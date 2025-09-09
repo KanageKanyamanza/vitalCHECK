@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: ubb-health-check-api
+    env: docker
+    plan: starter
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: EMAIL_SERVICE_KEY
+        sync: false
