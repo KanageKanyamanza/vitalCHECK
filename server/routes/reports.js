@@ -1,7 +1,7 @@
 const express = require('express');
 const Assessment = require('../models/Assessment');
 const User = require('../models/User');
-const { generatePDFReport } = require('../utils/pdfGenerator');
+const { generatePDFReport, generateSimplePDFReport } = require('../utils/pdfGenerator');
 const { sendEmail } = require('../utils/emailService');
 const emailTemplates = require('../utils/emailTemplates');
 const router = express.Router();
@@ -19,8 +19,19 @@ router.post('/generate/:assessmentId', async (req, res) => {
       });
     }
 
-    // Generate PDF report
-    const pdfBuffer = await generatePDFReport(assessment);
+    // Generate PDF report - try complex version first, fallback to simple
+    let pdfBuffer;
+    try {
+      pdfBuffer = await generatePDFReport(assessment);
+      console.log('Complex PDF generation successful');
+    } catch (error) {
+      console.warn('Complex PDF generation failed, trying simple version:', error.message);
+      pdfBuffer = await generateSimplePDFReport(assessment);
+      console.log('Simple PDF generation successful');
+    }
+
+    // Convert Uint8Array to Buffer for Mongoose
+    const pdfBufferForDB = Buffer.from(pdfBuffer);
 
     // Get email template based on language
     const language = assessment.language || 'fr';
@@ -39,7 +50,7 @@ router.post('/generate/:assessmentId', async (req, res) => {
 
     // Update assessment with report status and save PDF buffer
     assessment.reportGenerated = true;
-    assessment.pdfBuffer = pdfBuffer;
+    assessment.pdfBuffer = pdfBufferForDB;
     assessment.pdfGeneratedAt = new Date();
     assessment.reportType = 'freemium';
     await assessment.save();

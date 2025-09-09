@@ -2,6 +2,55 @@ const puppeteer = require('puppeteer');
 const path = require('path');
 const fs = require('fs');
 
+// Alternative PDF generation using a simpler approach
+async function generateSimplePDFReport(assessment) {
+  try {
+    const { user, overallScore, overallStatus, pillarScores, completedAt, language = 'fr' } = assessment;
+    
+    // Simple HTML content without external dependencies
+    const htmlContent = generateSimpleHTMLContent(assessment);
+    
+    // Use Puppeteer with minimal configuration
+    const browser = await puppeteer.launch({
+      headless: 'new',
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-gpu',
+        '--single-process'
+      ]
+    });
+    
+    const page = await browser.newPage();
+    
+    // Set content directly without waiting for network
+    await page.setContent(htmlContent, { 
+      waitUntil: 'domcontentloaded',
+      timeout: 10000
+    });
+    
+    // Generate PDF with minimal options
+    const pdfBuffer = await page.pdf({
+      format: 'A4',
+      printBackground: true,
+      margin: {
+        top: '10mm',
+        right: '10mm',
+        bottom: '10mm',
+        left: '10mm'
+      }
+    });
+    
+    await browser.close();
+    return pdfBuffer;
+    
+  } catch (error) {
+    console.error('Simple PDF generation error:', error);
+    throw error;
+  }
+}
+
 async function generatePDFReport(assessment) {
   let browser;
   
@@ -112,10 +161,28 @@ async function generatePDFReport(assessment) {
     
     const page = await browser.newPage();
     
+    // Set longer timeout for Render environment
+    page.setDefaultTimeout(60000); // 60 seconds
+    page.setDefaultNavigationTimeout(60000); // 60 seconds
+    
     // Generate HTML content for the PDF
     const htmlContent = generateHTMLContent(assessment);
     
-    await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+    // Try with networkidle0 first, fallback to domcontentloaded if timeout
+    try {
+      await page.setContent(htmlContent, { 
+        waitUntil: 'networkidle0',
+        timeout: 60000 // 60 seconds timeout
+      });
+    } catch (timeoutError) {
+      console.warn('networkidle0 timeout, falling back to domcontentloaded');
+      await page.setContent(htmlContent, { 
+        waitUntil: 'domcontentloaded',
+        timeout: 30000 // 30 seconds timeout
+      });
+      // Wait a bit more for any remaining resources
+      await page.waitForTimeout(2000);
+    }
     
     // Generate PDF
     const pdfBuffer = await page.pdf({
@@ -394,6 +461,194 @@ function generateHTMLContent(assessment) {
   `;
 }
 
+function generateSimpleHTMLContent(assessment) {
+  const { user, overallScore, overallStatus, pillarScores, completedAt, language = 'fr' } = assessment;
+  
+  const statusColors = {
+    red: '#EF4444',
+    amber: '#F59E0B',
+    green: '#10B981'
+  };
+  
+  const templates = {
+    en: {
+      statusTexts: {
+        red: 'Critical',
+        amber: 'Needs Improvement',
+        green: 'Healthy'
+      },
+      title: 'UBB Enterprise Health Check Report',
+      subtitle: 'Free Self-Assessment Report',
+      companyName: 'Company Name',
+      assessmentDate: 'Assessment Date',
+      overallScore: 'Overall Health Score',
+      pillarScores: 'Pillar Breakdown',
+      recommendations: 'Recommendations',
+      generatedOn: 'Generated on'
+    },
+    fr: {
+      statusTexts: {
+        red: 'Critique',
+        amber: 'À améliorer',
+        green: 'En bonne santé'
+      },
+      title: 'Rapport UBB Enterprise Health Check',
+      subtitle: 'Rapport d\'auto-évaluation gratuit',
+      companyName: 'Nom de l\'entreprise',
+      assessmentDate: 'Date d\'évaluation',
+      overallScore: 'Score de santé global',
+      pillarScores: 'Répartition par piliers',
+      recommendations: 'Recommandations',
+      generatedOn: 'Généré le'
+    }
+  };
+  
+  const t = templates[language] || templates.fr;
+  const overallText = t.statusTexts[overallStatus];
+  const overallColor = statusColors[overallStatus];
+  
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <title>UBB Enterprise Health Check Report</title>
+      <style>
+        body {
+          font-family: Arial, sans-serif;
+          line-height: 1.4;
+          color: #333;
+          margin: 0;
+          padding: 20px;
+        }
+        .header {
+          background: #FF6B35;
+          color: white;
+          padding: 20px;
+          text-align: center;
+          margin-bottom: 20px;
+        }
+        .header h1 {
+          margin: 0;
+          font-size: 24px;
+        }
+        .header h2 {
+          margin: 5px 0 0 0;
+          font-size: 16px;
+          opacity: 0.9;
+        }
+        .company-info {
+          background: #f8f9fa;
+          padding: 15px;
+          border-radius: 5px;
+          margin-bottom: 20px;
+        }
+        .score-section {
+          text-align: center;
+          margin: 30px 0;
+        }
+        .score-circle {
+          width: 120px;
+          height: 120px;
+          border-radius: 50%;
+          background: ${overallColor};
+          color: white;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 20px;
+          font-weight: bold;
+          margin-bottom: 15px;
+        }
+        .score-text {
+          font-size: 16px;
+          color: ${overallColor};
+          font-weight: bold;
+        }
+        .pillars-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 20px 0;
+        }
+        .pillars-table th,
+        .pillars-table td {
+          padding: 8px;
+          text-align: left;
+          border-bottom: 1px solid #ddd;
+        }
+        .pillars-table th {
+          background-color: #f8f9fa;
+          font-weight: bold;
+        }
+        .status-badge {
+          padding: 2px 8px;
+          border-radius: 15px;
+          color: white;
+          font-size: 10px;
+          font-weight: bold;
+          text-transform: uppercase;
+        }
+        .status-red { background-color: #EF4444; }
+        .status-amber { background-color: #F59E0B; }
+        .status-green { background-color: #10B981; }
+        .footer {
+          margin-top: 30px;
+          padding: 15px;
+          background: #f8f9fa;
+          text-align: center;
+          border-radius: 5px;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <h1>UBB ENTERPRISE HEALTH CHECK</h1>
+        <h2>${t.subtitle}</h2>
+      </div>
+      
+      <div class="company-info">
+        <h3>${t.companyName}</h3>
+        <p><strong>${t.companyName}:</strong> ${user.companyName}</p>
+        <p><strong>Secteur:</strong> ${user.sector}</p>
+        <p><strong>Taille:</strong> ${user.companySize}</p>
+        <p><strong>${t.assessmentDate}:</strong> ${new Date(completedAt).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US')}</p>
+      </div>
+      
+      <div class="score-section">
+        <div class="score-circle">${overallScore}/100</div>
+        <div class="score-text">${overallText}</div>
+      </div>
+      
+      <h3>${t.pillarScores}</h3>
+      <table class="pillars-table">
+        <thead>
+          <tr>
+            <th>Pillar</th>
+            <th>Score</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${pillarScores.map(pillar => `
+            <tr>
+              <td>${pillar.pillarName}</td>
+              <td>${pillar.score}/100</td>
+              <td><span class="status-badge status-${pillar.status}">${t.statusTexts[pillar.status]}</span></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+      
+      <div class="footer">
+        <p>This report was generated by UBB Enterprise Health Check</p>
+        <p>For more information, visit our website or contact our team</p>
+      </div>
+    </body>
+    </html>
+  `;
+}
+
 module.exports = {
-  generatePDFReport
+  generatePDFReport,
+  generateSimplePDFReport
 };
