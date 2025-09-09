@@ -4,8 +4,11 @@ import { Toaster } from 'react-hot-toast'
 import LandingPage from './pages/LandingPage'
 import AssessmentPage from './pages/AssessmentPage'
 import ResultsPage from './pages/ResultsPage'
+import PrivacyPolicy from './pages/PrivacyPolicy'
+import TermsOfService from './pages/TermsOfService'
 import Navbar from './components/Navbar'
 import { AssessmentProvider } from './context/AssessmentContext'
+import { toastColors } from './utils/colors'
 
 function App() {
   return (
@@ -17,14 +20,16 @@ function App() {
             <Route path="/" element={<LandingPage />} />
             <Route path="/assessment" element={<AssessmentPage />} />
             <Route path="/results" element={<ResultsPage />} />
+            <Route path="/privacy" element={<PrivacyPolicy />} />
+            <Route path="/terms" element={<TermsOfService />} />
           </Routes>
           <Toaster 
             position="top-right"
             toastOptions={{
               duration: 4000,
               style: {
-                background: '#363636',
-                color: '#fff',
+                background: toastColors.background,
+                color: toastColors.text,
               },
             }}
           />

@@ -16,7 +16,8 @@
     "delete": "Delete",
     "close": "Close",
     "yes": "Yes",
-    "no": "No"
+    "no": "No",
+    "goHome": "Go Home"
   },
   "navigation": {
     "home": "Home",
@@ -24,9 +25,60 @@
     "results": "Results",
     "newAssessment": "New Assessment"
   },
+  "results": {
+    "title": "UBB Enterprise Health Check – Results",
+    "newAssessment": "New Assessment",
+    "overallScore": "Section A – Overall Score",
+    "pillarBreakdown": "Section B – Pillar Breakdown (Radar Chart)",
+    "pillarBreakdownDesc": "Radar chart with 6 axes: Finance, Operations, Sales & Marketing, People & HR, Strategy & Governance, Technology. Each pillar is color-coded (Red / Amber / Green).",
+    "quickInsights": "Section C – Quick Insights (Freemium)",
+    "quickInsightsDesc": "2–3 automated generic tips to help improve your business health.",
+    "getFullReport": "Get Full Report",
+    "getFullReportDesc": "Unlock detailed insights, benchmarking, and expert consultation",
+    "generateReport": "Generate Report",
+    "reportGenerated": "Report generated and sent by email!",
+    "reportError": "Error generating report",
+    "downloadReport": "Download PDF",
+    "downloadSuccess": "Report downloaded successfully!",
+    "downloadError": "Error downloading report",
+    "pillarResults": "Pillar Results",
+    "pillarDetails": "Pillar Details",
+    "keyRecommendations": "Key Recommendations",
+    "priority": "Priority",
+    "improvement": "Improvement",
+    "optimization": "Optimization",
+    "freeReport": "Free Report",
+    "freeReportDesc": "Receive your detailed report by email with personalized recommendations.",
+    "generateReportBtn": "Generate report",
+    "reportSent": "Report sent",
+    "reportSuccessTitle": "Report generated successfully!",
+    "reportSuccessDesc": "Your UBB Enterprise Health Check report has been generated and sent by email.",
+    "reportSentTo": "Sent to",
+    "stayOnResults": "Stay on results",
+    "reportNote": "You can now upgrade to premium for deeper insights or return home for a new assessment.",
+    "premiumReport": "Premium Report",
+    "premiumReportDesc": "In-depth analysis, sector benchmarking and consultation with our experts.",
+    "unlockPremium": "Unlock Premium",
+    "nextSteps": "Next Steps",
+    "sector": "Sector",
+    "size": "Size",
+    "date": "Date",
+    "zones": {
+      "red": "Red Zone",
+      "amber": "Amber Zone",
+      "green": "Green Zone"
+    },
+    "successModal": {
+      "title": "Report generated successfully!",
+      "message": "Your detailed report has been generated and sent by email. You can also download it directly.",
+      "continue": "Continue",
+      "backToHome": "Back to home"
+    }
+  },
   "landing": {
-    "title": "Is your business fit to grow?",
-    "subtitle": "Take this free 10-minute self-assessment and discover your company's health score",
+    "title": "UBB Enterprise Health Check",
+    "subtitle": "Is your business fit to grow?<br/>Take this free 10-minute self-assessment and discover your company's health score",
+    "badge": "Free • 10 minutes • Instant results",
     "features": {
       "title": "What you'll get:",
       "complete": "Complete Assessment",
@@ -47,6 +99,8 @@
       "email": "Contact email",
       "emailPlaceholder": "your@email.com",
       "startButton": "Start Your Free Health Check",
+      "startButtonShort": "Start",
+      "startAssessment": "Start Assessment",
       "language": "Language",
       "languagePlaceholder": "Select language"
     },
@@ -57,6 +111,8 @@
       "manufacturing": "Manufacturing",
       "construction": "Construction",
       "health": "Health",
+      "healthcare": "Healthcare",
+      "agriculture": "Agriculture",
       "education": "Education",
       "finance": "Finance",
       "other": "Other"
@@ -75,33 +131,204 @@
     "responses": "responses",
     "complete": "Complete"
   },
-  "results": {
-    "title": "Assessment Results",
-    "overallScore": "Overall Health Score",
-    "pillarResults": "Pillar Results",
-    "pillarDetails": "Pillar Details",
-    "recommendations": "Key Recommendations",
-    "nextSteps": "Next Steps",
-    "freeReport": "Free Report",
-    "freeReportDesc": "Receive your detailed report by email with personalized recommendations.",
-    "premiumReport": "Premium Report",
-    "premiumReportDesc": "In-depth analysis, sector benchmarking and consultation with our experts.",
-    "generateReport": "Generate Report",
-    "reportSent": "Report Sent",
-    "unlockPremium": "Unlock Premium",
-    "status": {
-      "healthy": "Healthy",
-      "needsImprovement": "Needs Improvement",
-      "critical": "Critical"
-    },
-    "messages": {
-      "healthy": "Congratulations! Your business is in excellent health and well-positioned for growth.",
-      "needsImprovement": "Your business is developing but needs strengthening in some areas.",
-      "critical": "Your business is facing critical challenges that require immediate attention."
-    }
-  },
   "languages": {
     "en": "English",
     "fr": "Français"
+  },
+  "footer": {
+    "description": "UBB helps African businesses assess their organizational health and develop sustainable growth strategies.",
+    "quickLinks": "Quick Links",
+    "about": "About",
+    "services": "Services",
+    "contact": "Contact",
+    "privacy": "Privacy",
+    "location": "Douala, Cameroon",
+    "openHours": "Open Hours",
+    "allRightsReserved": "All rights reserved",
+    "terms": "Terms of Service"
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated",
+    "introduction": {
+      "title": "Introduction",
+      "content": "UBB (Ubuntu Business Builders) is committed to protecting your privacy and personal data in accordance with applicable Senegalese and African laws, including Law No. 2008-12 of January 25, 2008 on the protection of personal data in Senegal."
+    },
+    "dataCollection": {
+      "title": "Data Collection",
+      "personalData": {
+        "title": "Personal Data",
+        "items": {
+          "name": "Company name",
+          "email": "Email address",
+          "company": "Company information",
+          "sector": "Business sector",
+          "size": "Company size"
+        }
+      },
+      "assessmentData": {
+        "title": "Assessment Data",
+        "content": "We collect your responses to assessment questionnaires to generate personalized reports and recommendations tailored to your business."
+      }
+    },
+    "dataUsage": {
+      "title": "Data Usage",
+      "items": {
+        "assessment": "Generation of personalized assessment reports",
+        "reports": "Creation of sector-specific recommendations",
+        "communication": "Sending reports and relevant communications",
+        "improvement": "Continuous improvement of our services"
+      }
+    },
+    "dataProtection": {
+      "title": "Data Protection",
+      "content": "We implement appropriate security measures to protect your data against unauthorized access, modification, disclosure, or destruction.",
+      "measures": {
+        "encryption": "Encryption of sensitive data",
+        "access": "Strict access control",
+        "backup": "Secure data backup",
+        "monitoring": "Continuous system monitoring"
+      }
+    },
+    "dataSharing": {
+      "title": "Data Sharing",
+      "content": "We do not sell, rent, or share your personal data with third parties, except in the following cases:",
+      "exceptions": {
+        "legal": "Legal obligation or request from competent authorities",
+        "consent": "With your explicit consent",
+        "aggregated": "Aggregated and anonymized data for statistical analysis"
+      }
+    },
+    "userRights": {
+      "title": "User Rights",
+      "content": "In accordance with Senegalese legislation, you have the following rights:",
+      "rights": {
+        "access": "Right to access your personal data",
+        "rectification": "Right to rectification of inaccurate data",
+        "erasure": "Right to erasure of your data",
+        "portability": "Right to data portability",
+        "objection": "Right to object to processing of your data"
+      }
+    },
+    "cookies": {
+      "title": "Cookies",
+      "content": "We use cookies to improve your user experience and analyze the use of our site. You can disable cookies in your browser settings."
+    },
+    "internationalTransfers": {
+      "title": "International Transfers",
+      "content": "Your data may be transferred to servers located outside Senegal. We ensure that these transfers comply with international data protection standards."
+    },
+    "contact": {
+      "title": "Contact",
+      "content": "For any questions regarding this privacy policy or to exercise your rights, contact us:"
+    },
+    "updates": {
+      "title": "Updates",
+      "content": "We reserve the right to modify this privacy policy. Changes will be published on this page with a new update date."
+    }
+  },
+  "terms": {
+    "title": "Terms of Service",
+    "lastUpdated": "Last updated",
+    "introduction": {
+      "title": "Introduction",
+      "content": "These terms of service govern your use of the UBB Enterprise Health Check platform. By using our services, you agree to be bound by these terms."
+    },
+    "acceptance": {
+      "title": "Acceptance of Terms",
+      "content": "By accessing and using our platform, you confirm that you have read, understood, and accepted these terms of service in their entirety."
+    },
+    "serviceDescription": {
+      "title": "Service Description",
+      "content": "UBB Enterprise Health Check is a platform for assessing the organizational health of African businesses. Our services include:",
+      "features": {
+        "assessment": "Online assessment of your business health",
+        "reports": "Generation of detailed and personalized reports",
+        "consultation": "Consultation and support services",
+        "support": "Technical support and user assistance"
+      }
+    },
+    "userObligations": {
+      "title": "User Obligations",
+      "content": "By using our services, you agree to:",
+      "obligations": {
+        "accuracy": "Provide accurate and up-to-date information",
+        "authorization": "Have authorization to represent your company",
+        "compliance": "Comply with all applicable laws and regulations",
+        "responsibility": "Take responsibility for your actions on the platform"
+      }
+    },
+    "intellectualProperty": {
+      "title": "Intellectual Property",
+      "content": "All content, trademarks, and technologies of the UBB platform are protected by intellectual property rights.",
+      "rights": {
+        "ubb": "UBB holds all rights to the platform and its content",
+        "user": "You retain rights to your data and content",
+        "license": "You grant UBB a limited license to process your data"
+      }
+    },
+    "paymentTerms": {
+      "title": "Payment Terms",
+      "content": "Our services are offered under the following terms:",
+      "conditions": {
+        "free": "Free basic assessment",
+        "premium": "Paid premium services according to our current rates",
+        "refund": "Refund policy according to contractual conditions",
+        "currency": "Payments accepted in FCFA, EUR, USD, and GBP"
+      }
+    },
+    "limitationLiability": {
+      "title": "Limitation of Liability",
+      "content": "Within the limits allowed by Senegalese law, UBB disclaims any liability for:",
+      "limitations": {
+        "advice": "Advice generated by our platform is for informational purposes only",
+        "accuracy": "Accuracy of data provided by users",
+        "damages": "Indirect or consequential damages",
+        "force": "Force majeure or unforeseen events"
+      }
+    },
+    "governingLaw": {
+      "title": "Governing Law",
+      "content": "These terms are governed by Senegalese law. Any dispute will be subject to the exclusive jurisdiction of the courts of Dakar, Senegal."
+    },
+    "disputeResolution": {
+      "title": "Dispute Resolution",
+      "content": "In case of dispute, we favor amicable resolution according to the following steps:",
+      "steps": {
+        "negotiation": "Direct negotiation between parties",
+        "mediation": "Mediation by a neutral third party",
+        "arbitration": "Arbitration according to OHADA rules",
+        "courts": "Recourse to competent courts as a last resort"
+      }
+    },
+    "termination": {
+      "title": "Termination",
+      "content": "You can terminate your account at any time. UBB reserves the right to suspend or terminate your access in case of violation of these terms."
+    },
+    "contact": {
+      "title": "Contact",
+      "content": "For any questions regarding these terms of service, contact us:"
+    },
+    "updates": {
+      "title": "Updates",
+      "content": "We reserve the right to modify these terms. Changes will be notified to users and published on this page."
+    }
+  },
+  "premium": {
+    "upgradeTitle": "Upgrade to Premium",
+    "upgradeSubtitle": "Unlock deeper insights and expert consultation",
+    "upgradeNow": "Upgrade Now",
+    "teamAnalysis": "Team Analysis",
+    "teamAnalysisDesc": "Assessment of your team's skills and performance",
+    "actionPlan": "Personalized Action Plan",
+    "actionPlanDesc": "Detailed roadmap with priorities and deadlines",
+    "advancedAnalytics": "Advanced Analytics",
+    "advancedAnalyticsDesc": "Sector benchmarking and market trends"
+  },
+  "pwa": {
+    "installButton": {
+      "text": "Install App",
+      "ariaLabel": "Install UBB Enterprise Health Check application"
+    }
   }
 }

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, ChevronDown } from 'lucide-react'
 
-const NavbarLanguageSelector = ({ onLanguageChange, selectedLanguage = 'fr', className = '' }) => {
+const NavbarLanguageSelector = ({ onLanguageChange, selectedLanguage = 'fr', className = '', isScrolled = false }) => {
   const { t, i18n } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
 
@@ -30,7 +30,11 @@ const NavbarLanguageSelector = ({ onLanguageChange, selectedLanguage = 'fr', cla
     <div className={`relative ${className}`}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 hover:text-primary-600 hover:bg-gray-50 rounded-lg transition-colors duration-200"
+        className={`flex items-center space-x-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
+          isScrolled 
+            ? 'text-gray-700 hover:text-primary-600 hover:bg-gray-50' 
+            : 'text-white/90 hover:text-white hover:bg-white/10'
+        }`}
       >
         <span className="text-lg">{selectedLang.flag}</span>
         <span className="hidden sm:block">{selectedLang.name}</span>

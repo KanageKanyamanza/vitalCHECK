@@ -14,7 +14,7 @@ const QuestionCard = ({ question, selectedAnswer, onAnswerSelect }) => {
         <div className="text-sm font-medium text-primary-600 mb-2">
           {question.pillarName}
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 leading-tight">
+        <h2 className="sm:text-2xl text-lg font-bold text-gray-900 leading-tight">
           {question.text}
         </h2>
       </div>

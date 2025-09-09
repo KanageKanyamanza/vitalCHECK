@@ -1,8 +1,10 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { Lightbulb, TrendingUp, Target, AlertTriangle } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 const RecommendationsList = ({ pillarScores }) => {
+  const { t } = useTranslation()
   const getStatusIcon = (status) => {
     switch (status) {
       case 'green':
@@ -32,11 +34,11 @@ const RecommendationsList = ({ pillarScores }) => {
   const getStatusText = (status) => {
     switch (status) {
       case 'green':
-        return 'Optimisation'
+        return t('results.optimization')
       case 'amber':
-        return 'Amélioration'
+        return t('results.improvement')
       case 'red':
-        return 'Priorité'
+        return t('results.priority')
       default:
         return 'Recommandation'
     }
@@ -58,7 +60,7 @@ const RecommendationsList = ({ pillarScores }) => {
             <TrendingUp className="w-5 h-5 text-success-600" />
           </div>
           <h3 className="text-xl font-bold text-gray-900">
-            Félicitations ! Recommandations d'Optimisation
+            Félicitations ! {t('results.optimization')}
           </h3>
         </div>
         
@@ -89,7 +91,7 @@ const RecommendationsList = ({ pillarScores }) => {
           <Lightbulb className="w-5 h-5 text-primary-600" />
         </div>
         <h3 className="text-xl font-bold text-gray-900">
-          Recommandations Clés
+          {t('results.keyRecommendations')}
         </h3>
       </div>
       
@@ -117,7 +119,7 @@ const RecommendationsList = ({ pillarScores }) => {
             </div>
             
             <div className="space-y-3">
-              {pillar.recommendations.slice(0, 3).map((recommendation, recIndex) => (
+              {pillar.recommendations.slice(0, 2).map((recommendation, recIndex) => (
                 <div key={recIndex} className="flex items-start space-x-3">
                   <div className="w-2 h-2 bg-current rounded-full mt-2 opacity-60" />
                   <p className="text-gray-700 text-sm leading-relaxed">

@@ -37,8 +37,11 @@ router.post('/generate/:assessmentId', async (req, res) => {
       }]
     });
 
-    // Update assessment with report status
+    // Update assessment with report status and save PDF buffer
     assessment.reportGenerated = true;
+    assessment.pdfBuffer = pdfBuffer;
+    assessment.pdfGeneratedAt = new Date();
+    assessment.reportType = 'freemium';
     await assessment.save();
 
     res.json({
@@ -79,6 +82,80 @@ router.get('/status/:assessmentId', async (req, res) => {
     res.status(500).json({ 
       success: false, 
       message: 'Server error' 
+    });
+  }
+});
+
+// Download saved PDF report
+router.get('/download/:assessmentId', async (req, res) => {
+  try {
+    const assessment = await Assessment.findById(req.params.assessmentId)
+      .populate('user', 'companyName');
+
+    if (!assessment) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Assessment not found' 
+      });
+    }
+
+    if (!assessment.pdfBuffer) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'PDF report not found. Please generate the report first.' 
+      });
+    }
+
+    // Set headers for PDF download
+    const filename = `UBB-Health-Check-${assessment.user.companyName}-${assessment.pdfGeneratedAt.toISOString().split('T')[0]}.pdf`;
+    
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.setHeader('Content-Length', assessment.pdfBuffer.length);
+
+    // Send PDF buffer
+    res.send(assessment.pdfBuffer);
+
+  } catch (error) {
+    console.error('PDF download error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error downloading PDF report'
+    });
+  }
+});
+
+// Get report status and info
+router.get('/status/:assessmentId', async (req, res) => {
+  try {
+    const assessment = await Assessment.findById(req.params.assessmentId)
+      .populate('user', 'companyName email');
+
+    if (!assessment) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Assessment not found' 
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        reportGenerated: assessment.reportGenerated,
+        reportType: assessment.reportType,
+        pdfGeneratedAt: assessment.pdfGeneratedAt,
+        hasPdfBuffer: !!assessment.pdfBuffer,
+        companyName: assessment.user.companyName,
+        overallScore: assessment.overallScore,
+        overallStatus: assessment.overallStatus
+      }
+    });
+
+  } catch (error) {
+    console.error('Report status error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error getting report status'
     });
   }
 });

@@ -7,29 +7,57 @@ export default {
   theme: {
     extend: {
       colors: {
+        // UBB Ubuntu Blue - Trust, knowledge, interconnectedness
         primary: {
-          50: '#fff7ed',
-          100: '#ffedd5',
-          200: '#fed7aa',
-          300: '#fdba74',
-          400: '#fb923c',
-          500: '#f97316', // Main orange
-          600: '#ea580c',
-          700: '#c2410c',
-          800: '#9a3412',
-          900: '#7c2d12',
+          50: '#eff6ff',
+          100: '#dbeafe',
+          200: '#bfdbfe',
+          300: '#93c5fd',
+          400: '#60a5fa',
+          500: '#3b82f6', // Ubuntu Blue
+          600: '#2563eb',
+          700: '#1d4ed8',
+          800: '#1e40af',
+          900: '#1e3a8a',
         },
+        // Earthy and Grounded Foundation - Rich browns, warm ochre
         secondary: {
-          50: '#f0f9ff',
-          100: '#e0f2fe',
-          200: '#bae6fd',
-          300: '#7dd3fc',
-          400: '#38bdf8',
-          500: '#0ea5e9', // Main blue
-          600: '#0284c7',
-          700: '#0369a1',
-          800: '#075985',
-          900: '#0c4a6e',
+          50: '#fef7ed',
+          100: '#fdedd3',
+          200: '#fbd7a5',
+          300: '#f8b86d',
+          400: '#f59332',
+          500: '#d97706', // Warm ochre
+          600: '#b45309',
+          700: '#92400e',
+          800: '#78350f',
+          900: '#451a03',
+        },
+        // Vibrant African Accents - Bold yellows, oranges, reds
+        accent: {
+          50: '#fffdf7',
+          100: '#fef9e7',
+          200: '#fef2c7',
+          300: '#fde68a',
+          400: '#fcd34d',
+          500: '#fbc350', // UBB Orange
+          600: '#f59e0b',
+          700: '#d97706',
+          800: '#b45309',
+          900: '#92400e',
+        },
+        // Deep greens - Growth, resilience, connection to land
+        earth: {
+          50: '#f0fdf4',
+          100: '#dcfce7',
+          200: '#bbf7d0',
+          300: '#86efac',
+          400: '#4ade80',
+          500: '#22c55e', // Deep green
+          600: '#16a34a',
+          700: '#15803d',
+          800: '#166534',
+          900: '#14532d',
         },
         success: {
           50: '#ecfdf5',
@@ -69,7 +97,12 @@ export default {
         }
       },
       fontFamily: {
+        // Professional and Readable Sans-Serif
         sans: ['Inter', 'system-ui', 'sans-serif'],
+        // Display font with subtle African influences
+        display: ['Poppins', 'Inter', 'system-ui', 'sans-serif'],
+        // Body text - clean and contemporary
+        body: ['Inter', 'system-ui', 'sans-serif'],
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
