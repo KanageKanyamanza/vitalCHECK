@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const path = require('path');
+const fs = require('fs');
 
 async function generatePDFReport(assessment) {
   let browser;
@@ -22,14 +23,14 @@ async function generatePDFReport(assessment) {
 
     // Configuration pour Render.com - essayer Chrome système d'abord, puis Puppeteer
     if (process.env.NODE_ENV === 'production' || process.env.RENDER) {
-      const fs = require('fs');
       
       // Essayer d'abord Chrome système (installé via Dockerfile)
       const systemChromePaths = [
         '/usr/bin/google-chrome-stable',
         '/usr/bin/google-chrome',
         '/usr/bin/chromium-browser',
-        '/usr/bin/chromium'
+        '/usr/bin/chromium',
+        '/tmp/chrome/chrome'  // Lien symbolique créé par le script de build
       ];
       
       let chromeFound = false;
@@ -42,16 +43,67 @@ async function generatePDFReport(assessment) {
         }
       }
       
-      // Si Chrome système n'est pas trouvé, utiliser Puppeteer Chrome
+      // Si Chrome système n'est pas trouvé, essayer Puppeteer Chrome
       if (!chromeFound) {
         const puppeteer = require('puppeteer');
         const executablePath = puppeteer.executablePath();
         
-        if (executablePath) {
+        if (executablePath && fs.existsSync(executablePath)) {
           launchOptions.executablePath = executablePath;
           console.log(`Using Puppeteer Chrome at: ${executablePath}`);
         } else {
-          console.warn('Neither system Chrome nor Puppeteer Chrome found, using default configuration');
+          // Dernière tentative : essayer de trouver Chrome dans le cache Render
+          const cacheDir = '/opt/render/.cache/puppeteer';
+          if (fs.existsSync(cacheDir)) {
+            try {
+              const findChrome = (dir) => {
+                const items = fs.readdirSync(dir);
+                for (const item of items) {
+                  const fullPath = path.join(dir, item);
+                  const stat = fs.statSync(fullPath);
+                  if (stat.isDirectory()) {
+                    const result = findChrome(fullPath);
+                    if (result) return result;
+                  } else if (item === 'chrome' && stat.isFile()) {
+                    return fullPath;
+                  }
+                }
+                return null;
+              };
+              
+              const foundChrome = findChrome(cacheDir);
+              if (foundChrome) {
+                launchOptions.executablePath = foundChrome;
+                console.log(`Using found Chrome at: ${foundChrome}`);
+                chromeFound = true;
+              }
+            } catch (error) {
+              console.warn('Error searching for Chrome in cache:', error.message);
+            }
+          }
+          
+          if (!chromeFound) {
+            console.warn('No Chrome executable found, using default Puppeteer configuration');
+            console.log(`Puppeteer expected path: ${executablePath}`);
+            console.log(`File exists: ${executablePath ? fs.existsSync(executablePath) : 'N/A'}`);
+            
+            // Sur Render, si aucun Chrome n'est trouvé, essayer de réinstaller
+            if (process.env.RENDER) {
+              console.log('Attempting to reinstall Chrome via Puppeteer...');
+              try {
+                const { execSync } = require('child_process');
+                execSync('npx puppeteer browsers install chrome', { stdio: 'inherit' });
+                const newExecutablePath = puppeteer.executablePath();
+                if (newExecutablePath && fs.existsSync(newExecutablePath)) {
+                  launchOptions.executablePath = newExecutablePath;
+                  console.log(`Using reinstalled Chrome at: ${newExecutablePath}`);
+                  chromeFound = true;
+                }
+              } catch (error) {
+                console.warn('Failed to reinstall Chrome:', error.message);
+              }
+            }
+          }
         }
       }
     }
