@@ -1,0 +1,107 @@
+{
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "next": "Next",
+    "previous": "Previous",
+    "finish": "Finish",
+    "back": "Back",
+    "continue": "Continue",
+    "start": "Start",
+    "submit": "Submit",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "close": "Close",
+    "yes": "Yes",
+    "no": "No"
+  },
+  "navigation": {
+    "home": "Home",
+    "assessment": "Assessment",
+    "results": "Results",
+    "newAssessment": "New Assessment"
+  },
+  "landing": {
+    "title": "Is your business fit to grow?",
+    "subtitle": "Take this free 10-minute self-assessment and discover your company's health score",
+    "features": {
+      "title": "What you'll get:",
+      "complete": "Complete Assessment",
+      "completeDesc": "Analyze 6 key pillars of your business",
+      "personalized": "Personalized Recommendations",
+      "personalizedDesc": "Get advice tailored to your situation",
+      "detailed": "Detailed Report",
+      "detailedDesc": "Receive a complete PDF report by email"
+    },
+    "form": {
+      "title": "Start your free assessment",
+      "companyName": "Company name",
+      "companyNamePlaceholder": "e.g., My Company LLC",
+      "sector": "Sector / Industry",
+      "sectorPlaceholder": "Select your sector",
+      "companySize": "Company size",
+      "companySizePlaceholder": "Select size",
+      "email": "Contact email",
+      "emailPlaceholder": "your@email.com",
+      "startButton": "Start Your Free Health Check",
+      "language": "Language",
+      "languagePlaceholder": "Select language"
+    },
+    "sectors": {
+      "technology": "Technology",
+      "commerce": "Commerce",
+      "services": "Services",
+      "manufacturing": "Manufacturing",
+      "construction": "Construction",
+      "health": "Health",
+      "education": "Education",
+      "finance": "Finance",
+      "other": "Other"
+    },
+    "sizes": {
+      "micro": "Micro (1-9 employees)",
+      "sme": "SME (10-49 employees)",
+      "large-sme": "Large SME (50+ employees)"
+    }
+  },
+  "assessment": {
+    "title": "Health Check Assessment",
+    "progress": "Progress",
+    "question": "Question",
+    "of": "of",
+    "responses": "responses",
+    "complete": "Complete"
+  },
+  "results": {
+    "title": "Assessment Results",
+    "overallScore": "Overall Health Score",
+    "pillarResults": "Pillar Results",
+    "pillarDetails": "Pillar Details",
+    "recommendations": "Key Recommendations",
+    "nextSteps": "Next Steps",
+    "freeReport": "Free Report",
+    "freeReportDesc": "Receive your detailed report by email with personalized recommendations.",
+    "premiumReport": "Premium Report",
+    "premiumReportDesc": "In-depth analysis, sector benchmarking and consultation with our experts.",
+    "generateReport": "Generate Report",
+    "reportSent": "Report Sent",
+    "unlockPremium": "Unlock Premium",
+    "status": {
+      "healthy": "Healthy",
+      "needsImprovement": "Needs Improvement",
+      "critical": "Critical"
+    },
+    "messages": {
+      "healthy": "Congratulations! Your business is in excellent health and well-positioned for growth.",
+      "needsImprovement": "Your business is developing but needs strengthening in some areas.",
+      "critical": "Your business is facing critical challenges that require immediate attention."
+    }
+  },
+  "languages": {
+    "en": "English",
+    "fr": "Français"
+  }
+}

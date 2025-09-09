@@ -1,0 +1,107 @@
+{
+  "common": {
+    "loading": "Chargement...",
+    "error": "Erreur",
+    "success": "Succès",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "finish": "Terminer",
+    "back": "Retour",
+    "continue": "Continuer",
+    "start": "Commencer",
+    "submit": "Soumettre",
+    "cancel": "Annuler",
+    "save": "Enregistrer",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "close": "Fermer",
+    "yes": "Oui",
+    "no": "Non"
+  },
+  "navigation": {
+    "home": "Accueil",
+    "assessment": "Évaluation",
+    "results": "Résultats",
+    "newAssessment": "Nouvelle Évaluation"
+  },
+  "landing": {
+    "title": "Votre entreprise est-elle prête à grandir ?",
+    "subtitle": "Effectuez cette évaluation gratuite de 10 minutes et découvrez le score de santé de votre entreprise",
+    "features": {
+      "title": "Ce que vous obtiendrez :",
+      "complete": "Évaluation Complète",
+      "completeDesc": "Analysez 6 piliers clés de votre entreprise",
+      "personalized": "Recommandations Personnalisées",
+      "personalizedDesc": "Obtenez des conseils adaptés à votre situation",
+      "detailed": "Rapport Détaillé",
+      "detailedDesc": "Recevez un rapport PDF complet par email"
+    },
+    "form": {
+      "title": "Commencez votre évaluation gratuite",
+      "companyName": "Nom de l'entreprise",
+      "companyNamePlaceholder": "Ex: Mon Entreprise SARL",
+      "sector": "Secteur / Industrie",
+      "sectorPlaceholder": "Sélectionnez votre secteur",
+      "companySize": "Taille de l'entreprise",
+      "companySizePlaceholder": "Sélectionnez la taille",
+      "email": "Email de contact",
+      "emailPlaceholder": "votre@email.com",
+      "startButton": "Commencer l'évaluation gratuite",
+      "language": "Langue",
+      "languagePlaceholder": "Sélectionnez la langue"
+    },
+    "sectors": {
+      "technology": "Technologie",
+      "commerce": "Commerce",
+      "services": "Services",
+      "manufacturing": "Manufacture",
+      "construction": "Construction",
+      "health": "Santé",
+      "education": "Éducation",
+      "finance": "Finance",
+      "other": "Autre"
+    },
+    "sizes": {
+      "micro": "Micro (1-9 employés)",
+      "sme": "PME (10-49 employés)",
+      "large-sme": "Grande PME (50+ employés)"
+    }
+  },
+  "assessment": {
+    "title": "Évaluation de Santé d'Entreprise",
+    "progress": "Progression",
+    "question": "Question",
+    "of": "de",
+    "responses": "réponses",
+    "complete": "Terminé"
+  },
+  "results": {
+    "title": "Résultats de l'Évaluation",
+    "overallScore": "Score Global de Santé",
+    "pillarResults": "Résultats par Pilier",
+    "pillarDetails": "Détail des Piliers",
+    "recommendations": "Recommandations Clés",
+    "nextSteps": "Prochaines Étapes",
+    "freeReport": "Rapport Gratuit",
+    "freeReportDesc": "Recevez votre rapport détaillé par email avec des recommandations personnalisées.",
+    "premiumReport": "Rapport Premium",
+    "premiumReportDesc": "Analyse approfondie, benchmarking sectoriel et consultation avec nos experts.",
+    "generateReport": "Générer le rapport",
+    "reportSent": "Rapport envoyé",
+    "unlockPremium": "Débloquer Premium",
+    "status": {
+      "healthy": "En bonne santé",
+      "needsImprovement": "À améliorer",
+      "critical": "Critique"
+    },
+    "messages": {
+      "healthy": "Félicitations ! Votre entreprise est en excellente santé et bien positionnée pour la croissance.",
+      "needsImprovement": "Votre entreprise se développe mais a besoin de renforcement dans certains domaines.",
+      "critical": "Votre entreprise fait face à des défis critiques qui nécessitent une attention immédiate."
+    }
+  },
+  "languages": {
+    "en": "English",
+    "fr": "Français"
+  }
+}
