@@ -20,27 +20,39 @@ async function generatePDFReport(assessment) {
       ]
     };
 
-    // Si on est en production (Render), utiliser le Chrome système
-    if (process.env.NODE_ENV === 'production') {
-      // Essayer différents chemins possibles pour Chrome
-      const possiblePaths = [
+    // Configuration pour Render.com - essayer Chrome système d'abord, puis Puppeteer
+    if (process.env.NODE_ENV === 'production' || process.env.RENDER) {
+      const fs = require('fs');
+      
+      // Essayer d'abord Chrome système (installé via Dockerfile)
+      const systemChromePaths = [
         '/usr/bin/google-chrome-stable',
         '/usr/bin/google-chrome',
         '/usr/bin/chromium-browser',
         '/usr/bin/chromium'
       ];
       
-      const fs = require('fs');
-      for (const chromePath of possiblePaths) {
+      let chromeFound = false;
+      for (const chromePath of systemChromePaths) {
         if (fs.existsSync(chromePath)) {
           launchOptions.executablePath = chromePath;
-          console.log(`Using Chrome at: ${chromePath}`);
+          console.log(`Using system Chrome at: ${chromePath}`);
+          chromeFound = true;
           break;
         }
       }
       
-      if (!launchOptions.executablePath) {
-        console.warn('Chrome not found in system paths, using default Puppeteer Chrome');
+      // Si Chrome système n'est pas trouvé, utiliser Puppeteer Chrome
+      if (!chromeFound) {
+        const puppeteer = require('puppeteer');
+        const executablePath = puppeteer.executablePath();
+        
+        if (executablePath) {
+          launchOptions.executablePath = executablePath;
+          console.log(`Using Puppeteer Chrome at: ${executablePath}`);
+        } else {
+          console.warn('Neither system Chrome nor Puppeteer Chrome found, using default configuration');
+        }
       }
     }
 
