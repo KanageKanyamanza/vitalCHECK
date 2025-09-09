@@ -22,4 +22,18 @@ else
     echo "ℹ️  System Chrome not found, will use Puppeteer Chrome"
 fi
 
+# Créer un lien symbolique pour faciliter l'accès
+if [ -d "/opt/render/.cache/puppeteer" ]; then
+    echo "🔗 Setting up Chrome access..."
+    # Trouver le chemin exact de Chrome
+    CHROME_PATH=$(find /opt/render/.cache/puppeteer -name "chrome" -type f 2>/dev/null | head -1)
+    if [ -n "$CHROME_PATH" ]; then
+        echo "Found Chrome at: $CHROME_PATH"
+        # Créer un répertoire accessible
+        mkdir -p /tmp/chrome
+        ln -sf "$CHROME_PATH" /tmp/chrome/chrome 2>/dev/null || true
+        echo "Chrome accessible at: /tmp/chrome/chrome"
+    fi
+fi
+
 echo "🎉 Build completed successfully!"
