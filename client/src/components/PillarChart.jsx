@@ -1,20 +1,10 @@
 import React from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { motion } from 'framer-motion'
+import { getStatusColor, chartColors } from '../utils/colors'
 
 const PillarChart = ({ pillarScores }) => {
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'green':
-        return '#10B981'
-      case 'amber':
-        return '#F59E0B'
-      case 'red':
-        return '#EF4444'
-      default:
-        return '#6B7280'
-    }
-  }
+  // Utilise la fonction centralisée
 
   const data = pillarScores.map(pillar => ({
     name: pillar.pillarName.split(' ')[0], // Short name for display
@@ -51,16 +41,16 @@ const PillarChart = ({ pillarScores }) => {
     >
       <ResponsiveContainer width="100%" height="100%">
         <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#E5E7EB" />
+          <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid} />
           <XAxis 
             dataKey="name" 
-            stroke="#6B7280"
+            stroke={chartColors.text}
             fontSize={12}
             tickLine={false}
             axisLine={false}
           />
           <YAxis 
-            stroke="#6B7280"
+            stroke={chartColors.text}
             fontSize={12}
             tickLine={false}
             axisLine={false}

@@ -1,19 +1,9 @@
 import React from 'react'
 import { motion } from 'framer-motion'
+import { getStatusColor, chartColors } from '../utils/colors'
 
 const ScoreGauge = ({ score, status }) => {
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'green':
-        return '#10B981'
-      case 'amber':
-        return '#F59E0B'
-      case 'red':
-        return '#EF4444'
-      default:
-        return '#6B7280'
-    }
-  }
+  // Utilise la fonction centralisée
 
   const color = getStatusColor(status)
   const circumference = 2 * Math.PI * 60 // radius = 60
@@ -28,7 +18,7 @@ const ScoreGauge = ({ score, status }) => {
           cx="70"
           cy="70"
           r="60"
-          stroke="#E5E7EB"
+          stroke={chartColors.grid}
           strokeWidth="12"
           fill="none"
         />

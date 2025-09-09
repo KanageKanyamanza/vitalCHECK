@@ -72,6 +72,20 @@ const assessmentSchema = new mongoose.Schema({
   },
   reportUrl: {
     type: String
+  },
+  reportType: {
+    type: String,
+    enum: ['freemium', 'premium'],
+    default: 'freemium'
+  },
+  pdfBuffer: {
+    type: Buffer
+  },
+  pdfGeneratedAt: {
+    type: Date
+  },
+  premiumInsights: {
+    type: mongoose.Schema.Types.Mixed
   }
 });
 

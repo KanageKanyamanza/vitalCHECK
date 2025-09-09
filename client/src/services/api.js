@@ -49,6 +49,7 @@ export const assessmentAPI = {
 export const reportsAPI = {
   generateReport: (assessmentId) => api.post(`/reports/generate/${assessmentId}`),
   getReportStatus: (assessmentId) => api.get(`/reports/status/${assessmentId}`),
+  downloadReport: (assessmentId) => api.get(`/reports/download/${assessmentId}`, { responseType: 'blob' }),
 }
 
 export default api

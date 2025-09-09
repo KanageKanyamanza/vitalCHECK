@@ -288,7 +288,7 @@ const AssessmentPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen py-[70px] bg-gray-50">
       {/* Submission Progress Modal */}
       {submitting && (
         <SubmissionProgress
@@ -303,9 +303,9 @@ const AssessmentPage = () => {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-3">
-              <span className="text-lg font-bold text-gray-900">{t('assessment.title')}</span>
+              <span className="sm:text-lg font-bold text-gray-900">{t('assessment.title')}</span>
             </div>
-            <div className="text-sm text-gray-600">
+            <div className="text-lg text-gray-600">
               {user?.companyName}
             </div>
           </div>
@@ -344,7 +344,7 @@ const AssessmentPage = () => {
             className="btn-outline flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span>{t('common.previous')}</span>
+            <span className='hidden sm:block'>{t('common.previous')}</span>
           </button>
 
           <div className="flex items-center space-x-2 text-sm text-gray-500">
@@ -361,7 +361,7 @@ const AssessmentPage = () => {
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
             ) : (
               <>
-                <span>{isLastQuestion ? t('common.finish') : t('common.next')}</span>
+                <span className='hidden sm:block'>{isLastQuestion ? t('common.finish') : t('common.next')}</span>
                 <ArrowRight className="w-4 h-4" />
               </>
             )}

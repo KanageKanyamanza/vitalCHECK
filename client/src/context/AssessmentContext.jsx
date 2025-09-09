@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer } from 'react'
+import React, { createContext, useContext, useReducer, useEffect } from 'react'
 
 const AssessmentContext = createContext()
 
@@ -59,6 +59,9 @@ function assessmentReducer(state, action) {
     case 'SET_ASSESSMENT':
       return { ...state, assessment: action.payload, loading: false }
     
+    case 'LOAD_FROM_STORAGE':
+      return { ...state, ...action.payload }
+    
     case 'SET_LANGUAGE':
       return { ...state, language: action.payload }
     
@@ -71,6 +74,10 @@ function assessmentReducer(state, action) {
         error: null
       }
     
+    case 'CLEAR_STORAGE':
+      localStorage.removeItem('ubb-assessment-data')
+      return initialState
+    
     default:
       return state
   }
@@ -78,6 +85,37 @@ function assessmentReducer(state, action) {
 
 export function AssessmentProvider({ children }) {
   const [state, dispatch] = useReducer(assessmentReducer, initialState)
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    const savedData = localStorage.getItem('ubb-assessment-data')
+    if (savedData) {
+      try {
+        const parsedData = JSON.parse(savedData)
+        dispatch({ type: 'LOAD_FROM_STORAGE', payload: parsedData })
+      } catch (error) {
+        console.error('Error loading assessment data from localStorage:', error)
+        localStorage.removeItem('ubb-assessment-data')
+      }
+    }
+  }, [])
+
+  // Save to localStorage whenever state changes (except loading and error states)
+  useEffect(() => {
+    const dataToSave = {
+      user: state.user,
+      questions: state.questions,
+      currentQuestionIndex: state.currentQuestionIndex,
+      answers: state.answers,
+      assessment: state.assessment,
+      language: state.language
+    }
+    
+    // Only save if we have meaningful data
+    if (state.user || state.assessment || state.answers.length > 0) {
+      localStorage.setItem('ubb-assessment-data', JSON.stringify(dataToSave))
+    }
+  }, [state.user, state.questions, state.currentQuestionIndex, state.answers, state.assessment, state.language])
 
   const value = {
     ...state,

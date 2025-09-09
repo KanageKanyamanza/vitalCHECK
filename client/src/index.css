@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -8,7 +10,12 @@
   }
   
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply bg-gradient-to-br from-primary-50 to-accent-50 text-gray-900;
+    font-family: 'Inter', system-ui, sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Poppins', 'Inter', system-ui, sans-serif;
   }
 }
 
@@ -18,7 +25,7 @@
   }
   
   .btn-secondary {
-    @apply bg-secondary-500 hover:bg-secondary-600 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-secondary-500 focus:ring-offset-2;
+    @apply bg-accent-500 hover:bg-accent-600 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2;
   }
   
   .btn-outline {
@@ -48,4 +55,72 @@
   .status-green {
     @apply bg-success-100 text-success-800;
   }
+  
+  /* UBB Brand Components */
+  .ubb-gradient {
+    @apply bg-gradient-to-r from-primary-500 via-accent-500 to-accent-500;
+  }
+  
+  .ubb-gradient-text {
+    @apply bg-gradient-to-r from-primary-600 to-accent-600 bg-clip-text text-transparent;
+  }
+  
+  .ubb-card {
+    @apply bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 p-6;
+  }
+  
+  .ubb-button {
+    @apply bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-600 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+  
+  .ubb-button-outline {
+    @apply border-2 border-primary-500 text-primary-600 hover:bg-primary-500 hover:text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
+  }
+  
+  .ubb-pattern {
+    background-image: 
+      radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 75% 75%, rgba(251, 195, 80, 0.1) 0%, transparent 50%);
+  }
+  
+  .ubb-african-pattern {
+    background-image: 
+      linear-gradient(45deg, rgba(59, 130, 246, 0.05) 25%, transparent 25%),
+      linear-gradient(-45deg, rgba(251, 195, 80, 0.05) 25%, transparent 25%),
+      linear-gradient(45deg, transparent 75%, rgba(251, 195, 80, 0.05) 75%),
+      linear-gradient(-45deg, transparent 75%, rgba(34, 197, 94, 0.05) 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  }
+}
+
+/* Scrollbar personnalisée orange */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #fbc350; /* UBB Orange */
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #f59e0b; /* Orange-600 */
+}
+
+::-webkit-scrollbar-corner {
+  background: #f1f5f9;
+}
+
+/* Pour Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #fbc350 #f1f5f9;
 }

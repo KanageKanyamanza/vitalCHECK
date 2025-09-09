@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 import { 
   Download, 
   Mail, 
@@ -19,13 +20,18 @@ import ScoreGauge from '../components/ScoreGauge'
 import PillarChart from '../components/PillarChart'
 import RecommendationsList from '../components/RecommendationsList'
 import ReportGenerationProgress from '../components/ReportGenerationProgress'
+import ReportSuccessModal from '../components/ReportSuccessModal'
 
 const ResultsPage = () => {
   const navigate = useNavigate()
+  const { t } = useTranslation()
   const { user, assessment, dispatch } = useAssessment()
   const [generatingReport, setGeneratingReport] = useState(false)
   const [reportGenerated, setReportGenerated] = useState(false)
   const [reportError, setReportError] = useState(null)
+  const [showConsultationModal, setShowConsultationModal] = useState(false)
+  const [downloadingReport, setDownloadingReport] = useState(false)
+  const [showSuccessModal, setShowSuccessModal] = useState(false)
 
   useEffect(() => {
     if (!assessment) {
@@ -46,14 +52,15 @@ const ResultsPage = () => {
       
       if (response.data.success) {
         setReportGenerated(true)
-        toast.success('Rapport généré et envoyé par email !')
+        setShowSuccessModal(true)
+        // Ne pas effacer le localStorage immédiatement - laisser l'utilisateur choisir
       }
     } catch (error) {
       console.error('Report generation error:', error)
       setReportError({
-        message: error.response?.data?.message || 'Une erreur est survenue lors de la génération du rapport'
+        message: error.response?.data?.message || t('results.reportError')
       })
-      toast.error('Erreur lors de la génération du rapport')
+      toast.error(t('results.reportError'))
     } finally {
       setGeneratingReport(false)
     }
@@ -62,6 +69,47 @@ const ResultsPage = () => {
   const handleRetryReport = () => {
     setReportError(null)
     handleGenerateReport()
+  }
+
+  const handlePremiumUpgrade = () => {
+    setShowConsultationModal(true)
+  }
+
+  const handleGoHome = () => {
+    // Effacer le localStorage et rediriger vers l'accueil
+    dispatch({ type: 'CLEAR_STORAGE' })
+    navigate('/')
+  }
+
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false)
+  }
+
+  const handleDownloadReport = async () => {
+    setDownloadingReport(true)
+    try {
+      const response = await reportsAPI.downloadReport(assessment.id)
+      
+      // Create blob and download
+      const blob = new Blob([response.data], { type: 'application/pdf' })
+      const url = window.URL.createObjectURL(blob)
+      const link = document.createElement('a')
+      link.href = url
+      link.download = `UBB-Health-Check-${user?.companyName}-${new Date().toISOString().split('T')[0]}.pdf`
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+      window.URL.revokeObjectURL(url)
+      
+      toast.success(t('results.downloadSuccess'))
+      // Clear localStorage after successful download
+      dispatch({ type: 'CLEAR_STORAGE' })
+    } catch (error) {
+      console.error('Download error:', error)
+      toast.error(t('results.downloadError'))
+    } finally {
+      setDownloadingReport(false)
+    }
   }
 
   const getStatusIcon = (status) => {
@@ -78,15 +126,29 @@ const ResultsPage = () => {
   }
 
   const getStatusText = (status) => {
-    switch (status) {
-      case 'green':
-        return 'En bonne santé'
-      case 'amber':
-        return 'À améliorer'
-      case 'red':
-        return 'Critique'
-      default:
-        return 'Inconnu'
+    // Vérifier si les traductions sont disponibles
+    if (!t || typeof t !== 'function') {
+      return status === 'green' ? 'Green Zone' : 
+             status === 'amber' ? 'Amber Zone' : 
+             status === 'red' ? 'Red Zone' : 'Unknown'
+    }
+    
+    try {
+      switch (status) {
+        case 'green':
+          return t('results.zones.green') || 'Green Zone'
+        case 'amber':
+          return t('results.zones.amber') || 'Amber Zone'
+        case 'red':
+          return t('results.zones.red') || 'Red Zone'
+        default:
+          return 'Unknown'
+      }
+    } catch (error) {
+      console.warn('Translation error:', error)
+      return status === 'green' ? 'Green Zone' : 
+             status === 'amber' ? 'Amber Zone' : 
+             status === 'red' ? 'Red Zone' : 'Unknown'
     }
   }
 
@@ -120,7 +182,7 @@ const ResultsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen py-[70px] bg-gray-50">
       {/* Report Generation Progress Modal */}
       <ReportGenerationProgress
         isGenerating={generatingReport}
@@ -131,16 +193,16 @@ const ResultsPage = () => {
       {/* Action Bar */}
       <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap gap-2 items-center justify-between">
             <div className="flex items-center space-x-3">
-              <span className="text-lg font-bold text-gray-900">Health Check - Résultats</span>
+              <span className="text-lg font-bold text-gray-900">{t('results.title')}</span>
             </div>
             <button 
               onClick={() => navigate('/')}
-              className="btn-outline flex items-center space-x-2"
+              className="btn-outline flex items-center space-x-2 mx-auto sm:mx-0"
             >
               <ArrowLeft className="w-4 h-4" />
-              <span>Nouvelle évaluation</span>
+              <span>{t('results.newAssessment')}</span>
             </button>
           </div>
         </div>
@@ -157,11 +219,11 @@ const ResultsPage = () => {
             {user?.companyName}
           </h1>
           <div className="flex items-center space-x-4 text-sm text-gray-600">
-            <span>Secteur: {user?.sector}</span>
+            <span>{t('results.sector') || 'Secteur'}: {t(`landing.sectors.${user?.sector}`) || user?.sector}</span>
             <span>•</span>
-            <span>Taille: {user?.companySize}</span>
+            <span>{t('results.size') || 'Taille'}: {t(`landing.sizes.${user?.companySize}`) || user?.companySize}</span>
             <span>•</span>
-            <span>Date: {new Date(assessment.completedAt).toLocaleDateString()}</span>
+            <span>{t('results.date') || 'Date'}: {new Date(assessment.completedAt).toLocaleDateString()}</span>
           </div>
         </motion.div>
 
@@ -175,7 +237,7 @@ const ResultsPage = () => {
           >
             <div className="card text-center">
               <h2 className="text-xl font-bold text-gray-900 mb-6">
-                Score Global de Santé
+                {t('results.overallScore')}
               </h2>
               
               <ScoreGauge 
@@ -207,7 +269,7 @@ const ResultsPage = () => {
             {/* Pillar Chart */}
             <div className="card">
               <h3 className="text-xl font-bold text-gray-900 mb-6">
-                Résultats par Pilier
+                {t('results.pillarResults')}
               </h3>
               <PillarChart pillarScores={assessment.pillarScores} />
             </div>
@@ -215,7 +277,7 @@ const ResultsPage = () => {
             {/* Pillar Details */}
             <div className="card">
               <h3 className="text-xl font-bold text-gray-900 mb-6">
-                Détail des Piliers
+                {t('results.pillarDetails')}
               </h3>
               <div className="space-y-4">
                 {assessment.pillarScores.map((pillar, index) => (
@@ -257,7 +319,7 @@ const ResultsPage = () => {
         >
           <div className="card">
             <h3 className="text-xl font-bold text-gray-900 mb-6">
-              Prochaines Étapes
+              {t('results.nextSteps')}
             </h3>
             
             <div className="grid md:grid-cols-2 gap-6">
@@ -266,31 +328,50 @@ const ResultsPage = () => {
                 <div className="flex items-center space-x-3 mb-4">
                   <Download className="w-6 h-6 text-primary-500" />
                   <h4 className="text-lg font-semibold text-gray-900">
-                    Rapport Gratuit
+                    {t('results.freeReport')}
                   </h4>
                 </div>
                 <p className="text-gray-600 mb-4">
-                  Recevez votre rapport détaillé par email avec des recommandations personnalisées.
+                  {t('results.freeReportDesc')}
                 </p>
-                <button
-                  onClick={handleGenerateReport}
-                  disabled={generatingReport || reportGenerated}
-                  className="btn-primary w-full flex items-center justify-center space-x-2 disabled:opacity-50"
-                >
-                  {generatingReport ? (
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  ) : reportGenerated ? (
-                    <>
-                      <CheckCircle className="w-4 h-4" />
-                      <span>Rapport envoyé</span>
-                    </>
-                  ) : (
-                    <>
-                      <Mail className="w-4 h-4" />
-                      <span>Générer le rapport</span>
-                    </>
+                <div className="space-y-3">
+                  <button
+                    onClick={handleGenerateReport}
+                    disabled={generatingReport || reportGenerated}
+                    className="btn-primary w-full flex items-center justify-center space-x-2 disabled:opacity-50"
+                  >
+                    {generatingReport ? (
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : reportGenerated ? (
+                      <>
+                        <CheckCircle className="w-4 h-4" />
+                        <span>{t('results.reportSent')}</span>
+                      </>
+                    ) : (
+                      <>
+                        <Mail className="w-4 h-4" />
+                        <span>{t('results.generateReportBtn')}</span>
+                      </>
+                    )}
+                  </button>
+                  
+                  {reportGenerated && (
+                    <button
+                      onClick={handleDownloadReport}
+                      disabled={downloadingReport}
+                      className="btn-outline w-full flex items-center justify-center space-x-2 disabled:opacity-50"
+                    >
+                      {downloadingReport ? (
+                        <div className="w-4 h-4 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
+                      ) : (
+                        <>
+                          <Download className="w-4 h-4" />
+                          <span>{t('results.downloadReport')}</span>
+                        </>
+                      )}
+                    </button>
                   )}
-                </button>
+                </div>
               </div>
 
               {/* Premium Upgrade */}
@@ -298,21 +379,101 @@ const ResultsPage = () => {
                 <div className="flex items-center space-x-3 mb-4">
                   <Star className="w-6 h-6 text-purple-500" />
                   <h4 className="text-lg font-semibold text-gray-900">
-                    Rapport Premium
+                    {t('results.premiumReport')}
                   </h4>
                 </div>
                 <p className="text-gray-600 mb-4">
-                  Analyse approfondie, benchmarking sectoriel et consultation avec nos experts.
+                  {t('results.premiumReportDesc')}
                 </p>
-                <button className="btn-secondary w-full flex items-center justify-center space-x-2">
+                <button 
+                  onClick={handlePremiumUpgrade}
+                  className="btn-secondary w-full flex items-center justify-center space-x-2"
+                >
                   <Target className="w-4 h-4" />
-                  <span>Débloquer Premium</span>
+                  <span>{t('results.unlockPremium')}</span>
                 </button>
               </div>
             </div>
           </div>
         </motion.div>
       </div>
+
+      {/* Consultation Modal */}
+      {showConsultationModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-xl font-bold text-gray-900">
+                Consultation Premium UBB
+              </h3>
+              <button
+                onClick={() => setShowConsultationModal(false)}
+                className="text-gray-400 hover:text-gray-600"
+              >
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            
+            <div className="space-y-4">
+              <p className="text-gray-600">
+                Débloquez votre rapport premium avec :
+              </p>
+              <ul className="space-y-2 text-sm text-gray-600">
+                <li className="flex items-center space-x-2">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <span>Analyse détaillée par pilier</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <span>Benchmarking sectoriel</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <span>Plan d'action personnalisé</span>
+                </li>
+                <li className="flex items-center space-x-2">
+                  <CheckCircle className="w-4 h-4 text-green-500" />
+                  <span>Consultation avec nos experts</span>
+                </li>
+              </ul>
+              
+              <div className="pt-4">
+                <p className="text-sm text-gray-500 mb-4">
+                  Contactez-nous pour plus d'informations sur nos services premium.
+                </p>
+                <div className="flex space-x-3">
+                  <button
+                    onClick={() => setShowConsultationModal(false)}
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
+                  >
+                    Fermer
+                  </button>
+                  <button
+                    onClick={() => {
+                      window.open('mailto:contact@ubb.com?subject=Consultation Premium UBB', '_blank')
+                      setShowConsultationModal(false)
+                    }}
+                    className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+                  >
+                    Nous contacter
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Modal de succès après génération du rapport */}
+      <ReportSuccessModal
+        isOpen={showSuccessModal}
+        onClose={handleCloseSuccessModal}
+        onGoHome={handleGoHome}
+        onUpgradePremium={handlePremiumUpgrade}
+        userEmail={user?.email}
+      />
     </div>
   )
 }

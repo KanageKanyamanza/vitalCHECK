@@ -16,7 +16,8 @@
     "delete": "Supprimer",
     "close": "Fermer",
     "yes": "Oui",
-    "no": "Non"
+    "no": "Non",
+    "goHome": "Retour à l'accueil"
   },
   "navigation": {
     "home": "Accueil",
@@ -24,9 +25,60 @@
     "results": "Résultats",
     "newAssessment": "Nouvelle Évaluation"
   },
+  "results": {
+    "title": "UBB Enterprise Health Check – Résultats",
+    "newAssessment": "Nouvelle évaluation",
+    "overallScore": "Section A – Score Global",
+    "pillarBreakdown": "Section B – Répartition par Piliers (Graphique Radar)",
+    "pillarBreakdownDesc": "Graphique radar avec 6 axes : Finance, Opérations, Ventes & Marketing, Personnel & RH, Stratégie & Gouvernance, Technologie. Chaque pilier est codé par couleur (Rouge / Ambre / Vert).",
+    "quickInsights": "Section C – Aperçus Rapides (Freemium)",
+    "quickInsightsDesc": "2–3 conseils automatisés génériques pour vous aider à améliorer la santé de votre entreprise.",
+    "getFullReport": "Obtenir le Rapport Complet",
+    "getFullReportDesc": "Débloquez des insights détaillés, des benchmarks et une consultation d'expert",
+    "generateReport": "Générer le Rapport",
+    "reportGenerated": "Rapport généré et envoyé par email !",
+    "reportError": "Erreur lors de la génération du rapport",
+    "downloadReport": "Télécharger le PDF",
+    "downloadSuccess": "Rapport téléchargé avec succès !",
+    "downloadError": "Erreur lors du téléchargement du rapport",
+    "pillarResults": "Résultats par Pilier",
+    "pillarDetails": "Détail des Piliers",
+    "keyRecommendations": "Recommandations Clés",
+    "priority": "Priorité",
+    "improvement": "Amélioration",
+    "optimization": "Optimisation",
+    "freeReport": "Rapport Gratuit",
+    "freeReportDesc": "Recevez votre rapport détaillé par email avec des recommandations personnalisées.",
+    "generateReportBtn": "Générer le rapport",
+    "reportSent": "Rapport envoyé",
+    "reportSuccessTitle": "Rapport généré avec succès !",
+    "reportSuccessDesc": "Votre rapport UBB Enterprise Health Check a été généré et envoyé par email.",
+    "reportSentTo": "Envoyé à",
+    "stayOnResults": "Rester sur les résultats",
+    "reportNote": "Vous pouvez maintenant passer au premium pour des insights plus approfondis ou retourner à l'accueil pour une nouvelle évaluation.",
+    "premiumReport": "Rapport Premium",
+    "premiumReportDesc": "Analyse approfondie, benchmarking sectoriel et consultation avec nos experts.",
+    "unlockPremium": "Débloquer Premium",
+    "nextSteps": "Prochaines Étapes",
+    "sector": "Secteur",
+    "size": "Taille",
+    "date": "Date",
+    "zones": {
+      "red": "Zone Rouge",
+      "amber": "Zone Ambre", 
+      "green": "Zone Verte"
+    },
+    "successModal": {
+      "title": "Rapport généré avec succès !",
+      "message": "Votre rapport détaillé a été généré et envoyé par email. Vous pouvez également le télécharger directement.",
+      "continue": "Continuer",
+      "backToHome": "Retour à l'accueil"
+    }
+  },
   "landing": {
-    "title": "Votre entreprise est-elle prête à grandir ?",
-    "subtitle": "Effectuez cette évaluation gratuite de 10 minutes et découvrez le score de santé de votre entreprise",
+    "title": "UBB Enterprise Health Check",
+    "subtitle": "Votre entreprise est-elle prête à grandir ?<br/>Effectuez cette évaluation gratuite de 10 minutes et découvrez le score de santé de votre entreprise",
+    "badge": "Gratuit • 10 minutes • Résultats instantanés",
     "features": {
       "title": "Ce que vous obtiendrez :",
       "complete": "Évaluation Complète",
@@ -46,7 +98,9 @@
       "companySizePlaceholder": "Sélectionnez la taille",
       "email": "Email de contact",
       "emailPlaceholder": "votre@email.com",
-      "startButton": "Commencer l'évaluation gratuite",
+      "startButton": "Commencer votre évaluation gratuite",
+      "startButtonShort": "Commencer",
+      "startAssessment": "Commencer l'évaluation",
       "language": "Langue",
       "languagePlaceholder": "Sélectionnez la langue"
     },
@@ -57,6 +111,8 @@
       "manufacturing": "Manufacture",
       "construction": "Construction",
       "health": "Santé",
+      "healthcare": "Santé",
+      "agriculture": "Agriculture",
       "education": "Éducation",
       "finance": "Finance",
       "other": "Autre"
@@ -75,33 +131,204 @@
     "responses": "réponses",
     "complete": "Terminé"
   },
-  "results": {
-    "title": "Résultats de l'Évaluation",
-    "overallScore": "Score Global de Santé",
-    "pillarResults": "Résultats par Pilier",
-    "pillarDetails": "Détail des Piliers",
-    "recommendations": "Recommandations Clés",
-    "nextSteps": "Prochaines Étapes",
-    "freeReport": "Rapport Gratuit",
-    "freeReportDesc": "Recevez votre rapport détaillé par email avec des recommandations personnalisées.",
-    "premiumReport": "Rapport Premium",
-    "premiumReportDesc": "Analyse approfondie, benchmarking sectoriel et consultation avec nos experts.",
-    "generateReport": "Générer le rapport",
-    "reportSent": "Rapport envoyé",
-    "unlockPremium": "Débloquer Premium",
-    "status": {
-      "healthy": "En bonne santé",
-      "needsImprovement": "À améliorer",
-      "critical": "Critique"
-    },
-    "messages": {
-      "healthy": "Félicitations ! Votre entreprise est en excellente santé et bien positionnée pour la croissance.",
-      "needsImprovement": "Votre entreprise se développe mais a besoin de renforcement dans certains domaines.",
-      "critical": "Votre entreprise fait face à des défis critiques qui nécessitent une attention immédiate."
-    }
-  },
   "languages": {
     "en": "English",
     "fr": "Français"
+  },
+  "footer": {
+    "description": "UBB aide les entreprises africaines à évaluer leur santé organisationnelle et à développer des stratégies de croissance durables.",
+    "quickLinks": "Liens Rapides",
+    "about": "À Propos",
+    "services": "Services",
+    "contact": "Contact",
+    "privacy": "Confidentialité",
+    "location": "Douala, Cameroun",
+    "openHours": "Heures d'ouverture",
+    "allRightsReserved": "Tous droits réservés",
+    "terms": "Conditions d'utilisation"
+  },
+  "privacy": {
+    "title": "Politique de Confidentialité",
+    "lastUpdated": "Dernière mise à jour",
+    "introduction": {
+      "title": "Introduction",
+      "content": "UBB (Ubuntu Business Builders) s'engage à protéger votre vie privée et vos données personnelles conformément aux lois sénégalaises et africaines en vigueur, notamment la Loi n° 2008-12 du 25 janvier 2008 sur la protection des données à caractère personnel au Sénégal."
+    },
+    "dataCollection": {
+      "title": "Collecte des Données",
+      "personalData": {
+        "title": "Données Personnelles",
+        "items": {
+          "name": "Nom de l'entreprise",
+          "email": "Adresse email",
+          "company": "Informations sur l'entreprise",
+          "sector": "Secteur d'activité",
+          "size": "Taille de l'entreprise"
+        }
+      },
+      "assessmentData": {
+        "title": "Données d'Évaluation",
+        "content": "Nous collectons vos réponses aux questionnaires d'évaluation pour générer des rapports personnalisés et des recommandations adaptées à votre entreprise."
+      }
+    },
+    "dataUsage": {
+      "title": "Utilisation des Données",
+      "items": {
+        "assessment": "Génération de rapports d'évaluation personnalisés",
+        "reports": "Création de recommandations adaptées à votre secteur",
+        "communication": "Envoi de rapports et communications pertinentes",
+        "improvement": "Amélioration continue de nos services"
+      }
+    },
+    "dataProtection": {
+      "title": "Protection des Données",
+      "content": "Nous mettons en œuvre des mesures de sécurité appropriées pour protéger vos données contre l'accès non autorisé, la modification, la divulgation ou la destruction.",
+      "measures": {
+        "encryption": "Chiffrement des données sensibles",
+        "access": "Contrôle d'accès strict",
+        "backup": "Sauvegarde sécurisée des données",
+        "monitoring": "Surveillance continue des systèmes"
+      }
+    },
+    "dataSharing": {
+      "title": "Partage des Données",
+      "content": "Nous ne vendons, ne louons ni ne partageons vos données personnelles avec des tiers, sauf dans les cas suivants :",
+      "exceptions": {
+        "legal": "Obligation légale ou demande des autorités compétentes",
+        "consent": "Avec votre consentement explicite",
+        "aggregated": "Données agrégées et anonymisées pour des analyses statistiques"
+      }
+    },
+    "userRights": {
+      "title": "Droits des Utilisateurs",
+      "content": "Conformément à la législation sénégalaise, vous disposez des droits suivants :",
+      "rights": {
+        "access": "Droit d'accès à vos données personnelles",
+        "rectification": "Droit de rectification des données inexactes",
+        "erasure": "Droit à l'effacement de vos données",
+        "portability": "Droit à la portabilité de vos données",
+        "objection": "Droit d'opposition au traitement de vos données"
+      }
+    },
+    "cookies": {
+      "title": "Cookies",
+      "content": "Nous utilisons des cookies pour améliorer votre expérience utilisateur et analyser l'utilisation de notre site. Vous pouvez désactiver les cookies dans les paramètres de votre navigateur."
+    },
+    "internationalTransfers": {
+      "title": "Transferts Internationaux",
+      "content": "Vos données peuvent être transférées vers des serveurs situés en dehors du Sénégal. Nous nous assurons que ces transferts respectent les standards de protection des données internationaux."
+    },
+    "contact": {
+      "title": "Contact",
+      "content": "Pour toute question concernant cette politique de confidentialité ou pour exercer vos droits, contactez-nous :"
+    },
+    "updates": {
+      "title": "Modifications",
+      "content": "Nous nous réservons le droit de modifier cette politique de confidentialité. Les modifications seront publiées sur cette page avec une nouvelle date de mise à jour."
+    }
+  },
+  "terms": {
+    "title": "Conditions d'Utilisation",
+    "lastUpdated": "Dernière mise à jour",
+    "introduction": {
+      "title": "Introduction",
+      "content": "Ces conditions d'utilisation régissent votre utilisation de la plateforme UBB Enterprise Health Check. En utilisant nos services, vous acceptez d'être lié par ces conditions."
+    },
+    "acceptance": {
+      "title": "Acceptation des Conditions",
+      "content": "En accédant et en utilisant notre plateforme, vous confirmez que vous avez lu, compris et accepté ces conditions d'utilisation dans leur intégralité."
+    },
+    "serviceDescription": {
+      "title": "Description du Service",
+      "content": "UBB Enterprise Health Check est une plateforme d'évaluation de la santé organisationnelle des entreprises africaines. Nos services incluent :",
+      "features": {
+        "assessment": "Évaluation en ligne de la santé de votre entreprise",
+        "reports": "Génération de rapports détaillés et personnalisés",
+        "consultation": "Services de consultation et d'accompagnement",
+        "support": "Support technique et assistance utilisateur"
+      }
+    },
+    "userObligations": {
+      "title": "Obligations de l'Utilisateur",
+      "content": "En utilisant nos services, vous vous engagez à :",
+      "obligations": {
+        "accuracy": "Fournir des informations exactes et à jour",
+        "authorization": "Avoir l'autorisation de représenter votre entreprise",
+        "compliance": "Respecter toutes les lois et réglementations applicables",
+        "responsibility": "Assumer la responsabilité de vos actions sur la plateforme"
+      }
+    },
+    "intellectualProperty": {
+      "title": "Propriété Intellectuelle",
+      "content": "Tous les contenus, marques et technologies de la plateforme UBB sont protégés par les droits de propriété intellectuelle.",
+      "rights": {
+        "ubb": "UBB détient tous les droits sur la plateforme et ses contenus",
+        "user": "Vous conservez les droits sur vos données et contenus",
+        "license": "Vous accordez à UBB une licence limitée pour traiter vos données"
+      }
+    },
+    "paymentTerms": {
+      "title": "Conditions de Paiement",
+      "content": "Nos services sont proposés selon les modalités suivantes :",
+      "conditions": {
+        "free": "Évaluation de base gratuite",
+        "premium": "Services premium payants selon nos tarifs en vigueur",
+        "refund": "Politique de remboursement selon les conditions contractuelles",
+        "currency": "Paiements acceptés en FCFA, EUR, USD et GBP"
+      }
+    },
+    "limitationLiability": {
+      "title": "Limitation de Responsabilité",
+      "content": "Dans les limites autorisées par la loi sénégalaise, UBB décline toute responsabilité pour :",
+      "limitations": {
+        "advice": "Les conseils générés par notre plateforme sont informatifs uniquement",
+        "accuracy": "L'exactitude des données fournies par les utilisateurs",
+        "damages": "Les dommages indirects ou consécutifs",
+        "force": "Les cas de force majeure ou événements imprévisibles"
+      }
+    },
+    "governingLaw": {
+      "title": "Droit Applicable",
+      "content": "Ces conditions sont régies par le droit sénégalais. Tout litige sera soumis à la compétence exclusive des tribunaux de Dakar, Sénégal."
+    },
+    "disputeResolution": {
+      "title": "Résolution des Litiges",
+      "content": "En cas de litige, nous privilégions la résolution amiable selon les étapes suivantes :",
+      "steps": {
+        "negotiation": "Négociation directe entre les parties",
+        "mediation": "Médiation par un tiers neutre",
+        "arbitration": "Arbitrage selon les règles de l'OHADA",
+        "courts": "Recours aux tribunaux compétents en dernier ressort"
+      }
+    },
+    "termination": {
+      "title": "Résiliation",
+      "content": "Vous pouvez résilier votre compte à tout moment. UBB se réserve le droit de suspendre ou résilier votre accès en cas de violation de ces conditions."
+    },
+    "contact": {
+      "title": "Contact",
+      "content": "Pour toute question concernant ces conditions d'utilisation, contactez-nous :"
+    },
+    "updates": {
+      "title": "Modifications",
+      "content": "Nous nous réservons le droit de modifier ces conditions. Les modifications seront notifiées aux utilisateurs et publiées sur cette page."
+    }
+  },
+  "premium": {
+    "upgradeTitle": "Passez au Premium",
+    "upgradeSubtitle": "Débloquez des insights approfondis et une consultation d'expert",
+    "upgradeNow": "Passer au Premium",
+    "teamAnalysis": "Analyse d'équipe",
+    "teamAnalysisDesc": "Évaluation des compétences et de la performance de votre équipe",
+    "actionPlan": "Plan d'action personnalisé",
+    "actionPlanDesc": "Roadmap détaillée avec priorités et échéances",
+    "advancedAnalytics": "Analytics avancés",
+    "advancedAnalyticsDesc": "Benchmarking sectoriel et tendances de marché"
+  },
+  "pwa": {
+    "installButton": {
+      "text": "Installer l'app",
+      "ariaLabel": "Installer l'application UBB Enterprise Health Check"
+    }
   }
 }
