@@ -1,7 +1,7 @@
 # Dockerfile pour Render.com avec Chrome
-FROM node:18-slim
+FROM node:22-slim
 
-# Installer les dépendances système nécessaires
+# Installer les dépendances système nécessaires pour Puppeteer
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \
@@ -16,6 +16,20 @@ RUN apt-get update && apt-get install -y \
     libgbm1 \
     libxss1 \
     libnss3 \
+    libxkbcommon0 \
+    libx11-6 \
+    libx11-xcb1 \
+    libxcb1 \
+    libxcomposite1 \
+    libxcursor1 \
+    libxdamage1 \
+    libxext6 \
+    libxfixes3 \
+    libxi6 \
+    libxrandr2 \
+    libxrender1 \
+    libxss1 \
+    libxtst6 \
     && rm -rf /var/lib/apt/lists/*
 
 # Installer Google Chrome
