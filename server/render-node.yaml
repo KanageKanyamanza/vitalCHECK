@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: ubb-health-check-api-node
+    env: node
+    plan: starter
+    buildCommand: |
+      npm install
+      # Installer Chrome pour Puppeteer sur Render
+      apt-get update
+      apt-get install -y wget gnupg ca-certificates
+      wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | apt-key add -
+      echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
+      apt-get update
+      apt-get install -y google-chrome-stable
+      # Vérifier l'installation
+      google-chrome-stable --version
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGODB_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: EMAIL_SERVICE_KEY
+        sync: false

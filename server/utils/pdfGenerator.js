@@ -5,10 +5,46 @@ async function generatePDFReport(assessment) {
   let browser;
   
   try {
-    browser = await puppeteer.launch({
+    // Configuration pour Render.com
+    const launchOptions = {
       headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
+      args: [
+        '--no-sandbox',
+        '--disable-setuid-sandbox',
+        '--disable-dev-shm-usage',
+        '--disable-accelerated-2d-canvas',
+        '--no-first-run',
+        '--no-zygote',
+        '--single-process',
+        '--disable-gpu'
+      ]
+    };
+
+    // Si on est en production (Render), utiliser le Chrome système
+    if (process.env.NODE_ENV === 'production') {
+      // Essayer différents chemins possibles pour Chrome
+      const possiblePaths = [
+        '/usr/bin/google-chrome-stable',
+        '/usr/bin/google-chrome',
+        '/usr/bin/chromium-browser',
+        '/usr/bin/chromium'
+      ];
+      
+      const fs = require('fs');
+      for (const chromePath of possiblePaths) {
+        if (fs.existsSync(chromePath)) {
+          launchOptions.executablePath = chromePath;
+          console.log(`Using Chrome at: ${chromePath}`);
+          break;
+        }
+      }
+      
+      if (!launchOptions.executablePath) {
+        console.warn('Chrome not found in system paths, using default Puppeteer Chrome');
+      }
+    }
+
+    browser = await puppeteer.launch(launchOptions);
     
     const page = await browser.newPage();
     
