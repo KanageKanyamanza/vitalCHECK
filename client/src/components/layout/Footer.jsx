@@ -65,7 +65,7 @@ const Footer = () => {
 	};
 
 	return (
-		<footer className="bg-gray-900 text-white">
+		<footer className="bg-primary-500 text-black">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-4">
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
 					{/* Logo et Description */}
@@ -82,12 +82,12 @@ const Footer = () => {
 								<span className="text-lg font-display font-bold ubb-gradient-text">
 									UBB
 								</span>
-								<span className="text-xs text-gray-400 font-medium">
+								<span className="text-xs text-black font-medium">
 									Enterprise Health Check
 								</span>
 							</div>
 						</div>
-						<p className="text-gray-300 mb-6 max-w-md">
+						<p className="text-black mb-6 max-w-md">
 							{t("footer.description")}
 						</p>
 
@@ -117,14 +117,14 @@ const Footer = () => {
 									{link.href.startsWith("/") ? (
 										<Link
 											to={link.href}
-											className="text-gray-300 hover:text-white transition-colors duration-200"
+											className="text-black hover:text-gray-800 transition-colors duration-200"
 										>
 											{link.label}
 										</Link>
 									) : (
 										<button
 											onClick={() => handleScrollToSection(link.scrollTo)}
-											className="text-gray-300 hover:text-white transition-colors duration-200 text-left"
+											className="text-black hover:text-gray-800 transition-colors duration-200 text-left"
 										>
 											{link.label}
 										</button>
@@ -142,12 +142,12 @@ const Footer = () => {
 						<div className="space-y-3">
 							<div className="flex items-center space-x-3">
 								<Mail className="w-5 h-5 text-primary-500" />
-								<span className="text-gray-300">ambrose.nzeyi@gmail.com</span>
+								<span className="text-black">ambrose.nzeyi@gmail.com</span>
 							</div>
 							<div className="space-y-2">
 								<div className="flex items-center space-x-3">
 									<Phone className="w-5 h-5 text-primary-500" />
-									<div className="text-gray-300">
+									<div className="text-black">
 										<div className="text-sm">SEN: +221 771970713</div>
 										<div className="text-sm">GB: +44 7546756325</div>
 									</div>
@@ -162,9 +162,9 @@ const Footer = () => {
 				</div>
 
 				{/* Bottom Bar */}
-				<div className="border-t border-gray-800 mt-4 pt-8">
+				<div className="border-t border-gray-300 mt-4 pt-8">
 					<div className="flex flex-col md:flex-row justify-between items-center">
-						<p className="text-gray-400 text-sm">
+						<p className="text-black text-sm">
 							&copy; {currentYear} UBB Enterprise Health Check.{" "}
 							{t("footer.allRightsReserved")}
 						</p>
@@ -172,14 +172,14 @@ const Footer = () => {
 							<Link
 								to="/terms"
 								onClick={() => handleScrollToSection('terms')}
-								className="text-gray-400 hover:text-white text-sm transition-colors duration-200"
+								className="text-black hover:text-gray-800 text-sm transition-colors duration-200"
 							>
 								{t("footer.terms")}
 							</Link>
 							<Link
 								to="/privacy"
 								onClick={() => handleScrollToSection('privacy')}
-								className="text-gray-400 hover:text-white text-sm transition-colors duration-200"
+								className="text-black hover:text-gray-800 text-sm transition-colors duration-200"
 							>
 								{t("footer.privacy")}
 							</Link>
