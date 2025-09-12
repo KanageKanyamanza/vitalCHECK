@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import NavbarLanguageSelector from './NavbarLanguageSelector'
-import { useAssessment } from '../context/AssessmentContext'
+import { NavbarLanguageSelector } from '../ui'
+import { useAssessment } from '../../context/AssessmentContext'
 import logoIcon from '/icons/android-icon-96x96.png'
 
 const Navbar = () => {

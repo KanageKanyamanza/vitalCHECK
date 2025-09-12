@@ -1,5 +1,5 @@
 import React from 'react'
-import UBBLogo from './UBBLogo'
+import { UBBLogo } from '../ui'
 
 const LogoTest = () => {
   const logoTypes = [

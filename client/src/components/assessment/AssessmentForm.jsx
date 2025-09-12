@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
-import { useAssessment } from '../context/AssessmentContext'
-import { authAPI } from '../services/api'
+import { useAssessment } from '../../context/AssessmentContext'
+import { authAPI } from '../../services/api'
 import toast from 'react-hot-toast'
-import LanguageSelector from './LanguageSelector'
+import { LanguageSelector } from '../ui'
 
 const AssessmentForm = ({ onFormSubmit }) => {
   const { t, i18n } = useTranslation()
