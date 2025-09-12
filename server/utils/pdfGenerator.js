@@ -1,48 +1,84 @@
-const puppeteer = require('puppeteer');
+const htmlPdf = require('html-pdf-node');
 const path = require('path');
-const fs = require('fs');
 
-// Alternative PDF generation using a simpler approach
+// Configuration pour html-pdf-node
+const pdfOptions = {
+  format: 'A4',
+  margin: {
+    top: '20mm',
+    right: '15mm',
+    bottom: '20mm',
+    left: '15mm'
+  },
+  printBackground: true,
+  displayHeaderFooter: false,
+  preferCSSPageSize: true
+};
+
+// Configuration pour Render.com et autres environnements
+const launchOptions = {
+  args: [
+    '--no-sandbox',
+    '--disable-setuid-sandbox',
+    '--disable-dev-shm-usage',
+    '--disable-gpu',
+    '--single-process',
+    '--no-zygote',
+    '--disable-setuid-sandbox'
+  ]
+};
+
+// Fonction principale de génération PDF
+async function generatePDFReport(assessment) {
+  try {
+    const { user, overallScore, overallStatus, pillarScores, completedAt, language = 'fr' } = assessment;
+    
+    // Générer le contenu HTML
+    const htmlContent = generateHTMLContent(assessment);
+    
+    // Options pour html-pdf-node
+    const options = {
+      ...pdfOptions,
+      args: launchOptions.args
+    };
+    
+    // Créer le fichier HTML temporaire
+    const file = {
+      content: htmlContent
+    };
+    
+    // Générer le PDF
+    const pdfBuffer = await htmlPdf.generatePdf(file, options);
+    
+    return pdfBuffer;
+    
+  } catch (error) {
+    console.error('PDF generation error:', error);
+    throw error;
+  }
+}
+
+// Fonction de génération simple (fallback)
 async function generateSimplePDFReport(assessment) {
   try {
     const { user, overallScore, overallStatus, pillarScores, completedAt, language = 'fr' } = assessment;
     
-    // Simple HTML content without external dependencies
+    // HTML simplifié sans dépendances externes
     const htmlContent = generateSimpleHTMLContent(assessment);
     
-    // Use Puppeteer with minimal configuration
-    const browser = await puppeteer.launch({
-      headless: 'new',
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu',
-        '--single-process'
-      ]
-    });
-    
-    const page = await browser.newPage();
-    
-    // Set content directly without waiting for network
-    await page.setContent(htmlContent, { 
-      waitUntil: 'domcontentloaded',
-      timeout: 10000
-    });
-    
-    // Generate PDF with minimal options
-    const pdfBuffer = await page.pdf({
+    const options = {
       format: 'A4',
+      margin: '10mm',
       printBackground: true,
-      margin: {
-        top: '10mm',
-        right: '10mm',
-        bottom: '10mm',
-        left: '10mm'
-      }
-    });
+      args: launchOptions.args
+    };
     
-    await browser.close();
+    const file = {
+      content: htmlContent
+    };
+    
+    const pdfBuffer = await htmlPdf.generatePdf(file, options);
+    
     return pdfBuffer;
     
   } catch (error) {
@@ -51,163 +87,7 @@ async function generateSimplePDFReport(assessment) {
   }
 }
 
-async function generatePDFReport(assessment) {
-  let browser;
-  
-  try {
-    // Configuration pour Render.com
-    const launchOptions = {
-      headless: 'new',
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-accelerated-2d-canvas',
-        '--no-first-run',
-        '--no-zygote',
-        '--single-process',
-        '--disable-gpu'
-      ]
-    };
-
-    // Configuration pour Render.com - essayer Chrome système d'abord, puis Puppeteer
-    if (process.env.NODE_ENV === 'production' || process.env.RENDER) {
-      
-      // Essayer d'abord Chrome système (installé via Dockerfile)
-      const systemChromePaths = [
-        '/usr/bin/google-chrome-stable',
-        '/usr/bin/google-chrome',
-        '/usr/bin/chromium-browser',
-        '/usr/bin/chromium',
-        '/tmp/chrome/chrome'  // Lien symbolique créé par le script de build
-      ];
-      
-      let chromeFound = false;
-      for (const chromePath of systemChromePaths) {
-        if (fs.existsSync(chromePath)) {
-          launchOptions.executablePath = chromePath;
-          console.log(`Using system Chrome at: ${chromePath}`);
-          chromeFound = true;
-          break;
-        }
-      }
-      
-      // Si Chrome système n'est pas trouvé, essayer Puppeteer Chrome
-      if (!chromeFound) {
-        const puppeteer = require('puppeteer');
-        const executablePath = puppeteer.executablePath();
-        
-        if (executablePath && fs.existsSync(executablePath)) {
-          launchOptions.executablePath = executablePath;
-          console.log(`Using Puppeteer Chrome at: ${executablePath}`);
-        } else {
-          // Dernière tentative : essayer de trouver Chrome dans le cache Render
-          const cacheDir = '/opt/render/.cache/puppeteer';
-          if (fs.existsSync(cacheDir)) {
-            try {
-              const findChrome = (dir) => {
-                const items = fs.readdirSync(dir);
-                for (const item of items) {
-                  const fullPath = path.join(dir, item);
-                  const stat = fs.statSync(fullPath);
-                  if (stat.isDirectory()) {
-                    const result = findChrome(fullPath);
-                    if (result) return result;
-                  } else if (item === 'chrome' && stat.isFile()) {
-                    return fullPath;
-                  }
-                }
-                return null;
-              };
-              
-              const foundChrome = findChrome(cacheDir);
-              if (foundChrome) {
-                launchOptions.executablePath = foundChrome;
-                console.log(`Using found Chrome at: ${foundChrome}`);
-                chromeFound = true;
-              }
-            } catch (error) {
-              console.warn('Error searching for Chrome in cache:', error.message);
-            }
-          }
-          
-          if (!chromeFound) {
-            console.warn('No Chrome executable found, using default Puppeteer configuration');
-            console.log(`Puppeteer expected path: ${executablePath}`);
-            console.log(`File exists: ${executablePath ? fs.existsSync(executablePath) : 'N/A'}`);
-            
-            // Sur Render, si aucun Chrome n'est trouvé, essayer de réinstaller
-            if (process.env.RENDER) {
-              console.log('Attempting to reinstall Chrome via Puppeteer...');
-              try {
-                const { execSync } = require('child_process');
-                execSync('npx puppeteer browsers install chrome', { stdio: 'inherit' });
-                const newExecutablePath = puppeteer.executablePath();
-                if (newExecutablePath && fs.existsSync(newExecutablePath)) {
-                  launchOptions.executablePath = newExecutablePath;
-                  console.log(`Using reinstalled Chrome at: ${newExecutablePath}`);
-                  chromeFound = true;
-                }
-              } catch (error) {
-                console.warn('Failed to reinstall Chrome:', error.message);
-              }
-            }
-          }
-        }
-      }
-    }
-
-    browser = await puppeteer.launch(launchOptions);
-    
-    const page = await browser.newPage();
-    
-    // Set longer timeout for Render environment
-    page.setDefaultTimeout(60000); // 60 seconds
-    page.setDefaultNavigationTimeout(60000); // 60 seconds
-    
-    // Generate HTML content for the PDF
-    const htmlContent = generateHTMLContent(assessment);
-    
-    // Try with networkidle0 first, fallback to domcontentloaded if timeout
-    try {
-      await page.setContent(htmlContent, { 
-        waitUntil: 'networkidle0',
-        timeout: 60000 // 60 seconds timeout
-      });
-    } catch (timeoutError) {
-      console.warn('networkidle0 timeout, falling back to domcontentloaded');
-      await page.setContent(htmlContent, { 
-        waitUntil: 'domcontentloaded',
-        timeout: 30000 // 30 seconds timeout
-      });
-      // Wait a bit more for any remaining resources
-      await page.waitForTimeout(2000);
-    }
-    
-    // Generate PDF
-    const pdfBuffer = await page.pdf({
-      format: 'A4',
-      printBackground: true,
-      margin: {
-        top: '20mm',
-        right: '15mm',
-        bottom: '20mm',
-        left: '15mm'
-      }
-    });
-    
-    return pdfBuffer;
-    
-  } catch (error) {
-    console.error('PDF generation error:', error);
-    throw error;
-  } finally {
-    if (browser) {
-      await browser.close();
-    }
-  }
-}
-
+// Génération du contenu HTML (version complète) - Design comme l'email
 function generateHTMLContent(assessment) {
   const { user, overallScore, overallStatus, pillarScores, completedAt, language = 'fr' } = assessment;
   
@@ -217,37 +97,46 @@ function generateHTMLContent(assessment) {
     green: '#10B981'
   };
   
-  // Templates multilingues
   const templates = {
     en: {
       statusTexts: {
-        red: 'Critical',
+        red: 'Critical Attention Required',
         amber: 'Needs Improvement',
-        green: 'Healthy'
+        green: 'Healthy & Well-Positioned'
       },
-      title: 'UBB Enterprise Health Check Report',
-      subtitle: 'Free Self-Assessment Report',
-      companyName: 'Company Name',
+      title: 'UBB Enterprise Health Check',
+      subtitle: 'Professional Business Assessment Report',
+      companyName: 'Company',
+      sector: 'Sector',
+      companySize: 'Company Size',
       assessmentDate: 'Assessment Date',
       overallScore: 'Overall Health Score',
       pillarScores: 'Pillar Breakdown',
       recommendations: 'Recommendations',
-      generatedOn: 'Generated on'
+      generatedOn: 'Generated on',
+      contact: 'Contact Information',
+      email: 'Email',
+      phone: 'Phone'
     },
     fr: {
       statusTexts: {
-        red: 'Critique',
-        amber: 'À améliorer',
-        green: 'En bonne santé'
+        red: 'Attention critique requise',
+        amber: 'Nécessite des améliorations',
+        green: 'En bonne santé et bien positionnée'
       },
-      title: 'Rapport UBB Enterprise Health Check',
-      subtitle: 'Rapport d\'auto-évaluation gratuit',
-      companyName: 'Nom de l\'entreprise',
-      assessmentDate: 'Date d\'évaluation',
-      overallScore: 'Score de santé global',
-      pillarScores: 'Répartition par piliers',
+      title: 'UBB Enterprise Health Check',
+      subtitle: 'Rapport d\'Évaluation Professionnelle d\'Entreprise',
+      companyName: 'Entreprise',
+      sector: 'Secteur',
+      companySize: 'Taille',
+      assessmentDate: 'Date d\'Évaluation',
+      overallScore: 'Score de Santé Global',
+      pillarScores: 'Répartition par Piliers',
       recommendations: 'Recommandations',
-      generatedOn: 'Généré le'
+      generatedOn: 'Généré le',
+      contact: 'Informations de Contact',
+      email: 'Email',
+      phone: 'Téléphone'
     }
   };
   
@@ -262,73 +151,188 @@ function generateHTMLContent(assessment) {
       <meta charset="UTF-8">
       <title>UBB Enterprise Health Check Report</title>
       <style>
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+        
         body {
           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
           line-height: 1.6;
           color: #333;
-          margin: 0;
-          padding: 0;
+          background: white;
         }
+        
         .header {
-          background: linear-gradient(135deg, #FF6B35, #F7931E);
+          background: linear-gradient(135deg, #fbc350 0%, #f59e0b 100%);
           color: white;
-          padding: 30px;
+          padding: 40px 30px;
           text-align: center;
+          position: relative;
+          overflow: hidden;
           margin-bottom: 30px;
         }
+        
+        .header::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIyIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMSkiLz48Y2lyY2xlIGN4PSI4MCIgY3k9IjQwIiByPSIxLjUiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPjxjaXJjbGUgY3g9IjQwIiBjeT0iODAiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPjwvc3ZnPg==') repeat;
+          opacity: 0.3;
+        }
+        
+        .header-content {
+          position: relative;
+          z-index: 2;
+        }
+        
+        .logo-container {
+          display: inline-block;
+          background: rgba(255, 255, 255, 0.2);
+          padding: 20px;
+          border-radius: 50%;
+          margin-bottom: 20px;
+          backdrop-filter: blur(10px);
+        }
+        
+         .logo {
+           width: 80px;
+           height: 80px;
+           border-radius: 50%;
+           object-fit: contain;
+           margin: 0;
+         }
+        
         .header h1 {
           margin: 0;
           font-size: 28px;
-          font-weight: bold;
+          font-weight: 700;
+          text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
-        .header h2 {
+        
+        .header p {
           margin: 10px 0 0 0;
-          font-size: 18px;
+          font-size: 16px;
+          font-weight: 300;
           opacity: 0.9;
         }
-        .company-info {
-          background: #f8f9fa;
-          padding: 20px;
-          border-radius: 8px;
-          margin-bottom: 30px;
-        }
+        
         .score-section {
           text-align: center;
           margin: 40px 0;
+          background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+          border-radius: 16px;
+          padding: 30px;
+          border: 1px solid #e2e8f0;
         }
+        
         .score-circle {
-          width: 150px;
-          height: 150px;
+          width: 120px;
+          height: 120px;
           border-radius: 50%;
           background: ${overallColor};
           color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 32px;
+          font-weight: 700;
+          margin: 0 auto 20px auto;
+          box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+        
+        .score-text {
+          font-size: 20px;
+          color: #2d3748;
+          font-weight: 600;
+          margin-bottom: 10px;
+        }
+        
+        .score-status {
+          font-size: 16px;
+          color: #4a5568;
+        }
+        
+        .company-details {
+          background: white;
+          border-radius: 12px;
+          padding: 25px;
+          margin: 30px 0;
+          border: 1px solid #e2e8f0;
+          box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .company-details h3 {
+          color: #2d3748;
+          margin: 0 0 20px 0;
+          font-size: 18px;
+          font-weight: 600;
+          display: flex;
+          align-items: center;
+        }
+        
+        .company-details h3::before {
+          content: '📊';
+          background: #fbc350;
+          color: white;
+          width: 24px;
+          height: 24px;
+          border-radius: 50%;
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          font-size: 24px;
-          font-weight: bold;
-          margin-bottom: 20px;
+          margin-right: 10px;
+          font-size: 12px;
         }
-        .score-text {
-          font-size: 18px;
-          color: ${overallColor};
-          font-weight: bold;
+        
+        .company-grid {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 15px;
         }
+        
+        .company-item {
+          padding: 12px;
+          background: #f8fafc;
+          border-radius: 8px;
+        }
+        
+        .company-label {
+          color: #718096;
+          font-size: 12px;
+          font-weight: 500;
+          text-transform: uppercase;
+          margin-bottom: 4px;
+        }
+        
+        .company-value {
+          color: #2d3748;
+          font-weight: 600;
+        }
+        
         .pillars-table {
           width: 100%;
           border-collapse: collapse;
           margin: 30px 0;
         }
+        
         .pillars-table th,
         .pillars-table td {
           padding: 12px;
           text-align: left;
-          border-bottom: 1px solid #ddd;
+          border-bottom: 1px solid #e2e8f0;
         }
+        
         .pillars-table th {
-          background-color: #f8f9fa;
-          font-weight: bold;
+          background-color: #f8fafc;
+          font-weight: 600;
+          color: #2d3748;
         }
+        
         .status-badge {
           padding: 4px 12px;
           border-radius: 20px;
@@ -337,93 +341,143 @@ function generateHTMLContent(assessment) {
           font-weight: bold;
           text-transform: uppercase;
         }
+        
         .status-red { background-color: #EF4444; }
         .status-amber { background-color: #F59E0B; }
         .status-green { background-color: #10B981; }
+        
+        
         .recommendations {
           margin: 30px 0;
         }
+        
         .recommendations h3 {
-          color: #FF6B35;
-          border-bottom: 2px solid #FF6B35;
+          color: #fbc350;
+          border-bottom: 2px solid #fbc350;
           padding-bottom: 10px;
         }
+        
         .recommendations ul {
           list-style-type: none;
           padding: 0;
         }
-        .recommendations li {
-          background: #f8f9fa;
-          margin: 10px 0;
-          padding: 15px;
-          border-left: 4px solid #FF6B35;
-          border-radius: 4px;
-        }
-        .footer {
-          margin-top: 50px;
-          padding: 20px;
-          background: #f8f9fa;
-          text-align: center;
-          border-radius: 8px;
-        }
-        .premium-teaser {
-          background: linear-gradient(135deg, #667eea, #764ba2);
-          color: white;
-          padding: 30px;
-          border-radius: 8px;
-          text-align: center;
-          margin: 30px 0;
-        }
-        .premium-teaser h3 {
-          margin-top: 0;
-        }
-        .cta-button {
-          background: white;
-          color: #667eea;
-          padding: 12px 30px;
-          border: none;
-          border-radius: 25px;
-          font-weight: bold;
-          text-decoration: none;
-          display: inline-block;
-          margin-top: 15px;
+        
+         .recommendations li {
+           background: #f8f9fa;
+           margin: 10px 0;
+           padding: 15px;
+           border-left: 4px solid #fbc350;
+           border-radius: 4px;
+         }
+         
+         .premium-teaser {
+           background: linear-gradient(135deg, #fbc350 0%, #f59e0b 100%);
+           color: white;
+           padding: 30px;
+           border-radius: 12px;
+           text-align: center;
+           margin: 30px 0;
+         }
+         
+         .premium-teaser h3 {
+           color: white;
+           margin: 0 0 15px 0;
+           font-size: 20px;
+           font-weight: 600;
+         }
+         
+         .premium-teaser p {
+           color: rgba(255, 255, 255, 0.9);
+           margin: 0 0 20px 0;
+           font-size: 16px;
+           line-height: 1.5;
+         }
+         
+         .premium-button {
+           background: white;
+           color: #f59e0b;
+           padding: 12px 24px;
+           text-decoration: none;
+           border-radius: 8px;
+           font-weight: 600;
+           font-size: 16px;
+           display: inline-block;
+           transition: all 0.3s ease;
+         }
+         
+         .premium-button:hover {
+           background: #f8f9fa;
+           transform: translateY(-2px);
+         }
+         
+         .generation-info {
+           background: #f8f9fa;
+           padding: 20px;
+           border-radius: 8px;
+           text-align: center;
+           margin: 30px 0;
+         }
+         
+         .generation-info p {
+           margin: 5px 0;
+           color: #6b7280;
+           font-size: 14px;
+         }
+        
+        @media print {
+          body { -webkit-print-color-adjust: exact; }
+          .header { break-inside: avoid; }
+          .score-section { break-inside: avoid; }
         }
       </style>
     </head>
     <body>
-      <div class="header">
-        <h1>UBB ENTERPRISE HEALTH CHECK</h1>
-        <h2>${t.subtitle}</h2>
-      </div>
-      
-      <div class="company-info">
-        <h3>${t.companyName}</h3>
-        <p><strong>${t.companyName}:</strong> ${user.companyName}</p>
-        <p><strong>Secteur:</strong> ${user.sector}</p>
-        <p><strong>Taille:</strong> ${user.companySize}</p>
-        <p><strong>${t.assessmentDate}:</strong> ${new Date(completedAt).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US')}</p>
-      </div>
+       <div class="header">
+         <div class="header-pattern"></div>
+         <div class="header-content">
+           <div class="logo-container">
+             <img src="http://localhost:5173/icons/ms-icon-310x310.png" alt="UBB Logo" class="logo" />
+           </div>
+           <h1>Enterprise Health Check</h1>
+           <p>${language === 'fr' ? 'Rapport d\'Évaluation Professionnelle d\'Entreprise' : 'Professional Business Assessment Report'}</p>
+         </div>
+       </div>
       
       <div class="score-section">
-        <div class="score-circle">${overallScore}/100</div>
-        <div class="score-text">${overallText}</div>
-        <p>${language === 'fr' ? 
-          `Votre entreprise est ${overallStatus === 'green' ? 'en bonne santé et bien positionnée pour la croissance' : 
-            overallStatus === 'amber' ? 'en développement mais a besoin de renforcement dans certains domaines' : 
-            'confrontée à des défis critiques qui nécessitent une attention immédiate'}.` :
-          `Your enterprise is ${overallStatus === 'green' ? 'healthy and well-positioned for growth' : 
-            overallStatus === 'amber' ? 'developing but needs strengthening in some areas' : 
-            'facing critical challenges that require immediate attention'}.`
-        }</p>
+        <div class="score-circle">${overallScore}</div>
+        <div class="score-text">${t.overallScore}</div>
+        <div class="score-status">${overallText}</div>
+      </div>
+      
+      <div class="company-details">
+        <h3>${language === 'fr' ? 'Détails de l\'Évaluation' : 'Assessment Details'}</h3>
+        <div class="company-grid">
+          <div class="company-item">
+            <div class="company-label">${t.companyName}</div>
+            <div class="company-value">${user.companyName}</div>
+          </div>
+          <div class="company-item">
+            <div class="company-label">${t.sector}</div>
+            <div class="company-value">${user.sector}</div>
+          </div>
+          <div class="company-item">
+            <div class="company-label">${t.companySize}</div>
+            <div class="company-value">${user.companySize}</div>
+          </div>
+          <div class="company-item">
+            <div class="company-label">${t.assessmentDate}</div>
+            <div class="company-value">${new Date(completedAt).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US')}</div>
+          </div>
+        </div>
       </div>
       
       <h3>${t.pillarScores}</h3>
       <table class="pillars-table">
         <thead>
           <tr>
-            <th>Pillar</th>
-            <th>Score</th>
-            <th>Status</th>
+            <th>${language === 'fr' ? 'Pilier' : 'Pillar'}</th>
+            <th>${language === 'fr' ? 'Score' : 'Score'}</th>
+            <th>${language === 'fr' ? 'Statut' : 'Status'}</th>
           </tr>
         </thead>
         <tbody>
@@ -437,30 +491,36 @@ function generateHTMLContent(assessment) {
         </tbody>
       </table>
       
-      <div class="recommendations">
-        <h3>Key Recommendations</h3>
-        <ul>
-          ${pillarScores.filter(p => p.recommendations && p.recommendations.length > 0)
-            .flatMap(p => p.recommendations.slice(0, 2))
-            .map(rec => `<li>${rec}</li>`).join('')}
-        </ul>
-      </div>
+       <div class="recommendations">
+         <h3>${t.recommendations}</h3>
+         <ul>
+           ${pillarScores.filter(p => p.recommendations && p.recommendations.length > 0)
+             .flatMap(p => p.recommendations.slice(0, 2))
+             .map(rec => `<li>${rec}</li>`).join('')}
+         </ul>
+       </div>
+       
+       <!-- Section premium teaser -->
+       <div class="premium-teaser">
+         <h3>${language === 'fr' ? 'Débloquez Votre Rapport Complet de Santé d\'Entreprise' : 'Unlock Your Full Enterprise Health Report'}</h3>
+         <p>${language === 'fr' ? 'Obtenez des insights détaillés, des recommandations personnalisées, un benchmarking par rapport aux pairs, et un appel de consultation avec nos experts.' : 'Get detailed insights, tailored recommendations, benchmarking against peers, and a consultation call with our experts.'}</p>
+         <a href="mailto:ambrose.n@growthubb.space?subject=Full%20Report%20Request" class="premium-button">
+           ${language === 'fr' ? 'Réservez Votre Rapport Complet' : 'Book Your Full Report'}
+         </a>
+       </div>
+       
+       <!-- Section génération -->
+       <div class="generation-info">
+         <p>${language === 'fr' ? 'Ce rapport a été généré par UBB Enterprise Health Check' : 'This report was generated by UBB Enterprise Health Check'}</p>
+         <p>${language === 'fr' ? 'Pour plus d\'informations, visitez notre site web ou contactez notre équipe' : 'For more information, visit our website or contact our team'}</p>
+       </div>
       
-      <div class="premium-teaser">
-        <h3>Unlock Your Full Enterprise Health Report</h3>
-        <p>Get detailed insights, tailored recommendations, benchmarking against peers, and a consultation call with our experts.</p>
-        <a href="#" class="cta-button">Book Your Full Report</a>
-      </div>
-      
-      <div class="footer">
-        <p>This report was generated by UBB Enterprise Health Check</p>
-        <p>For more information, visit our website or contact our team</p>
-      </div>
     </body>
     </html>
   `;
 }
 
+// Génération du contenu HTML simple (fallback)
 function generateSimpleHTMLContent(assessment) {
   const { user, overallScore, overallStatus, pillarScores, completedAt, language = 'fr' } = assessment;
   
@@ -591,13 +651,6 @@ function generateSimpleHTMLContent(assessment) {
         .status-red { background-color: #EF4444; }
         .status-amber { background-color: #F59E0B; }
         .status-green { background-color: #10B981; }
-        .footer {
-          margin-top: 30px;
-          padding: 15px;
-          background: #f8f9fa;
-          text-align: center;
-          border-radius: 5px;
-        }
       </style>
     </head>
     <body>
@@ -639,10 +692,21 @@ function generateSimpleHTMLContent(assessment) {
         </tbody>
       </table>
       
-      <div class="footer">
-        <p>This report was generated by UBB Enterprise Health Check</p>
-        <p>For more information, visit our website or contact our team</p>
+      <!-- Section premium teaser -->
+      <div class="premium-teaser">
+        <h3>${language === 'fr' ? 'Débloquez Votre Rapport Complet de Santé d\'Entreprise' : 'Unlock Your Full Enterprise Health Report'}</h3>
+        <p>${language === 'fr' ? 'Obtenez des insights détaillés, des recommandations personnalisées, un benchmarking par rapport aux pairs, et un appel de consultation avec nos experts.' : 'Get detailed insights, tailored recommendations, benchmarking against peers, and a consultation call with our experts.'}</p>
+        <a href="mailto:ambrose.n@growthubb.space?subject=Full%20Report%20Request" class="premium-button">
+          ${language === 'fr' ? 'Réservez Votre Rapport Complet' : 'Book Your Full Report'}
+        </a>
       </div>
+      
+      <!-- Section génération -->
+      <div class="generation-info">
+        <p>${language === 'fr' ? 'Ce rapport a été généré par UBB Enterprise Health Check' : 'This report was generated by UBB Enterprise Health Check'}</p>
+        <p>${language === 'fr' ? 'Pour plus d\'informations, visitez notre site web ou contactez notre équipe' : 'For more information, visit our website or contact our team'}</p>
+      </div>
+      
     </body>
     </html>
   `;

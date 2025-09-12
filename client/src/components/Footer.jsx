@@ -8,12 +8,16 @@ import {
 	Linkedin,
 	Instagram,
 	Youtube,
+	ChevronUp,
+	ArrowUp
 } from "lucide-react";
 import logoIcon from "/icons/android-icon-96x96.png";
 import InstallPWAButton from "./InstallPWAButton";
+import useSmoothScroll from "../hooks/useSmoothScroll";
 
 const Footer = () => {
 	const { t } = useTranslation();
+	const { scrollToTop, scrollToElement } = useSmoothScroll();
 
 	const currentYear = new Date().getFullYear();
 
@@ -48,12 +52,18 @@ const Footer = () => {
 	];
 
 	const quickLinks = [
-		{ label: t("footer.about"), href: "#about" },
-		{ label: t("footer.services"), href: "#services" },
-		{ label: t("footer.contact"), href: "#contact" },
+		{ label: t("footer.about"), href: "#about", scrollTo: "about" },
+		{ label: t("footer.services"), href: "#services", scrollTo: "services" },
+		{ label: t("footer.contact"), href: "#contact", scrollTo: "contact" },
 		// { label: t('footer.privacy'), href: '/privacy' },
 		// { label: t('footer.terms'), href: '/terms' }
 	];
+
+	const handleScrollToSection = (sectionId) => {
+		if (sectionId) {
+			scrollToElement(sectionId, 80, 800);
+		}
+	};
 
 	return (
 		<footer className="bg-gray-900 text-white">
@@ -113,12 +123,12 @@ const Footer = () => {
 											{link.label}
 										</Link>
 									) : (
-										<a
-											href={link.href}
-											className="text-gray-300 hover:text-white transition-colors duration-200"
+										<button
+											onClick={() => handleScrollToSection(link.scrollTo)}
+											className="text-gray-300 hover:text-white transition-colors duration-200 text-left"
 										>
 											{link.label}
-										</a>
+										</button>
 									)}
 								</li>
 							))}
@@ -159,7 +169,7 @@ const Footer = () => {
 							&copy; {currentYear} UBB Enterprise Health Check.{" "}
 							{t("footer.allRightsReserved")}
 						</p>
-						<div className="flex space-x-6 mt-4 md:mt-0">
+						<div className="flex items-center space-x-6 mt-4 md:mt-0">
 							<Link
 								to="/terms"
 								className="text-gray-400 hover:text-white text-sm transition-colors duration-200"
@@ -172,6 +182,14 @@ const Footer = () => {
 							>
 								{t("footer.privacy")}
 							</Link>
+							<button
+								onClick={() => scrollToTop(800)}
+								className="flex items-center space-x-2 text-gray-400 hover:text-white text-sm transition-colors duration-200 group"
+								title="Retour en haut"
+							>
+								<ChevronUp className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" />
+								<span>Haut de page</span>
+							</button>
 						</div>
 					</div>
 				</div>

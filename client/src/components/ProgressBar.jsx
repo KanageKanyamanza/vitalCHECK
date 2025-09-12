@@ -17,7 +17,7 @@ const ProgressBar = ({ current, total }) => {
       
       <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
         <motion.div
-          className="h-full bg-gradient-to-r from-primary-500 to-secondary-500 rounded-full"
+          className="h-full bg-gradient-to-r from-primary-500 to-accent-500 rounded-full"
           initial={{ width: 0 }}
           animate={{ width: `${percentage}%` }}
           transition={{ duration: 0.5, ease: "easeOut" }}

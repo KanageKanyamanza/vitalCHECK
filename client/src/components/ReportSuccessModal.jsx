@@ -128,7 +128,7 @@ const ReportSuccessModal = ({
         </div>
 
         {/* Actions */}
-        <div className="flex space-x-3">
+        <div className="grid sm:grid-cols-2 gap-3">
           <button
             onClick={onGoHome}
             className="flex-1 btn-outline flex items-center justify-center space-x-2"
