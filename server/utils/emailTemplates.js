@@ -20,7 +20,7 @@ const emailTemplates = {
               <!-- Logo UBB -->
               <div style="position: relative; z-index: 2;">
                 <div style="display: inline-block; background: rgba(255, 255, 255, 0.2); padding: 20px; border-radius: 50%; margin-bottom: 20px; backdrop-filter: blur(10px);">
-                  <img src="http://localhost:5173/icons/ms-icon-310x310.png" alt="UBB Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: contain;" />
+                  <img src="https://ubb-enterprise-health-check.vercel.app/icons/ms-icon-310x310.png" alt="UBB Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: contain;" />
                 </div>
                 <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
                   Enterprise Health Check
@@ -116,7 +116,7 @@ const emailTemplates = {
             <!-- Footer professionnel -->
             <div style="background: #2d3748; padding: 30px; text-align: center; color: #a0aec0;">
               <div style="margin-bottom: 20px;">
-                <img src="http://localhost:5173/icons/ms-icon-310x310.png" alt="UBB Logo" style="width: 50px; height: 50px; border-radius: 50%; object-fit: contain; margin: 0 auto 10px auto;" />
+                <img src="https://ubb-enterprise-health-check.vercel.app/icons/ms-icon-310x310.png" alt="UBB Logo" style="width: 50px; height: 50px; border-radius: 50%; object-fit: contain; margin: 0 auto 10px auto;" />
                 <div style="color: #e2e8f0; font-weight: 600; font-size: 14px; margin-top: 5px;">
                   Enterprise Health Check
                 </div>
@@ -160,7 +160,7 @@ const emailTemplates = {
               <!-- Logo UBB -->
               <div style="position: relative; z-index: 2;">
                 <div style="display: inline-block; background: rgba(255, 255, 255, 0.2); padding: 20px; border-radius: 50%; margin-bottom: 20px; backdrop-filter: blur(10px);">
-                  <img src="http://localhost:5173/icons/ms-icon-310x310.png" alt="UBB Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: contain;" />
+                  <img src="https://ubb-enterprise-health-check.vercel.app/icons/ms-icon-310x310.png" alt="UBB Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: contain;" />
                 </div>
                 <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
                   Enterprise Health Check
@@ -256,7 +256,7 @@ const emailTemplates = {
             <!-- Footer professionnel -->
             <div style="background: #2d3748; padding: 30px; text-align: center; color: #a0aec0;">
               <div style="margin-bottom: 20px;">
-                <img src="http://localhost:5173/icons/ms-icon-310x310.png" alt="UBB Logo" style="width: 50px; height: 50px; border-radius: 50%; object-fit: contain; margin: 0 auto 10px auto;" />
+                <img src="https://ubb-enterprise-health-check.vercel.app/icons/ms-icon-310x310.png" alt="UBB Logo" style="width: 50px; height: 50px; border-radius: 50%; object-fit: contain; margin: 0 auto 10px auto;" />
                 <div style="color: #e2e8f0; font-weight: 600; font-size: 14px; margin-top: 5px;">
                   Enterprise Health Check
                 </div>
