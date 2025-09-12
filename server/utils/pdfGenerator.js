@@ -211,7 +211,6 @@ function generateHTMLContent(assessment) {
           margin: 0;
           font-size: 28px;
           font-weight: 700;
-          text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
         .header p {
@@ -242,7 +241,6 @@ function generateHTMLContent(assessment) {
           font-size: 32px;
           font-weight: 700;
           margin: 0 auto 20px auto;
-          box-shadow: 0 8px 25px rgba(0,0,0,0.15);
         }
         
         .score-text {
@@ -436,7 +434,7 @@ function generateHTMLContent(assessment) {
          <div class="header-pattern"></div>
          <div class="header-content">
            <div class="logo-container">
-             <img src="http://localhost:5173/icons/ms-icon-310x310.png" alt="UBB Logo" class="logo" />
+             <img src="https://ubb-enterprise-health-check.vercel.app/icons/ms-icon-310x310.png" alt="UBB Logo" class="logo" />
            </div>
            <h1>Enterprise Health Check</h1>
            <p>${language === 'fr' ? 'Rapport d\'Évaluation Professionnelle d\'Entreprise' : 'Professional Business Assessment Report'}</p>
@@ -504,7 +502,7 @@ function generateHTMLContent(assessment) {
        <div class="premium-teaser">
          <h3>${language === 'fr' ? 'Débloquez Votre Rapport Complet de Santé d\'Entreprise' : 'Unlock Your Full Enterprise Health Report'}</h3>
          <p>${language === 'fr' ? 'Obtenez des insights détaillés, des recommandations personnalisées, un benchmarking par rapport aux pairs, et un appel de consultation avec nos experts.' : 'Get detailed insights, tailored recommendations, benchmarking against peers, and a consultation call with our experts.'}</p>
-         <a href="mailto:ambrose.n@growthubb.space?subject=Full%20Report%20Request" class="premium-button">
+         <a href="mailto:ambrose.nzeyi@gmail.com?subject=Full%20Report%20Request" class="premium-button">
            ${language === 'fr' ? 'Réservez Votre Rapport Complet' : 'Book Your Full Report'}
          </a>
        </div>
@@ -696,7 +694,7 @@ function generateSimpleHTMLContent(assessment) {
       <div class="premium-teaser">
         <h3>${language === 'fr' ? 'Débloquez Votre Rapport Complet de Santé d\'Entreprise' : 'Unlock Your Full Enterprise Health Report'}</h3>
         <p>${language === 'fr' ? 'Obtenez des insights détaillés, des recommandations personnalisées, un benchmarking par rapport aux pairs, et un appel de consultation avec nos experts.' : 'Get detailed insights, tailored recommendations, benchmarking against peers, and a consultation call with our experts.'}</p>
-        <a href="mailto:ambrose.n@growthubb.space?subject=Full%20Report%20Request" class="premium-button">
+        <a href="mailto:ambrose.nzeyi@gmail.com?subject=Full%20Report%20Request" class="premium-button">
           ${language === 'fr' ? 'Réservez Votre Rapport Complet' : 'Book Your Full Report'}
         </a>
       </div>

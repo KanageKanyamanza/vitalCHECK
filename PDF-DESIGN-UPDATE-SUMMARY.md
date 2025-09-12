@@ -70,7 +70,7 @@ Le générateur PDF utilise maintenant le même design que l'email professionnel
 <div class="footer">
   <div class="footer-logo">UBB</div>
   <div class="footer-title">Évaluation Professionnelle d'Entreprise & Conseil en Croissance</div>
-  <div class="footer-contact">📧 ambrose.n@growthubb.space | 📞 +221 771970713 (SEN) / +44 7546756325 (GB)</div>
+  <div class="footer-contact">📧 ambrose.nzeyi@gmail.com | 📞 +221 771970713 (SEN) / +44 7546756325 (GB)</div>
   <div class="footer-meta">Généré le ... | UBB Enterprise Health Check v1.0</div>
 </div>
 ```

@@ -6,9 +6,7 @@ import { useTranslation } from 'react-i18next'
 import { useAssessment } from '../context/AssessmentContext'
 import { assessmentAPI } from '../services/api'
 import toast from 'react-hot-toast'
-import ProgressBar from '../components/ProgressBar'
-import QuestionCard from '../components/QuestionCard'
-import SubmissionProgress from '../components/SubmissionProgress'
+import { ProgressBar, QuestionCard, SubmissionProgress } from '../components/assessment'
 import useSmoothScroll from '../hooks/useSmoothScroll'
 
 const AssessmentPage = () => {

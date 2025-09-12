@@ -1,13 +1,26 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Shield, Eye, Lock, Database, Users, Globe } from 'lucide-react'
+import { BackButton } from '../components/navigation'
+import useSmoothScroll from '../hooks/useSmoothScroll'
 
 const PrivacyPolicy = () => {
   const { t } = useTranslation()
+  const { scrollToTop } = useSmoothScroll()
+
+  useEffect(() => {
+    // Scroll to top when page loads
+    scrollToTop(600)
+  }, [scrollToTop])
 
   return (
     <div className="min-h-screen bg-gray-50 py-[70px]">
+      {/* Back Button */}
+      <div className="m-4">
+        <BackButton />
+      </div>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        
         {/* Header */}
         <div className="text-center mb-12">
           <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -171,7 +184,7 @@ const PrivacyPolicy = () => {
             </p>
             <div className="space-y-2">
               <p className="text-gray-700">
-                <strong>Email:</strong> ambrose.n@growthubb.space
+                <strong>Email:</strong> ambrose.nzeyi@gmail.com
               </p>
               <p className="text-gray-700">
                 <strong>Sénégal:</strong> +221 771970713

@@ -1,6 +1,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
-import { getStatusColor, chartColors } from '../utils/colors'
+import { getStatusColor, chartColors } from '../../utils/colors'
 
 const ScoreGauge = ({ score, status }) => {
   // Utilise la fonction centralisée

@@ -2,7 +2,7 @@ import React from 'react'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { ArrowRight, CheckCircle } from 'lucide-react'
-import bgHero from '../assets/bg-hero.png'
+import bgHero from '../../assets/bg-hero.png'
 
 const Hero = ({ onStartAssessment }) => {
   const { t } = useTranslation()

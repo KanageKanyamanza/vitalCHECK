@@ -12,7 +12,7 @@ import {
   Briefcase,
   Zap
 } from 'lucide-react'
-import UBBLogo from './UBBLogo'
+import { UBBLogo } from '../ui'
 
 const SplashScreen = ({ onLoadingComplete }) => {
   const [loading, setLoading] = useState(true)

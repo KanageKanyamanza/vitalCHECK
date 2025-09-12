@@ -1,7 +1,7 @@
 import React from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
 import { motion } from 'framer-motion'
-import { getStatusColor, chartColors } from '../utils/colors'
+import { getStatusColor, chartColors } from '../../utils/colors'
 
 const PillarChart = ({ pillarScores }) => {
   // Utilise la fonction centralisée

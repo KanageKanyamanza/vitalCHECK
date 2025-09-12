@@ -7,13 +7,11 @@ import {
 	MapPin,
 	Linkedin,
 	Instagram,
-	Youtube,
-	ChevronUp,
-	ArrowUp
+	Youtube
 } from "lucide-react";
 import logoIcon from "/icons/android-icon-96x96.png";
-import InstallPWAButton from "./InstallPWAButton";
-import useSmoothScroll from "../hooks/useSmoothScroll";
+import { InstallPWAButton } from "../ui";
+import useSmoothScroll from "../../hooks/useSmoothScroll";
 
 const Footer = () => {
 	const { t } = useTranslation();
@@ -60,9 +58,10 @@ const Footer = () => {
 	];
 
 	const handleScrollToSection = (sectionId) => {
-		if (sectionId) {
-			scrollToElement(sectionId, 80, 800);
-		}
+		window.scrollTo({
+			top: sectionId === 'terms' ? 0 : sectionId === 'privacy' ? 0 : document.getElementById(sectionId).offsetTop,
+			behavior: 'smooth'
+		});
 	};
 
 	return (
@@ -143,7 +142,7 @@ const Footer = () => {
 						<div className="space-y-3">
 							<div className="flex items-center space-x-3">
 								<Mail className="w-5 h-5 text-primary-500" />
-								<span className="text-gray-300">ambrose.n@growthubb.space</span>
+								<span className="text-gray-300">ambrose.nzeyi@gmail.com</span>
 							</div>
 							<div className="space-y-2">
 								<div className="flex items-center space-x-3">
@@ -172,24 +171,18 @@ const Footer = () => {
 						<div className="flex items-center space-x-6 mt-4 md:mt-0">
 							<Link
 								to="/terms"
+								onClick={() => handleScrollToSection('terms')}
 								className="text-gray-400 hover:text-white text-sm transition-colors duration-200"
 							>
 								{t("footer.terms")}
 							</Link>
 							<Link
 								to="/privacy"
+								onClick={() => handleScrollToSection('privacy')}
 								className="text-gray-400 hover:text-white text-sm transition-colors duration-200"
 							>
 								{t("footer.privacy")}
 							</Link>
-							<button
-								onClick={() => scrollToTop(800)}
-								className="flex items-center space-x-2 text-gray-400 hover:text-white text-sm transition-colors duration-200 group"
-								title="Retour en haut"
-							>
-								<ChevronUp className="w-4 h-4 group-hover:scale-110 transition-transform duration-200" />
-								<span>Haut de page</span>
-							</button>
 						</div>
 					</div>
 				</div>

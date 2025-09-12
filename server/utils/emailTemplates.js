@@ -20,7 +20,7 @@ const emailTemplates = {
               <!-- Logo UBB -->
               <div style="position: relative; z-index: 2;">
                 <div style="display: inline-block; background: rgba(255, 255, 255, 0.2); padding: 20px; border-radius: 50%; margin-bottom: 20px; backdrop-filter: blur(10px);">
-                  <img src="http://localhost:5173/icons/ms-icon-310x310.png" alt="UBB Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: contain;" />
+                  <img src="https://ubb-enterprise-health-check.vercel.app/icons/ms-icon-310x310.png" alt="UBB Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: contain;" />
                 </div>
                 <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
                   Enterprise Health Check
@@ -95,11 +95,11 @@ const emailTemplates = {
               
               <!-- Boutons d'action -->
               <div style="text-align: center; margin: 40px 0;">
-                <a href="http://localhost:5173" 
+                <a href="https://ubb-enterprise-health-check.vercel.app/results" 
                    style="background: linear-gradient(135deg, #fbc350 0%, #f59e0b 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(251, 195, 80, 0.3); margin: 0 10px 10px 0;">
                   📊 View Full Report
                 </a>
-                <a href="mailto:contact@ubb.com?subject=Consultation%20Request" 
+                <a href="mailto:ambrose.nzeyi@gmail.com?subject=Consultation%20Request" 
                    style="background: transparent; color: #fbc350; padding: 16px 32px; text-decoration: none; border: 2px solid #fbc350; border-radius: 8px; display: inline-block; font-weight: 600; font-size: 16px; margin: 0 0 10px 10px;">
                   💬 Book Consultation
                 </a>
@@ -116,7 +116,7 @@ const emailTemplates = {
             <!-- Footer professionnel -->
             <div style="background: #2d3748; padding: 30px; text-align: center; color: #a0aec0;">
               <div style="margin-bottom: 20px;">
-                <img src="http://localhost:5173/icons/ms-icon-310x310.png" alt="UBB Logo" style="width: 50px; height: 50px; border-radius: 50%; object-fit: contain; margin: 0 auto 10px auto;" />
+                <img src="https://ubb-enterprise-health-check.vercel.app/icons/ms-icon-310x310.png" alt="UBB Logo" style="width: 50px; height: 50px; border-radius: 50%; object-fit: contain; margin: 0 auto 10px auto;" />
                 <div style="color: #e2e8f0; font-weight: 600; font-size: 14px; margin-top: 5px;">
                   Enterprise Health Check
                 </div>
@@ -126,7 +126,7 @@ const emailTemplates = {
               </p>
               <div style="margin: 20px 0; padding: 20px 0; border-top: 1px solid #4a5568;">
                 <p style="margin: 0 0 10px 0; font-size: 12px; color: #a0aec0;">
-                  📧 ambrose.n@growthubb.space | 📞 +221 771970713 (SEN) / +44 7546756325 (GB)
+                  📧 ambrose.nzeyi@gmail.com | 📞 +221 771970713 (SEN) / +44 7546756325 (GB)
                 </p>
                 <p style="margin: 0; font-size: 11px; color: #718096;">
                   Generated on ${new Date().toLocaleString('en-US')} | UBB Enterprise Health Check v1.0
@@ -160,7 +160,7 @@ const emailTemplates = {
               <!-- Logo UBB -->
               <div style="position: relative; z-index: 2;">
                 <div style="display: inline-block; background: rgba(255, 255, 255, 0.2); padding: 20px; border-radius: 50%; margin-bottom: 20px; backdrop-filter: blur(10px);">
-                  <img src="http://localhost:5173/icons/ms-icon-310x310.png" alt="UBB Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: contain;" />
+                  <img src="https://ubb-enterprise-health-check.vercel.app/icons/ms-icon-310x310.png" alt="UBB Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: contain;" />
                 </div>
                 <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
                   Enterprise Health Check
@@ -235,11 +235,11 @@ const emailTemplates = {
               
               <!-- Boutons d'action -->
               <div style="text-align: center; margin: 40px 0;">
-                <a href="http://localhost:5173" 
+                <a href="https://ubb-enterprise-health-check.vercel.app/results" 
                    style="background: linear-gradient(135deg, #fbc350 0%, #f59e0b 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(251, 195, 80, 0.3); margin: 0 10px 10px 0;">
                   📊 Voir le Rapport Complet
                 </a>
-                <a href="mailto:contact@ubb.com?subject=Demande%20de%20Consultation" 
+                <a href="mailto:ambrose.nzeyi@gmail.com?subject=Demande%20de%20Consultation" 
                    style="background: transparent; color: #fbc350; padding: 16px 32px; text-decoration: none; border: 2px solid #fbc350; border-radius: 8px; display: inline-block; font-weight: 600; font-size: 16px; margin: 0 0 10px 10px;">
                   💬 Réserver une Consultation
                 </a>
@@ -256,7 +256,7 @@ const emailTemplates = {
             <!-- Footer professionnel -->
             <div style="background: #2d3748; padding: 30px; text-align: center; color: #a0aec0;">
               <div style="margin-bottom: 20px;">
-                <img src="http://localhost:5173/icons/ms-icon-310x310.png" alt="UBB Logo" style="width: 50px; height: 50px; border-radius: 50%; object-fit: contain; margin: 0 auto 10px auto;" />
+                <img src="https://ubb-enterprise-health-check.vercel.app/icons/ms-icon-310x310.png" alt="UBB Logo" style="width: 50px; height: 50px; border-radius: 50%; object-fit: contain; margin: 0 auto 10px auto;" />
                 <div style="color: #e2e8f0; font-weight: 600; font-size: 14px; margin-top: 5px;">
                   Enterprise Health Check
                 </div>
@@ -266,7 +266,7 @@ const emailTemplates = {
               </p>
               <div style="margin: 20px 0; padding: 20px 0; border-top: 1px solid #4a5568;">
                 <p style="margin: 0 0 10px 0; font-size: 12px; color: #a0aec0;">
-                  📧 ambrose.n@growthubb.space | 📞 +221 771970713 (SEN) / +44 7546756325 (GB)
+                  📧 ambrose.nzeyi@gmail.com | 📞 +221 771970713 (SEN) / +44 7546756325 (GB)
                 </p>
                 <p style="margin: 0; font-size: 11px; color: #718096;">
                   Généré le ${new Date().toLocaleString('fr-FR')} | UBB Enterprise Health Check v1.0

@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Hero from '../components/Hero'
-import AssessmentForm from '../components/AssessmentForm'
-import Footer from '../components/Footer'
+import { Hero } from '../components/layout'
+import { AssessmentForm } from '../components/assessment'
+import { Footer } from '../components/navigation'
 import { useAssessment } from '../context/AssessmentContext'
 
 const LandingPage = () => {

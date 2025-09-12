@@ -14,13 +14,13 @@ Informations extraites du footer de l'application UBB (`client/src/components/Fo
 
 **Après :**
 ```
-📧 ambrose.n@growthubb.space | 📞 +221 771970713 (SEN) / +44 7546756325 (GB)
+📧 ambrose.nzeyi@gmail.com | 📞 +221 771970713 (SEN) / +44 7546756325 (GB)
 ```
 
 ## 📋 Détails des Contacts
 
 ### **Email Principal**
-- **Adresse** : `ambrose.n@growthubb.space`
+- **Adresse** : `ambrose.nzeyi@gmail.com`
 - **Source** : Footer de l'application
 - **Usage** : Contact principal UBB
 
@@ -53,12 +53,12 @@ Informations extraites du footer de l'application UBB (`client/src/components/Fo
 ## 📧 Templates Mis à Jour
 
 ### **Version Anglaise**
-- ✅ Email : `ambrose.n@growthubb.space`
+- ✅ Email : `ambrose.nzeyi@gmail.com`
 - ✅ Téléphones : Sénégal et GB
 - ✅ Format professionnel
 
 ### **Version Française**
-- ✅ Email : `ambrose.n@growthubb.space`
+- ✅ Email : `ambrose.nzeyi@gmail.com`
 - ✅ Téléphones : Sénégal et GB
 - ✅ Format professionnel
 
@@ -79,14 +79,14 @@ Informations extraites du footer de l'application UBB (`client/src/components/Fo
 - **Région** : Europe
 
 ### **Email International**
-- **Adresse** : ambrose.n@growthubb.space
+- **Adresse** : ambrose.nzeyi@gmail.com
 - **Domaine** : growthubb.space
 - **Usage** : Contact principal
 
 ## 🚀 Résultat
 
 **L'email utilise maintenant les vrais contacts UBB :**
-- 📧 **Email officiel** : ambrose.n@growthubb.space
+- 📧 **Email officiel** : ambrose.nzeyi@gmail.com
 - 📞 **Téléphones internationaux** : Sénégal et GB
 - 🌍 **Présence mondiale** : Afrique et Europe
 - ✅ **Cohérence** : Même source que l'application

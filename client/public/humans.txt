@@ -2,7 +2,7 @@
 
 # Équipe
     Développeur: UBB Development Team
-    Contact: ambrose.n@growthubb.space
+    Contact: ambrose.nzeyi@gmail.com
     Site: https://growthubb.space
 
 # Technologies
