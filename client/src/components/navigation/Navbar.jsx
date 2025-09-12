@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion } from 'framer-motion'
@@ -10,8 +10,6 @@ const Navbar = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
-  const [isScrolled, setIsScrolled] = useState(false)
-  
   // Vérification sécurisée du contexte
   let state, dispatch
   try {
@@ -24,18 +22,6 @@ const Navbar = () => {
     dispatch = () => {}
   }
 
-  // Gestion du scroll
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = window.scrollY
-      const scrolled = scrollTop > 50
-      setIsScrolled(scrolled)
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
-
   const handleLanguageChange = (language) => {
     // Mettre à jour la langue dans le contexte global
     if (dispatch) {
@@ -47,24 +33,15 @@ const Navbar = () => {
     return location.pathname === path
   }
 
-  // Déterminer si la navbar doit être transparente (seulement sur la page d'accueil)
-  const shouldBeTransparent = location.pathname === '/'
+  // Plus de transparence - background solide
 
   return (
     <motion.nav 
       initial={{ y: -100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        shouldBeTransparent && !isScrolled
-          ? 'bg-transparent' 
-          : 'bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200'
-      }`}
-      style={{ 
-        backgroundColor: shouldBeTransparent && !isScrolled 
-          ? 'rgba(0, 0, 0, 0)' 
-          : 'rgba(255, 255, 255, 0.95)' 
-      }}
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 
+          bg-white shadow-lg border-b border-gray-200"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
@@ -82,9 +59,7 @@ const Navbar = () => {
                 <span className="text-lg font-display font-bold ubb-gradient-text">
                   UBB
                 </span>
-                <span className={`text-xs font-medium transition-colors duration-300 ${
-                  shouldBeTransparent && !isScrolled ? 'text-white/90' : 'text-gray-600'
-                }`}>
+                <span className="text-xs font-medium text-gray-600">
                   Enterprise Health Check
                 </span>
               </div>
@@ -100,9 +75,7 @@ const Navbar = () => {
                 className={`text-sm font-medium transition-colors duration-200 ${
                   isActive('/') 
                     ? 'text-primary-600 border-b-2 border-primary-600 pb-1' 
-                    : shouldBeTransparent && !isScrolled
-                      ? 'text-white/90 hover:text-white' 
-                      : 'text-gray-600 hover:text-primary-600'
+                    : 'text-gray-600 hover:text-primary-600'
                 }`}
               >
                 {t('navigation.home')}
@@ -114,9 +87,7 @@ const Navbar = () => {
                   className={`text-sm font-medium transition-colors duration-200 ${
                     isActive('/assessment') 
                       ? 'text-primary-600 border-b-2 border-primary-600 pb-1' 
-                      : shouldBeTransparent && !isScrolled
-                        ? 'text-white/90 hover:text-white' 
-                        : 'text-gray-600 hover:text-primary-600'
+                      : 'text-gray-600 hover:text-primary-600'
                   }`}
                 >
                   {t('navigation.assessment')}
@@ -129,9 +100,7 @@ const Navbar = () => {
                   className={`text-sm font-medium transition-colors duration-200 ${
                     isActive('/results') 
                       ? 'text-primary-600 border-b-2 border-primary-600 pb-1' 
-                      : shouldBeTransparent && !isScrolled
-                        ? 'text-white/90 hover:text-white' 
-                        : 'text-gray-600 hover:text-primary-600'
+                      : 'text-gray-600 hover:text-primary-600'
                   }`}
                 >
                   {t('navigation.results')}
@@ -143,7 +112,7 @@ const Navbar = () => {
             <NavbarLanguageSelector 
               onLanguageChange={handleLanguageChange}
               selectedLanguage={state?.language || 'fr'}
-              isScrolled={shouldBeTransparent ? isScrolled : true}
+              isScrolled={true}
             />
           </div>
         </div>
