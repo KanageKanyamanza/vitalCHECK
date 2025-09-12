@@ -207,7 +207,7 @@ const TermsOfService = () => {
             </p>
             <div className="space-y-2">
               <p className="text-gray-700">
-                <strong>Email:</strong> ambrose.n@growthubb.space
+                <strong>Email:</strong> ambrose.nzeyi@gmail.com
               </p>
               <p className="text-gray-700">
                 <strong>Sénégal:</strong> +221 771970713

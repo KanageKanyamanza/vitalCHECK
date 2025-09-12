@@ -99,7 +99,7 @@ const emailTemplates = {
                    style="background: linear-gradient(135deg, #fbc350 0%, #f59e0b 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(251, 195, 80, 0.3); margin: 0 10px 10px 0;">
                   📊 View Full Report
                 </a>
-                <a href="mailto:ambrose.n@growthubb.space?subject=Consultation%20Request" 
+                <a href="mailto:ambrose.nzeyi@gmail.com?subject=Consultation%20Request" 
                    style="background: transparent; color: #fbc350; padding: 16px 32px; text-decoration: none; border: 2px solid #fbc350; border-radius: 8px; display: inline-block; font-weight: 600; font-size: 16px; margin: 0 0 10px 10px;">
                   💬 Book Consultation
                 </a>
@@ -126,7 +126,7 @@ const emailTemplates = {
               </p>
               <div style="margin: 20px 0; padding: 20px 0; border-top: 1px solid #4a5568;">
                 <p style="margin: 0 0 10px 0; font-size: 12px; color: #a0aec0;">
-                  📧 ambrose.n@growthubb.space | 📞 +221 771970713 (SEN) / +44 7546756325 (GB)
+                  📧 ambrose.nzeyi@gmail.com | 📞 +221 771970713 (SEN) / +44 7546756325 (GB)
                 </p>
                 <p style="margin: 0; font-size: 11px; color: #718096;">
                   Generated on ${new Date().toLocaleString('en-US')} | UBB Enterprise Health Check v1.0
@@ -239,7 +239,7 @@ const emailTemplates = {
                    style="background: linear-gradient(135deg, #fbc350 0%, #f59e0b 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(251, 195, 80, 0.3); margin: 0 10px 10px 0;">
                   📊 Voir le Rapport Complet
                 </a>
-                <a href="mailto:ambrose.n@growthubb.space?subject=Demande%20de%20Consultation" 
+                <a href="mailto:ambrose.nzeyi@gmail.com?subject=Demande%20de%20Consultation" 
                    style="background: transparent; color: #fbc350; padding: 16px 32px; text-decoration: none; border: 2px solid #fbc350; border-radius: 8px; display: inline-block; font-weight: 600; font-size: 16px; margin: 0 0 10px 10px;">
                   💬 Réserver une Consultation
                 </a>
@@ -266,7 +266,7 @@ const emailTemplates = {
               </p>
               <div style="margin: 20px 0; padding: 20px 0; border-top: 1px solid #4a5568;">
                 <p style="margin: 0 0 10px 0; font-size: 12px; color: #a0aec0;">
-                  📧 ambrose.n@growthubb.space | 📞 +221 771970713 (SEN) / +44 7546756325 (GB)
+                  📧 ambrose.nzeyi@gmail.com | 📞 +221 771970713 (SEN) / +44 7546756325 (GB)
                 </p>
                 <p style="margin: 0; font-size: 11px; color: #718096;">
                   Généré le ${new Date().toLocaleString('fr-FR')} | UBB Enterprise Health Check v1.0
