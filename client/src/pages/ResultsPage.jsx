@@ -21,11 +21,15 @@ import PillarChart from '../components/PillarChart'
 import RecommendationsList from '../components/RecommendationsList'
 import ReportGenerationProgress from '../components/ReportGenerationProgress'
 import ReportSuccessModal from '../components/ReportSuccessModal'
+import BackToTop from '../components/BackToTop'
+import useSmoothScroll from '../hooks/useSmoothScroll'
+import { generateClientPDF, generateSimpleClientPDF } from '../utils/pdfGeneratorClient'
 
 const ResultsPage = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
   const { user, assessment, dispatch } = useAssessment()
+  const { scrollToTop, scrollToElement } = useSmoothScroll()
   const [generatingReport, setGeneratingReport] = useState(false)
   const [reportGenerated, setReportGenerated] = useState(false)
   const [reportError, setReportError] = useState(null)
@@ -38,7 +42,12 @@ const ResultsPage = () => {
       navigate('/')
       return
     }
-  }, [assessment, navigate])
+    
+    // Scroll smooth vers le haut quand la page se charge
+    setTimeout(() => {
+      scrollToTop(600)
+    }, 100)
+  }, [assessment, navigate, scrollToTop])
 
   const handleGenerateReport = async () => {
     setGeneratingReport(true)
@@ -48,19 +57,43 @@ const ResultsPage = () => {
       // Simuler les étapes de génération
       await new Promise(resolve => setTimeout(resolve, 2000))
       
-      const response = await reportsAPI.generateReport(assessment.id)
-      
-      if (response.data.success) {
-        setReportGenerated(true)
-        setShowSuccessModal(true)
-        // Ne pas effacer le localStorage immédiatement - laisser l'utilisateur choisir
+      // Essayer d'abord la génération côté serveur
+      try {
+        const response = await reportsAPI.generateReport(assessment.id)
+        
+        if (response.data.success) {
+          setReportGenerated(true)
+          setShowSuccessModal(true)
+          return
+        }
+      } catch (serverError) {
+        console.warn('Server PDF generation failed, trying client-side:', serverError.message)
+        
+        // Fallback: génération côté client
+        try {
+          await generateClientPDF(assessment)
+          setReportGenerated(true)
+          setShowSuccessModal(true)
+          toast.success('Rapport PDF généré avec succès !')
+          return
+        } catch (clientError) {
+          console.warn('Client PDF generation failed, trying simple version:', clientError.message)
+          
+          // Dernier recours: PDF simple
+          await generateSimpleClientPDF(assessment)
+          setReportGenerated(true)
+          setShowSuccessModal(true)
+          toast.success('Rapport PDF simple généré avec succès !')
+          return
+        }
       }
+      
     } catch (error) {
       console.error('Report generation error:', error)
       setReportError({
-        message: error.response?.data?.message || t('results.reportError')
+        message: 'Impossible de générer le rapport PDF. Veuillez réessayer.'
       })
-      toast.error(t('results.reportError'))
+      toast.error('Erreur lors de la génération du rapport')
     } finally {
       setGeneratingReport(false)
     }
@@ -474,6 +507,9 @@ const ResultsPage = () => {
         onUpgradePremium={handlePremiumUpgrade}
         userEmail={user?.email}
       />
+
+      {/* Bouton Back to Top */}
+      <BackToTop showAfter={300} />
     </div>
   )
 }

@@ -9,10 +9,12 @@ import toast from 'react-hot-toast'
 import ProgressBar from '../components/ProgressBar'
 import QuestionCard from '../components/QuestionCard'
 import SubmissionProgress from '../components/SubmissionProgress'
+import useSmoothScroll from '../hooks/useSmoothScroll'
 
 const AssessmentPage = () => {
   const navigate = useNavigate()
   const { t } = useTranslation()
+  const { scrollToTop } = useSmoothScroll()
   const { 
     user, 
     questions, 
@@ -221,6 +223,13 @@ const AssessmentPage = () => {
         
         dispatch({ type: 'SET_ASSESSMENT', payload: response.data.assessment })
         toast.success('Évaluation terminée avec succès !')
+        
+        // Scroll smooth vers le haut avant la navigation
+        scrollToTop(500)
+        
+        // Attendre un peu pour que le scroll se termine
+        await new Promise(resolve => setTimeout(resolve, 300))
+        
         navigate('/results')
       }
     } catch (error) {
