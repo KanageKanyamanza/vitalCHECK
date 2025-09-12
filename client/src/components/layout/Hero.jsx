@@ -9,11 +9,13 @@ const Hero = ({ onStartAssessment }) => {
 
   return (
     <div 
-      className="min-h-screen bg-cover bg-center bg-no-repeat relative flex items-center pt-16"
-      style={{ backgroundImage: `url(${bgHero})` }}
+    // className="min-h-screen bg-cover bg-center bg-no-repeat relative flex items-center pt-16"
+    className="min-h-screen bg-white relative flex items-center pt-16"
+
+    // style={{ backgroundImage: `url(${bgHero})` }}
     >
       {/* Overlay pour améliorer la lisibilité */}
-      <div className="absolute inset-0 bg-black/60"></div>
+      {/* <div className="absolute inset-0 bg-black/60"></div> */}
 
       {/* Hero Content */}
       <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 sm:py-16 relative z-10 w-full">
@@ -22,7 +24,7 @@ const Hero = ({ onStartAssessment }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="text-7xl md:text-6xl font-display font-bold ubb-gradient-text mb-6"
+            className="text-7xl md:text-6xl font-display font-bold text-primary-500 mb-6"
           >
             {t('landing.title')}
           </motion.h1>
@@ -31,7 +33,7 @@ const Hero = ({ onStartAssessment }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-xl text-white mb-8 max-w-3xl px-2 mx-auto"
+            className="text-xl text-black mb-8 max-w-3xl px-2 mx-auto"
             dangerouslySetInnerHTML={{ __html: t('landing.subtitle') }}
           />
 
@@ -39,7 +41,7 @@ const Hero = ({ onStartAssessment }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex items-center justify-center space-x-2 text-sm text-white/90 mb-12"
+            className="flex items-center justify-center space-x-2 text-sm text-black mb-12"
           >
             <CheckCircle className="w-4 h-4 text-green-400" />
             <span>{t('landing.badge')}</span>
