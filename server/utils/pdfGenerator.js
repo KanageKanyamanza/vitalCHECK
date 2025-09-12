@@ -211,7 +211,6 @@ function generateHTMLContent(assessment) {
           margin: 0;
           font-size: 28px;
           font-weight: 700;
-          text-shadow: 0 2px 4px rgba(0,0,0,0.3);
         }
         
         .header p {
@@ -242,7 +241,6 @@ function generateHTMLContent(assessment) {
           font-size: 32px;
           font-weight: 700;
           margin: 0 auto 20px auto;
-          box-shadow: 0 8px 25px rgba(0,0,0,0.15);
         }
         
         .score-text {
