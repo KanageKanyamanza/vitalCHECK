@@ -8,7 +8,7 @@ const NavbarLanguageSelector = ({ onLanguageChange, selectedLanguage = 'fr', cla
   const [isOpen, setIsOpen] = useState(false)
 
   const languages = [
-    { code: 'en', name: t('languages.en'), flag: '🇺🇸' },
+    { code: 'en', name: t('languages.en'), flag: '🇬🇧' },
     { code: 'fr', name: t('languages.fr'), flag: '🇫🇷' }
   ]
 
