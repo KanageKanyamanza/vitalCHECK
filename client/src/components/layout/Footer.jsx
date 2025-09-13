@@ -65,7 +65,7 @@ const Footer = () => {
 	};
 
 	return (
-		<footer className="bg-primary-500 text-black">
+		<footer className="bg-primary-500 text-white">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-4">
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
 					{/* Logo et Description */}
@@ -79,15 +79,15 @@ const Footer = () => {
 								/>
 							</div>
 							<div className="flex flex-col">
-								<span className="text-lg font-display font-bold ubb-gradient-text">
+								<span className="text-lg font-display font-bold text-white">
 									UBB
 								</span>
-								<span className="text-xs text-black font-medium">
+								<span className="text-xs text-white font-medium">
 									Enterprise Health Check
 								</span>
 							</div>
 						</div>
-						<p className="text-black mb-6 max-w-md">
+						<p className="text-white mb-6 max-w-md">
 							{t("footer.description")}
 						</p>
 
@@ -100,7 +100,7 @@ const Footer = () => {
 									className="w-10 h-10 bg-accent-500 rounded-lg flex items-center justify-center hover:bg-accent-600 transition-colors duration-200"
 									aria-label={social.label}
 								>
-									<social.icon className="w-5 h-5 text-black" />
+									<social.icon className="w-5 h-5 text-white" />
 								</a>
 							))}
 						</div>
@@ -117,14 +117,14 @@ const Footer = () => {
 									{link.href.startsWith("/") ? (
 										<Link
 											to={link.href}
-											className="text-black hover:text-gray-800 transition-colors duration-200"
+											className="text-white hover:text-gray-800 transition-colors duration-200"
 										>
 											{link.label}
 										</Link>
 									) : (
 										<button
 											onClick={() => handleScrollToSection(link.scrollTo)}
-											className="text-black hover:text-gray-800 transition-colors duration-200 text-left"
+											className="text-white hover:text-gray-800 transition-colors duration-200 text-left"
 										>
 											{link.label}
 										</button>
@@ -141,15 +141,15 @@ const Footer = () => {
 						</h3>
 						<div className="space-y-3">
 							<div className="flex items-center space-x-3">
-								<Mail className="w-5 h-5 text-primary-500" />
-								<span className="text-black">ambrose.nzeyi@gmail.com</span>
+								<Mail className="w-5 h-5 text-accent-500" />
+								<span className="text-white">ambrose.nzeyi@gmail.com</span>
 							</div>
 							<div className="space-y-2">
 								<div className="flex items-center space-x-3">
-									<Phone className="w-5 h-5 text-primary-500" />
-									<div className="text-black">
-										<div className="text-sm">SEN: +221 771970713</div>
-										<div className="text-sm">GB: +44 7546756325</div>
+									<Phone className="w-5 h-5 text-accent-500" />
+									<div className="text-white">
+										<div className="text-sm">🇸🇳 +221 771970713</div>
+										<div className="text-sm">🇬🇧 +44 7546756325</div>
 									</div>
 								</div>
 							</div>
@@ -164,7 +164,7 @@ const Footer = () => {
 				{/* Bottom Bar */}
 				<div className="border-t border-gray-300 mt-4 pt-8">
 					<div className="flex flex-col md:flex-row justify-between items-center">
-						<p className="text-black text-sm">
+						<p className="text-white text-sm">
 							&copy; {currentYear} UBB Enterprise Health Check.{" "}
 							{t("footer.allRightsReserved")}
 						</p>
@@ -172,14 +172,14 @@ const Footer = () => {
 							<Link
 								to="/terms"
 								onClick={() => handleScrollToSection('terms')}
-								className="text-black hover:text-gray-800 text-sm transition-colors duration-200"
+								className="text-white hover:text-gray-800 text-sm transition-colors duration-200"
 							>
 								{t("footer.terms")}
 							</Link>
 							<Link
 								to="/privacy"
 								onClick={() => handleScrollToSection('privacy')}
-								className="text-black hover:text-gray-800 text-sm transition-colors duration-200"
+								className="text-white hover:text-gray-800 text-sm transition-colors duration-200"
 							>
 								{t("footer.privacy")}
 							</Link>

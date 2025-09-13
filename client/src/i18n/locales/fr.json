@@ -68,6 +68,94 @@
       "amber": "Zone Ambre", 
       "green": "Zone Verte"
     },
+    "scoreMessages": {
+      "developing": "Votre entreprise se développe mais a besoin de renforcement dans certains domaines.",
+      "excellent": "Excellente performance ! Votre entreprise est en excellente santé.",
+      "critical": "Attention ! Votre entreprise nécessite une attention immédiate dans plusieurs domaines."
+    },
+    "premiumReport2": {
+      "title": "Rapport Premium Disponible",
+      "description": "Pour des recommandations plus détaillées, un plan d'action personnalisé et un benchmarking sectoriel, consultez notre rapport premium."
+    },
+    "consultationModal": {
+      "title": "Consultation Premium UBB",
+      "unlockText": "Débloquez votre rapport premium avec :",
+      "features": {
+        "detailedAnalysis": "Analyse détaillée par pilier",
+        "sectorBenchmarking": "Benchmarking sectoriel",
+        "actionPlan": "Plan d'action personnalisé",
+        "expertConsultation": "Consultation avec nos experts"
+      },
+      "contactText": "Contactez-nous pour plus d'informations sur nos services premium.",
+      "close": "Fermer",
+      "contactUs": "Nous contacter"
+    },
+    "reportProgress": {
+      "title": "Génération de votre rapport",
+      "subtitle": "Création de votre rapport personnalisé...",
+      "steps": {
+        "preparing": {
+          "title": "Préparation du rapport",
+          "description": "Organisation de vos données..."
+        },
+        "generating": {
+          "title": "Génération PDF",
+          "description": "Création de votre rapport PDF..."
+        },
+        "sending": {
+          "title": "Envoi par email",
+          "description": "Envoi de votre rapport..."
+        },
+        "complete": {
+          "title": "Rapport envoyé !",
+          "description": "Vérifiez votre boîte email"
+        }
+      },
+      "error": {
+        "title": "Erreur de génération",
+        "message": "Une erreur est survenue lors de la génération du rapport.",
+        "retry": "Réessayer",
+        "close": "Fermer"
+      },
+      "status": {
+        "failed": "Échec",
+        "inProgress": "En cours...",
+        "completed": "Terminé"
+      }
+    },
+    "submissionProgress": {
+      "title": "Traitement de votre évaluation",
+      "subtitle": "Veuillez patienter pendant que nous analysons vos réponses...",
+      "steps": {
+        "validating": {
+          "title": "Validation des données",
+          "description": "Vérification de vos réponses..."
+        },
+        "calculating": {
+          "title": "Calcul des scores",
+          "description": "Analyse de vos réponses et calcul des scores..."
+        },
+        "generating": {
+          "title": "Génération du rapport",
+          "description": "Création de votre rapport personnalisé..."
+        },
+        "saving": {
+          "title": "Sauvegarde",
+          "description": "Enregistrement de votre évaluation..."
+        },
+        "complete": {
+          "title": "Terminé !",
+          "description": "Votre évaluation est prête !"
+        }
+      },
+      "error": {
+        "title": "Erreur de traitement",
+        "message": "Une erreur est survenue lors du traitement de votre évaluation.",
+        "retry": "Réessayer",
+        "reload": "Recharger la page"
+      },
+      "stepCounter": "Étape {current} sur {total}"
+    },
     "successModal": {
       "title": "Rapport généré avec succès !",
       "message": "Votre rapport détaillé a été généré et envoyé par email. Vous pouvez également le télécharger directement.",
@@ -78,7 +166,7 @@
   "landing": {
     "title": "UBB Enterprise Health Check",
     "subtitle": "Votre entreprise est-elle prête à grandir ?<br/>Effectuez cette évaluation gratuite de 10 minutes et découvrez le score de santé de votre entreprise",
-    "badge": "Gratuit • 10 minutes • Résultats instantanés",
+    "badge": "Gratuit • Résultats instantanés",
     "features": {
       "title": "Ce que vous obtiendrez :",
       "complete": "Évaluation Complète",

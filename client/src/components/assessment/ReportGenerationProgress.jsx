@@ -1,31 +1,34 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { CheckCircle, Clock, AlertCircle, Mail, FileText, Download } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 const ReportGenerationProgress = ({ isGenerating, error, onRetry }) => {
+  const { t } = useTranslation()
+  
   const steps = [
     {
       id: 'preparing',
-      title: 'Préparation du rapport',
-      description: 'Organisation de vos données...',
+      title: t('results.reportProgress.steps.preparing.title'),
+      description: t('results.reportProgress.steps.preparing.description'),
       icon: <FileText className="w-5 h-5" />
     },
     {
       id: 'generating',
-      title: 'Génération PDF',
-      description: 'Création de votre rapport PDF...',
+      title: t('results.reportProgress.steps.generating.title'),
+      description: t('results.reportProgress.steps.generating.description'),
       icon: <Download className="w-5 h-5" />
     },
     {
       id: 'sending',
-      title: 'Envoi par email',
-      description: 'Envoi de votre rapport...',
+      title: t('results.reportProgress.steps.sending.title'),
+      description: t('results.reportProgress.steps.sending.description'),
       icon: <Mail className="w-5 h-5" />
     },
     {
       id: 'complete',
-      title: 'Rapport envoyé !',
-      description: 'Vérifiez votre boîte email',
+      title: t('results.reportProgress.steps.complete.title'),
+      description: t('results.reportProgress.steps.complete.description'),
       icon: <CheckCircle className="w-5 h-5" />
     }
   ]
@@ -41,10 +44,10 @@ const ReportGenerationProgress = ({ isGenerating, error, onRetry }) => {
       >
         <div className="text-center mb-6">
           <h3 className="text-xl font-bold text-gray-900 mb-2">
-            Génération de votre rapport
+            {t('results.reportProgress.title')}
           </h3>
           <p className="text-gray-600 text-sm">
-            Création de votre rapport personnalisé...
+            {t('results.reportProgress.subtitle')}
           </p>
         </div>
 
@@ -138,9 +141,9 @@ const ReportGenerationProgress = ({ isGenerating, error, onRetry }) => {
             <div className="flex items-center space-x-3">
               <AlertCircle className="w-5 h-5 text-danger-500" />
               <div className="flex-1">
-                <h4 className="font-semibold text-danger-900">Erreur de génération</h4>
+                <h4 className="font-semibold text-danger-900">{t('results.reportProgress.error.title')}</h4>
                 <p className="text-sm text-danger-700 mt-1">
-                  {error.message || 'Une erreur est survenue lors de la génération du rapport.'}
+                  {error.message || t('results.reportProgress.error.message')}
                 </p>
               </div>
             </div>
@@ -149,13 +152,13 @@ const ReportGenerationProgress = ({ isGenerating, error, onRetry }) => {
                 onClick={onRetry}
                 className="btn-primary text-sm px-4 py-2"
               >
-                Réessayer
+                {t('results.reportProgress.error.retry')}
               </button>
               <button
                 onClick={() => window.location.reload()}
                 className="btn-outline text-sm px-4 py-2"
               >
-                Fermer
+                {t('results.reportProgress.error.close')}
               </button>
             </div>
           </motion.div>
@@ -173,7 +176,7 @@ const ReportGenerationProgress = ({ isGenerating, error, onRetry }) => {
             />
           </div>
           <p className="text-sm text-gray-500 mt-2">
-            {error ? 'Échec' : isGenerating ? 'En cours...' : 'Terminé'}
+            {error ? t('results.reportProgress.status.failed') : isGenerating ? t('results.reportProgress.status.inProgress') : t('results.reportProgress.status.completed')}
           </p>
         </div>
       </motion.div>

@@ -1,37 +1,40 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { CheckCircle, Clock, AlertCircle, Mail, FileText } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 const SubmissionProgress = ({ currentStep, error, onRetry }) => {
+  const { t } = useTranslation()
+  
   const steps = [
     {
       id: 'validating',
-      title: 'Validation des données',
-      description: 'Vérification de vos réponses...',
+      title: t('results.submissionProgress.steps.validating.title'),
+      description: t('results.submissionProgress.steps.validating.description'),
       icon: <Clock className="w-5 h-5" />
     },
     {
       id: 'calculating',
-      title: 'Calcul des scores',
-      description: 'Analyse de vos réponses et calcul des scores...',
+      title: t('results.submissionProgress.steps.calculating.title'),
+      description: t('results.submissionProgress.steps.calculating.description'),
       icon: <FileText className="w-5 h-5" />
     },
     {
       id: 'generating',
-      title: 'Génération du rapport',
-      description: 'Création de votre rapport personnalisé...',
+      title: t('results.submissionProgress.steps.generating.title'),
+      description: t('results.submissionProgress.steps.generating.description'),
       icon: <FileText className="w-5 h-5" />
     },
     {
       id: 'saving',
-      title: 'Sauvegarde',
-      description: 'Enregistrement de votre évaluation...',
+      title: t('results.submissionProgress.steps.saving.title'),
+      description: t('results.submissionProgress.steps.saving.description'),
       icon: <CheckCircle className="w-5 h-5" />
     },
     {
       id: 'complete',
-      title: 'Terminé !',
-      description: 'Votre évaluation est prête !',
+      title: t('results.submissionProgress.steps.complete.title'),
+      description: t('results.submissionProgress.steps.complete.description'),
       icon: <CheckCircle className="w-5 h-5" />
     }
   ]
@@ -65,10 +68,10 @@ const SubmissionProgress = ({ currentStep, error, onRetry }) => {
       >
         <div className="text-center mb-6">
           <h3 className="text-xl font-bold text-gray-900 mb-2">
-            Traitement de votre évaluation
+            {t('results.submissionProgress.title')}
           </h3>
           <p className="text-gray-600 text-sm">
-            Veuillez patienter pendant que nous analysons vos réponses...
+            {t('results.submissionProgress.subtitle')}
           </p>
         </div>
 
@@ -158,9 +161,9 @@ const SubmissionProgress = ({ currentStep, error, onRetry }) => {
             <div className="flex items-center space-x-3">
               <AlertCircle className="w-5 h-5 text-danger-500" />
               <div className="flex-1">
-                <h4 className="font-semibold text-danger-900">Erreur de traitement</h4>
+                <h4 className="font-semibold text-danger-900">{t('results.submissionProgress.error.title')}</h4>
                 <p className="text-sm text-danger-700 mt-1">
-                  {error.message || 'Une erreur est survenue lors du traitement de votre évaluation.'}
+                  {error.message || t('results.submissionProgress.error.message')}
                 </p>
               </div>
             </div>
@@ -169,13 +172,13 @@ const SubmissionProgress = ({ currentStep, error, onRetry }) => {
                 onClick={onRetry}
                 className="btn-primary text-sm px-4 py-2"
               >
-                Réessayer
+                {t('results.submissionProgress.error.retry')}
               </button>
               <button
                 onClick={() => window.location.reload()}
                 className="btn-outline text-sm px-4 py-2"
               >
-                Recharger la page
+                {t('results.submissionProgress.error.reload')}
               </button>
             </div>
           </motion.div>
@@ -193,7 +196,10 @@ const SubmissionProgress = ({ currentStep, error, onRetry }) => {
             />
           </div>
           <p className="text-xs text-gray-500 mt-1">
-            Étape {steps.findIndex(s => s.id === currentStep) + 1} sur {steps.length}
+            {t('results.submissionProgress.stepCounter', { 
+              current: steps.findIndex(s => s.id === currentStep) + 1, 
+              total: steps.length 
+            })}
           </p>
         </div>
       </motion.div>

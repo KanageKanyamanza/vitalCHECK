@@ -137,11 +137,10 @@ const RecommendationsList = ({ pillarScores }) => {
           <Target className="w-5 h-5 text-blue-600 mt-0.5" />
           <div>
             <h4 className="font-semibold text-blue-900 mb-2">
-              Rapport Premium Disponible
+              {t('results.premiumReport2.title')}
             </h4>
             <p className="text-blue-700 text-sm">
-              Pour des recommandations plus détaillées, un plan d'action personnalisé 
-              et un benchmarking sectoriel, consultez notre rapport premium.
+              {t('results.premiumReport2.description')}
             </p>
           </div>
         </div>

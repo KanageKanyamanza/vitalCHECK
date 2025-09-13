@@ -55,14 +55,14 @@ const Navbar = () => {
                   className="w-full h-full object-contain"
                 />
               </div>
-              <div className="flex flex-col">
+              {/* <div className="flex flex-col">
                 <span className="text-lg font-display font-bold ubb-gradient-text">
                   UBB
                 </span>
                 <span className="text-xs font-medium text-gray-600">
                   Enterprise Health Check
                 </span>
-              </div>
+              </div> */}
             </div>
           </div>
 

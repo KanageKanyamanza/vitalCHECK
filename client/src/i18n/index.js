@@ -18,7 +18,7 @@ i18n
     resources,
     fallbackLng: 'fr',
     lng: 'fr', // Langue par défaut
-    debug: process.env.NODE_ENV === 'development',
+    debug: import.meta.env.NODE_ENV === 'development',
     
     detection: {
       order: ['localStorage', 'navigator', 'htmlTag'],
