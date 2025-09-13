@@ -185,13 +185,13 @@ const ResultsPage = () => {
   const getOverallMessage = () => {
     switch (assessment.overallStatus) {
       case 'green':
-        return 'Félicitations ! Votre entreprise est en excellente santé et bien positionnée pour la croissance.'
+        return t('results.scoreMessages.excellent')
       case 'amber':
-        return 'Votre entreprise se développe mais a besoin de renforcement dans certains domaines.'
+        return t('results.scoreMessages.developing')
       case 'red':
-        return 'Votre entreprise fait face à des défis critiques qui nécessitent une attention immédiate.'
+        return t('results.scoreMessages.critical')
       default:
-        return 'Analyse en cours...'
+        return t('common.loading')
     }
   }
 
@@ -434,7 +434,7 @@ const ResultsPage = () => {
           <div className="bg-white rounded-xl shadow-2xl max-w-md w-full p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-xl font-bold text-gray-900">
-                Consultation Premium UBB
+                {t('results.consultationModal.title')}
               </h3>
               <button
                 onClick={() => setShowConsultationModal(false)}
@@ -448,37 +448,37 @@ const ResultsPage = () => {
             
             <div className="space-y-4">
               <p className="text-gray-600">
-                Débloquez votre rapport premium avec :
+                {t('results.consultationModal.unlockText')}
               </p>
               <ul className="space-y-2 text-sm text-gray-600">
                 <li className="flex items-center space-x-2">
                   <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>Analyse détaillée par pilier</span>
+                  <span>{t('results.consultationModal.features.detailedAnalysis')}</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>Benchmarking sectoriel</span>
+                  <span>{t('results.consultationModal.features.sectorBenchmarking')}</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>Plan d'action personnalisé</span>
+                  <span>{t('results.consultationModal.features.actionPlan')}</span>
                 </li>
                 <li className="flex items-center space-x-2">
                   <CheckCircle className="w-4 h-4 text-green-500" />
-                  <span>Consultation avec nos experts</span>
+                  <span>{t('results.consultationModal.features.expertConsultation')}</span>
                 </li>
               </ul>
               
               <div className="pt-4">
                 <p className="text-sm text-gray-500 mb-4">
-                  Contactez-nous pour plus d'informations sur nos services premium.
+                  {t('results.consultationModal.contactText')}
                 </p>
                 <div className="flex space-x-3">
                   <button
                     onClick={() => setShowConsultationModal(false)}
                     className="flex-1 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50"
                   >
-                    Fermer
+                    {t('results.consultationModal.close')}
                   </button>
                   <button
                     onClick={() => {
@@ -487,7 +487,7 @@ const ResultsPage = () => {
                     }}
                     className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
                   >
-                    Nous contacter
+                    {t('results.consultationModal.contactUs')}
                   </button>
                 </div>
               </div>

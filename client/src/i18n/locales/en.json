@@ -68,6 +68,94 @@
       "amber": "Amber Zone",
       "green": "Green Zone"
     },
+    "scoreMessages": {
+      "developing": "Your business is developing but needs strengthening in certain areas.",
+      "excellent": "Excellent performance! Your business is in excellent health.",
+      "critical": "Warning! Your business requires immediate attention in several areas."
+    },
+    "premiumReport2": {
+      "title": "Premium Report Available",
+      "description": "For more detailed recommendations, a personalized action plan and sector benchmarking, check out our premium report."
+    },
+    "consultationModal": {
+      "title": "UBB Premium Consultation",
+      "unlockText": "Unlock your premium report with:",
+      "features": {
+        "detailedAnalysis": "Detailed analysis by pillar",
+        "sectorBenchmarking": "Sector benchmarking",
+        "actionPlan": "Personalized action plan",
+        "expertConsultation": "Consultation with our experts"
+      },
+      "contactText": "Contact us for more information about our premium services.",
+      "close": "Close",
+      "contactUs": "Contact Us"
+    },
+    "reportProgress": {
+      "title": "Generating your report",
+      "subtitle": "Creating your personalized report...",
+      "steps": {
+        "preparing": {
+          "title": "Preparing report",
+          "description": "Organizing your data..."
+        },
+        "generating": {
+          "title": "PDF Generation",
+          "description": "Creating your PDF report..."
+        },
+        "sending": {
+          "title": "Email sending",
+          "description": "Sending your report..."
+        },
+        "complete": {
+          "title": "Report sent!",
+          "description": "Check your email inbox"
+        }
+      },
+      "error": {
+        "title": "Generation error",
+        "message": "An error occurred while generating the report.",
+        "retry": "Retry",
+        "close": "Close"
+      },
+      "status": {
+        "failed": "Failed",
+        "inProgress": "In progress...",
+        "completed": "Completed"
+      }
+    },
+    "submissionProgress": {
+      "title": "Processing your assessment",
+      "subtitle": "Please wait while we analyze your responses...",
+      "steps": {
+        "validating": {
+          "title": "Data validation",
+          "description": "Verifying your responses..."
+        },
+        "calculating": {
+          "title": "Score calculation",
+          "description": "Analyzing your responses and calculating scores..."
+        },
+        "generating": {
+          "title": "Report generation",
+          "description": "Creating your personalized report..."
+        },
+        "saving": {
+          "title": "Saving",
+          "description": "Saving your assessment..."
+        },
+        "complete": {
+          "title": "Complete!",
+          "description": "Your assessment is ready!"
+        }
+      },
+      "error": {
+        "title": "Processing error",
+        "message": "An error occurred while processing your assessment.",
+        "retry": "Retry",
+        "reload": "Reload page"
+      },
+      "stepCounter": "Step {current} of {total}"
+    },
     "successModal": {
       "title": "Report generated successfully!",
       "message": "Your detailed report has been generated and sent by email. You can also download it directly.",
@@ -78,7 +166,7 @@
   "landing": {
     "title": "UBB Enterprise Health Check",
     "subtitle": "Is your business fit to grow?<br/>Take this free 10-minute self-assessment and discover your company's health score",
-    "badge": "Free • 10 minutes • Instant results",
+    "badge": "Free • Instant results",
     "features": {
       "title": "What you'll get:",
       "complete": "Complete Assessment",
