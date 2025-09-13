@@ -1,0 +1,133 @@
+// Service Worker avec gestion des mises à jour
+const CACHE_NAME = 'ubb-health-check-v1.0.1'; // Incrémenter à chaque déploiement
+const urlsToCache = [
+  '/',
+  '/assessment',
+  '/results',
+  '/privacy',
+  '/terms',
+  '/icons/android-icon-192x192.png',
+  '/icons/android-icon-144x144.png',
+  '/icons/favicon.ico',
+  '/manifest.json'
+];
+
+// Installation du Service Worker
+self.addEventListener('install', (event) => {
+  console.log('Service Worker: Installation en cours...');
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) => {
+        console.log('Service Worker: Cache ouvert');
+        return cache.addAll(urlsToCache);
+      })
+      .then(() => {
+        // Forcer l'activation immédiate
+        return self.skipWaiting();
+      })
+  );
+});
+
+// Activation du Service Worker
+self.addEventListener('activate', (event) => {
+  console.log('Service Worker: Activation en cours...');
+  event.waitUntil(
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            console.log('Service Worker: Suppression de l\'ancien cache:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    }).then(() => {
+      // Prendre le contrôle de tous les clients
+      return self.clients.claim();
+    })
+  );
+});
+
+// Interception des requêtes avec stratégie "Network First"
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    fetch(event.request)
+      .then((response) => {
+        // Vérifier si la réponse est valide
+        if (!response || response.status !== 200 || response.type !== 'basic') {
+          return response;
+        }
+
+        // Cloner la réponse pour la mettre en cache
+        const responseToCache = response.clone();
+
+        caches.open(CACHE_NAME)
+          .then((cache) => {
+            cache.put(event.request, responseToCache);
+          });
+
+        return response;
+      })
+      .catch(() => {
+        // En cas d'erreur réseau, retourner depuis le cache
+        return caches.match(event.request)
+          .then((response) => {
+            if (response) {
+              return response;
+            }
+            // Si pas de cache, retourner la page d'accueil
+            if (event.request.destination === 'document') {
+              return caches.match('/');
+            }
+          });
+      })
+  );
+});
+
+// Gestion des messages pour les mises à jour
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
+// Gestion des notifications push
+self.addEventListener('push', (event) => {
+  const options = {
+    body: event.data ? event.data.text() : 'Nouvelle mise à jour disponible !',
+    icon: '/icons/android-icon-192x192.png',
+    badge: '/icons/android-icon-96x96.png',
+    vibrate: [100, 50, 100],
+    data: {
+      dateOfArrival: Date.now(),
+      primaryKey: 1
+    },
+    actions: [
+      {
+        action: 'update',
+        title: 'Mettre à jour',
+        icon: '/icons/android-icon-96x96.png'
+      },
+      {
+        action: 'close',
+        title: 'Plus tard',
+        icon: '/icons/android-icon-96x96.png'
+      }
+    ]
+  };
+
+  event.waitUntil(
+    self.registration.showNotification('UBB Enterprise Health Check', options)
+  );
+});
+
+// Gestion des clics sur les notifications
+self.addEventListener('notificationclick', (event) => {
+  event.notification.close();
+
+  if (event.action === 'update') {
+    event.waitUntil(
+      clients.openWindow('/?update=true')
+    );
+  }
+});
