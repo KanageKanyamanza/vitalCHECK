@@ -417,6 +417,12 @@
     "installButton": {
       "text": "Installer l'app",
       "ariaLabel": "Installer l'application UBB Enterprise Health Check"
+    },
+    "updateAvailable": {
+      "title": "Mise à jour disponible",
+      "message": "Une nouvelle version de l'application est disponible.",
+      "update": "Mettre à jour",
+      "dismiss": "Plus tard"
     }
   }
 }

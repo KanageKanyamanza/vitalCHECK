@@ -11,18 +11,33 @@ import { SplashScreen } from './components/layout'
 import { PingPongTest, LogoTest } from './components/test'
 import { AssessmentProvider } from './context/AssessmentContext'
 import { toastColors } from './utils/colors'
+import { usePWAUpdate } from './hooks/usePWAUpdate'
+import UpdateNotification from './components/ui/UpdateNotification'
 
 function App() {
   const [showSplash, setShowSplash] = useState(true)
+  const { updateAvailable, updateApp, checkForUpdate } = usePWAUpdate()
 
   const handleSplashComplete = () => {
     setShowSplash(false)
+  }
+
+  const handleUpdateDismiss = () => {
+    // Optionnel : masquer la notification temporairement
+    // Vous pouvez implémenter une logique pour ne pas la montrer pendant X minutes
   }
 
   return (
     <AssessmentProvider>
       <Router>
         <div className="min-h-screen bg-gray-50">
+          {/* Notification de mise à jour PWA */}
+          <UpdateNotification
+            isVisible={updateAvailable}
+            onUpdate={updateApp}
+            onDismiss={handleUpdateDismiss}
+          />
+          
           {showSplash && (
             <SplashScreen onLoadingComplete={handleSplashComplete} />
           )}

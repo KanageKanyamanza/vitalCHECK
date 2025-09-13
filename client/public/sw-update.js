@@ -1,4 +1,5 @@
-const CACHE_NAME = 'ubb-health-check-v1.0.1';
+// Service Worker avec gestion des mises à jour
+const CACHE_NAME = 'ubb-health-check-v1.0.1'; // Incrémenter à chaque déploiement
 const urlsToCache = [
   '/',
   '/assessment',
@@ -83,10 +84,17 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// Gestion des notifications push (optionnel)
+// Gestion des messages pour les mises à jour
+self.addEventListener('message', (event) => {
+  if (event.data && event.data.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
+// Gestion des notifications push
 self.addEventListener('push', (event) => {
   const options = {
-    body: event.data ? event.data.text() : 'Nouvelle notification UBB',
+    body: event.data ? event.data.text() : 'Nouvelle mise à jour disponible !',
     icon: '/icons/android-icon-192x192.png',
     badge: '/icons/android-icon-96x96.png',
     vibrate: [100, 50, 100],
@@ -96,13 +104,13 @@ self.addEventListener('push', (event) => {
     },
     actions: [
       {
-        action: 'explore',
-        title: 'Voir les détails',
+        action: 'update',
+        title: 'Mettre à jour',
         icon: '/icons/android-icon-96x96.png'
       },
       {
         action: 'close',
-        title: 'Fermer',
+        title: 'Plus tard',
         icon: '/icons/android-icon-96x96.png'
       }
     ]
@@ -117,16 +125,9 @@ self.addEventListener('push', (event) => {
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
 
-  if (event.action === 'explore') {
+  if (event.action === 'update') {
     event.waitUntil(
-      clients.openWindow('/')
+      clients.openWindow('/?update=true')
     );
-  }
-});
-
-// Gestion des messages pour les mises à jour
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
-    self.skipWaiting();
   }
 });
