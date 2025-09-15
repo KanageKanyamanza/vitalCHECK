@@ -68,7 +68,12 @@ const ResultsPage = () => {
         
         // Fallback: génération côté client
         try {
-          await generateClientPDF(assessment)
+          // Créer un objet assessment complet avec les données utilisateur
+          const fullAssessment = {
+            ...assessment,
+            user: user
+          };
+          await generateClientPDF(fullAssessment)
           setReportGenerated(true)
           setShowSuccessModal(true)
           toast.success('Rapport PDF généré avec succès !')
@@ -77,7 +82,11 @@ const ResultsPage = () => {
           console.warn('Client PDF generation failed, trying simple version:', clientError.message)
           
           // Dernier recours: PDF simple
-          await generateSimpleClientPDF(assessment)
+          const fullAssessment = {
+            ...assessment,
+            user: user
+          };
+          await generateSimpleClientPDF(fullAssessment)
           setReportGenerated(true)
           setShowSuccessModal(true)
           toast.success('Rapport PDF simple généré avec succès !')

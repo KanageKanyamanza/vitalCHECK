@@ -27,6 +27,17 @@ export const usePWAUpdate = () => {
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         window.location.reload()
       })
+
+      // Écouter les erreurs du service worker
+      navigator.serviceWorker.addEventListener('error', (event) => {
+        console.error('Erreur Service Worker:', event.error)
+        
+        // Si c'est l'erreur de cache POST, forcer la mise à jour
+        if (event.error && event.error.message.includes('Request method \'POST\' is unsupported')) {
+          console.log('Correction de l\'erreur de cache POST...')
+          reg.update()
+        }
+      })
     }
   }, [])
 

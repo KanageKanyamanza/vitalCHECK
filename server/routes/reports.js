@@ -70,6 +70,50 @@ router.post('/generate/:assessmentId', async (req, res) => {
   }
 });
 
+// Get report data (for client-side PDF generation)
+router.get('/:assessmentId', async (req, res) => {
+  try {
+    const assessment = await Assessment.findById(req.params.assessmentId)
+      .populate('user', 'companyName email sector companySize');
+
+    if (!assessment) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Assessment not found' 
+      });
+    }
+
+    res.json({
+      success: true,
+      data: {
+        assessment: {
+          _id: assessment._id,
+          overallScore: assessment.overallScore,
+          overallStatus: assessment.overallStatus,
+          completedAt: assessment.completedAt,
+          language: assessment.language,
+          answers: assessment.answers,
+          categoryScores: assessment.categoryScores,
+          recommendations: assessment.recommendations
+        },
+        user: {
+          companyName: assessment.user.companyName,
+          email: assessment.user.email,
+          sector: assessment.user.sector,
+          companySize: assessment.user.companySize
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error('Get report data error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error getting report data'
+    });
+  }
+});
+
 // Get report status
 router.get('/status/:assessmentId', async (req, res) => {
   try {
@@ -101,7 +145,7 @@ router.get('/status/:assessmentId', async (req, res) => {
 router.get('/download/:assessmentId', async (req, res) => {
   try {
     const assessment = await Assessment.findById(req.params.assessmentId)
-      .populate('user', 'companyName');
+      .populate('user', 'companyName email sector companySize');
 
     if (!assessment) {
       return res.status(404).json({ 
@@ -110,11 +154,38 @@ router.get('/download/:assessmentId', async (req, res) => {
       });
     }
 
+    // Si le PDF n'existe pas, le générer automatiquement
     if (!assessment.pdfBuffer) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'PDF report not found. Please generate the report first.' 
-      });
+      console.log('PDF not found, generating automatically...');
+      
+      try {
+        // Générer le PDF
+        let pdfBuffer;
+        try {
+          pdfBuffer = await generatePDFReport(assessment);
+          console.log('Complex PDF generation successful');
+        } catch (error) {
+          console.warn('Complex PDF generation failed, trying simple version:', error.message);
+          pdfBuffer = await generateSimplePDFReport(assessment);
+          console.log('Simple PDF generation successful');
+        }
+
+        // Convertir et sauvegarder
+        const pdfBufferForDB = Buffer.from(pdfBuffer);
+        assessment.pdfBuffer = pdfBufferForDB;
+        assessment.pdfGeneratedAt = new Date();
+        assessment.reportGenerated = true;
+        assessment.reportType = 'freemium';
+        await assessment.save();
+        
+        console.log('PDF generated and saved successfully');
+      } catch (genError) {
+        console.error('PDF generation error:', genError);
+        return res.status(500).json({
+          success: false,
+          message: 'Error generating PDF report'
+        });
+      }
     }
 
     // Set headers for PDF download
@@ -132,41 +203,6 @@ router.get('/download/:assessmentId', async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Error downloading PDF report'
-    });
-  }
-});
-
-// Get report status and info
-router.get('/status/:assessmentId', async (req, res) => {
-  try {
-    const assessment = await Assessment.findById(req.params.assessmentId)
-      .populate('user', 'companyName email');
-
-    if (!assessment) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Assessment not found' 
-      });
-    }
-
-    res.json({
-      success: true,
-      data: {
-        reportGenerated: assessment.reportGenerated,
-        reportType: assessment.reportType,
-        pdfGeneratedAt: assessment.pdfGeneratedAt,
-        hasPdfBuffer: !!assessment.pdfBuffer,
-        companyName: assessment.user.companyName,
-        overallScore: assessment.overallScore,
-        overallStatus: assessment.overallStatus
-      }
-    });
-
-  } catch (error) {
-    console.error('Report status error:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Error getting report status'
     });
   }
 });
