@@ -81,17 +81,28 @@ const SplashScreen = ({ onLoadingComplete }) => {
     }
   }, [fallingElements.length])
 
-  // Simulation du chargement avec ping-pong
+  // Simulation du chargement avec ping-pong et timeout
   useEffect(() => {
     const simulateLoading = async () => {
       try {
-        // Ping-pong avec le backend
-        const pingBackend = async () => {
+        // Ping-pong avec le backend avec timeout
+        const pingBackend = async (timeoutMs = 5000) => {
           try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/ping`)
+            const controller = new AbortController()
+            const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
+            
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/ping`, {
+              signal: controller.signal
+            })
+            
+            clearTimeout(timeoutId)
             return response.ok
           } catch (error) {
-            console.log('Backend not ready, continuing...')
+            if (error.name === 'AbortError') {
+              console.log('Backend ping timeout, continuing...')
+            } else {
+              console.log('Backend not ready, continuing...')
+            }
             return false
           }
         }
@@ -100,25 +111,22 @@ const SplashScreen = ({ onLoadingComplete }) => {
         for (let i = 0; i <= 100; i += 2) {
           setLoadingProgress(i)
           
-          // Ping le backend toutes les 20%
+          // Ping le backend toutes les 20% avec timeout de 1 seconde
           if (i % 20 === 0) {
-            await pingBackend()
+            await pingBackend(1000)
           }
           
           await new Promise(resolve => setTimeout(resolve, 100))
         }
 
-        // Attendre que le backend soit prêt
-        let backendReady = false
-        let attempts = 0
-        const maxAttempts = 10
-
-        while (!backendReady && attempts < maxAttempts) {
-          backendReady = await pingBackend()
-          if (!backendReady) {
-            await new Promise(resolve => setTimeout(resolve, 500))
-            attempts++
-          }
+        // Tentative finale avec timeout de 5 secondes maximum
+        console.log('Tentative finale de connexion au backend...')
+        const backendReady = await pingBackend(5000)
+        
+        if (backendReady) {
+          console.log('Backend connecté avec succès')
+        } else {
+          console.log('Backend non disponible, démarrage sans connexion')
         }
 
         setLoading(false)
