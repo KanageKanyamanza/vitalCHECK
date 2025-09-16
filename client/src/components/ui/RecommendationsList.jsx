@@ -85,7 +85,7 @@ const RecommendationsList = ({ pillarScores }) => {
   }
 
   return (
-    <div className="card">
+    <div className="rounded-lg p-4 bg-white shadow-lg border">
       <div className="flex items-center space-x-3 mb-6">
         <div className="w-10 h-10 bg-primary-100 rounded-lg flex items-center justify-center">
           <Lightbulb className="w-5 h-5 text-primary-600" />
@@ -95,16 +95,16 @@ const RecommendationsList = ({ pillarScores }) => {
         </h3>
       </div>
       
-      <div className="space-y-6">
+      <div className="sm:space-y-6 space-y-2">
         {pillarsWithRecommendations.map((pillar, index) => (
           <motion.div
             key={index}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: index * 0.1 }}
-            className={`p-6 border rounded-lg ${getStatusColor(pillar.status)}`}
+            className={`sm:p-6 p-2 border rounded-lg ${getStatusColor(pillar.status)}`}
           >
-            <div className="flex items-center space-x-3 mb-4">
+            <div className="flex items-center sm:space-x-3 space-x-1 mb-4">
               {getStatusIcon(pillar.status)}
               <h4 className="text-lg font-semibold text-gray-900">
                 {pillar.pillarName}
@@ -120,7 +120,7 @@ const RecommendationsList = ({ pillarScores }) => {
             
             <div className="space-y-3">
               {pillar.recommendations.slice(0, 2).map((recommendation, recIndex) => (
-                <div key={recIndex} className="flex items-start space-x-3">
+                <div key={recIndex} className="flex items-start sm:space-x-3 space-x-1">
                   <div className="w-2 h-2 bg-current rounded-full mt-2 opacity-60" />
                   <p className="text-gray-700 text-sm leading-relaxed">
                     {recommendation}
