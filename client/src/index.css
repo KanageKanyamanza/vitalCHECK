@@ -45,15 +45,15 @@
   }
   
   .status-red {
-    @apply bg-danger-100 text-danger-800;
+    @apply bg-red-500 text-white;
   }
   
   .status-amber {
-    @apply bg-warning-100 text-warning-800;
+    @apply bg-amber-500 text-white;
   }
   
   .status-green {
-    @apply bg-success-100 text-success-800;
+    @apply bg-green-500 text-white;
   }
   
   /* UBB Brand Components */

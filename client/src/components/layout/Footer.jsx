@@ -79,10 +79,7 @@ const Footer = () => {
 								/>
 							</div>
 							<div className="flex flex-col">
-								<span className="text-lg font-display font-bold text-white">
-									UBB
-								</span>
-								<span className="text-xs text-white font-medium">
+								<span className="text-white font-medium">
 									Enterprise Health Check
 								</span>
 							</div>

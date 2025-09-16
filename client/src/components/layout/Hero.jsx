@@ -24,17 +24,28 @@ const Hero = ({ onStartAssessment }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="md:text-7xl text-6xl font-display font-bold text-primary-500 mb-6"
+            className="md:text-7xl text-6xl font-display font-bold mb-6"
           >
-            {t('landing.title')}
+            <span className="text-primary-500">{t('landing.title1')}</span>
+            <br />
+            <span className="text-primary-500 ml-4">{t('landing.title2')}</span>
           </motion.h1>
           
           <motion.p 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-xl text-black mb-8 max-w-3xl px-2 mx-auto"
-            dangerouslySetInnerHTML={{ __html: t('landing.subtitle') }}
+            className="text-xl sm:text-3xl text-black mb-4 max-w-3xl px-2 mx-auto font-semibold"
+          >
+            {t('landing.subtitle1')}
+          </motion.p>
+          
+          <motion.p 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.3 }}
+            className="text-lg sm:text-2xl text-gray-600 mb-8 max-w-3xl px-2 mx-auto"
+            dangerouslySetInnerHTML={{ __html: t('landing.subtitle2') }}
           />
 
           <motion.div 

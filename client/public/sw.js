@@ -49,6 +49,16 @@ self.addEventListener('activate', (event) => {
 
 // Interception des requêtes avec stratégie "Network First"
 self.addEventListener('fetch', (event) => {
+  // Ne pas intercepter les requêtes vers l'API ou les requêtes POST
+  if (event.request.url.includes('/api/') || event.request.method !== 'GET') {
+    return;
+  }
+
+  // Ne pas intercepter les requêtes admin
+  if (event.request.url.includes('/admin/')) {
+    return;
+  }
+
   event.respondWith(
     fetch(event.request)
       .then((response) => {

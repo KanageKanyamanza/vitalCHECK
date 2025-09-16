@@ -1,7 +1,7 @@
 # Dockerfile pour Render.com avec Chrome
 FROM node:22-slim
 
-# Installer les dépendances système nécessaires pour Puppeteer
+# Installer les dépendances système nécessaires pour html-pdf-node (Chrome)
 RUN apt-get update && apt-get install -y \
     wget \
     gnupg \

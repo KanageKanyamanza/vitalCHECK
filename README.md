@@ -17,7 +17,7 @@ Une application web complète pour évaluer la santé d'entreprise avec la stack
 ### Backend (Node.js + Express + MongoDB)
 - **API REST** : Routes pour authentification, évaluations et rapports
 - **Modèles de Données** : User, Assessment avec relations
-- **Génération PDF** : Rapports automatiques avec Puppeteer
+- **Génération PDF** : Rapports automatiques avec html-pdf-node
 - **Envoi d'Emails** : Notifications avec rapports en pièce jointe
 - **Sécurité** : Helmet, CORS, Rate Limiting
 
@@ -90,7 +90,7 @@ EMAIL_USER=your-email@gmail.com
 EMAIL_PASS=your-app-password
 EMAIL_FROM=noreply@ubb.com
 
-CLIENT_URL=http://localhost:5173
+# Note: CORS configuration is now hardcoded in server/index.js
 ```
 
 #### Frontend (client/.env)

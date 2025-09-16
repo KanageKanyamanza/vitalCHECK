@@ -40,7 +40,7 @@ const PillarChart = ({ pillarScores }) => {
       className="h-80"
     >
       <ResponsiveContainer width="100%" height="100%">
-        <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+        <BarChart data={data} margin={{ top: 10, right: 30, left: -3, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke={chartColors.grid} />
           <XAxis 
             dataKey="name" 
@@ -55,6 +55,7 @@ const PillarChart = ({ pillarScores }) => {
             tickLine={false}
             axisLine={false}
             domain={[0, 100]}
+            width={30}
           />
           <Tooltip content={<CustomTooltip />} />
           <Bar 
