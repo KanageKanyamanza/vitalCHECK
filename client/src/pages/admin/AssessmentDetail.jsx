@@ -24,7 +24,9 @@ const AssessmentDetail = () => {
   console.log('AssessmentDetail - assessmentId from params:', assessmentId); // Debug
   
   // Utilisation du hook API
+  console.log('About to call useAdminApi'); // Debug
   const { loading, getAssessment } = useAdminApi();
+  console.log('useAdminApi called successfully'); // Debug
 
   useEffect(() => {
     console.log('AssessmentDetail mounted, assessmentId:', assessmentId); // Debug

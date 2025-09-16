@@ -15,6 +15,12 @@ import { useAdminApi } from '../../hooks/useAdminApi';
 const ReportsPage = () => {
   const [reports, setReports] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    totalAssessments: 0,
+    averageScore: 0,
+    totalCompanies: 0
+  });
   const [dateRange, setDateRange] = useState({
     from: '',
     to: ''
@@ -22,6 +28,32 @@ const ReportsPage = () => {
   
   // Utilisation du hook API
   const { getStats, exportUsers } = useAdminApi();
+
+  // Charger les statistiques au montage du composant
+  useEffect(() => {
+    fetchStats();
+  }, []);
+
+  const fetchStats = async () => {
+    try {
+      console.log('Fetching stats...'); // Debug
+      const data = await getStats();
+      console.log('Stats data received:', data); // Debug
+      
+      // Extraire les données de l'objet stats
+      const statsData = data.stats || {};
+      setStats({
+        totalUsers: statsData.totalUsers || 0,
+        totalAssessments: statsData.totalAssessments || 0,
+        averageScore: statsData.scoreStats && statsData.scoreStats.length > 0 
+          ? Math.round(statsData.scoreStats.reduce((sum, stat) => sum + stat.avgScore, 0) / statsData.scoreStats.length)
+          : 0,
+        totalCompanies: statsData.totalUsers || 0 // Pour l'instant, on utilise le nombre d'utilisateurs
+      });
+    } catch (error) {
+      console.error('Fetch stats error:', error);
+    }
+  };
 
   const handleGenerateReport = async (type) => {
     try {
@@ -171,22 +203,22 @@ const ReportsPage = () => {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               <div className="text-center p-4 bg-primary-50 rounded-lg">
                 <Users className="h-8 w-8 text-primary-600 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-primary-600">-</div>
+                <div className="text-2xl font-bold text-primary-600">{stats.totalUsers}</div>
                 <div className="text-sm text-gray-600">Utilisateurs</div>
               </div>
               <div className="text-center p-4 bg-accent-50 rounded-lg">
                 <FileText className="h-8 w-8 text-accent-600 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-accent-600">-</div>
+                <div className="text-2xl font-bold text-accent-600">{stats.totalAssessments}</div>
                 <div className="text-sm text-gray-600">Évaluations</div>
               </div>
               <div className="text-center p-4 bg-success-50 rounded-lg">
                 <TrendingUp className="h-8 w-8 text-success-600 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-success-600">-</div>
+                <div className="text-2xl font-bold text-success-600">{stats.averageScore}%</div>
                 <div className="text-sm text-gray-600">Score Moyen</div>
               </div>
               <div className="text-center p-4 bg-warning-50 rounded-lg">
                 <Building2 className="h-8 w-8 text-warning-600 mx-auto mb-2" />
-                <div className="text-2xl font-bold text-warning-600">-</div>
+                <div className="text-2xl font-bold text-warning-600">{stats.totalCompanies}</div>
                 <div className="text-sm text-gray-600">Entreprises</div>
               </div>
             </div>
