@@ -10,7 +10,7 @@ const app = express();
 // Security middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: process.env.CLIENT_URL || ['http://localhost:5173',"https://ubb-enterprise-health-check-43lryld5y-roll-haurlys-projects.vercel.app"]
   credentials: true
 }));
 
