@@ -164,8 +164,10 @@
     }
   },
   "landing": {
-    "title": "UBB Enterprise Health Check",
-    "subtitle": "Is your business fit to grow?<br/>Take this free 10-minute self-assessment and discover your company's health score",
+    "title1": "UBB",
+    "title2": "Enterprise Health Check",
+    "subtitle1": "Is your business fit to grow?",
+    "subtitle2": "Take this <span class='text-green-500 font-bold uppercase'>FREE</span> 10-minute self-assessment and discover your company's health score",
     "badge": "Free • Instant results",
     "features": {
       "title": "What you'll get:",

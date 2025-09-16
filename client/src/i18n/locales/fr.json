@@ -164,8 +164,10 @@
     }
   },
   "landing": {
-    "title": "UBB Enterprise Health Check",
-    "subtitle": "Votre entreprise est-elle prête à grandir ?<br/>Effectuez cette évaluation gratuite de 10 minutes et découvrez le score de santé de votre entreprise",
+    "title1": "UBB",
+    "title2": "Enterprise Health Check",
+    "subtitle1": "Votre entreprise est-elle prête à grandir ?",
+    "subtitle2": "Effectuez cette évaluation <span class='text-green-500 font-bold uppercase'>GRATUITE</span> de 10 minutes et découvrez le score de santé de votre entreprise",
     "badge": "Gratuit • Résultats instantanés",
     "features": {
       "title": "Ce que vous obtiendrez :",
