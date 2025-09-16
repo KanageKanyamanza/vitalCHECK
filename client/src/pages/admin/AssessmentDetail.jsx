@@ -21,7 +21,7 @@ const AssessmentDetail = () => {
   const { assessmentId } = useParams();
   
   // Utilisation du hook API
-  const { loading, getAssessment } = useAdminApi();
+  const { loading, getAssessment, deleteAssessment } = useAdminApi();
 
   useEffect(() => {
     fetchAssessment();
@@ -43,15 +43,7 @@ const AssessmentDetail = () => {
     }
 
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await fetch(`/api/admin/assessments/${assessmentId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      const data = await response.json();
+      const data = await deleteAssessment(assessmentId);
 
       if (data.success) {
         toast.success('Évaluation supprimée avec succès');

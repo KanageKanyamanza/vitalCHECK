@@ -21,7 +21,7 @@ const UserDetail = () => {
   const { userId } = useParams();
   
   // Utilisation du hook API
-  const { loading, getUser } = useAdminApi();
+  const { loading, getUser, deleteUser } = useAdminApi();
 
   useEffect(() => {
     fetchUser();
@@ -52,15 +52,7 @@ const UserDetail = () => {
     }
 
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await fetch(`/api/admin/users/${userId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      const data = await response.json();
+      const data = await deleteUser(userId);
 
       if (data.success) {
         toast.success('Utilisateur supprimé avec succès');

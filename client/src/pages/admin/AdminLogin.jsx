@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import { Eye, EyeOff, Lock, Mail, Building2, ArrowLeft, Shield } from 'lucide-react';
 import Logo from '../../assets/Logo.png';
+import { adminApiService } from '../../services/api';
 
 const AdminLogin = () => {
   const [formData, setFormData] = useState({
@@ -25,15 +26,8 @@ const AdminLogin = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('/api/admin/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
+      const response = await adminApiService.login(formData);
+      const data = response.data;
 
       if (data.success) {
         localStorage.setItem('adminToken', data.token);
@@ -45,7 +39,11 @@ const AdminLogin = () => {
       }
     } catch (error) {
       console.error('Login error:', error);
-      toast.error('Erreur de connexion au serveur');
+      if (error.response && error.response.data && error.response.data.message) {
+        toast.error(error.response.data.message);
+      } else {
+        toast.error('Erreur de connexion au serveur');
+      }
     } finally {
       setLoading(false);
     }
