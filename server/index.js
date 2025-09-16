@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
 const rateLimit = require("express-rate-limit");
+const { initAdmin } = require("./scripts/init-admin");
 require("dotenv").config();
 
 const app = express();
@@ -96,8 +97,12 @@ mongoose
 	.connect(
 		process.env.MONGODB_URI || "mongodb://localhost:27017/ubb-health-check"
 	)
-	.then(() => {
+	.then(async () => {
 		console.log("Connected to MongoDB");
+		
+		// Initialiser l'admin au démarrage
+		await initAdmin();
+		
 		const PORT = process.env.PORT || 5000;
 		app.listen(PORT, () => {
 			console.log(`Server running on port ${PORT}`);
