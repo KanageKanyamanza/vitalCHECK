@@ -10,11 +10,13 @@ export const useAdminApi = () => {
 
   // Fonction générique pour exécuter les requêtes avec retry et cache
   const executeRequest = useCallback(async (requestFunction, retryCount = 0, cacheKey = null) => {
+    console.log('executeRequest called with cacheKey:', cacheKey); // Debug
     try {
       // Vérifier le cache si une clé est fournie
       if (cacheKey && requestCache.current.has(cacheKey)) {
         const cached = requestCache.current.get(cacheKey);
         if (Date.now() - cached.timestamp < 30000) { // Cache valide 30 secondes
+          console.log('Returning cached data'); // Debug
           return cached.data;
         }
       }
@@ -30,7 +32,9 @@ export const useAdminApi = () => {
       setLoading(true);
       setError(null);
       
+      console.log('Making API request...'); // Debug
       const response = await requestFunction();
+      console.log('API response received:', response); // Debug
       const data = response.data;
 
       // Mettre en cache si une clé est fournie
@@ -41,6 +45,7 @@ export const useAdminApi = () => {
         });
       }
 
+      console.log('Returning data:', data); // Debug
       return data;
     } catch (err) {
       // Gestion du rate limiting avec retry automatique (max 2 tentatives)
@@ -89,6 +94,7 @@ export const useAdminApi = () => {
   }, [executeRequest]);
 
   const getAssessment = useCallback(async (assessmentId) => {
+    console.log('useAdminApi.getAssessment called with:', assessmentId); // Debug
     const cacheKey = `assessment-${assessmentId}`;
     return executeRequest(() => adminApiService.getAssessment(assessmentId), 0, cacheKey);
   }, [executeRequest]);
