@@ -36,9 +36,7 @@ const ReportsPage = () => {
 
   const fetchStats = async () => {
     try {
-      console.log('Fetching stats...'); // Debug
       const data = await getStats();
-      console.log('Stats data received:', data); // Debug
       
       // Extraire les données de l'objet stats
       const statsData = data.stats || {};
@@ -200,7 +198,7 @@ const ReportsPage = () => {
             <h3 className="text-lg font-semibold text-gray-900 mb-4">
               Statistiques Rapides
             </h3>
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center p-4 bg-primary-50 rounded-lg">
                 <Users className="h-8 w-8 text-primary-600 mx-auto mb-2" />
                 <div className="text-2xl font-bold text-primary-600">{stats.totalUsers}</div>

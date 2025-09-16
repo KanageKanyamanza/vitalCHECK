@@ -95,8 +95,6 @@ router.post('/submit', [
 
     // Calculate scores
     const { pillarScores, overallScore, overallStatus } = calculateScores(answers, selectedQuestions);
-    
-    console.log('Calculated scores:', { pillarScores, overallScore, overallStatus }); // Debug
 
     // Generate recommendations
     const recommendations = generateRecommendations(pillarScores, selectedQuestions);

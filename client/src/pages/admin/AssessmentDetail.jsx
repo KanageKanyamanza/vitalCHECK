@@ -16,29 +16,20 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import { useAdminApi } from '../../hooks/useAdminApi';
 
 const AssessmentDetail = () => {
-  console.log('AssessmentDetail component rendering'); // Debug
   const [assessment, setAssessment] = useState(null);
   const navigate = useNavigate();
   const { assessmentId } = useParams();
   
-  console.log('AssessmentDetail - assessmentId from params:', assessmentId); // Debug
-  
   // Utilisation du hook API
-  console.log('About to call useAdminApi'); // Debug
   const { loading, getAssessment } = useAdminApi();
-  console.log('useAdminApi called successfully'); // Debug
 
   useEffect(() => {
-    console.log('AssessmentDetail mounted, assessmentId:', assessmentId); // Debug
     fetchAssessment();
   }, [assessmentId]);
 
   const fetchAssessment = async () => {
-    console.log('fetchAssessment called with assessmentId:', assessmentId); // Debug
     try {
-      console.log('Calling getAssessment...'); // Debug
       const data = await getAssessment(assessmentId);
-      console.log('Assessment data received:', data); // Debug
       setAssessment(data.assessment);
     } catch (error) {
       console.error('Fetch assessment error:', error);

@@ -51,15 +51,7 @@ const AdminApp = () => {
       <Route 
         path="/assessments/:assessmentId" 
         element={
-          isAuthenticated() ? (() => {
-            console.log('AdminApp: Rendering AssessmentDetail route'); // Debug
-            try {
-              return <AssessmentDetail />;
-            } catch (error) {
-              console.error('Error rendering AssessmentDetail:', error);
-              return <div>Erreur lors du chargement de AssessmentDetail: {error.message}</div>;
-            }
-          })() : <Navigate to="/admin/login" replace />
+          isAuthenticated() ? <AssessmentDetail /> : <Navigate to="/admin/login" replace />
         } 
       />
       <Route 
