@@ -11,13 +11,27 @@ const app = express();
 app.use(helmet());
 app.use(
 	cors({
-		origin: [
-			"http://localhost:5173",
-			"https://ubb-enterprise-health-check.vercel.app",
-			"https://ubb-enterprise-health-check-43lryld5y-roll-haurlys-projects.vercel.app",
-			"https://ubb-enterprise-health-check-git-feedback-roll-haurlys-projects.vercel.app",
-		],
+		origin: function (origin, callback) {
+			// Autoriser les requêtes sans origine (ex: mobile apps, Postman)
+			if (!origin) return callback(null, true);
+			
+			const allowedOrigins = [
+				"http://localhost:5173",
+				"https://ubb-enterprise-health-check.vercel.app",
+				"https://ubb-enterprise-health-check-git-feedback-roll-haurlys-projects.vercel.app",
+				"https://ubb-enterprise-health-check-43lryld5y-roll-haurlys-projects.vercel.app",
+			];
+			
+			// Vérifier si l'origine est autorisée ou si c'est une URL Vercel
+			if (allowedOrigins.includes(origin) || origin.includes('vercel.app')) {
+				return callback(null, true);
+			}
+			
+			callback(new Error('Non autorisé par CORS'));
+		},
 		credentials: true,
+		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+		allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
 	})
 );
 
@@ -55,7 +69,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authLimiter, require("./routes/auth"));
 app.use("/api/assessments", require("./routes/assessments"));
 app.use("/api/reports", require("./routes/reports"));
-app.use("/api/admin", require("./routes/admin"));
+app.use("/api/admin", authLimiter, require("./routes/admin"));
 app.use("/api", require("./routes/ping"));
 
 // Health check endpoint
