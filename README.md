@@ -90,7 +90,7 @@ EMAIL_USER=your-email@gmail.com
 EMAIL_PASS=your-app-password
 EMAIL_FROM=noreply@ubb.com
 
-CLIENT_URL=http://localhost:5173
+# Note: CORS configuration is now hardcoded in server/index.js
 ```
 
 #### Frontend (client/.env)
