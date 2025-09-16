@@ -7,33 +7,18 @@ echo "🚀 Starting build process..."
 echo "📦 Installing Node.js dependencies..."
 npm install
 
-# Installer Chrome pour Puppeteer (via Puppeteer lui-même)
-echo "🌐 Installing Chrome for Puppeteer..."
-npx puppeteer browsers install chrome
+# html-pdf-node gère automatiquement Chrome via Puppeteer
+echo "📄 html-pdf-node will handle Chrome installation automatically"
+echo "ℹ️  No manual Chrome setup required for PDF generation"
 
-# Vérifier l'installation
-echo "✅ Chrome installation completed"
-echo "Chrome cache location: /opt/render/.cache/puppeteer"
+# Vérifier que les dépendances sont installées
+echo "✅ Dependencies installed successfully"
 
-# Vérifier que Chrome est accessible
-if command -v google-chrome-stable &> /dev/null; then
-    echo "✅ System Chrome found: $(google-chrome-stable --version)"
+# Vérifier que html-pdf-node est disponible
+if npm list html-pdf-node &> /dev/null; then
+    echo "✅ html-pdf-node is available for PDF generation"
 else
-    echo "ℹ️  System Chrome not found, will use Puppeteer Chrome"
-fi
-
-# Créer un lien symbolique pour faciliter l'accès
-if [ -d "/opt/render/.cache/puppeteer" ]; then
-    echo "🔗 Setting up Chrome access..."
-    # Trouver le chemin exact de Chrome
-    CHROME_PATH=$(find /opt/render/.cache/puppeteer -name "chrome" -type f 2>/dev/null | head -1)
-    if [ -n "$CHROME_PATH" ]; then
-        echo "Found Chrome at: $CHROME_PATH"
-        # Créer un répertoire accessible
-        mkdir -p /tmp/chrome
-        ln -sf "$CHROME_PATH" /tmp/chrome/chrome 2>/dev/null || true
-        echo "Chrome accessible at: /tmp/chrome/chrome"
-    fi
+    echo "❌ html-pdf-node not found, PDF generation may not work"
 fi
 
 echo "🎉 Build completed successfully!"
