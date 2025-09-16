@@ -73,15 +73,7 @@ const AssessmentManagement = () => {
     }
 
     try {
-      const token = localStorage.getItem('adminToken');
-      const response = await fetch(`/api/admin/assessments/${assessmentId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`,
-        },
-      });
-
-      const data = await response.json();
+      const data = await deleteAssessment(assessmentId);
 
       if (data.success) {
         toast.success('Évaluation supprimée avec succès');
