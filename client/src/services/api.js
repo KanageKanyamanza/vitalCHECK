@@ -2,7 +2,16 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
 // Configuration de base d'Axios
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const getApiBaseUrl = () => {
+  // En production, utiliser l'URL du serveur backend
+  if (import.meta.env.PROD) {
+    return 'https://ubb-enterprise-health-check.onrender.com/api';
+  }
+  // En développement, utiliser l'URL locale ou celle définie dans .env
+  return import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 // Instance Axios principale
 const api = axios.create({
