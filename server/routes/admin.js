@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin');
 const User = require('../models/User');
 const Assessment = require('../models/Assessment');
+const Notification = require('../models/Notification');
 const { sendEmail } = require('../utils/emailService');
 const router = express.Router();
 
@@ -113,49 +114,87 @@ router.post('/login', [
   }
 });
 
-// Obtenir les notifications (nouveaux questionnaires)
+// Obtenir les notifications
 router.get('/notifications', authenticateAdmin, async (req, res) => {
   try {
-    // Récupérer les évaluations des dernières 24h
-    const last24Hours = new Date(Date.now() - 24 * 60 * 60 * 1000);
+    const { limit = 20, offset = 0 } = req.query;
     
-    const recentAssessments = await Assessment.find({
-      completedAt: { $gte: last24Hours }
-    })
-    .populate('user', 'companyName email sector companySize')
-    .sort({ completedAt: -1 })
-    .limit(10);
+    const notifications = await Notification.find()
+      .sort({ createdAt: -1 })
+      .limit(parseInt(limit))
+      .skip(parseInt(offset));
 
-    const notifications = recentAssessments.map(assessment => ({
-      id: assessment._id,
-      type: 'new_assessment',
-      title: 'Nouvelle évaluation complétée',
-      message: `${assessment.user.companyName} a complété son évaluation`,
-      user: {
-        id: assessment.user._id,
-        name: assessment.user.companyName,
-        email: assessment.user.email,
-        sector: assessment.user.sector,
-        companySize: assessment.user.companySize
-      },
-      assessment: {
-        id: assessment._id,
-        score: assessment.overallScore,
-        status: assessment.overallStatus,
-        completedAt: assessment.completedAt
-      },
-      createdAt: assessment.completedAt,
-      read: false
-    }));
+    const unreadCount = await Notification.countDocuments({ read: false });
 
     res.json({
       success: true,
       notifications,
-      count: notifications.length
+      count: notifications.length,
+      unreadCount
     });
 
   } catch (error) {
     console.error('Get notifications error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur' 
+    });
+  }
+});
+
+// Marquer une notification comme lue
+router.put('/notifications/:id/read', authenticateAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    const notification = await Notification.findByIdAndUpdate(
+      id,
+      { 
+        read: true,
+        readAt: new Date()
+      },
+      { new: true }
+    );
+
+    if (!notification) {
+      return res.status(404).json({
+        success: false,
+        message: 'Notification non trouvée'
+      });
+    }
+
+    res.json({
+      success: true,
+      notification
+    });
+
+  } catch (error) {
+    console.error('Mark notification as read error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur' 
+    });
+  }
+});
+
+// Marquer toutes les notifications comme lues
+router.put('/notifications/read-all', authenticateAdmin, async (req, res) => {
+  try {
+    const result = await Notification.updateMany(
+      { read: false },
+      { 
+        read: true,
+        readAt: new Date()
+      }
+    );
+
+    res.json({
+      success: true,
+      updatedCount: result.modifiedCount
+    });
+
+  } catch (error) {
+    console.error('Mark all notifications as read error:', error);
     res.status(500).json({ 
       success: false, 
       message: 'Erreur serveur' 

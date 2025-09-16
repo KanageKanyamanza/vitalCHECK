@@ -153,6 +153,18 @@ export const useAdminApi = () => {
     return executeRequest(() => adminApiService.getNotifications(), 0, cacheKey);
   }, [executeRequest]);
 
+  const markNotificationAsRead = useCallback(async (notificationId) => {
+    // Invalider le cache des notifications
+    requestCache.current.delete('notifications');
+    return executeRequest(() => adminApiService.markNotificationAsRead(notificationId));
+  }, [executeRequest]);
+
+  const markAllNotificationsAsRead = useCallback(async () => {
+    // Invalider le cache des notifications
+    requestCache.current.delete('notifications');
+    return executeRequest(() => adminApiService.markAllNotificationsAsRead());
+  }, [executeRequest]);
+
   // Fonction pour vider le cache
   const clearCache = useCallback(() => {
     requestCache.current.clear();
@@ -179,6 +191,8 @@ export const useAdminApi = () => {
     exportUsers,
     // Notifications
     getNotifications,
+    markNotificationAsRead,
+    markAllNotificationsAsRead,
     // Cache
     clearCache,
   };

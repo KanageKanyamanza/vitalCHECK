@@ -153,8 +153,10 @@ export const adminApiService = {
       responseType: 'blob',
     }),
     
-    // Notifications
-    getNotifications: () => adminApi.get('/admin/notifications'),
+  // Notifications
+  getNotifications: () => adminApi.get('/admin/notifications'),
+  markNotificationAsRead: (notificationId) => adminApi.put(`/admin/notifications/${notificationId}/read`),
+  markAllNotificationsAsRead: () => adminApi.put('/admin/notifications/read-all'),
 };
 
 // Fonction utilitaire pour gérer les erreurs de rate limiting

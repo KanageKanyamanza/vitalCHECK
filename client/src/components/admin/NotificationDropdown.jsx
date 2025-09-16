@@ -10,7 +10,7 @@ const NotificationDropdown = () => {
   const [backgroundLoading, setBackgroundLoading] = useState(false);
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
-  const { getNotifications } = useAdminApi();
+  const { getNotifications, markNotificationAsRead, markAllNotificationsAsRead } = useAdminApi();
 
   // Fermer le dropdown quand on clique à l'extérieur
   useEffect(() => {
@@ -84,17 +84,34 @@ const NotificationDropdown = () => {
   };
 
   // Gérer le clic sur une notification
-  const handleNotificationClick = (notification) => {
-    // Marquer la notification comme lue
-    setNotifications(prevNotifications => 
-      prevNotifications.map(n => 
-        n.id === notification.id ? { ...n, read: true } : n
-      )
-    );
-    
-    setIsOpen(false);
-    // Naviguer vers les détails de l'évaluation
-    navigate(`/admin/assessments/${notification.assessment.id}`);
+  const handleNotificationClick = async (notification) => {
+    try {
+      // Marquer la notification comme lue côté serveur
+      if (!notification.read) {
+        await markNotificationAsRead(notification.id);
+      }
+      
+      // Mettre à jour l'état local
+      setNotifications(prevNotifications => 
+        prevNotifications.map(n => 
+          n.id === notification.id ? { ...n, read: true } : n
+        )
+      );
+      
+      setIsOpen(false);
+      // Naviguer vers les détails de l'évaluation
+      navigate(`/admin/assessments/${notification.assessment.id}`);
+    } catch (error) {
+      console.error('Erreur lors du marquage de la notification:', error);
+      // Mettre à jour l'état local même en cas d'erreur
+      setNotifications(prevNotifications => 
+        prevNotifications.map(n => 
+          n.id === notification.id ? { ...n, read: true } : n
+        )
+      );
+      setIsOpen(false);
+      navigate(`/admin/assessments/${notification.assessment.id}`);
+    }
   };
 
   // Gérer le clic sur le bouton de notification
@@ -103,10 +120,19 @@ const NotificationDropdown = () => {
   };
 
   // Marquer toutes les notifications comme lues
-  const markAllAsRead = () => {
-    setNotifications(prevNotifications => 
-      prevNotifications.map(n => ({ ...n, read: true }))
-    );
+  const markAllAsRead = async () => {
+    try {
+      await markAllNotificationsAsRead();
+      setNotifications(prevNotifications => 
+        prevNotifications.map(n => ({ ...n, read: true }))
+      );
+    } catch (error) {
+      console.error('Erreur lors du marquage de toutes les notifications:', error);
+      // Mettre à jour l'état local même en cas d'erreur
+      setNotifications(prevNotifications => 
+        prevNotifications.map(n => ({ ...n, read: true }))
+      );
+    }
   };
 
   const unreadCount = notifications.filter(n => !n.read).length;
@@ -132,7 +158,7 @@ const NotificationDropdown = () => {
 
       {/* Dropdown des notifications */}
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-lg border border-gray-200 z-50">
+        <div className="absolute sm:right-0 -right-6 mt-2 w-80 max-w-[calc(100vw-2rem)] bg-white rounded-lg shadow-lg border border-gray-200 z-50">
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900">Notifications</h3>

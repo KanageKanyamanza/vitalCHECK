@@ -2,6 +2,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const User = require('../models/User');
 const Assessment = require('../models/Assessment');
+const Notification = require('../models/Notification');
 const questionsData = require('../data/questions');
 const questionsDataFR = require('../data/questions-fr');
 const { calculateScores, generateRecommendations } = require('../utils/scoring');
@@ -119,6 +120,34 @@ router.post('/submit', [
     // Update user with assessment reference
     user.assessments.push(assessment._id);
     await user.save();
+
+    // Create notification for admin
+    try {
+      const notification = new Notification({
+        type: 'new_assessment',
+        title: 'Nouvelle évaluation complétée',
+        message: `${user.companyName} a complété son évaluation`,
+        user: {
+          id: user._id,
+          name: user.companyName,
+          email: user.email,
+          sector: user.sector,
+          companySize: user.companySize
+        },
+        assessment: {
+          id: assessment._id,
+          score: overallScore,
+          status: overallStatus,
+          completedAt: assessment.completedAt
+        },
+        read: false
+      });
+      
+      await notification.save();
+    } catch (notificationError) {
+      console.error('Erreur lors de la création de la notification:', notificationError);
+      // Ne pas faire échouer la soumission pour une erreur de notification
+    }
 
     res.status(201).json({
       success: true,
