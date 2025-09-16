@@ -30,6 +30,7 @@ const AssessmentDetail = () => {
   const fetchAssessment = async () => {
     try {
       const data = await getAssessment(assessmentId);
+      console.log('Assessment data:', data); // Debug
       setAssessment(data.assessment);
     } catch (error) {
       console.error('Fetch assessment error:', error);
@@ -128,12 +129,12 @@ const AssessmentDetail = () => {
 
   return (
     <AdminLayout>
-      <div className="">
+      <div className="pb-10">
       {/* Header */}
       <div className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap justify-between items-center py-6">
-            <div className="flex items-center md:w-auto w-full mb-4 md:mb-0">
+            <div className="flex flex-col sm:flex-row sm:items-center md:w-auto w-full mb-4 md:mb-0">
               <button
                 onClick={() => navigate('/admin/assessments')}
                 className="mr-4 p-2 text-gray-400 hover:text-gray-600"
@@ -211,25 +212,31 @@ const AssessmentDetail = () => {
           <div className="bg-white shadow rounded-lg p-6">
             <h3 className="text-lg font-medium text-gray-900 mb-4">Score global</h3>
             <div className="text-center">
-              <div className={`text-4xl font-bold ${getScoreColor(assessment.overallScore)}`}>
-                {assessment.overallScore}%
-              </div>
-              <div className="mt-2">
-                <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(assessment.overallStatus)}`}>
-                  {getStatusText(assessment.overallStatus)}
-                </span>
-              </div>
-              <div className="mt-4">
-                <div className="w-full bg-gray-200 rounded-full h-3">
-                  <div
-                    className={`h-3 rounded-full ${
-                      assessment.overallStatus === 'green' ? 'bg-green-500' :
-                      assessment.overallStatus === 'amber' ? 'bg-yellow-500' : 'bg-red-500'
-                    }`}
-                    style={{ width: `${assessment.overallScore}%` }}
-                  ></div>
-                </div>
-              </div>
+              {assessment.overallScore !== undefined ? (
+                <>
+                  <div className={`text-4xl font-bold ${getScoreColor(assessment.overallScore)}`}>
+                    {assessment.overallScore}%
+                  </div>
+                  <div className="mt-2">
+                    <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(assessment.overallStatus)}`}>
+                      {getStatusText(assessment.overallStatus)}
+                    </span>
+                  </div>
+                  <div className="mt-4">
+                    <div className="w-full bg-gray-200 rounded-full h-3">
+                      <div
+                        className={`h-3 rounded-full ${
+                          assessment.overallStatus === 'green' ? 'bg-green-500' :
+                          assessment.overallStatus === 'amber' ? 'bg-yellow-500' : 'bg-red-500'
+                        }`}
+                        style={{ width: `${assessment.overallScore}%` }}
+                      ></div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="text-gray-500">Données de score non disponibles</div>
+              )}
             </div>
           </div>
         </div>
@@ -241,7 +248,8 @@ const AssessmentDetail = () => {
           </div>
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {assessment.pillarScores?.map((pillar, index) => (
+              {assessment.pillarScores && assessment.pillarScores.length > 0 ? (
+                assessment.pillarScores.map((pillar, index) => (
                 <div key={index} className="border border-gray-200 rounded-lg p-4">
                   <div className="flex justify-between items-center mb-3">
                     <h4 className="text-sm font-medium text-gray-900">{pillar.pillarName}</h4>
@@ -280,7 +288,12 @@ const AssessmentDetail = () => {
                     </div>
                   )}
                 </div>
-              ))}
+                ))
+              ) : (
+                <div className="col-span-full text-center text-gray-500 py-8">
+                  Aucun score de pilier disponible
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -294,7 +307,7 @@ const AssessmentDetail = () => {
             <div className="space-y-4">
               {assessment.answers?.map((answer, index) => (
                 <div key={index} className="border border-gray-200 rounded-lg p-4">
-                  <div className="flex justify-between items-start">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between items-start">
                     <div className="flex-1">
                       <p className="text-sm text-gray-900 mb-2">
                         Question {index + 1} (ID: {answer.questionId})

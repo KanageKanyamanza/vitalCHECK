@@ -136,7 +136,7 @@ const UserDetail = () => {
       <div className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-wrap justify-between items-center py-6">
-            <div className="flex items-center">
+            <div className="flex flex-col sm:flex-row sm:items-center">
               <button
                 onClick={() => navigate('/admin/users')}
                 className="mr-4 p-2 text-gray-400 hover:text-gray-600"
@@ -151,7 +151,7 @@ const UserDetail = () => {
             <div className="flex justify-between md:w-auto md:justify-end md:space-x-4 w-full">
               <button
                 onClick={handleSendEmail}
-                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                className="flex items-center px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
               >
                 <Mail className="h-4 w-4 mr-2" />
                 Envoyer un email
@@ -252,7 +252,7 @@ const UserDetail = () => {
             {user.assessments?.length > 0 ? (
               user.assessments.map((assessment, index) => (
                 <div key={assessment._id} className="p-6">
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">
                         <BarChart3 className="h-8 w-8 text-blue-500" />
@@ -272,8 +272,8 @@ const UserDetail = () => {
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-4">
-                      <div className="text-right">
+                    <div className="flex items-center space-x-4 content-center">
+                      <div className="text-right flex sm:grid md:flex space-x-2 items-center">
                         <p className="text-sm font-medium text-gray-900">
                           Score: {assessment.overallScore}%
                         </p>

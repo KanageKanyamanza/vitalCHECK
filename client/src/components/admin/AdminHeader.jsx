@@ -54,11 +54,11 @@ const AdminHeader = ({ onMenuClick, adminData, onLogout }) => {
           {/* Logout button - icon only on mobile, full button on desktop */}
           <button
             onClick={onLogout}
-            className="flex items-center space-x-2 px-3 py-2 text-danger-600 hover:bg-danger-50 rounded-lg transition-colors"
+            className="lg:hidden flex items-center space-x-2 px-3 py-2 text-danger-600 hover:bg-danger-50 rounded-lg transition-colors"
             title="Déconnexion"
           >
             <LogOut className="w-4 h-4" />
-            <span className="hidden lg:inline text-sm font-medium">Déconnexion</span>
+            {/* <span className="hidden lg:inline text-sm font-medium">Déconnexion</span> */}
           </button>
         </div>
       </div>

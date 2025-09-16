@@ -78,7 +78,7 @@ const AdminDashboard = () => {
     <AdminLayout>
       <div className="p-4 lg:p-8 pb-20 lg:pb-8">
         {/* Debug Tools */}
-        <div className="mb-6 flex flex-wrap gap-2">
+        {/* <div className="mb-6 flex flex-wrap gap-2">
           <button
             onClick={handleUpdateServiceWorker}
             className="flex items-center px-3 py-2 text-sm text-primary-600 hover:text-primary-900 bg-primary-50 rounded-lg"
@@ -103,9 +103,9 @@ const AdminDashboard = () => {
             <RefreshCw className="h-4 w-4 mr-2" />
             Cache API
           </button>
-        </div>
+        </div> */}
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <div className="bg-white overflow-hidden shadow-lg rounded-xl border border-gray-100">
             <div className="p-6">
               <div className="flex items-center">

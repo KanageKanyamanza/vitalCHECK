@@ -98,7 +98,7 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
         ${isCollapsed ? 'w-[80px]' : 'w-64'}
       `}>
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
+        <div className="flex items-center justify-between p-[14px] border-b border-gray-200">
           {!isCollapsed ? (
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-white border border-gray-200">
