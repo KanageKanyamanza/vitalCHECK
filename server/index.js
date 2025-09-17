@@ -70,6 +70,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/api/auth", authLimiter, require("./routes/auth"));
 app.use("/api/assessments", require("./routes/assessments"));
 app.use("/api/reports", require("./routes/reports"));
+app.use("/api/contact", require("./routes/contact"));
 app.use("/api/admin", authLimiter, require("./routes/admin"));
 app.use("/api", require("./routes/ping"));
 

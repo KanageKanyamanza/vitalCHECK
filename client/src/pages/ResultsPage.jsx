@@ -122,7 +122,8 @@ const ResultsPage = () => {
 	};
 
 	const handlePremiumUpgrade = () => {
-		setShowConsultationModal(true);
+		navigate('/contact');
+		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
 
 	const handleGoHome = () => {
@@ -555,10 +556,8 @@ const ResultsPage = () => {
 									</button>
 									<button
 										onClick={() => {
-											window.open(
-												"mailto:contact@ubb.com?subject=Consultation Premium UBB",
-												"_blank"
-											);
+											navigate('/contact');
+											window.scrollTo({ top: 0, behavior: 'smooth' });
 											setShowConsultationModal(false);
 										}}
 										className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"

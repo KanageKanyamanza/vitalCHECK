@@ -21,8 +21,10 @@
   },
   "navigation": {
     "home": "Home",
+    "about": "About",
     "assessment": "Assessment",
     "results": "Results",
+    "contact": "Contact",
     "newAssessment": "New Assessment"
   },
   "results": {
@@ -232,7 +234,7 @@
     "services": "Services",
     "contact": "Contact",
     "privacy": "Privacy",
-    "location": "Douala, Cameroon",
+    "location": "Dakar, Senegal",
     "openHours": "Open Hours",
     "allRightsReserved": "All rights reserved",
     "terms": "Terms of Service"
@@ -425,6 +427,138 @@
       "message": "A new version of the application is available.",
       "update": "Update",
       "dismiss": "Later"
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "We're here to help you improve your business health. Feel free to contact us with any questions.",
+    "info": {
+      "title": "Our Information",
+      "address": {
+        "title": "Address",
+        "value": "Dakar, Senegal"
+      },
+      "phone": {
+        "title": "Phone",
+        "value": "🇸🇳 +221 771970713 | 🇬🇧 +44 7546756325"
+      },
+      "email": {
+        "title": "Email",
+        "value": "ambrose.nzeyi@gmail.com"
+      },
+      "hours": {
+        "title": "Business Hours",
+        "value": "Mon - Fri: 8:00 AM - 6:00 PM"
+      }
+    },
+    "why": {
+      "title": "Why Contact Us?",
+      "description": "Our experts can help you assess your business and provide personalized solutions.",
+      "startAssessment": "Start Assessment"
+    },
+    "form": {
+      "title": "Send us a message",
+      "name": "Full Name",
+      "namePlaceholder": "Your full name",
+      "email": "Email Address",
+      "emailPlaceholder": "your@email.com",
+      "company": "Company",
+      "companyPlaceholder": "Your company name",
+      "phone": "Phone",
+      "phonePlaceholder": "+237 XXX XXX XXX",
+      "inquiryType": "Inquiry Type",
+      "inquiryTypePlaceholder": "Select inquiry type",
+      "subject": "Subject",
+      "subjectPlaceholder": "Summary of your inquiry",
+      "message": "Message",
+      "messagePlaceholder": "Describe your inquiry in detail...",
+      "send": "Send Message",
+      "sending": "Sending...",
+      "successMessage": "Message sent successfully! We'll get back to you as soon as possible.",
+      "errorMessage": "Error sending message. Please try again.",
+      "privacy": "By submitting this form, you agree that we may use your information to respond to you. We will never share your data with third parties.",
+      "inquiryTypes": {
+        "general": "General Inquiry",
+        "assessment": "Assessment Questions",
+        "premium": "Premium Services",
+        "technical": "Technical Support",
+        "partnership": "Partnership",
+        "other": "Other"
+      }
+    }
+  },
+  "about": {
+    "title": "About UBB",
+    "subtitle": "Helping SMEs diagnose, grow, and go digital",
+    "mission": {
+      "title": "Our Mission",
+      "content": "To empower SMEs with expert diagnostics, practical strategies, and digital transformation so they can become more resilient, more visible, and more competitive in today's fast-changing markets."
+    },
+    "vision": {
+      "title": "Our Vision",
+      "content": "UBB plays its unavoidable role in the transformative process of a world where African and global SMEs are financially stable, technologically equipped, and ready to grow beyond borders."
+    },
+    "values": {
+      "title": "Our Values",
+      "subtitle": "We are guided by principles that define our work:",
+      "integrity": {
+        "title": "Integrity & Transparency",
+        "description": "Building trust through honesty."
+      },
+      "excellence": {
+        "title": "Excellence",
+        "description": "Striving for the highest standards in every project."
+      },
+      "courage": {
+        "title": "Courage & Leadership",
+        "description": "Making bold decisions and guiding others to do the same."
+      },
+      "solidarity": {
+        "title": "Solidarity & Generosity (Ubuntu)",
+        "description": "Sharing knowledge and creating value for communities."
+      },
+      "pragmatism": {
+        "title": "Pragmatism & Realism",
+        "description": "Delivering solutions that actually work."
+      }
+    },
+    "story": {
+      "title": "Our Story",
+      "content1": "UBB was born from the belief that too many SMEs fail not because of a lack of potential, but because they lack the right support.",
+      "example": {
+        "title": "One concrete example",
+        "content": "Our work with STM, a company on the brink of bankruptcy. Through diagnosis, strategic guidance, and implementation, we helped them stabilize, restructure, and regain trust.",
+        "result": "As a direct result, their revenues grew, and they doubled our consulting fee in recognition of the measurable impact."
+      },
+      "content2": "This experience reinforced our mission: to stand beside entrepreneurs when they need clarity most, helping them turn setbacks into growth."
+    },
+    "services": {
+      "title": "What We Do",
+      "subtitle": "We support SMEs in three interconnected areas:",
+      "healthCheck": {
+        "title": "Enterprise Health Check (free)",
+        "description": "A diagnostic tool to assess financial and operational health."
+      },
+      "visibility": {
+        "title": "Visibility & Growth Services",
+        "description": "Strategies and campaigns to expand brand presence and attract clients."
+      },
+      "development": {
+        "title": "Custom App Development",
+        "description": "Building tailored digital tools that improve efficiency and create new revenue streams."
+      }
+    },
+    "impact": {
+      "title": "Our Impact",
+      "stabilized": "Helped SMEs stabilize during financial crises.",
+      "export": "Supported export-oriented companies to rethink strategies and open new markets.",
+      "digital": "Developing new digital tools to make enterprise diagnostics widely accessible."
+    },
+    "cta": {
+      "title": "Ready to grow your business?",
+      "subtitle": "Let's build your next chapter together.",
+      "startAssessment": "Start free assessment",
+      "contactUs": "Contact us"
     }
   }
 }

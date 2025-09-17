@@ -2,8 +2,10 @@ import React, { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import LandingPage from './pages/LandingPage'
+import AboutPage from './pages/AboutPage'
 import AssessmentPage from './pages/AssessmentPage'
 import ResultsPage from './pages/ResultsPage'
+import ContactPage from './pages/ContactPage'
 import PrivacyPolicy from './pages/PrivacyPolicy'
 import TermsOfService from './pages/TermsOfService'
 import AdminApp from './pages/admin/AdminApp'
@@ -52,8 +54,10 @@ function AppContent() {
           
           <Routes>
             <Route path="/" element={<LandingPage />} />
+            <Route path="/about" element={<AboutPage />} />
             <Route path="/assessment" element={<AssessmentPage />} />
             <Route path="/results" element={<ResultsPage />} />
+            <Route path="/contact" element={<ContactPage />} />
             <Route path="/privacy" element={<PrivacyPolicy />} />
             <Route path="/terms" element={<TermsOfService />} />
             <Route path="/ping-test" element={<PingPongTest />} />
