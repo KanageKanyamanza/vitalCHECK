@@ -21,8 +21,10 @@
   },
   "navigation": {
     "home": "Accueil",
+    "about": "À Propos",
     "assessment": "Évaluation",
     "results": "Résultats",
+    "contact": "Contact",
     "newAssessment": "Nouvelle Évaluation"
   },
   "results": {
@@ -232,7 +234,7 @@
     "services": "Services",
     "contact": "Contact",
     "privacy": "Confidentialité",
-    "location": "Douala, Cameroun",
+    "location": "Dakar, Sénégal",
     "openHours": "Heures d'ouverture",
     "allRightsReserved": "Tous droits réservés",
     "terms": "Conditions d'utilisation"
@@ -425,6 +427,138 @@
       "message": "Une nouvelle version de l'application est disponible.",
       "update": "Mettre à jour",
       "dismiss": "Plus tard"
+    }
+  },
+  "contact": {
+    "title": "Contactez-nous",
+    "subtitle": "Nous sommes là pour vous aider à améliorer la santé de votre entreprise. N'hésitez pas à nous contacter pour toute question.",
+    "info": {
+      "title": "Nos Informations",
+      "address": {
+        "title": "Adresse",
+        "value": "Dakar, Sénégal"
+      },
+      "phone": {
+        "title": "Téléphone",
+        "value": "🇸🇳 +221 771970713 | 🇬🇧 +44 7546756325"
+      },
+      "email": {
+        "title": "Email",
+        "value": "ambrose.nzeyi@gmail.com"
+      },
+      "hours": {
+        "title": "Heures d'ouverture",
+        "value": "Lun - Ven: 8h00 - 18h00"
+      }
+    },
+    "why": {
+      "title": "Pourquoi nous contacter ?",
+      "description": "Nos experts peuvent vous accompagner dans l'évaluation de votre entreprise et vous proposer des solutions personnalisées.",
+      "startAssessment": "Commencer l'évaluation"
+    },
+    "form": {
+      "title": "Envoyez-nous un message",
+      "name": "Nom complet",
+      "namePlaceholder": "Votre nom complet",
+      "email": "Adresse email",
+      "emailPlaceholder": "votre@email.com",
+      "company": "Entreprise",
+      "companyPlaceholder": "Nom de votre entreprise",
+      "phone": "Téléphone",
+      "phonePlaceholder": "+237 XXX XXX XXX",
+      "inquiryType": "Type de demande",
+      "inquiryTypePlaceholder": "Sélectionnez le type de demande",
+      "subject": "Sujet",
+      "subjectPlaceholder": "Résumé de votre demande",
+      "message": "Message",
+      "messagePlaceholder": "Décrivez votre demande en détail...",
+      "send": "Envoyer le message",
+      "sending": "Envoi en cours...",
+      "successMessage": "Message envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.",
+      "errorMessage": "Erreur lors de l'envoi du message. Veuillez réessayer.",
+      "privacy": "En envoyant ce formulaire, vous acceptez que nous utilisions vos informations pour vous répondre. Nous ne partagerons jamais vos données avec des tiers.",
+      "inquiryTypes": {
+        "general": "Demande générale",
+        "assessment": "Questions sur l'évaluation",
+        "premium": "Services premium",
+        "technical": "Support technique",
+        "partnership": "Partenariat",
+        "other": "Autre"
+      }
+    }
+  },
+  "about": {
+    "title": "À Propos d'UBB",
+    "subtitle": "Aider les PME à diagnostiquer, grandir et se digitaliser",
+    "mission": {
+      "title": "Notre Mission",
+      "content": "Donner aux PME les moyens d'effectuer des diagnostics experts, des stratégies pratiques et une transformation digitale pour qu'elles deviennent plus résilientes, plus visibles et plus compétitives dans les marchés en évolution rapide d'aujourd'hui."
+    },
+    "vision": {
+      "title": "Notre Vision",
+      "content": "UBB joue son rôle incontournable dans le processus transformateur d'un monde où les PME africaines et mondiales sont financièrement stables, technologiquement équipées et prêtes à grandir au-delà des frontières."
+    },
+    "values": {
+      "title": "Nos Valeurs",
+      "subtitle": "Nous sommes guidés par des principes qui définissent notre travail :",
+      "integrity": {
+        "title": "Intégrité & Transparence",
+        "description": "Construire la confiance par l'honnêteté."
+      },
+      "excellence": {
+        "title": "Excellence",
+        "description": "Visant les plus hauts standards dans chaque projet."
+      },
+      "courage": {
+        "title": "Courage & Leadership",
+        "description": "Prendre des décisions audacieuses et guider les autres à faire de même."
+      },
+      "solidarity": {
+        "title": "Solidarité & Générosité (Ubuntu)",
+        "description": "Partager les connaissances et créer de la valeur pour les communautés."
+      },
+      "pragmatism": {
+        "title": "Pragmatisme & Réalisme",
+        "description": "Livrer des solutions qui fonctionnent réellement."
+      }
+    },
+    "story": {
+      "title": "Notre Histoire",
+      "content1": "UBB est né de la conviction que trop de PME échouent non pas par manque de potentiel, mais parce qu'elles manquent du bon soutien.",
+      "example": {
+        "title": "Un exemple concret",
+        "content": "Notre travail avec STM, une entreprise au bord de la faillite. Grâce au diagnostic, aux conseils stratégiques et à la mise en œuvre, nous les avons aidés à se stabiliser, se restructurer et retrouver la confiance.",
+        "result": "En conséquence directe, leurs revenus ont augmenté et ils ont doublé nos honoraires de conseil en reconnaissance de l'impact mesurable."
+      },
+      "content2": "Cette expérience a renforcé notre mission : être aux côtés des entrepreneurs quand ils ont le plus besoin de clarté, les aidant à transformer les revers en croissance."
+    },
+    "services": {
+      "title": "Ce que nous faisons",
+      "subtitle": "Nous soutenons les PME dans trois domaines interconnectés :",
+      "healthCheck": {
+        "title": "Enterprise Health Check (gratuit)",
+        "description": "Un outil de diagnostic pour évaluer la santé financière et opérationnelle."
+      },
+      "visibility": {
+        "title": "Services de Visibilité & Croissance",
+        "description": "Stratégies et campagnes pour étendre la présence de marque et attirer des clients."
+      },
+      "development": {
+        "title": "Développement d'Applications Sur Mesure",
+        "description": "Construire des outils numériques personnalisés qui améliorent l'efficacité et créent de nouveaux flux de revenus."
+      }
+    },
+    "impact": {
+      "title": "Notre Impact",
+      "stabilized": "Aidés les PME à se stabiliser pendant les crises financières.",
+      "export": "Soutenu les entreprises orientées export pour repenser leurs stratégies et ouvrir de nouveaux marchés.",
+      "digital": "Développement de nouveaux outils numériques pour rendre les diagnostics d'entreprise largement accessibles."
+    },
+    "cta": {
+      "title": "Prêt à faire grandir votre entreprise ?",
+      "subtitle": "Construisons ensemble votre prochain chapitre.",
+      "startAssessment": "Commencer l'évaluation gratuite",
+      "contactUs": "Nous contacter"
     }
   }
 }

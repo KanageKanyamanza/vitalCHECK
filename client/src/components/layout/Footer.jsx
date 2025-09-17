@@ -1,6 +1,6 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
 	Mail,
 	Phone,
@@ -15,6 +15,7 @@ import useSmoothScroll from "../../hooks/useSmoothScroll";
 
 const Footer = () => {
 	const { t } = useTranslation();
+	const navigate = useNavigate();
 	const { scrollToTop, scrollToElement } = useSmoothScroll();
 
 	const currentYear = new Date().getFullYear();
@@ -50,9 +51,9 @@ const Footer = () => {
 	];
 
 	const quickLinks = [
-		{ label: t("footer.about"), href: "#about", scrollTo: "about" },
+		{ label: t("footer.about"), href: "/about" },
 		{ label: t("footer.services"), href: "#services", scrollTo: "services" },
-		{ label: t("footer.contact"), href: "#contact", scrollTo: "contact" },
+		{ label: t("footer.contact"), href: "/contact" },
 		// { label: t('footer.privacy'), href: '/privacy' },
 		// { label: t('footer.terms'), href: '/terms' }
 	];
@@ -62,6 +63,12 @@ const Footer = () => {
 			top: sectionId === 'terms' ? 0 : sectionId === 'privacy' ? 0 : document.getElementById(sectionId).offsetTop,
 			behavior: 'smooth'
 		});
+	};
+
+	const handleNavigation = (path) => {
+		navigate(path);
+		// Ramener au top de la page
+		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
 
 	return (
@@ -112,12 +119,12 @@ const Footer = () => {
 							{quickLinks.map((link, index) => (
 								<li key={index}>
 									{link.href.startsWith("/") ? (
-										<Link
-											to={link.href}
-											className="text-white hover:text-gray-800 transition-colors duration-200"
+										<button
+											onClick={() => handleNavigation(link.href)}
+											className="text-white hover:text-gray-800 transition-colors duration-200 text-left"
 										>
 											{link.label}
-										</Link>
+										</button>
 									) : (
 										<button
 											onClick={() => handleScrollToSection(link.scrollTo)}
@@ -166,20 +173,18 @@ const Footer = () => {
 							{t("footer.allRightsReserved")}
 						</p>
 						<div className="flex items-center space-x-6 mt-4 md:mt-0">
-							<Link
-								to="/terms"
-								onClick={() => handleScrollToSection('terms')}
+							<button
+								onClick={() => handleNavigation('/terms')}
 								className="text-white hover:text-gray-800 text-sm transition-colors duration-200"
 							>
 								{t("footer.terms")}
-							</Link>
-							<Link
-								to="/privacy"
-								onClick={() => handleScrollToSection('privacy')}
+							</button>
+							<button
+								onClick={() => handleNavigation('/privacy')}
 								className="text-white hover:text-gray-800 text-sm transition-colors duration-200"
 							>
 								{t("footer.privacy")}
-							</Link>
+							</button>
 						</div>
 					</div>
 				</div>
