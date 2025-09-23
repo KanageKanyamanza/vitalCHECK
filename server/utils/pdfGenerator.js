@@ -434,7 +434,7 @@ function generateHTMLContent(assessment) {
          <div class="header-pattern"></div>
          <div class="header-content">
            <div class="logo-container">
-             <img src="https://www.checkmyenterprise.com/icons/ms-icon-310x310.png" alt="UBB Logo" class="logo" />
+             <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="UBB Logo" class="logo" />
            </div>
            <h1>Enterprise Health Check</h1>
            <p>${language === 'fr' ? 'Rapport d\'Évaluation Professionnelle d\'Entreprise' : 'Professional Business Assessment Report'}</p>

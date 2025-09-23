@@ -21,7 +21,7 @@ const generateReminderEmailHTML = (user, message, subject) => {
           <!-- Logo UBB -->
           <div style="position: relative; z-index: 2;">
             <div style="display: inline-block; background: rgba(255, 255, 255, 0.2); padding: 20px; border-radius: 50%; margin-bottom: 20px; backdrop-filter: blur(10px);">
-              <img src="https://www.checkmyenterprise.com/icons/ms-icon-310x310.png" alt="UBB Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: contain;" />
+              <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="UBB Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: contain;" />
             </div>
             <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
               Enterprise Health Check

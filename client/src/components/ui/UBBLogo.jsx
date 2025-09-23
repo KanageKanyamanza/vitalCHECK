@@ -23,9 +23,9 @@ const UBBLogo = ({
   }
 
   const logoPaths = {
-    'ms-icon': '/icons/ms-icon-310x310.png',
-    'favicon': '/icons/favicon-96x96.png',
-    'apple-icon': '/icons/apple-icon-180x180.png'
+    'ms-icon': '/ms-icon-310x310.png',
+    'favicon': '/favicon-96x96.png',
+    'apple-icon': '/apple-icon-180x180.png'
   }
 
   const logoVariants = {

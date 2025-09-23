@@ -6,9 +6,9 @@ const urlsToCache = [
   '/results',
   '/privacy',
   '/terms',
-  '/icons/android-icon-192x192.png',
-  '/icons/android-icon-144x144.png',
-  '/icons/favicon.ico',
+  '/android-icon-192x192.png',
+  '/android-icon-144x144.png',
+  '/favicon.ico',
   '/manifest.json'
 ];
 
@@ -95,8 +95,8 @@ self.addEventListener('message', (event) => {
 self.addEventListener('push', (event) => {
   const options = {
     body: event.data ? event.data.text() : 'Nouvelle mise à jour disponible !',
-    icon: '/icons/android-icon-192x192.png',
-    badge: '/icons/android-icon-96x96.png',
+    icon: '/android-icon-192x192.png',
+    badge: '/android-icon-96x96.png',
     vibrate: [100, 50, 100],
     data: {
       dateOfArrival: Date.now(),
@@ -106,12 +106,12 @@ self.addEventListener('push', (event) => {
       {
         action: 'update',
         title: 'Mettre à jour',
-        icon: '/icons/android-icon-96x96.png'
+        icon: '/android-icon-96x96.png'
       },
       {
         action: 'close',
         title: 'Plus tard',
-        icon: '/icons/android-icon-96x96.png'
+        icon: '/android-icon-96x96.png'
       }
     ]
   };

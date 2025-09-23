@@ -9,7 +9,7 @@ import {
 	Instagram,
 	Youtube
 } from "lucide-react";
-import logoIcon from "/icons/android-icon-96x96.png";
+import logoIcon from "/android-icon-96x96.png";
 import { InstallPWAButton } from "../ui";
 import useSmoothScroll from "../../hooks/useSmoothScroll";
 
