@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide Administrateur - UBB Enterprise Health Check</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+        }
+        
+        h1 {
+            color: #2563eb;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 10px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        
+        h2 {
+            color: #1e40af;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 8px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+        
+        h3 {
+            color: #374151;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 25px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .highlight {
+            background-color: #fef3c7;
+            padding: 15px;
+            border-left: 4px solid #f59e0b;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .info-box {
+            background-color: #dbeafe;
+            padding: 15px;
+            border-left: 4px solid #2563eb;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .success-box {
+            background-color: #f0fdf4;
+            padding: 15px;
+            border-left: 4px solid #10b981;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .warning-box {
+            background-color: #fef2f2;
+            padding: 15px;
+            border-left: 4px solid #ef4444;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .admin-section {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .feature-card {
+            background-color: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .feature-card h4 {
+            color: #1e40af;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        
+        .toc {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .toc h2 {
+            margin-top: 0;
+            color: #1f2937;
+        }
+        
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .toc li {
+            margin-bottom: 5px;
+        }
+        
+        .toc a {
+            color: #4b5563;
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+        
+        .step-number {
+            background-color: #2563eb;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        
+        .metric-card {
+            background-color: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+        }
+        
+        .metric-card h4 {
+            color: #0369a1;
+            margin-top: 0;
+            margin-bottom: 10px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f9fafb;
+            font-weight: 600;
+        }
+        
+        .code-block {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        @media print {
+            body {
+                font-size: 12px;
+            }
+            
+            h1 {
+                font-size: 18px;
+            }
+            
+            h2 {
+                font-size: 16px;
+            }
+            
+            h3 {
+                font-size: 14px;
+            }
+            
+            /* Éviter les coupures de mots */
+            * {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            /* Éviter les coupures dans les paragraphes */
+            p {
+                orphans: 3;
+                widows: 3;
+                page-break-inside: avoid;
+            }
+            
+            /* Éviter les coupures dans les listes */
+            ul, ol {
+                page-break-inside: avoid;
+            }
+            
+            /* Éviter les coupures dans les boîtes importantes */
+            .admin-section, .feature-card, .metric-card, .info-box, .success-box, .warning-box, .highlight {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            /* Éviter les coupures dans les titres */
+            h1, h2, h3, h4, h5, h6 {
+                page-break-after: avoid;
+                break-after: avoid;
+            }
+            
+            /* Forcer les sauts de page avant les sections importantes */
+            h2 {
+                page-break-before: auto;
+                break-before: auto;
+            }
+            
+            /* Éviter les coupures dans les tableaux */
+            table {
+                page-break-inside: avoid;
+            }
+            
+            /* Éviter les coupures dans les éléments avec des numéros */
+            .step-number {
+                page-break-inside: avoid;
+            }
+            
+            /* Éviter les coupures dans les grilles */
+            .feature-grid {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Guide Administrateur - UBB Enterprise Health Check</h1>
+    
+    <div class="info-box">
+        <h3>🎯 À propos de ce guide</h3>
+        <p>Ce guide vous accompagne dans l'utilisation complète du panel d'administration d'UBB Enterprise Health Check. Vous y trouverez toutes les fonctionnalités pour gérer efficacement votre plateforme et vos utilisateurs.</p>
+    </div>
+    
+    <div class="toc">
+        <h2>Table des Matières</h2>
+        <ul>
+            <li><a href="#introduction">1. Introduction au panel d'administration</a></li>
+            <li><a href="#tableau-bord">2. Tableau de bord et statistiques</a></li>
+            <li><a href="#gestion-utilisateurs">3. Gestion des utilisateurs</a></li>
+            <li><a href="#gestion-evaluations">4. Gestion des évaluations</a></li>
+            <li><a href="#gestion-emails">5. Gestion des emails et communications</a></li>
+            <li><a href="#gestion-rapports">6. Gestion des rapports et exports</a></li>
+            <li><a href="#gestion-blog">7. Gestion du blog et contenu</a></li>
+            <li><a href="#maintenance">8. Maintenance et surveillance</a></li>
+            <li><a href="#securite">9. Sécurité et conformité</a></li>
+        </ul>
+    </div>
+
+    <h2 id="introduction">1. Introduction au panel d'administration</h2>
+    
+    <p>Le panel d'administration d'UBB Enterprise Health Check vous donne un contrôle complet sur votre plateforme. Vous pouvez gérer les utilisateurs, suivre les évaluations, générer des rapports et personnaliser le contenu.</p>
+
+    <div class="success-box">
+        <h3>🔑 Accès au panel d'administration</h3>
+        <ul>
+            <li><strong>URL :</strong> /admin/login</li>
+            <li><strong>Authentification :</strong> Email et mot de passe administrateur</li>
+            <li><strong>Sécurité :</strong> Session sécurisée avec JWT</li>
+            <li><strong>Déconnexion automatique :</strong> Après 24h d'inactivité</li>
+        </ul>
+    </div>
+
+    <h3>Navigation du panel</h3>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h4>📊 Tableau de bord</h4>
+            <p>Vue d'ensemble des statistiques et métriques clés de votre plateforme.</p>
+        </div>
+        <div class="feature-card">
+            <h4>👥 Utilisateurs</h4>
+            <p>Gestion complète des comptes utilisateurs et de leurs informations.</p>
+        </div>
+        <div class="feature-card">
+            <h4>📋 Évaluations</h4>
+            <p>Suivi et gestion de toutes les évaluations réalisées.</p>
+        </div>
+        <div class="feature-card">
+            <h4>⏰ En Cours</h4>
+            <p>Gestion des évaluations incomplètes et système de relances.</p>
+        </div>
+        <div class="feature-card">
+            <h4>📧 Emails</h4>
+            <p>Gestion des templates et envoi de communications.</p>
+        </div>
+        <div class="feature-card">
+            <h4>📈 Rapports</h4>
+            <p>Génération et export de rapports personnalisés.</p>
+        </div>
+        <div class="feature-card">
+            <h4>📝 Blog</h4>
+            <p>Gestion du contenu blog et des articles.</p>
+        </div>
+    </div>
+
+    <h2 id="tableau-bord">2. Tableau de bord et statistiques</h2>
+
+    <h3>Métriques principales</h3>
+    <div class="admin-section">
+        <h4>📊 Indicateurs clés de performance</h4>
+        <div class="metric-card">
+            <h4>Utilisateurs actifs</h4>
+            <p>Nombre total d'utilisateurs inscrits et leur statut d'activité</p>
+        </div>
+        <div class="metric-card">
+            <h4>Évaluations complétées</h4>
+            <p>Nombre d'évaluations terminées sur la période sélectionnée</p>
+        </div>
+        <div class="metric-card">
+            <h4>Évaluations en cours</h4>
+            <p>Nombre d'évaluations commencées mais non terminées</p>
+        </div>
+        <div class="metric-card">
+            <h4>Taux de completion</h4>
+            <p>Pourcentage d'évaluations complétées par rapport aux évaluations commencées</p>
+        </div>
+    </div>
+
+    <h3>Graphiques et visualisations</h3>
+    <ul>
+        <li><strong>Évolution des inscriptions</strong> : Courbe d'évolution du nombre d'utilisateurs</li>
+        <li><strong>Répartition par secteur</strong> : Graphique en secteurs des secteurs d'activité</li>
+        <li><strong>Répartition par taille</strong> : Distribution des tailles d'entreprise</li>
+        <li><strong>Scores moyens</strong> : Évolution des scores moyens par pilier</li>
+        <li><strong>Activité temporelle</strong> : Évaluations par jour/semaine/mois</li>
+    </ul>
+
+    <h3>Filtres et périodes</h3>
+    <div class="info-box">
+        <h4>📅 Options de filtrage</h4>
+        <ul>
+            <li><strong>Période</strong> : Dernière semaine, mois, trimestre, année</li>
+            <li><strong>Secteur</strong> : Filtrer par secteur d'activité</li>
+            <li><strong>Taille</strong> : Filtrer par taille d'entreprise</li>
+            <li><strong>Statut</strong> : Actifs, inactifs, évaluations complètes</li>
+        </ul>
+    </div>
+
+    <h2 id="gestion-utilisateurs">3. Gestion des utilisateurs</h2>
+
+    <h3>Liste des utilisateurs</h3>
+    <div class="admin-section">
+        <h4>📋 Fonctionnalités de la liste</h4>
+        <ul>
+            <li><strong>Recherche</strong> : Par nom d'entreprise, email, secteur</li>
+            <li><strong>Tri</strong> : Par date d'inscription, nom, dernière activité</li>
+            <li><strong>Filtres</strong> : Par secteur, taille, statut d'évaluation</li>
+            <li><strong>Pagination</strong> : Navigation par pages pour de grandes listes</li>
+            <li><strong>Export</strong> : Téléchargement en Excel ou PDF</li>
+        </ul>
+    </div>
+
+    <h3>Détails utilisateur</h3>
+    <div class="step-box">
+        <h4><span class="step-number">1</span>Informations générales</h4>
+        <ul>
+            <li>Nom de l'entreprise</li>
+            <li>Email de contact</li>
+            <li>Secteur d'activité</li>
+            <li>Taille de l'entreprise</li>
+            <li>Date d'inscription</li>
+            <li>Dernière connexion</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h4><span class="step-number">2</span>Historique des évaluations</h4>
+        <ul>
+            <li>Évaluations complétées</li>
+            <li>Évaluations en cours</li>
+            <li>Dates de réalisation</li>
+            <li>Scores obtenus</li>
+            <li>Statut des rapports</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h4><span class="step-number">3</span>Actions disponibles</h4>
+        <ul>
+            <li><strong>Voir les détails</strong> : Consulter l'historique complet</li>
+            <li><strong>Envoyer un email</strong> : Communication personnalisée</li>
+            <li><strong>Générer un rapport</strong> : Créer un rapport spécifique</li>
+            <li><strong>Exporter les données</strong> : Télécharger les informations</li>
+            <li><strong>Supprimer</strong> : Retirer l'utilisateur (avec confirmation)</li>
+        </ul>
+    </div>
+
+    <h3>Gestion des évaluations en cours</h3>
+    <div class="warning-box">
+        <h4>⏰ Évaluations incomplètes</h4>
+        <p>Cette section vous permet de gérer les évaluations commencées mais non terminées :</p>
+        <ul>
+            <li><strong>Liste des brouillons</strong> : Toutes les évaluations en cours</li>
+            <li><strong>Progression</strong> : Nombre de questions répondues</li>
+            <li><strong>Dernière activité</strong> : Date de la dernière réponse</li>
+            <li><strong>Lien de reprise</strong> : URL pour reprendre l'évaluation</li>
+            <li><strong>Relance email</strong> : Envoi de rappel automatique</li>
+        </ul>
+    </div>
+
+    <h2 id="gestion-evaluations">4. Gestion des évaluations</h2>
+
+    <h3>Vue d'ensemble des évaluations</h3>
+    <div class="admin-section">
+        <h4>📊 Statistiques des évaluations</h4>
+        <ul>
+            <li><strong>Total des évaluations</strong> : Nombre total réalisées</li>
+            <li><strong>Évaluations complétées</strong> : Terminées avec succès</li>
+            <li><strong>Évaluations en cours</strong> : Brouillons non terminés</li>
+            <li><strong>Taux de completion</strong> : Pourcentage de réussite</li>
+            <li><strong>Temps moyen</strong> : Durée moyenne d'une évaluation</li>
+        </ul>
+    </div>
+
+    <h3>Détails d'une évaluation</h3>
+    <div class="step-box">
+        <h4><span class="step-number">1</span>Informations de base</h4>
+        <ul>
+            <li>Utilisateur associé</li>
+            <li>Date de début et de fin</li>
+            <li>Langue utilisée</li>
+            <li>Statut (draft/completed)</li>
+            <li>Score global et par pilier</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h4><span class="step-number">2</span>Réponses détaillées</h4>
+        <ul>
+            <li>Question par question</li>
+            <li>Réponse choisie</li>
+            <li>Points attribués</li>
+            <li>Pilier concerné</li>
+            <li>Commentaires (si disponibles)</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h4><span class="step-number">3</span>Analyse et recommandations</h4>
+        <ul>
+            <li>Recommandations générées</li>
+            <li>Piliers prioritaires</li>
+            <li>Points d'amélioration</li>
+            <li>Forces identifiées</li>
+        </ul>
+    </div>
+
+    <h3>Actions sur les évaluations</h3>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h4>👁️ Consulter</h4>
+            <p>Voir tous les détails d'une évaluation spécifique</p>
+        </div>
+        <div class="feature-card">
+            <h4>📄 Générer rapport</h4>
+            <p>Créer un rapport PDF personnalisé</p>
+        </div>
+        <div class="feature-card">
+            <h4>📧 Envoyer par email</h4>
+            <p>Transmettre le rapport à l'utilisateur</p>
+        </div>
+        <div class="feature-card">
+            <h4>📊 Exporter données</h4>
+            <p>Télécharger les données en Excel/PDF</p>
+        </div>
+        <div class="feature-card">
+            <h4>🗑️ Supprimer</h4>
+            <p>Retirer l'évaluation (avec confirmation)</p>
+        </div>
+        <div class="feature-card">
+            <h4>🔄 Dupliquer</h4>
+            <p>Créer une copie pour analyse</p>
+        </div>
+    </div>
+
+    <h2 id="gestion-emails">5. Gestion des emails et communications</h2>
+
+    <h3>Templates d'emails prédéfinis</h3>
+    <div class="admin-section">
+        <h4>📧 Templates disponibles</h4>
+        <ul>
+            <li><strong>Relance évaluation incomplète</strong> : Rappel pour terminer l'évaluation</li>
+            <li><strong>Relance nouvelle évaluation</strong> : Invitation à refaire l'évaluation</li>
+            <li><strong>Rappel de connexion</strong> : Invitation à se connecter</li>
+            <li><strong>Confirmation d'inscription</strong> : Accueil nouveau utilisateur</li>
+            <li><strong>Rapport généré</strong> : Notification de disponibilité du rapport</li>
+        </ul>
+    </div>
+
+    <h3>Personnalisation des templates</h3>
+    <div class="step-box">
+        <h4><span class="step-number">1</span>Modification du contenu</h4>
+        <ul>
+            <li>Éditeur de texte riche</li>
+            <li>Variables dynamiques (nom, entreprise, etc.)</li>
+            <li>Liens automatiques de reprise</li>
+            <li>Prévisualisation en temps réel</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h4><span class="step-number">2</span>Gestion des variables</h4>
+        <ul>
+            <li><strong>[NOM]</strong> : Nom de l'entreprise</li>
+            <li><strong>[EMAIL]</strong> : Adresse email</li>
+            <li><strong>[LIEN]</strong> : Lien de reprise automatique</li>
+            <li><strong>[DATE]</strong> : Date actuelle</li>
+            <li><strong>[SCORE]</strong> : Score de la dernière évaluation</li>
+        </ul>
+    </div>
+
+    <h3>Envoi d'emails</h3>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h4>📤 Envoi individuel</h4>
+            <p>Envoyer un email personnalisé à un utilisateur spécifique</p>
+        </div>
+        <div class="feature-card">
+            <h4>📢 Envoi en masse</h4>
+            <p>Campagne email à plusieurs utilisateurs avec filtres</p>
+        </div>
+        <div class="feature-card">
+            <h4>⏰ Envoi programmé</h4>
+            <p>Planifier l'envoi d'emails à une date/heure précise</p>
+        </div>
+        <div class="feature-card">
+            <h4>📊 Suivi des envois</h4>
+            <p>Statistiques d'ouverture et de clics</p>
+        </div>
+    </div>
+
+    <h3>Historique des communications</h3>
+    <ul>
+        <li><strong>Log des envois</strong> : Historique complet des emails</li>
+        <li><strong>Statuts de livraison</strong> : Succès, échecs, bounces</li>
+        <li><strong>Ouvertures</strong> : Qui a ouvert les emails</li>
+        <li><strong>Clics</strong> : Suivi des liens cliqués</li>
+        <li><strong>Désabonnements</strong> : Gestion des opt-out</li>
+    </ul>
+
+    <h2 id="gestion-rapports">6. Gestion des rapports et exports</h2>
+
+    <h3>Génération de rapports</h3>
+    <div class="admin-section">
+        <h4>📊 Types de rapports disponibles</h4>
+        <ul>
+            <li><strong>Rapport utilisateur</strong> : PDF individuel avec résultats détaillés</li>
+            <li><strong>Rapport d'évaluation</strong> : Analyse complète d'une évaluation</li>
+            <li><strong>Rapport de statistiques</strong> : Vue d'ensemble des données</li>
+            <li><strong>Rapport personnalisé</strong> : Création sur mesure</li>
+        </ul>
+    </div>
+
+    <h3>Export de données</h3>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h4>📊 Excel</h4>
+            <p>Export des données utilisateurs et évaluations en format Excel</p>
+        </div>
+        <div class="feature-card">
+            <h4>📄 PDF</h4>
+            <p>Rapports détaillés en format PDF</p>
+        </div>
+        <div class="feature-card">
+            <h4>📋 CSV</h4>
+            <p>Données tabulaires pour analyse externe</p>
+        </div>
+        <div class="feature-card">
+            <h4>📈 Graphiques</h4>
+            <p>Visualisations et graphiques personnalisés</p>
+        </div>
+    </div>
+
+    <h3>Filtres d'export</h3>
+    <div class="info-box">
+        <h4>🔍 Options de filtrage pour les exports</h4>
+        <ul>
+            <li><strong>Période</strong> : Date de début et de fin</li>
+            <li><strong>Secteur</strong> : Filtrer par secteur d'activité</li>
+            <li><strong>Taille d'entreprise</strong> : Micro, PME, Grande PME</li>
+            <li><strong>Statut d'évaluation</strong> : Complétées, en cours, abandonnées</li>
+            <li><strong>Score</strong> : Plage de scores à inclure</li>
+            <li><strong>Langue</strong> : Français ou anglais</li>
+        </ul>
+    </div>
+
+    <h3>Planification des exports</h3>
+    <ul>
+        <li><strong>Exports automatiques</strong> : Programmation d'exports récurrents</li>
+        <li><strong>Notifications</strong> : Alertes par email lors de la disponibilité</li>
+        <li><strong>Stockage</strong> : Conservation des exports générés</li>
+        <li><strong>Partage</strong> : Envoi automatique aux destinataires</li>
+    </ul>
+
+    <h2 id="gestion-blog">7. Gestion du blog et contenu</h2>
+
+    <h3>Types de contenu</h3>
+    <div class="admin-section">
+        <h4>📝 Types d'articles supportés</h4>
+        <ul>
+            <li><strong>Article</strong> : Contenu informatif général</li>
+            <li><strong>Étude de cas</strong> : Retours d'expérience clients</li>
+            <li><strong>Tutoriel</strong> : Guides pratiques et didactiques</li>
+            <li><strong>Actualité</strong> : Nouvelles et mises à jour</li>
+            <li><strong>Témoignage</strong> : Avis et retours clients</li>
+        </ul>
+    </div>
+
+    <h3>Création et édition d'articles</h3>
+    <div class="step-box">
+        <h4><span class="step-number">1</span>Informations de base</h4>
+        <ul>
+            <li>Titre de l'article</li>
+            <li>Slug automatique (URL-friendly)</li>
+            <li>Extrait (résumé court)</li>
+            <li>Contenu principal</li>
+            <li>Type et catégorie</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h4><span class="step-number">2</span>Optimisation SEO</h4>
+        <ul>
+            <li>Méta-titre (max 60 caractères)</li>
+            <li>Méta-description (max 160 caractères)</li>
+            <li>Mots-clés et tags</li>
+            <li>Image de couverture</li>
+            <li>Alt text des images</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h4><span class="step-number">3</span>Publication</h4>
+        <ul>
+            <li>Statut (brouillon, publié, archivé)</li>
+            <li>Date de publication</li>
+            <li>Prévisualisation</li>
+            <li>Planification de publication</li>
+        </ul>
+    </div>
+
+    <h3>Gestion des médias</h3>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h4>🖼️ Images</h4>
+            <p>Upload et gestion des images d'articles</p>
+        </div>
+        <div class="feature-card">
+            <h4>📁 Galeries</h4>
+            <p>Création de galeries d'images</p>
+        </div>
+        <div class="feature-card">
+            <h4>🎨 Optimisation</h4>
+            <p>Compression et redimensionnement automatique</p>
+        </div>
+        <div class="feature-card">
+            <h4>📊 Métadonnées</h4>
+            <p>Gestion des informations des fichiers</p>
+        </div>
+    </div>
+
+    <h3>Statistiques du blog</h3>
+    <div class="metric-card">
+        <h4>📊 Métriques de contenu</h4>
+        <ul>
+            <li><strong>Articles publiés</strong> : Nombre total d'articles</li>
+            <li><strong>Vues totales</strong> : Nombre de lectures</li>
+            <li><strong>Likes</strong> : Engagement des lecteurs</li>
+            <li><strong>Partages</strong> : Diffusion sur les réseaux</li>
+            <li><strong>Articles populaires</strong> : Contenu le plus lu</li>
+        </ul>
+    </div>
+
+    <h2 id="maintenance">8. Maintenance et surveillance</h2>
+
+    <h3>Surveillance système</h3>
+    <div class="admin-section">
+        <h4>🔍 Monitoring en temps réel</h4>
+        <ul>
+            <li><strong>Performance</strong> : Temps de réponse et charge</li>
+            <li><strong>Erreurs</strong> : Logs d'erreurs et exceptions</li>
+            <li><strong>Utilisation</strong> : Ressources serveur et base de données</li>
+            <li><strong>Connexions</strong> : Utilisateurs connectés simultanément</li>
+            <li><strong>Stockage</strong> : Espace disque et fichiers</li>
+        </ul>
+    </div>
+
+    <h3>Logs et diagnostics</h3>
+    <div class="feature-grid">
+        <div class="feature-card">
+            <h4>📋 Logs d'application</h4>
+            <p>Suivi des événements et erreurs de l'application</p>
+        </div>
+        <div class="feature-card">
+            <h4>🔐 Logs de sécurité</h4>
+            <p>Surveillance des tentatives d'intrusion et accès</p>
+        </div>
+        <div class="feature-card">
+            <h4>📊 Logs de performance</h4>
+            <p>Métriques de performance et optimisation</p>
+        </div>
+        <div class="feature-card">
+            <h4>📧 Logs d'emails</h4>
+            <p>Suivi des envois et livraisons d'emails</p>
+        </div>
+    </div>
+
+    <h3>Nettoyage et optimisation</h3>
+    <div class="warning-box">
+        <h4>🧹 Tâches de maintenance</h4>
+        <ul>
+            <li><strong>Nettoyage des logs</strong> : Suppression des anciens logs</li>
+            <li><strong>Optimisation base de données</strong> : Indexation et requêtes</li>
+            <li><strong>Nettoyage des fichiers</strong> : Suppression des fichiers temporaires</li>
+            <li><strong>Archivage</strong> : Sauvegarde des anciennes données</li>
+            <li><strong>Mise à jour</strong> : Mise à jour des dépendances</li>
+        </ul>
+    </div>
+
+    <h2 id="securite">9. Sécurité et conformité</h2>
+
+    <h3>Gestion des accès</h3>
+    <div class="admin-section">
+        <h4>🔐 Contrôle d'accès</h4>
+        <ul>
+            <li><strong>Authentification</strong> : Connexion sécurisée avec JWT</li>
+            <li><strong>Autorisation</strong> : Permissions par fonctionnalité</li>
+            <li><strong>Sessions</strong> : Gestion des sessions utilisateurs</li>
+            <li><strong>Déconnexion</strong> : Fermeture automatique des sessions</li>
+            <li><strong>Audit</strong> : Traçabilité des actions administrateur</li>
+        </ul>
+    </div>
+
+    <h3>Protection des données</h3>
+    <div class="success-box">
+        <h4>🛡️ Mesures de sécurité</h4>
+        <ul>
+            <li><strong>Chiffrement</strong> : Données chiffrées en transit et au repos</li>
+            <li><strong>RGPD</strong> : Conformité au règlement européen</li>
+            <li><strong>Anonymisation</strong> : Possibilité d'anonymiser les données</li>
+            <li><strong>Suppression</strong> : Droit à l'oubli des utilisateurs</li>
+            <li><strong>Export</strong> : Droit à la portabilité des données</li>
+        </ul>
+    </div>
+
+    <h3>Surveillance de sécurité</h3>
+    <div class="warning-box">
+        <h4>🚨 Alertes de sécurité</h4>
+        <ul>
+            <li><strong>Tentatives d'intrusion</strong> : Détection des accès non autorisés</li>
+            <li><strong>Attaques par force brute</strong> : Protection contre les tentatives de connexion</li>
+            <li><strong>Anomalies de trafic</strong> : Détection de comportements suspects</li>
+            <li><strong>Vulnérabilités</strong> : Scan de sécurité automatique</li>
+            <li><strong>Mises à jour</strong> : Alertes pour les mises à jour critiques</li>
+        </ul>
+    </div>
+
+    <h3>Conformité et audit</h3>
+    <ul>
+        <li><strong>Logs d'audit</strong> : Traçabilité complète des actions</li>
+        <li><strong>Rapports de conformité</strong> : Documentation pour les audits</li>
+        <li><strong>Politiques de sécurité</strong> : Documentation des procédures</li>
+        <li><strong>Formation</strong> : Sensibilisation aux bonnes pratiques</li>
+        <li><strong>Tests de pénétration</strong> : Validation de la sécurité</li>
+    </ul>
+
+    <h2>Conclusion</h2>
+
+    <div class="success-box">
+        <h3>🎯 Maîtrisez votre plateforme</h3>
+        <p>Le panel d'administration d'UBB Enterprise Health Check vous donne tous les outils nécessaires pour gérer efficacement votre plateforme. De la gestion des utilisateurs à la création de contenu, en passant par l'analyse des données, vous avez un contrôle complet sur votre solution.</p>
+        
+        <p><strong>Utilisez ce guide comme référence pour optimiser l'utilisation de votre plateforme !</strong></p>
+    </div>
+
+    <hr style="margin: 40px 0; border: none; border-top: 2px solid #e5e7eb;">
+    
+    <p style="text-align: center; color: #6b7280; font-size: 14px;">
+        <em>Guide Administrateur UBB Enterprise Health Check - Version 1.0</em><br>
+        <em>Dernière mise à jour : Septembre 2025</em>
+    </p>
+</body>
+</html>

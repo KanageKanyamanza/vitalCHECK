@@ -116,6 +116,17 @@ const Navbar = () => {
               </button>
               
               <button
+                onClick={() => handleDesktopNavigation('/blog')}
+                className={`text-sm font-medium transition-colors duration-200 ${
+                  isActive('/blog') 
+                    ? 'text-primary-600 border-b-2 border-primary-600 pb-1' 
+                    : 'text-gray-600 hover:text-primary-600'
+                }`}
+              >
+                Blog
+              </button>
+              
+              <button
                 onClick={() => handleDesktopNavigation('/contact')}
                 className={`text-sm font-medium transition-colors duration-200 ${
                   isActive('/contact') 
@@ -224,6 +235,17 @@ const Navbar = () => {
                   }`}
                 >
                   {t('navigation.about')}
+                </button>
+                
+                <button
+                  onClick={() => handleNavigation('/blog')}
+                  className={`w-full text-left px-3 py-2 rounded-lg font-medium transition-colors duration-200 ${
+                    isActive('/blog') 
+                      ? 'text-primary-600 bg-primary-50' 
+                      : 'text-gray-600 hover:text-primary-600 hover:bg-gray-50'
+                  }`}
+                >
+                  Blog
                 </button>
                 
                 <button

@@ -221,7 +221,22 @@
     "question": "Question",
     "of": "de",
     "responses": "réponses",
-    "complete": "Terminé"
+    "complete": "Terminé",
+    "pleaseAnswerAll": "Veuillez répondre à toutes les questions",
+    "completedSuccessfully": "Évaluation terminée avec succès !",
+    "submissionError": "Erreur lors de la soumission de l'évaluation"
+  },
+  "resume": {
+    "title": "Évaluation UBB - Reprise",
+    "loading": "Reprise de l'évaluation en cours...",
+    "error": "Erreur de reprise",
+    "errorMessage": "Impossible de reprendre l'évaluation",
+    "success": "Évaluation reprise avec succès !",
+    "questionNotFound": "Question introuvable",
+    "questionNotFoundMessage": "La question demandée n'existe pas.",
+    "loadingQuestions": "Chargement des questions...",
+    "resumeNote": "Évaluation reprise",
+    "backToHome": "Retour à l'accueil"
   },
   "languages": {
     "en": "English",

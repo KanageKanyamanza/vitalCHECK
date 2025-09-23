@@ -2,11 +2,14 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
-const rateLimit = require("express-rate-limit");
+// Rate limiting désactivé - express-rate-limit retiré
 const { initAdmin } = require("./scripts/init-admin");
 require("dotenv").config();
 
 const app = express();
+
+// Configuration du trust proxy pour les headers X-Forwarded-For
+app.set('trust proxy', 1);
 
 // Security middleware
 app.use(helmet());
@@ -18,13 +21,11 @@ app.use(
 			
 			const allowedOrigins = [
 				"http://localhost:5173",
-				"https://ubb-enterprise-health-check.vercel.app",
-				"https://ubb-enterprise-health-check-git-feedback-roll-haurlys-projects.vercel.app",
-				"https://ubb-enterprise-health-check-43lryld5y-roll-haurlys-projects.vercel.app",
+				"https://www.checkmyenterprise.com",
 			];
 			
-			// Vérifier si l'origine est autorisée ou si c'est une URL Vercel
-			if (allowedOrigins.includes(origin) || origin.includes('vercel.app')) {
+			// Vérifier si l'origine est autorisée
+			if (allowedOrigins.includes(origin)) {
 				return callback(null, true);
 			}
 			
@@ -36,42 +37,20 @@ app.use(
 	})
 );
 
-// Rate limiting - Plus permissif pour les formulaires
-const limiter = rateLimit({
-	windowMs: 15 * 60 * 1000, // 15 minutes
-	max: 500, // limit each IP to 500 requests per windowMs (plus permissif)
-	message: {
-		success: false,
-		message: "Trop de requêtes, veuillez réessayer dans quelques minutes"
-	},
-	standardHeaders: true,
-	legacyHeaders: false,
-});
-
-// Rate limiting plus strict pour les routes d'authentification
-const authLimiter = rateLimit({
-	windowMs: 15 * 60 * 1000, // 15 minutes
-	max: 20, // limit each IP to 20 auth requests per windowMs
-	message: {
-		success: false,
-		message: "Trop de tentatives de connexion, veuillez réessayer dans 15 minutes"
-	},
-	standardHeaders: true,
-	legacyHeaders: false,
-});
-
-app.use(limiter);
+// Rate limiting désactivé pour permettre un trafic illimité en production
+// Les limitations ont été retirées pour éviter de bloquer les clients
 
 // Body parsing middleware
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
 
-// Routes
-app.use("/api/auth", authLimiter, require("./routes/auth"));
+// Routes - Aucune limitation de rate-limiting appliquée
+app.use("/api/auth", require("./routes/auth"));
 app.use("/api/assessments", require("./routes/assessments"));
 app.use("/api/reports", require("./routes/reports"));
 app.use("/api/contact", require("./routes/contact"));
-app.use("/api/admin", authLimiter, require("./routes/admin"));
+app.use("/api/admin", require("./routes/admin"));
+app.use("/api/blogs", require("./routes/blogs"));
 app.use("/api", require("./routes/ping"));
 
 // Health check endpoint

@@ -11,10 +11,19 @@
     "install-all": "npm install && cd server && npm install && cd ../client && npm install",
     "start": "cd server && npm start"
   },
-  "keywords": ["business", "health-check", "assessment", "enterprise", "UBB"],
+  "keywords": [
+    "business",
+    "health-check",
+    "assessment",
+    "enterprise",
+    "UBB"
+  ],
   "author": "UBB",
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2"
+  },
+  "dependencies": {
+    "puppeteer": "^24.22.1"
   }
 }

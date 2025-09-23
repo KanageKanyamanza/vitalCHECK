@@ -8,6 +8,8 @@ const initialState = {
   currentQuestionIndex: 0,
   answers: [],
   assessment: null,
+  assessmentId: null,
+  resumeToken: null,
   loading: false,
   error: null,
   language: 'fr'
@@ -35,8 +37,18 @@ function assessmentReducer(state, action) {
       
       if (existingAnswerIndex >= 0) {
         newAnswers[existingAnswerIndex] = action.payload
+        console.log('🔄 [CONTEXT] Réponse mise à jour:', {
+          questionId: action.payload.questionId,
+          answer: action.payload.answer,
+          totalAnswers: newAnswers.length
+        });
       } else {
         newAnswers.push(action.payload)
+        console.log('➕ [CONTEXT] Nouvelle réponse ajoutée:', {
+          questionId: action.payload.questionId,
+          answer: action.payload.answer,
+          totalAnswers: newAnswers.length
+        });
       }
       
       return { ...state, answers: newAnswers }
@@ -59,6 +71,14 @@ function assessmentReducer(state, action) {
     case 'SET_ASSESSMENT':
       return { ...state, assessment: action.payload, loading: false }
     
+    case 'SET_ASSESSMENT_ID':
+      console.log('🆔 [CONTEXT] Assessment ID défini:', action.payload);
+      return { ...state, assessmentId: action.payload }
+    
+    case 'SET_RESUME_TOKEN':
+      console.log('🔑 [CONTEXT] Resume token défini:', action.payload);
+      return { ...state, resumeToken: action.payload }
+    
     case 'LOAD_FROM_STORAGE':
       return { ...state, ...action.payload }
     
@@ -71,6 +91,8 @@ function assessmentReducer(state, action) {
         currentQuestionIndex: 0, 
         answers: [], 
         assessment: null,
+        assessmentId: null,
+        resumeToken: null,
         error: null
       }
     
@@ -92,9 +114,16 @@ export function AssessmentProvider({ children }) {
     if (savedData) {
       try {
         const parsedData = JSON.parse(savedData)
+        console.log('📱 [CONTEXT] Chargement des données depuis localStorage:', {
+          hasUser: !!parsedData.user,
+          hasAssessmentId: !!parsedData.assessmentId,
+          hasResumeToken: !!parsedData.resumeToken,
+          answersCount: parsedData.answers?.length || 0,
+          currentQuestionIndex: parsedData.currentQuestionIndex || 0
+        });
         dispatch({ type: 'LOAD_FROM_STORAGE', payload: parsedData })
       } catch (error) {
-        console.error('Error loading assessment data from localStorage:', error)
+        console.error('❌ [CONTEXT] Erreur lors du chargement depuis localStorage:', error)
         localStorage.removeItem('ubb-assessment-data')
       }
     }
@@ -108,14 +137,23 @@ export function AssessmentProvider({ children }) {
       currentQuestionIndex: state.currentQuestionIndex,
       answers: state.answers,
       assessment: state.assessment,
+      assessmentId: state.assessmentId,
+      resumeToken: state.resumeToken,
       language: state.language
     }
     
     // Only save if we have meaningful data
     if (state.user || state.assessment || state.answers.length > 0) {
+      console.log('💾 [CONTEXT] Sauvegarde dans localStorage:', {
+        hasUser: !!state.user,
+        hasAssessmentId: !!state.assessmentId,
+        hasResumeToken: !!state.resumeToken,
+        answersCount: state.answers.length,
+        currentQuestionIndex: state.currentQuestionIndex
+      });
       localStorage.setItem('ubb-assessment-data', JSON.stringify(dataToSave))
     }
-  }, [state.user, state.questions, state.currentQuestionIndex, state.answers, state.assessment, state.language])
+  }, [state.user, state.questions, state.currentQuestionIndex, state.answers, state.assessment, state.assessmentId, state.resumeToken, state.language])
 
   const value = {
     ...state,

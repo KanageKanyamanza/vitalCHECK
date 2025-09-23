@@ -221,7 +221,22 @@
     "question": "Question",
     "of": "of",
     "responses": "responses",
-    "complete": "Complete"
+    "complete": "Complete",
+    "pleaseAnswerAll": "Please answer all questions",
+    "completedSuccessfully": "Assessment completed successfully!",
+    "submissionError": "Error submitting assessment"
+  },
+  "resume": {
+    "title": "UBB Assessment - Resume",
+    "loading": "Resuming assessment...",
+    "error": "Resume Error",
+    "errorMessage": "Unable to resume assessment",
+    "success": "Assessment resumed successfully!",
+    "questionNotFound": "Question not found",
+    "questionNotFoundMessage": "The requested question does not exist.",
+    "loadingQuestions": "Loading questions...",
+    "resumeNote": "Assessment resumed",
+    "backToHome": "Back to home"
   },
   "languages": {
     "en": "English",

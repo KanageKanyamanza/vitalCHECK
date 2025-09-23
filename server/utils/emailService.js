@@ -75,8 +75,8 @@ const sendContactConfirmation = async (clientEmail, clientName, subject) => {
           <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0;">
             <h3 style="color: #1976d2; margin-top: 0;">En attendant notre réponse :</h3>
             <ul style="color: #666; line-height: 1.6;">
-              <li>Découvrez notre <a href="https://ubb-enterprise-health-check.vercel.app" style="color: #1976d2;">évaluation gratuite</a></li>
-              <li>Consultez nos <a href="https://ubb-enterprise-health-check.vercel.app/contact" style="color: #1976d2;">informations de contact</a></li>
+              <li>Découvrez notre <a href="https://www.checkmyenterprise.com" style="color: #1976d2;">évaluation gratuite</a></li>
+              <li>Consultez nos <a href="https://www.checkmyenterprise.com/contact" style="color: #1976d2;">informations de contact</a></li>
               <li>Suivez-nous sur nos réseaux sociaux</li>
             </ul>
           </div>

@@ -13,8 +13,7 @@ import AdminLayout from '../../components/admin/AdminLayout';
 import { useAdminApi } from '../../hooks/useAdminApi';
 
 const ReportsPage = () => {
-  const [reports, setReports] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loadingStates, setLoadingStates] = useState({});
   const [stats, setStats] = useState({
     totalUsers: 0,
     totalAssessments: 0,
@@ -27,7 +26,15 @@ const ReportsPage = () => {
   });
   
   // Utilisation du hook API
-  const { getStats, exportUsers } = useAdminApi();
+  const { 
+    getStats, 
+    exportUsersExcel, 
+    exportUsersPDF,
+    exportAssessmentsExcel, 
+    exportAssessmentsPDF,
+    exportStatsExcel, 
+    exportStatsPDF 
+  } = useAdminApi();
 
   // Charger les statistiques au montage du composant
   useEffect(() => {
@@ -53,31 +60,48 @@ const ReportsPage = () => {
     }
   };
 
-  const handleGenerateReport = async (type) => {
+  const handleGenerateReport = async (type, format = 'excel') => {
+    const loadingKey = `${type}-${format}`;
+    
     try {
-      setLoading(true);
+      setLoadingStates(prev => ({ ...prev, [loadingKey]: true }));
       
       switch (type) {
         case 'users':
-          await exportUsers();
-          toast.success('Rapport utilisateurs généré avec succès');
+          if (format === 'excel') {
+            await exportUsersExcel();
+            toast.success('Rapport utilisateurs Excel généré avec succès');
+          } else if (format === 'pdf') {
+            await exportUsersPDF();
+            toast.success('Rapport utilisateurs PDF généré avec succès');
+          }
           break;
         case 'assessments':
-          // TODO: Implémenter l'export des évaluations
-          toast.info('Fonctionnalité en cours de développement');
+          if (format === 'excel') {
+            await exportAssessmentsExcel();
+            toast.success('Rapport évaluations Excel généré avec succès');
+          } else if (format === 'pdf') {
+            await exportAssessmentsPDF();
+            toast.success('Rapport évaluations PDF généré avec succès');
+          }
           break;
         case 'statistics':
-          // TODO: Implémenter l'export des statistiques
-          toast.info('Fonctionnalité en cours de développement');
+          if (format === 'excel') {
+            await exportStatsExcel();
+            toast.success('Rapport statistiques Excel généré avec succès');
+          } else if (format === 'pdf') {
+            await exportStatsPDF();
+            toast.success('Rapport statistiques PDF généré avec succès');
+          }
           break;
         default:
           toast.error('Type de rapport non reconnu');
       }
     } catch (error) {
       console.error('Generate report error:', error);
-      // L'erreur est déjà gérée par le hook
+      toast.error('Erreur lors de la génération du rapport');
     } finally {
-      setLoading(false);
+      setLoadingStates(prev => ({ ...prev, [loadingKey]: false }));
     }
   };
 
@@ -172,23 +196,43 @@ const ReportsPage = () => {
                   {report.description}
                 </p>
                 
-                <button
-                  onClick={() => handleGenerateReport(report.id)}
-                  disabled={loading}
-                  className={`w-full px-4 py-2 rounded-lg font-medium text-sm transition-colors duration-200 ${report.hoverColor} ${report.bgColor} ${report.color} border border-current disabled:opacity-50 disabled:cursor-not-allowed`}
-                >
-                  {loading ? (
-                    <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
-                      Génération...
-                    </div>
-                  ) : (
-                    <div className="flex items-center justify-center">
-                      <Download className="h-4 w-4 mr-2" />
-                      Générer le rapport
-                    </div>
-                  )}
-                </button>
+                <div className="space-y-2">
+                  <button
+                    onClick={() => handleGenerateReport(report.id, 'excel')}
+                    disabled={loadingStates[`${report.id}-excel`]}
+                    className={`w-full px-4 py-2 rounded-lg font-medium text-sm transition-colors duration-200 ${report.hoverColor} ${report.bgColor} ${report.color} border border-current disabled:opacity-50 disabled:cursor-not-allowed`}
+                  >
+                    {loadingStates[`${report.id}-excel`] ? (
+                      <div className="flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                        Génération...
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center">
+                        <Download className="h-4 w-4 mr-2" />
+                        Excel (.xlsx)
+                      </div>
+                    )}
+                  </button>
+                  
+                  <button
+                    onClick={() => handleGenerateReport(report.id, 'pdf')}
+                    disabled={loadingStates[`${report.id}-pdf`]}
+                    className={`w-full px-4 py-2 rounded-lg font-medium text-sm transition-colors duration-200 ${report.hoverColor} ${report.bgColor} ${report.color} border border-current disabled:opacity-50 disabled:cursor-not-allowed`}
+                  >
+                    {loadingStates[`${report.id}-pdf`] ? (
+                      <div className="flex items-center justify-center">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-current mr-2"></div>
+                        Génération...
+                      </div>
+                    ) : (
+                      <div className="flex items-center justify-center">
+                        <FileText className="h-4 w-4 mr-2" />
+                        PDF
+                      </div>
+                    )}
+                  </button>
+                </div>
               </div>
             ))}
           </div>
@@ -234,7 +278,8 @@ const ReportsPage = () => {
                 </h3>
                 <div className="mt-2 text-sm text-blue-700">
                   <ul className="list-disc list-inside space-y-1">
-                    <li>Les rapports sont générés au format CSV</li>
+                    <li>Les rapports sont disponibles en format Excel (.xlsx) et PDF</li>
+                    <li>Format CSV disponible pour les utilisateurs</li>
                     <li>Vous pouvez filtrer par période en utilisant les dates</li>
                     <li>Les données sont exportées en temps réel</li>
                     <li>Les rapports incluent toutes les informations disponibles</li>

@@ -8,7 +8,10 @@ import EmailManagement from './EmailManagement';
 import UserDetail from './UserDetail';
 import AssessmentDetail from './AssessmentDetail';
 import ReportsPage from './ReportsPage';
-import SettingsPage from './SettingsPage';
+import DraftAssessmentsPage from './DraftAssessmentsPage';
+import BlogManagement from './BlogManagement';
+import BlogEditPage from './BlogEditPage';
+import BlogStatsPage from './BlogStatsPage';
 
 const AdminApp = () => {
   const isAuthenticated = () => {
@@ -55,6 +58,36 @@ const AdminApp = () => {
         } 
       />
       <Route 
+        path="/draft-assessments" 
+        element={
+          isAuthenticated() ? <DraftAssessmentsPage /> : <Navigate to="/admin/login" replace />
+        } 
+      />
+      <Route 
+        path="/blog" 
+        element={
+          isAuthenticated() ? <BlogManagement /> : <Navigate to="/admin/login" replace />
+        } 
+      />
+      <Route 
+        path="/blog/create" 
+        element={
+          isAuthenticated() ? <BlogEditPage /> : <Navigate to="/admin/login" replace />
+        } 
+      />
+      <Route 
+        path="/blog/edit/:id" 
+        element={
+          isAuthenticated() ? <BlogEditPage /> : <Navigate to="/admin/login" replace />
+        } 
+      />
+      <Route 
+        path="/blog/stats" 
+        element={
+          isAuthenticated() ? <BlogStatsPage /> : <Navigate to="/admin/login" replace />
+        } 
+      />
+      <Route 
         path="/emails" 
         element={
           isAuthenticated() ? <EmailManagement /> : <Navigate to="/admin/login" replace />
@@ -64,12 +97,6 @@ const AdminApp = () => {
         path="/reports" 
         element={
           isAuthenticated() ? <ReportsPage /> : <Navigate to="/admin/login" replace />
-        } 
-      />
-      <Route 
-        path="/settings" 
-        element={
-          isAuthenticated() ? <SettingsPage /> : <Navigate to="/admin/login" replace />
         } 
       />
       <Route 

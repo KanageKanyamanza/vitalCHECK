@@ -113,6 +113,9 @@ export const publicApi = {
   submitAssessment: (data) => api.post('/assessments/submit', data),
   getUserAssessments: (userId) => api.get(`/assessments/user/${userId}`),
   getAssessment: (assessmentId) => api.get(`/assessments/${assessmentId}`),
+  createDraft: (data) => api.post('/assessments/draft', data),
+  resumeAssessment: (token) => api.get(`/assessments/resume/${token}`),
+  saveProgress: (assessmentId, data) => api.put(`/assessments/progress/${assessmentId}`, data),
   
   // Reports
   generateReport: (assessmentId) => api.get(`/reports/${assessmentId}`),
@@ -144,6 +147,7 @@ export const adminApiService = {
   },
   getUser: (userId) => adminApi.get(`/admin/users/${userId}`),
   deleteUser: (userId) => adminApi.delete(`/admin/users/${userId}`),
+  getUserDraftAssessment: (userId) => adminApi.get(`/admin/users/${userId}/draft-assessment`),
   
   // Assessments
   getAssessments: (params = {}) => {
@@ -152,6 +156,10 @@ export const adminApiService = {
   },
   getAssessment: (assessmentId) => adminApi.get(`/admin/assessments/${assessmentId}`),
   deleteAssessment: (assessmentId) => adminApi.delete(`/admin/assessments/${assessmentId}`),
+  getDraftAssessments: (params = {}) => {
+    const queryParams = new URLSearchParams(params);
+    return adminApi.get(`/admin/draft-assessments?${queryParams}`);
+  },
   
   // Emails
   sendReminderEmail: (userId, data) => adminApi.post(`/admin/users/${userId}/remind`, data),
@@ -166,6 +174,25 @@ export const adminApiService = {
   getNotifications: () => adminApi.get('/admin/notifications'),
   markNotificationAsRead: (notificationId) => adminApi.put(`/admin/notifications/${notificationId}/read`),
   markAllNotificationsAsRead: () => adminApi.put('/admin/notifications/read-all'),
+  
+  // Blogs
+  getBlogs: (params = {}) => {
+    const queryParams = new URLSearchParams(params);
+    return adminApi.get(`/blogs/admin/blogs?${queryParams}`);
+  },
+  getBlog: (id) => adminApi.get(`/blogs/admin/blogs/${id}`),
+  createBlog: (data) => adminApi.post('/blogs/admin/blogs', data),
+  updateBlog: (id, data) => adminApi.put(`/blogs/admin/blogs/${id}`, data),
+  deleteBlog: (id) => adminApi.delete(`/blogs/admin/blogs/${id}`),
+  getBlogStats: () => adminApi.get('/blogs/admin/stats'),
+  
+  // Exports
+  exportUsersExcel: () => adminApi.get('/admin/export/users/excel', { responseType: 'blob' }),
+  exportUsersPDF: () => adminApi.get('/admin/export/users/pdf', { responseType: 'blob' }),
+  exportAssessmentsExcel: () => adminApi.get('/admin/export/assessments/excel', { responseType: 'blob' }),
+  exportAssessmentsPDF: () => adminApi.get('/admin/export/assessments/pdf', { responseType: 'blob' }),
+  exportStatsExcel: () => adminApi.get('/admin/export/stats/excel', { responseType: 'blob' }),
+  exportStatsPDF: () => adminApi.get('/admin/export/stats/pdf', { responseType: 'blob' }),
 };
 
 // Fonction utilitaire pour gérer les erreurs de rate limiting
@@ -202,6 +229,51 @@ export const resetConnection = () => {
   
   // Rediriger vers la page de connexion
   window.location.href = '/admin/login';
+};
+
+// ===== SERVICES BLOG =====
+
+// Services publics pour les blogs
+export const blogApiService = {
+  // Récupérer tous les blogs publiés
+  getBlogs: (params = {}) => api.get('/blogs', { params }),
+  
+  // Récupérer un blog par slug
+  getBlogBySlug: (slug) => api.get(`/blogs/${slug}`),
+  
+  // Liker un blog
+  likeBlog: (id) => api.post(`/blogs/${id}/like`),
+  
+  // Rechercher des blogs
+  searchBlogs: (query) => api.get('/blogs', { 
+    params: { search: query, limit: 20 } 
+  })
+};
+
+// Services admin pour les blogs
+export const adminBlogApiService = {
+  // Récupérer tous les blogs (admin)
+  getBlogs: (params = {}) => adminApi.get('/blogs/admin/blogs', { params }),
+  
+  // Récupérer un blog par ID (admin)
+  getBlog: (id) => adminApi.get(`/blogs/admin/blogs/${id}`),
+  
+  // Créer un blog
+  createBlog: (data) => adminApi.post('/blogs/admin/blogs', data),
+  
+  // Mettre à jour un blog
+  updateBlog: (id, data) => adminApi.put(`/blogs/admin/blogs/${id}`, data),
+  
+  // Supprimer un blog
+  deleteBlog: (id) => adminApi.delete(`/blogs/admin/blogs/${id}`),
+  
+  // Récupérer les statistiques
+  getStats: () => {
+    console.log('Getting blog stats...')
+    const token = localStorage.getItem('adminToken')
+    console.log('Admin token present:', !!token)
+    return adminApi.get('/blogs/admin/stats')
+  }
 };
 
 export default api;
