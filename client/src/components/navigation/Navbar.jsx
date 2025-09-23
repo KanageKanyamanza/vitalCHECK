@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { NavbarLanguageSelector } from '../ui'
 import { useAssessment } from '../../context/AssessmentContext'
-import logoIcon from '/icons/android-icon-96x96.png'
+import logoIcon from '/android-icon-96x96.png'
 
 const Navbar = () => {
   const { t } = useTranslation()
