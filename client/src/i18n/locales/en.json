@@ -191,7 +191,7 @@
       "email": "Contact email",
       "emailPlaceholder": "your@email.com",
       "startButton": "Start Your Free Health Check",
-      "startButtonShort": "Start",
+      "startButtonShort": "Start here",
       "startAssessment": "Start Assessment",
       "language": "Language",
       "languagePlaceholder": "Select language"
@@ -521,7 +521,7 @@
         "description": "Building trust through honesty."
       },
       "excellence": {
-        "title": "Excellence",
+        "title": "Excellency",
         "description": "Striving for the highest standards in every project."
       },
       "courage": {
@@ -542,7 +542,7 @@
       "content1": "UBB was born from the belief that too many SMEs fail not because of a lack of potential, but because they lack the right support.",
       "example": {
         "title": "One concrete example",
-        "content": "Our work with STM, a company on the brink of bankruptcy. Through diagnosis, strategic guidance, and implementation, we helped them stabilize, restructure, and regain trust.",
+        "content": "Our work with STM, a company on the brink of bankruptcy, Through diagnosis, strategic guidance, and implementation, we helped them stabilize, restructure, and regain trust.",
         "result": "As a direct result, their revenues grew, and they doubled our consulting fee in recognition of the measurable impact."
       },
       "content2": "This experience reinforced our mission: to stand beside entrepreneurs when they need clarity most, helping them turn setbacks into growth."
