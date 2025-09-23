@@ -1,11 +1,21 @@
 const express = require('express');
 const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 const Admin = require('../models/Admin');
 const User = require('../models/User');
 const Assessment = require('../models/Assessment');
 const Notification = require('../models/Notification');
 const { sendEmail } = require('../utils/emailService');
+const { 
+  exportUsersToExcel, 
+  exportAssessmentsToExcel, 
+  exportStatsToExcel, 
+  exportStatsToPDF,
+  exportUsersToPDF,
+  exportAssessmentsToPDF
+} = require('../utils/exportUtils');
+const { generateReminderEmailHTML } = require('../utils/reminderEmailTemplate');
 const router = express.Router();
 
 // Middleware d'authentification admin
@@ -126,9 +136,19 @@ router.get('/notifications', authenticateAdmin, async (req, res) => {
 
     const unreadCount = await Notification.countDocuments({ read: false });
 
+    // Transformer les _id en id pour le frontend
+    const transformedNotifications = notifications.map(notification => ({
+      ...notification.toObject(),
+      id: notification._id,
+      assessment: {
+        ...notification.assessment,
+        id: notification.assessment.id
+      }
+    }));
+
     res.json({
       success: true,
-      notifications,
+      notifications: transformedNotifications,
       count: notifications.length,
       unreadCount
     });
@@ -146,6 +166,14 @@ router.get('/notifications', authenticateAdmin, async (req, res) => {
 router.put('/notifications/:id/read', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
+    
+    // Validation de l'ID
+    if (!id || id === 'undefined' || !mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({
+        success: false,
+        message: 'ID de notification invalide'
+      });
+    }
     
     const notification = await Notification.findByIdAndUpdate(
       id,
@@ -165,7 +193,14 @@ router.put('/notifications/:id/read', authenticateAdmin, async (req, res) => {
 
     res.json({
       success: true,
-      notification
+      notification: {
+        ...notification.toObject(),
+        id: notification._id,
+        assessment: {
+          ...notification.assessment,
+          id: notification.assessment.id
+        }
+      }
     });
 
   } catch (error) {
@@ -440,17 +475,7 @@ router.post('/users/:userId/remind', authenticateAdmin, checkPermission('sendEma
     const emailData = {
       to: user.email,
       subject: subject,
-      html: `
-        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-          <h2 style="color: #2563eb;">UBB Enterprise Health Check</h2>
-          <p>Bonjour ${user.companyName},</p>
-          <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            ${message.replace(/\n/g, '<br>')}
-          </div>
-          <p>Si vous souhaitez compléter ou reprendre votre évaluation, vous pouvez accéder à notre plateforme.</p>
-          <p>Cordialement,<br>L'équipe UBB</p>
-        </div>
-      `
+      html: generateReminderEmailHTML(user, message, subject)
     };
 
     await sendEmail(emailData);
@@ -471,9 +496,10 @@ router.post('/users/:userId/remind', authenticateAdmin, checkPermission('sendEma
 
 // Envoyer un email de relance en masse
 router.post('/users/remind-bulk', authenticateAdmin, checkPermission('sendEmails'), [
-  body('userIds').isArray({ min: 1 }),
-  body('subject').trim().isLength({ min: 1 }),
-  body('message').trim().isLength({ min: 1 })
+  body('userIds').optional().isArray({ min: 1 }),
+  body('emails').optional().isArray({ min: 1 }),
+  body('subject').optional().trim().isLength({ min: 1 }),
+  body('message').optional().trim().isLength({ min: 1 })
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -481,41 +507,61 @@ router.post('/users/remind-bulk', authenticateAdmin, checkPermission('sendEmails
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { userIds, subject, message } = req.body;
-    const users = await User.find({ _id: { $in: userIds } });
+    const { userIds, emails, subject, message } = req.body;
 
-    if (users.length === 0) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Aucun utilisateur trouvé' 
+    // Support pour les deux formats : userIds + message commun OU emails personnalisés
+    if (emails && emails.length > 0) {
+      // Format avec emails personnalisés
+      const emailPromises = emails.map(emailData => {
+        // Créer un objet user fictif pour le template
+        const user = { companyName: emailData.to.split('@')[0] };
+        const html = generateReminderEmailHTML(user, emailData.message, emailData.subject);
+        
+        return sendEmail({
+          to: emailData.to,
+          subject: emailData.subject,
+          html: html
+        });
+      });
+
+      await Promise.all(emailPromises);
+
+      res.json({
+        success: true,
+        message: `${emails.length} emails personnalisés envoyés avec succès`
+      });
+    } else if (userIds && userIds.length > 0) {
+      // Format classique avec userIds et message commun
+      const users = await User.find({ _id: { $in: userIds } });
+
+      if (users.length === 0) {
+        return res.status(404).json({ 
+          success: false, 
+          message: 'Aucun utilisateur trouvé' 
+        });
+      }
+
+      const emailPromises = users.map(user => {
+        const emailData = {
+          to: user.email,
+          subject: subject,
+          html: generateReminderEmailHTML(user, message, subject)
+        };
+        return sendEmail(emailData);
+      });
+
+      await Promise.all(emailPromises);
+
+      res.json({
+        success: true,
+        message: `${users.length} emails de relance envoyés avec succès`
+      });
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: 'userIds ou emails requis'
       });
     }
-
-    const emailPromises = users.map(user => {
-      const emailData = {
-        to: user.email,
-        subject: subject,
-        html: `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h2 style="color: #2563eb;">UBB Enterprise Health Check</h2>
-            <p>Bonjour ${user.companyName},</p>
-            <div style="background-color: #f8fafc; padding: 20px; border-radius: 8px; margin: 20px 0;">
-              ${message.replace(/\n/g, '<br>')}
-            </div>
-            <p>Si vous souhaitez compléter ou reprendre votre évaluation, vous pouvez accéder à notre plateforme.</p>
-            <p>Cordialement,<br>L'équipe UBB</p>
-          </div>
-        `
-      };
-      return sendEmail(emailData);
-    });
-
-    await Promise.all(emailPromises);
-
-    res.json({
-      success: true,
-      message: `${users.length} emails de relance envoyés avec succès`
-    });
 
   } catch (error) {
     console.error('Send bulk reminder emails error:', error);
@@ -622,6 +668,350 @@ router.get('/export/users', authenticateAdmin, checkPermission('viewUsers'), asy
     res.status(500).json({ 
       success: false, 
       message: 'Erreur lors de l\'export' 
+    });
+  }
+});
+
+// Export utilisateurs en Excel
+router.get('/export/users/excel', authenticateAdmin, checkPermission('viewUsers'), async (req, res) => {
+  try {
+    const users = await User.find({})
+      .populate('assessments', 'overallScore overallStatus completedAt')
+      .sort({ createdAt: -1 });
+
+    const buffer = await exportUsersToExcel(users);
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="utilisateurs-export.xlsx"');
+    res.send(buffer);
+
+  } catch (error) {
+    console.error('Export users Excel error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur lors de l\'export Excel' 
+    });
+  }
+});
+
+// Export utilisateurs en PDF
+router.get('/export/users/pdf', authenticateAdmin, checkPermission('viewUsers'), async (req, res) => {
+  try {
+    const users = await User.find({})
+      .populate('assessments', 'overallScore overallStatus completedAt')
+      .sort({ createdAt: -1 });
+
+    const pdf = await exportUsersToPDF(users);
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="utilisateurs-rapport.pdf"');
+    res.send(pdf);
+
+  } catch (error) {
+    console.error('Export users PDF error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur lors de l\'export PDF' 
+    });
+  }
+});
+
+// Export évaluations en Excel
+router.get('/export/assessments/excel', authenticateAdmin, checkPermission('viewAssessments'), async (req, res) => {
+  try {
+    const assessments = await Assessment.find({})
+      .populate('user', 'companyName email sector companySize')
+      .sort({ completedAt: -1 });
+
+    const buffer = await exportAssessmentsToExcel(assessments);
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="evaluations-export.xlsx"');
+    res.send(buffer);
+
+  } catch (error) {
+    console.error('Export assessments Excel error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur lors de l\'export Excel' 
+    });
+  }
+});
+
+// Export évaluations en PDF
+router.get('/export/assessments/pdf', authenticateAdmin, checkPermission('viewAssessments'), async (req, res) => {
+  try {
+    const assessments = await Assessment.find({})
+      .populate('user', 'companyName email sector companySize')
+      .sort({ completedAt: -1 });
+
+    const pdf = await exportAssessmentsToPDF(assessments);
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="evaluations-rapport.pdf"');
+    res.send(pdf);
+
+  } catch (error) {
+    console.error('Export assessments PDF error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur lors de l\'export PDF' 
+    });
+  }
+});
+
+// Export statistiques en Excel
+router.get('/export/stats/excel', authenticateAdmin, async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments();
+    const totalAssessments = await Assessment.countDocuments();
+    const completedAssessments = await Assessment.countDocuments({ reportGenerated: true });
+    
+    // Statistiques par secteur
+    const sectorStats = await User.aggregate([
+      { $group: { _id: '$sector', count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]);
+
+    // Statistiques par taille d'entreprise
+    const sizeStats = await User.aggregate([
+      { $group: { _id: '$companySize', count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]);
+
+    // Statistiques des scores
+    const scoreStats = await Assessment.aggregate([
+      {
+        $group: {
+          _id: '$overallStatus',
+          count: { $sum: 1 },
+          avgScore: { $avg: '$overallScore' }
+        }
+      }
+    ]);
+
+    // Utilisateurs récents (7 derniers jours)
+    const recentUsers = await User.countDocuments({
+      createdAt: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }
+    });
+
+    // Évaluations récentes (7 derniers jours)
+    const recentAssessments = await Assessment.countDocuments({
+      completedAt: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }
+    });
+
+    const stats = {
+      totalUsers,
+      totalAssessments,
+      completedAssessments,
+      recentUsers,
+      recentAssessments,
+      sectorStats,
+      sizeStats,
+      scoreStats
+    };
+
+    const buffer = await exportStatsToExcel(stats);
+
+    res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    res.setHeader('Content-Disposition', 'attachment; filename="statistiques-export.xlsx"');
+    res.send(buffer);
+
+  } catch (error) {
+    console.error('Export stats Excel error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur lors de l\'export Excel' 
+    });
+  }
+});
+
+// Export statistiques en PDF
+router.get('/export/stats/pdf', authenticateAdmin, async (req, res) => {
+  try {
+    const totalUsers = await User.countDocuments();
+    const totalAssessments = await Assessment.countDocuments();
+    const completedAssessments = await Assessment.countDocuments({ reportGenerated: true });
+    
+    // Statistiques par secteur
+    const sectorStats = await User.aggregate([
+      { $group: { _id: '$sector', count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]);
+
+    // Statistiques par taille d'entreprise
+    const sizeStats = await User.aggregate([
+      { $group: { _id: '$companySize', count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]);
+
+    // Utilisateurs récents (7 derniers jours)
+    const recentUsers = await User.countDocuments({
+      createdAt: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }
+    });
+
+    // Évaluations récentes (7 derniers jours)
+    const recentAssessments = await Assessment.countDocuments({
+      completedAt: { $gte: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000) }
+    });
+
+    const stats = {
+      totalUsers,
+      totalAssessments,
+      completedAssessments,
+      recentUsers,
+      recentAssessments,
+      sectorStats,
+      sizeStats
+    };
+
+    const pdf = await exportStatsToPDF(stats);
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', 'attachment; filename="statistiques-rapport.pdf"');
+    res.send(pdf);
+
+  } catch (error) {
+    console.error('Export stats PDF error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur lors de l\'export PDF' 
+    });
+  }
+});
+
+// Get user's draft assessment and generate resume link
+router.get('/users/:userId/draft-assessment', authenticateAdmin, checkPermission('viewAssessments'), async (req, res) => {
+  try {
+    const draftAssessment = await Assessment.findOne({ 
+      user: req.params.userId, 
+      status: 'draft' 
+    }).populate('user', 'companyName email');
+
+    if (!draftAssessment) {
+      return res.json({
+        success: true,
+        hasDraft: false,
+        message: 'No draft assessment found'
+      });
+    }
+
+    // Ensure resume token exists
+    if (!draftAssessment.resumeToken) {
+      const { generateResumeToken } = require('../utils/resumeToken');
+      draftAssessment.resumeToken = generateResumeToken(req.params.userId, draftAssessment._id);
+      await draftAssessment.save();
+    }
+
+    const resumeLink = `${process.env.CLIENT_URL || 'http://localhost:3000'}/resume/${draftAssessment.resumeToken}`;
+
+    res.json({
+      success: true,
+      hasDraft: true,
+      assessment: {
+        id: draftAssessment._id,
+        resumeToken: draftAssessment.resumeToken,
+        resumeLink,
+        currentQuestionIndex: draftAssessment.currentQuestionIndex,
+        totalQuestions: draftAssessment.totalQuestions,
+        answersCount: draftAssessment.answers.length,
+        startedAt: draftAssessment.startedAt,
+        lastAnsweredAt: draftAssessment.lastAnsweredAt,
+        user: {
+          companyName: draftAssessment.user.companyName,
+          email: draftAssessment.user.email
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error('Get draft assessment error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server error' 
+    });
+  }
+});
+
+// Get all draft assessments (incomplete evaluations)
+router.get('/draft-assessments', authenticateAdmin, checkPermission('viewAssessments'), async (req, res) => {
+  try {
+    const { page = 1, limit = 10, search = '' } = req.query;
+    const skip = (page - 1) * limit;
+
+    // Build search query
+    let searchQuery = { status: 'draft' };
+    if (search) {
+      searchQuery = {
+        ...searchQuery,
+        $or: [
+          { 'user.companyName': { $regex: search, $options: 'i' } },
+          { 'user.email': { $regex: search, $options: 'i' } }
+        ]
+      };
+    }
+
+    const draftAssessments = await Assessment.find(searchQuery)
+      .populate('user', 'companyName email sector companySize')
+      .sort({ lastAnsweredAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const total = await Assessment.countDocuments(searchQuery);
+
+    // Generate resume links for all assessments
+    const { generateResumeToken } = require('../utils/resumeToken');
+    const assessmentsWithLinks = await Promise.all(
+      draftAssessments.map(async (assessment) => {
+        // Ensure resume token exists
+        if (!assessment.resumeToken) {
+          assessment.resumeToken = generateResumeToken(assessment.user._id, assessment._id);
+          await assessment.save();
+        }
+
+        const resumeLink = `${process.env.CLIENT_URL || 'http://localhost:3000'}/resume/${assessment.resumeToken}`;
+        const progressPercentage = assessment.totalQuestions > 0 
+          ? Math.round((assessment.answers.length / assessment.totalQuestions) * 100)
+          : 0;
+
+        return {
+          id: assessment._id,
+          resumeToken: assessment.resumeToken,
+          resumeLink,
+          currentQuestionIndex: assessment.currentQuestionIndex,
+          totalQuestions: assessment.totalQuestions,
+          answersCount: assessment.answers.length,
+          progressPercentage,
+          startedAt: assessment.startedAt,
+          lastAnsweredAt: assessment.lastAnsweredAt,
+          language: assessment.language,
+          user: {
+            id: assessment.user._id,
+            companyName: assessment.user.companyName,
+            email: assessment.user.email,
+            sector: assessment.user.sector,
+            companySize: assessment.user.companySize
+          }
+        };
+      })
+    );
+
+    res.json({
+      success: true,
+      assessments: assessmentsWithLinks,
+      pagination: {
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(total / limit),
+        totalItems: total,
+        itemsPerPage: parseInt(limit)
+      }
+    });
+
+  } catch (error) {
+    console.error('Get draft assessments error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Server error' 
     });
   }
 });

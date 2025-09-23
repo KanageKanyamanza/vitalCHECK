@@ -104,6 +104,16 @@ export const useAdminApi = () => {
     return executeRequest(() => adminApiService.deleteAssessment(assessmentId));
   }, [executeRequest]);
 
+  const getDraftAssessments = useCallback(async (params = {}) => {
+    const cacheKey = `draft-assessments-${JSON.stringify(params)}`;
+    return executeRequest(() => adminApiService.getDraftAssessments(params), 0, cacheKey);
+  }, [executeRequest]);
+
+  const getUserDraftAssessment = useCallback(async (userId) => {
+    const cacheKey = `user-draft-assessment-${userId}`;
+    return executeRequest(() => adminApiService.getUserDraftAssessment(userId), 0, cacheKey);
+  }, [executeRequest]);
+
   // Fonctions pour les statistiques
   const getStats = useCallback(async () => {
     const cacheKey = 'stats';
@@ -119,7 +129,7 @@ export const useAdminApi = () => {
     return executeRequest(() => adminApiService.sendBulkEmails(data));
   }, [executeRequest]);
 
-  // Fonction pour l'export
+  // Fonction pour l'export CSV
   const exportUsers = useCallback(async () => {
     try {
       setLoading(true);
@@ -147,6 +157,65 @@ export const useAdminApi = () => {
     }
   }, []);
 
+  // Fonction générique pour télécharger des fichiers
+  const downloadFile = useCallback(async (apiFunction, filename) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await apiFunction();
+      
+      // Créer un blob et télécharger le fichier
+      const blob = new Blob([response.data]);
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
+      
+      return { success: true };
+    } catch (err) {
+      setError(err);
+      throw err;
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  // Exports Excel et PDF
+  const exportUsersExcel = useCallback(() => 
+    downloadFile(adminApiService.exportUsersExcel, 'utilisateurs-export.xlsx'), 
+    [downloadFile]
+  );
+
+  const exportUsersPDF = useCallback(() => 
+    downloadFile(adminApiService.exportUsersPDF, 'utilisateurs-rapport.pdf'), 
+    [downloadFile]
+  );
+
+  const exportAssessmentsExcel = useCallback(() => 
+    downloadFile(adminApiService.exportAssessmentsExcel, 'evaluations-export.xlsx'), 
+    [downloadFile]
+  );
+
+  const exportAssessmentsPDF = useCallback(() => 
+    downloadFile(adminApiService.exportAssessmentsPDF, 'evaluations-rapport.pdf'), 
+    [downloadFile]
+  );
+
+  const exportStatsExcel = useCallback(() => 
+    downloadFile(adminApiService.exportStatsExcel, 'statistiques-export.xlsx'), 
+    [downloadFile]
+  );
+
+  const exportStatsPDF = useCallback(() => 
+    downloadFile(adminApiService.exportStatsPDF, 'statistiques-rapport.pdf'), 
+    [downloadFile]
+  );
+
   // Fonctions pour les notifications
   const getNotifications = useCallback(async () => {
     const cacheKey = 'notifications';
@@ -166,6 +235,54 @@ export const useAdminApi = () => {
   }, [executeRequest]);
 
   // Fonction pour vider le cache
+  // Fonctions spécifiques pour les blogs
+  const getBlogs = useCallback(async (params = {}) => {
+    const cacheKey = `blogs-${JSON.stringify(params)}`;
+    return executeRequest(() => adminApiService.getBlogs(params), 0, cacheKey);
+  }, [executeRequest]);
+
+  const getBlog = useCallback(async (blogId) => {
+    const cacheKey = `blog-${blogId}`;
+    return executeRequest(() => adminApiService.getBlog(blogId), 0, cacheKey);
+  }, [executeRequest]);
+
+  const createBlog = useCallback(async (data) => {
+    // Invalider le cache des blogs
+    requestCache.current.forEach((value, key) => {
+      if (key.startsWith('blogs-')) {
+        requestCache.current.delete(key);
+      }
+    });
+    return executeRequest(() => adminApiService.createBlog(data));
+  }, [executeRequest]);
+
+  const updateBlog = useCallback(async (id, data) => {
+    // Invalider le cache des blogs
+    requestCache.current.delete(`blog-${id}`);
+    requestCache.current.forEach((value, key) => {
+      if (key.startsWith('blogs-')) {
+        requestCache.current.delete(key);
+      }
+    });
+    return executeRequest(() => adminApiService.updateBlog(id, data));
+  }, [executeRequest]);
+
+  const deleteBlog = useCallback(async (id) => {
+    // Invalider le cache des blogs
+    requestCache.current.delete(`blog-${id}`);
+    requestCache.current.forEach((value, key) => {
+      if (key.startsWith('blogs-')) {
+        requestCache.current.delete(key);
+      }
+    });
+    return executeRequest(() => adminApiService.deleteBlog(id));
+  }, [executeRequest]);
+
+  const getBlogStats = useCallback(async () => {
+    const cacheKey = 'blog-stats';
+    return executeRequest(() => adminApiService.getBlogStats(), 0, cacheKey);
+  }, [executeRequest]);
+
   const clearCache = useCallback(() => {
     requestCache.current.clear();
     console.log('Cache API vidé');
@@ -174,6 +291,7 @@ export const useAdminApi = () => {
   return {
     loading,
     error,
+    executeRequest,
     // Users
     getUsers,
     getUser,
@@ -182,17 +300,32 @@ export const useAdminApi = () => {
     getAssessments,
     getAssessment,
     deleteAssessment,
+    getDraftAssessments,
+    getUserDraftAssessment,
     // Stats
     getStats,
     // Emails
     sendReminderEmail,
     sendBulkEmails,
-    // Export
+    // Exports
     exportUsers,
+    exportUsersExcel,
+    exportUsersPDF,
+    exportAssessmentsExcel,
+    exportAssessmentsPDF,
+    exportStatsExcel,
+    exportStatsPDF,
     // Notifications
     getNotifications,
     markNotificationAsRead,
     markAllNotificationsAsRead,
+    // Blogs
+    getBlogs,
+    getBlog,
+    createBlog,
+    updateBlog,
+    deleteBlog,
+    getBlogStats,
     // Cache
     clearCache,
   };

@@ -5,7 +5,6 @@ const adminSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, 'Email is required'],
-    unique: true,
     lowercase: true,
     trim: true
   },
@@ -51,7 +50,7 @@ const adminSchema = new mongoose.Schema({
 });
 
 // Index for faster queries
-adminSchema.index({ email: 1 });
+adminSchema.index({ email: 1 }, { unique: true });
 adminSchema.index({ role: 1 });
 
 // Hash password before saving

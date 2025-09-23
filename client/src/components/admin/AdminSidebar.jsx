@@ -6,12 +6,13 @@ import {
   FileText, 
   Mail, 
   BarChart3, 
-  Settings,
   LogOut,
   Menu,
   X,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Clock,
+  BookOpen
 } from 'lucide-react';
 import Logo from '../../assets/Logo.png';
 
@@ -45,6 +46,22 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
       hoverColor: 'hover:bg-accent-100'
     },
     {
+      name: 'En Cours',
+      path: '/admin/draft-assessments',
+      icon: Clock,
+      color: 'text-orange-600',
+      bgColor: 'bg-orange-50',
+      hoverColor: 'hover:bg-orange-100'
+    },
+    {
+      name: 'Blog',
+      path: '/admin/blog',
+      icon: BookOpen,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-50',
+      hoverColor: 'hover:bg-purple-100'
+    },
+    {
       name: 'Emails',
       path: '/admin/emails',
       icon: Mail,
@@ -59,14 +76,6 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
       color: 'text-success-600',
       bgColor: 'bg-success-50',
       hoverColor: 'hover:bg-success-100'
-    },
-    {
-      name: 'Paramètres',
-      path: '/admin/settings',
-      icon: Settings,
-      color: 'text-warning-600',
-      bgColor: 'bg-warning-50',
-      hoverColor: 'hover:bg-warning-100'
     }
   ];
 

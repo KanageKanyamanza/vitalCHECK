@@ -48,23 +48,44 @@ const assessmentSchema = new mongoose.Schema({
   pillarScores: [pillarScoreSchema],
   overallScore: {
     type: Number,
-    required: true,
     min: 0,
     max: 100
   },
   overallStatus: {
     type: String,
-    enum: ['red', 'amber', 'green'],
-    required: true
+    enum: ['red', 'amber', 'green']
   },
   language: {
     type: String,
     default: 'fr',
     enum: ['en', 'fr']
   },
-  completedAt: {
+  status: {
+    type: String,
+    enum: ['draft', 'completed'],
+    default: 'draft'
+  },
+  startedAt: {
     type: Date,
     default: Date.now
+  },
+  completedAt: {
+    type: Date
+  },
+  lastAnsweredAt: {
+    type: Date,
+    default: Date.now
+  },
+  currentQuestionIndex: {
+    type: Number,
+    default: 0
+  },
+  totalQuestions: {
+    type: Number,
+    default: 0
+  },
+  resumeToken: {
+    type: String
   },
   reportGenerated: {
     type: Boolean,
@@ -91,5 +112,8 @@ const assessmentSchema = new mongoose.Schema({
 
 // Index for faster queries
 assessmentSchema.index({ user: 1, completedAt: -1 });
+assessmentSchema.index({ user: 1, status: 1, startedAt: -1 });
+// Create sparse unique index for resumeToken
+assessmentSchema.index({ resumeToken: 1 }, { unique: true, sparse: true });
 
 module.exports = mongoose.model('Assessment', assessmentSchema);

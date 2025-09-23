@@ -6,7 +6,8 @@ import {
   FileText, 
   Mail, 
   BarChart3, 
-  Settings
+  Clock,
+  BookOpen
 } from 'lucide-react';
 
 const AdminBottomNav = () => {
@@ -36,6 +37,13 @@ const AdminBottomNav = () => {
       bgColor: 'bg-accent-50'
     },
     {
+      name: 'En Cours',
+      path: '/admin/draft-assessments',
+      icon: Clock,
+      color: 'text-orange-600',
+      bgColor: 'bg-orange-50'
+    },
+    {
       name: 'Emails',
       path: '/admin/emails',
       icon: Mail,
@@ -43,18 +51,18 @@ const AdminBottomNav = () => {
       bgColor: 'bg-earth-50'
     },
     {
+      name: 'Blog',
+      path: '/admin/blog',
+      icon: BookOpen,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-50'
+    },
+    {
       name: 'Rapports',
       path: '/admin/reports',
       icon: BarChart3,
       color: 'text-success-600',
       bgColor: 'bg-success-50'
-    },
-    {
-      name: 'Paramètres',
-      path: '/admin/settings',
-      icon: Settings,
-      color: 'text-warning-600',
-      bgColor: 'bg-warning-50'
     }
   ];
 
@@ -64,7 +72,7 @@ const AdminBottomNav = () => {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-lg z-50 lg:hidden">
-      <div className="grid grid-cols-6 h-16">
+      <div className="grid grid-cols-7 h-16">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.path);
@@ -82,7 +90,7 @@ const AdminBottomNav = () => {
               `}
             >
               <Icon className={`w-5 h-5 ${active ? item.color : ''}`} />
-              <span className={`text-[10px] pb-3 font-medium ${active ? item.color : 'text-gray-500'}`}>
+              <span className={`text-[8px] pb-3 font-medium ${active ? item.color : 'text-gray-500'}`}>
                 {item.name}
               </span>
             </button>

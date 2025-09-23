@@ -8,6 +8,9 @@ require("dotenv").config();
 
 const app = express();
 
+// Configuration du trust proxy pour les headers X-Forwarded-For
+app.set('trust proxy', 1);
+
 // Security middleware
 app.use(helmet());
 app.use(
@@ -19,8 +22,6 @@ app.use(
 			const allowedOrigins = [
 				"http://localhost:5173",
 				"https://ubb-enterprise-health-check.vercel.app",
-				"https://ubb-enterprise-health-check-git-feedback-roll-haurlys-projects.vercel.app",
-				"https://ubb-enterprise-health-check-43lryld5y-roll-haurlys-projects.vercel.app",
 			];
 			
 			// Vérifier si l'origine est autorisée ou si c'est une URL Vercel
@@ -49,6 +50,7 @@ app.use("/api/assessments", require("./routes/assessments"));
 app.use("/api/reports", require("./routes/reports"));
 app.use("/api/contact", require("./routes/contact"));
 app.use("/api/admin", require("./routes/admin"));
+app.use("/api/blogs", require("./routes/blogs"));
 app.use("/api", require("./routes/ping"));
 
 // Health check endpoint

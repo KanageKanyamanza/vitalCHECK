@@ -20,6 +20,7 @@ const AssessmentPage = () => {
     answers, 
     loading, 
     language,
+    assessmentId,
     dispatch 
   } = useAssessment()
   
@@ -34,7 +35,71 @@ const AssessmentPage = () => {
     }
 
     loadQuestions()
+    createDraftAssessment()
   }, [user, navigate])
+
+  const createDraftAssessment = async () => {
+    try {
+      console.log('🆕 [FRONTEND] Création du draft assessment pour userId:', user.id);
+      
+      const response = await assessmentAPI.createDraft({
+        userId: user.id,
+        language
+      });
+
+      if (response.data.success) {
+        const { assessment } = response.data;
+        console.log('✅ [FRONTEND] Draft créé:', {
+          id: assessment.id,
+          resumeToken: assessment.resumeToken,
+          currentQuestionIndex: assessment.currentQuestionIndex
+        });
+        
+        dispatch({ type: 'SET_ASSESSMENT_ID', payload: assessment.id });
+        dispatch({ type: 'SET_RESUME_TOKEN', payload: assessment.resumeToken });
+        
+        // Si on a des réponses existantes, les charger
+        if (assessment.answers && assessment.answers.length > 0) {
+          console.log('📋 [FRONTEND] Chargement des réponses existantes:', assessment.answers.length);
+          assessment.answers.forEach(answer => {
+            dispatch({
+              type: 'SET_ANSWER',
+              payload: { questionId: answer.questionId, answer: answer.answer }
+            });
+          });
+          dispatch({ type: 'SET_CURRENT_QUESTION_INDEX', payload: assessment.currentQuestionIndex });
+        }
+      }
+    } catch (error) {
+      console.error('❌ [FRONTEND] Erreur création draft:', error);
+      // Ne pas bloquer l'évaluation si la création du draft échoue
+    }
+  }
+
+  const saveProgress = async () => {
+    try {
+      if (!assessmentId) {
+        console.log('⚠️ [FRONTEND] Pas d\'assessmentId, impossible de sauvegarder');
+        return;
+      }
+
+      console.log('💾 [FRONTEND] Sauvegarde de la progression:', {
+        assessmentId,
+        answersCount: answers.length,
+        currentQuestionIndex
+      });
+
+      await assessmentAPI.saveProgress(assessmentId, {
+        answers,
+        currentQuestionIndex
+      });
+
+      console.log('✅ [FRONTEND] Progression sauvegardée avec succès');
+    } catch (error) {
+      console.error('❌ [FRONTEND] Erreur sauvegarde progression:', error);
+      // Ne pas bloquer l'évaluation si la sauvegarde échoue
+    }
+  }
 
   const loadQuestions = async () => {
     try {
@@ -166,12 +231,17 @@ const AssessmentPage = () => {
       type: 'SET_ANSWER',
       payload: { questionId, answer: score }
     })
+    
+    // Sauvegarder automatiquement la progression
+    saveProgress()
   }
 
   const handleNext = () => {
     const totalQuestions = getTotalQuestions()
     if (currentQuestionIndex < totalQuestions - 1) {
       dispatch({ type: 'NEXT_QUESTION' })
+      // Sauvegarder la progression après changement de question
+      saveProgress()
     } else {
       handleSubmit()
     }

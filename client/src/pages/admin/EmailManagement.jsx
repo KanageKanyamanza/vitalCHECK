@@ -23,7 +23,7 @@ const EmailManagement = () => {
   const location = useLocation();
   
   // Utilisation du hook API
-  const { loading, sendReminderEmail, sendBulkEmails } = useAdminApi();
+  const { loading, sendReminderEmail, sendBulkEmails, getUserDraftAssessment } = useAdminApi();
 
   useEffect(() => {
     // Récupérer les utilisateurs sélectionnés depuis la navigation
@@ -54,14 +54,58 @@ const EmailManagement = () => {
     }
 
     try {
-      const data = await sendBulkEmails({
-        userIds: selectedUsers,
-        subject: formData.subject,
-        message: formData.message
-      });
+      // Si le message contient [LIEN], récupérer les liens de reprise pour chaque utilisateur
+      if (formData.message.includes('[LIEN]')) {
+        const emailsWithLinks = [];
+        
+        for (const userId of selectedUsers) {
+          try {
+            const response = await getUserDraftAssessment(userId);
+            let personalizedMessage = formData.message;
+            
+            if (response.success && response.hasDraft) {
+              personalizedMessage = formData.message.replace('[LIEN]', response.assessment.resumeLink);
+            } else {
+              // Si pas d'évaluation en cours, utiliser le lien de connexion par défaut
+              personalizedMessage = formData.message.replace('[LIEN]', `${window.location.origin}/`);
+            }
+            
+            emailsWithLinks.push({
+              userId,
+              to: userEmails.find(u => u.id === userId)?.email || '',
+              subject: formData.subject,
+              message: personalizedMessage
+            });
+          } catch (error) {
+            console.error(`Error getting draft assessment for user ${userId}:`, error);
+            // En cas d'erreur, utiliser le message original
+            emailsWithLinks.push({
+              userId,
+              to: userEmails.find(u => u.id === userId)?.email || '',
+              subject: formData.subject,
+              message: formData.message.replace('[LIEN]', `${window.location.origin}/`)
+            });
+          }
+        }
+        
+        // Envoyer les emails avec les liens personnalisés
+        const data = await sendBulkEmails({
+          emails: emailsWithLinks
+        });
+        
+        toast.success(data.message);
+        navigate('/admin/users');
+      } else {
+        // Si pas de [LIEN], envoyer normalement
+        const data = await sendBulkEmails({
+          userIds: selectedUsers,
+          subject: formData.subject,
+          message: formData.message
+        });
 
-      toast.success(data.message);
-      navigate('/admin/users');
+        toast.success(data.message);
+        navigate('/admin/users');
+      }
     } catch (error) {
       console.error('Send email error:', error);
       // L'erreur est déjà gérée par le hook
@@ -75,9 +119,29 @@ const EmailManagement = () => {
     }
 
     try {
+      let messageToSend = formData.message;
+      
+      // Si le message contient [LIEN], récupérer le lien de reprise
+      if (formData.message.includes('[LIEN]')) {
+        try {
+          const response = await getUserDraftAssessment(userId);
+          
+          if (response.success && response.hasDraft) {
+            messageToSend = formData.message.replace('[LIEN]', response.assessment.resumeLink);
+          } else {
+            // Si pas d'évaluation en cours, utiliser le lien de connexion par défaut
+            messageToSend = formData.message.replace('[LIEN]', `${window.location.origin}/`);
+          }
+        } catch (error) {
+          console.error('Error getting draft assessment:', error);
+          // En cas d'erreur, utiliser le lien de connexion par défaut
+          messageToSend = formData.message.replace('[LIEN]', `${window.location.origin}/`);
+        }
+      }
+
       await sendReminderEmail(userId, {
         subject: formData.subject,
-        message: formData.message
+        message: messageToSend
       });
 
       toast.success('Email envoyé avec succès');
@@ -91,52 +155,65 @@ const EmailManagement = () => {
     {
       name: 'Relance évaluation incomplète',
       subject: 'Complétez votre évaluation UBB Enterprise Health Check',
-      message: `Bonjour,
-
-Nous avons remarqué que vous avez commencé votre évaluation UBB Enterprise Health Check mais ne l'avez pas encore terminée.
+      message: `Nous avons remarqué que vous avez commencé votre évaluation UBB Enterprise Health Check mais ne l'avez pas encore terminée.
 
 Cette évaluation vous permettra d'obtenir un rapport détaillé sur la santé de votre entreprise et des recommandations personnalisées pour l'améliorer.
 
-Pour reprendre votre évaluation, cliquez sur le lien suivant : [LIEN]
+Pour reprendre votre évaluation, cliquez sur le lien suivant : ${window.location.origin}/
 
-Si vous avez des questions, n'hésitez pas à nous contacter.
-
-Cordialement,
-L'équipe UBB`
+Si vous avez des questions, n'hésitez pas à nous contacter.`
     },
     {
       name: 'Relance nouvelle évaluation',
       subject: 'Nouvelle évaluation UBB Enterprise Health Check disponible',
-      message: `Bonjour,
-
-Nous sommes ravis de vous informer qu'une nouvelle évaluation UBB Enterprise Health Check est maintenant disponible.
+      message: `Nous sommes ravis de vous informer qu'une nouvelle évaluation UBB Enterprise Health Check est maintenant disponible.
 
 Cette mise à jour inclut de nouvelles questions et des recommandations améliorées basées sur les dernières tendances du marché.
 
-Pour commencer votre nouvelle évaluation, cliquez sur le lien suivant : [LIEN]
-
-Cordialement,
-L'équipe UBB`
+Pour commencer votre nouvelle évaluation, cliquez sur le lien suivant : ${window.location.origin}/`
     },
     {
       name: 'Rappel de connexion',
       subject: 'Accédez à votre tableau de bord UBB',
-      message: `Bonjour,
+      message: `Nous vous rappelons que vous pouvez accéder à votre tableau de bord UBB à tout moment pour consulter vos évaluations précédentes et télécharger vos rapports.
 
-Nous vous rappelons que vous pouvez accéder à votre tableau de bord UBB à tout moment pour consulter vos évaluations précédentes et télécharger vos rapports.
-
-Connectez-vous ici : [LIEN]
-
-Cordialement,
-L'équipe UBB`
+Connectez-vous ici : ${window.location.origin}/`
     }
   ];
 
-  const applyTemplate = (template) => {
-    setFormData({
-      subject: template.subject,
-      message: template.message
-    });
+  const applyTemplate = async (template) => {
+    try {
+      // Si c'est un template de relance d'évaluation incomplète, récupérer le lien de reprise personnalisé
+      if (template.name === 'Relance évaluation incomplète' && selectedUsers.length === 1) {
+        const userId = selectedUsers[0];
+        const response = await getUserDraftAssessment(userId);
+        
+        if (response.success && response.hasDraft) {
+          const resumeLink = response.assessment.resumeLink;
+          // Remplacer le lien générique par le lien de reprise spécifique
+          const messageWithLink = template.message.replace(`${window.location.origin}/`, resumeLink);
+          
+          setFormData({
+            subject: template.subject,
+            message: messageWithLink
+          });
+          return;
+        }
+      }
+      
+      // Pour les autres cas, utiliser le template tel quel
+      setFormData({
+        subject: template.subject,
+        message: template.message
+      });
+    } catch (error) {
+      console.error('Error getting draft assessment:', error);
+      // En cas d'erreur, utiliser le template tel quel
+      setFormData({
+        subject: template.subject,
+        message: template.message
+      });
+    }
   };
 
   return (
@@ -213,9 +290,6 @@ L'équipe UBB`
                   placeholder="Votre message..."
                   required
                 />
-                <p className="mt-2 text-sm text-gray-500">
-                  Vous pouvez utiliser [LIEN] pour insérer un lien vers l'évaluation.
-                </p>
               </div>
 
               <div className="flex justify-end space-x-4">

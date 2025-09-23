@@ -86,31 +86,48 @@ const NotificationDropdown = () => {
   // Gérer le clic sur une notification
   const handleNotificationClick = async (notification) => {
     try {
-      // Marquer la notification comme lue côté serveur
-      if (!notification.read) {
-        await markNotificationAsRead(notification.id);
+      const notificationId = notification.id || notification._id;
+      const assessmentId = notification.assessment?.id || notification.assessment?._id;
+      
+      if (!notificationId) {
+        console.error('ID de notification manquant:', notification);
+        return;
       }
+      
+      if (!assessmentId) {
+        console.error('ID d\'évaluation manquant:', notification);
+        return;
+      }
+      
+      // Marquer la notification comme lue côté serveur
+      await markNotificationAsRead(notificationId);
       
       // Mettre à jour l'état local
       setNotifications(prevNotifications => 
         prevNotifications.map(n => 
-          n.id === notification.id ? { ...n, read: true } : n
+          (n.id || n._id) === notificationId ? { ...n, read: true } : n
         )
       );
       
       setIsOpen(false);
       // Naviguer vers les détails de l'évaluation
-      navigate(`/admin/assessments/${notification.assessment.id}`);
+      navigate(`/admin/assessments/${assessmentId}`);
     } catch (error) {
       console.error('Erreur lors du marquage de la notification:', error);
       // Mettre à jour l'état local même en cas d'erreur
-      setNotifications(prevNotifications => 
-        prevNotifications.map(n => 
-          n.id === notification.id ? { ...n, read: true } : n
-        )
-      );
+      const notificationId = notification.id || notification._id;
+      if (notificationId) {
+        setNotifications(prevNotifications => 
+          prevNotifications.map(n => 
+            (n.id || n._id) === notificationId ? { ...n, read: true } : n
+          )
+        );
+      }
       setIsOpen(false);
-      navigate(`/admin/assessments/${notification.assessment.id}`);
+      const assessmentId = notification.assessment?.id || notification.assessment?._id;
+      if (assessmentId) {
+        navigate(`/admin/assessments/${assessmentId}`);
+      }
     }
   };
 
@@ -135,7 +152,8 @@ const NotificationDropdown = () => {
     }
   };
 
-  const unreadCount = notifications.filter(n => !n.read).length;
+  const unreadNotifications = notifications.filter(n => !n.read);
+  const unreadCount = unreadNotifications.length;
 
   return (
     <div className="relative" ref={dropdownRef}>
@@ -186,20 +204,18 @@ const NotificationDropdown = () => {
               <div className="flex items-center justify-center p-8">
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-primary-600"></div>
               </div>
-            ) : notifications.length === 0 ? (
+            ) : unreadNotifications.length === 0 ? (
               <div className="flex flex-col items-center justify-center p-8 text-gray-500">
                 <Bell className="w-12 h-12 text-gray-300 mb-2" />
                 <p className="text-sm">Aucune nouvelle notification</p>
               </div>
             ) : (
               <div className="divide-y divide-gray-100">
-                {notifications.map((notification) => (
+                {unreadNotifications.map((notification, index) => (
                   <div
-                    key={notification.id}
+                    key={notification.id || notification._id || index}
                     onClick={() => handleNotificationClick(notification)}
-                    className={`p-4 hover:bg-gray-50 cursor-pointer transition-colors group ${
-                      !notification.read ? 'bg-blue-50 border-l-4 border-l-primary-500' : ''
-                    }`}
+                    className="p-4 hover:bg-gray-50 cursor-pointer transition-colors group bg-blue-50 border-l-4 border-l-primary-500"
                   >
                     <div className="flex items-start space-x-3">
                       {/* Icône */}
@@ -215,9 +231,7 @@ const NotificationDropdown = () => {
                           <p className="text-sm font-medium text-gray-900 truncate">
                             {notification.title}
                           </p>
-                          {!notification.read && (
-                            <div className="w-2 h-2 bg-primary-500 rounded-full flex-shrink-0"></div>
-                          )}
+                          <div className="w-2 h-2 bg-primary-500 rounded-full flex-shrink-0"></div>
                         </div>
                         <p className="text-sm text-gray-600 mt-1">
                           {notification.message}
@@ -255,7 +269,7 @@ const NotificationDropdown = () => {
           </div>
 
           {/* Footer */}
-          {notifications.length > 0 && (
+          {unreadNotifications.length > 0 && (
             <div className="p-3 border-t border-gray-200 bg-gray-50">
               <button
                 onClick={() => {
