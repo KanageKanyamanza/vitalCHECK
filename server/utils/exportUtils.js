@@ -419,7 +419,7 @@ const generateStatsHTML = (stats) => {
       <div class="header">
         <div class="header-content">
           <div class="logo-container">
-            <img src="https://ubb-enterprise-health-check.vercel.app/icons/ms-icon-310x310.png" alt="UBB Logo" class="logo" />
+            <img src="https://www.checkmyenterprise.com/icons/ms-icon-310x310.png" alt="UBB Logo" class="logo" />
           </div>
           <h1>UBB Enterprise Health Check</h1>
           <p>Rapport Statistiques Administrateur</p>
@@ -752,7 +752,7 @@ const generateUsersHTML = (users) => {
       <div class="header">
         <div class="header-content">
           <div class="logo-container">
-            <img src="https://ubb-enterprise-health-check.vercel.app/icons/ms-icon-310x310.png" alt="UBB Logo" class="logo" />
+            <img src="https://www.checkmyenterprise.com/icons/ms-icon-310x310.png" alt="UBB Logo" class="logo" />
           </div>
           <h1>UBB Enterprise Health Check</h1>
           <p>Rapport Utilisateurs Administrateur</p>
@@ -1078,7 +1078,7 @@ const generateAssessmentsHTML = (assessments) => {
       <div class="header">
         <div class="header-content">
           <div class="logo-container">
-            <img src="https://ubb-enterprise-health-check.vercel.app/icons/ms-icon-310x310.png" alt="UBB Logo" class="logo" />
+            <img src="https://www.checkmyenterprise.com/icons/ms-icon-310x310.png" alt="UBB Logo" class="logo" />
           </div>
           <h1>UBB Enterprise Health Check</h1>
           <p>Rapport Évaluations Administrateur</p>

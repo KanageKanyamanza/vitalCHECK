@@ -245,7 +245,7 @@ const BlogPage = () => {
                       </div>
                     )}
 
-                    <div className="p-6">
+                    <div className="p-2 sm:p-6">
                       {/* Métadonnées */}
                       <div className="flex items-center space-x-3 mb-3">
                         <div className="flex items-center text-sm text-primary-600">
@@ -284,8 +284,8 @@ const BlogPage = () => {
                       )}
 
                       {/* Footer */}
-                      <div className="flex items-center justify-between text-sm text-gray-500">
-                        <div className="flex items-center space-x-4">
+                      <div className="flex flex-wrap items-center justify-between text-sm text-gray-500">
+                        <div className="flex items-center space-x-3">
                           <div className="flex items-center">
                             <User className="h-4 w-4 mr-1" />
                             {blog.author?.name || 'Auteur'}

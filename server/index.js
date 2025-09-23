@@ -21,11 +21,11 @@ app.use(
 			
 			const allowedOrigins = [
 				"http://localhost:5173",
-				"https://ubb-enterprise-health-check.vercel.app",
+				"https://www.checkmyenterprise.com",
 			];
 			
-			// Vérifier si l'origine est autorisée ou si c'est une URL Vercel
-			if (allowedOrigins.includes(origin) || origin.includes('vercel.app')) {
+			// Vérifier si l'origine est autorisée
+			if (allowedOrigins.includes(origin)) {
 				return callback(null, true);
 			}
 			

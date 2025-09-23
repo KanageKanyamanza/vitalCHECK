@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UBB Enterprise Health Check - Guide d'Utilisation Complet</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+        }
+        
+        h1 {
+            color: #2563eb;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 10px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        
+        h2 {
+            color: #1e40af;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 8px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+        
+        h3 {
+            color: #374151;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 25px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        code {
+            background-color: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+        }
+        
+        pre {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 15px;
+            overflow-x: auto;
+            margin: 15px 0;
+        }
+        
+        pre code {
+            background: none;
+            padding: 0;
+        }
+        
+        strong {
+            color: #1f2937;
+            font-weight: 600;
+        }
+        
+        em {
+            color: #6b7280;
+            font-style: italic;
+        }
+        
+        a {
+            color: #2563eb;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+        
+        .highlight {
+            background-color: #fef3c7;
+            padding: 15px;
+            border-left: 4px solid #f59e0b;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .info-box {
+            background-color: #dbeafe;
+            padding: 15px;
+            border-left: 4px solid #2563eb;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .warning-box {
+            background-color: #fef2f2;
+            padding: 15px;
+            border-left: 4px solid #ef4444;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .success-box {
+            background-color: #f0fdf4;
+            padding: 15px;
+            border-left: 4px solid #10b981;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+        }
+        
+        th, td {
+            border: 1px solid #d1d5db;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: #f9fafb;
+            font-weight: 600;
+        }
+        
+        .toc {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .toc h2 {
+            margin-top: 0;
+            color: #1f2937;
+        }
+        
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .toc li {
+            margin-bottom: 5px;
+        }
+        
+        .toc a {
+            color: #4b5563;
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+        
+        .page-break {
+            page-break-before: always;
+        }
+        
+        @media print {
+            body {
+                font-size: 12px;
+            }
+            
+            h1 {
+                font-size: 18px;
+            }
+            
+            h2 {
+                font-size: 16px;
+            }
+            
+            h3 {
+                font-size: 14px;
+            }
+            
+            /* Éviter les coupures de mots */
+            * {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            /* Éviter les coupures dans les paragraphes */
+            p {
+                orphans: 3;
+                widows: 3;
+                page-break-inside: avoid;
+            }
+            
+            /* Éviter les coupures dans les listes */
+            ul, ol {
+                page-break-inside: avoid;
+            }
+            
+            /* Éviter les coupures dans les boîtes importantes */
+            .step-box, .info-box, .success-box, .warning-box, .highlight, .admin-section, .feature-card, .metric-card {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            /* Éviter les coupures dans les titres */
+            h1, h2, h3, h4, h5, h6 {
+                page-break-after: avoid;
+                break-after: avoid;
+            }
+            
+            /* Forcer les sauts de page avant les sections importantes */
+            h2 {
+                page-break-before: auto;
+                break-before: auto;
+            }
+            
+            /* Éviter les coupures dans les tableaux */
+            table {
+                page-break-inside: avoid;
+            }
+            
+            /* Éviter les coupures dans les éléments avec des numéros */
+            .step-number {
+                page-break-inside: avoid;
+            }
+            
+            /* Éviter les coupures dans les grilles */
+            .feature-grid {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Guide d'Utilisation Complet - UBB Enterprise Health Check</h1>
+    
+    <div class="toc">
+        <h2>Table des Matières</h2>
+        <ul>
+            <li><a href="#introduction">1. Introduction</a></li>
+            <li><a href="#vue-densemble">2. Vue d'ensemble du système</a></li>
+            <li><a href="#parcours-utilisateur">3. Parcours utilisateur complet</a></li>
+            <li><a href="#fonctionnalites-avancees">4. Fonctionnalités avancées</a></li>
+            <li><a href="#gestion-administrative">5. Gestion administrative</a></li>
+            <li><a href="#systeme-blog">6. Système de blog</a></li>
+            <li><a href="#faq">7. FAQ et dépannage</a></li>
+        </ul>
+    </div>
+
+    <h2 id="introduction">1. Introduction</h2>
+    
+    <p><strong>UBB Enterprise Health Check (UBB-EHC)</strong> est une plateforme web complète permettant aux entreprises d'évaluer leur santé organisationnelle à travers 6 piliers clés. Cette solution moderne utilise la stack technologique MERN (MongoDB, Express.js, React, Node.js) avec Vite et Tailwind CSS pour offrir une expérience utilisateur fluide et responsive.</p>
+
+    <div class="info-box">
+        <h3>Objectifs de la plateforme</h3>
+        <ul>
+            <li><strong>Évaluation complète</strong> : Analyse de 6 piliers essentiels de la santé d'entreprise</li>
+            <li><strong>Scoring intelligent</strong> : Système de notation automatique avec seuils colorés</li>
+            <li><strong>Rapports détaillés</strong> : Génération automatique de rapports PDF personnalisés</li>
+            <li><strong>Recommandations</strong> : Conseils adaptés selon les scores obtenus</li>
+            <li><strong>Multilingue</strong> : Interface disponible en français et anglais</li>
+            <li><strong>Gestion administrative</strong> : Panel d'administration complet</li>
+        </ul>
+    </div>
+
+    <h2 id="vue-densemble">2. Vue d'ensemble du système</h2>
+
+    <h3>Architecture technique</h3>
+
+    <h4>Backend (Node.js + Express + MongoDB)</h4>
+    <ul>
+        <li><strong>API REST</strong> : Routes pour authentification, évaluations et rapports</li>
+        <li><strong>Modèles de données</strong> : User, Assessment, Admin, Blog avec relations</li>
+        <li><strong>Génération PDF</strong> : Rapports automatiques avec html-pdf-node</li>
+        <li><strong>Envoi d'emails</strong> : Notifications avec rapports en pièce jointe</li>
+        <li><strong>Sécurité</strong> : Helmet, CORS, Rate Limiting, JWT</li>
+    </ul>
+
+    <h4>Frontend (React + Vite + Tailwind CSS)</h4>
+    <ul>
+        <li><strong>Pages principales</strong> : Landing, Assessment, Results, Blog</li>
+        <li><strong>Composants</strong> : QuestionCard, ScoreGauge, PillarChart</li>
+        <li><strong>État global</strong> : Context API pour la gestion des données</li>
+        <li><strong>Animations</strong> : Framer Motion pour une UX fluide</li>
+        <li><strong>Graphiques</strong> : Recharts et Chart.js pour la visualisation</li>
+    </ul>
+
+    <h3>Les 6 piliers d'évaluation</h3>
+    <ol>
+        <li><strong>Finance & Cash Flow</strong> - Gestion financière et trésorerie</li>
+        <li><strong>Operations & Processes</strong> - Processus et efficacité opérationnelle</li>
+        <li><strong>Sales & Marketing</strong> - Ventes et stratégie marketing</li>
+        <li><strong>People & HR</strong> - Ressources humaines et développement</li>
+        <li><strong>Strategy & Governance</strong> - Stratégie et gouvernance</li>
+        <li><strong>Technology & Digital Readiness</strong> - Maturité technologique</li>
+    </ol>
+
+    <h3>Système de scoring</h3>
+    <ul>
+        <li><strong>Chaque question</strong> : 0-3 points</li>
+        <li><strong>Score par pilier</strong> : Moyenne × 25 (0-100)</li>
+        <li><strong>Score global</strong> : Moyenne de tous les piliers</li>
+        <li><strong>Seuils</strong> :
+            <ul>
+                <li>🔴 <strong>Rouge (0-39)</strong> : Critique - Action immédiate requise</li>
+                <li>🟡 <strong>Ambre (40-69)</strong> : En développement - Amélioration nécessaire</li>
+                <li>🟢 <strong>Vert (70-100)</strong> : Excellent - Maintien et optimisation</li>
+            </ul>
+        </li>
+    </ul>
+
+    <h2 id="parcours-utilisateur">3. Parcours utilisateur complet</h2>
+
+    <h3>Étape 1 : Page d'accueil (Landing Page)</h3>
+
+    <h4>Interface utilisateur</h4>
+    <ul>
+        <li><strong>Hero Section</strong> : Titre accrocheur avec call-to-action principal</li>
+        <li><strong>Formulaire d'inscription</strong> : Collecte des informations de l'entreprise</li>
+        <li><strong>Sélecteur de langue</strong> : Français/English</li>
+        <li><strong>Fonctionnalités mises en avant</strong> : 3 points clés de la plateforme</li>
+    </ul>
+
+    <h4>Données collectées</h4>
+    <pre><code>{
+  companyName: "Nom de l'entreprise",
+  sector: "Secteur d'activité",
+  companySize: "Taille de l'entreprise",
+  email: "Email de contact",
+  language: "fr" // ou "en"
+}</code></pre>
+
+    <h4>Secteurs d'activité supportés</h4>
+    <ul>
+        <li>Technologie</li>
+        <li>Commerce</li>
+        <li>Services</li>
+        <li>Manufacturing</li>
+        <li>Agriculture</li>
+        <li>Healthcare</li>
+        <li>Education</li>
+        <li>Finance</li>
+        <li>Autre</li>
+    </ul>
+
+    <h4>Tailles d'entreprise</h4>
+    <ul>
+        <li><strong>Micro</strong> : 1-9 employés</li>
+        <li><strong>PME</strong> : 10-49 employés</li>
+        <li><strong>Grande PME</strong> : 50-249 employés</li>
+    </ul>
+
+    <h3>Étape 2 : Page d'évaluation (Assessment Page)</h3>
+
+    <h4>Interface utilisateur</h4>
+    <ul>
+        <li><strong>Barre de progression</strong> : Indication visuelle du progrès (X/12 questions)</li>
+        <li><strong>Carte de question</strong> : Question actuelle avec options de réponse</li>
+        <li><strong>Navigation</strong> : Boutons Précédent/Suivant</li>
+        <li><strong>Sauvegarde automatique</strong> : Progression sauvegardée en temps réel</li>
+    </ul>
+
+    <h4>Système de questions</h4>
+    <ul>
+        <li><strong>12 questions au total</strong> : 2 questions par pilier</li>
+        <li><strong>Options de réponse</strong> : 4 niveaux (0-3 points)</li>
+        <li><strong>Navigation libre</strong> : Possibilité de revenir en arrière</li>
+        <li><strong>Validation</strong> : Réponse obligatoire pour continuer</li>
+    </ul>
+
+    <div class="highlight">
+        <h4>Exemple de question</h4>
+        <p><strong>Question :</strong> "Do you have up-to-date financial statements (P&L, Balance Sheet, Cash Flow)?"</p>
+        <p><strong>Options :</strong></p>
+        <ul>
+            <li>No records (0 points)</li>
+            <li>Basic records, not updated (1 point)</li>
+            <li>Updated quarterly (2 points)</li>
+            <li>Updated monthly (3 points)</li>
+        </ul>
+    </div>
+
+    <h4>Sauvegarde de progression</h4>
+    <ul>
+        <li><strong>Draft automatique</strong> : Création d'un brouillon dès la première réponse</li>
+        <li><strong>Resume token</strong> : Lien unique pour reprendre l'évaluation</li>
+        <li><strong>Synchronisation</strong> : Sauvegarde à chaque changement de question</li>
+        <li><strong>Récupération</strong> : Possibilité de reprendre où on s'est arrêté</li>
+    </ul>
+
+    <h3>Étape 3 : Page de résultats (Results Page)</h3>
+
+    <h4>Interface utilisateur</h4>
+    <ul>
+        <li><strong>Score global</strong> : Jauge circulaire avec statut coloré</li>
+        <li><strong>Graphique des piliers</strong> : Visualisation des scores par pilier</li>
+        <li><strong>Détails par pilier</strong> : Scores individuels avec statuts</li>
+        <li><strong>Recommandations</strong> : Conseils personnalisés par pilier</li>
+        <li><strong>Actions</strong> : Génération et téléchargement de rapports</li>
+    </ul>
+
+    <h4>Affichage des résultats</h4>
+    <ul>
+        <li><strong>Score global</strong> : 0-100 avec statut (Rouge/Ambre/Vert)</li>
+        <li><strong>Scores par pilier</strong> : Détail de chaque pilier évalué</li>
+        <li><strong>Recommandations</strong> : Conseils adaptés au niveau de score</li>
+        <li><strong>Métadonnées</strong> : Informations sur l'entreprise et la date</li>
+    </ul>
+
+    <h4>Génération de rapports</h4>
+    <ul>
+        <li><strong>Rapport gratuit</strong> : PDF basique avec résultats</li>
+        <li><strong>Rapport premium</strong> : Analyse détaillée avec benchmarking</li>
+        <li><strong>Envoi par email</strong> : Rapport automatiquement envoyé</li>
+        <li><strong>Téléchargement</strong> : Possibilité de télécharger directement</li>
+    </ul>
+
+    <h3>Étape 4 : Système de reprise d'évaluation</h3>
+
+    <h4>Fonctionnalité de reprise</h4>
+    <ul>
+        <li><strong>Lien de reprise</strong> : URL unique générée automatiquement</li>
+        <li><strong>Page de reprise</strong> : Interface identique à l'évaluation normale</li>
+        <li><strong>Restauration d'état</strong> : Reprise exacte où l'utilisateur s'est arrêté</li>
+        <li><strong>Validation</strong> : Vérification de la validité du token</li>
+    </ul>
+
+    <h4>Gestion des brouillons</h4>
+    <ul>
+        <li><strong>Création automatique</strong> : Draft créé dès la première réponse</li>
+        <li><strong>Mise à jour</strong> : Progression sauvegardée en continu</li>
+        <li><strong>Expiration</strong> : Gestion des tokens expirés</li>
+        <li><strong>Nettoyage</strong> : Suppression des drafts après soumission</li>
+    </ul>
+
+    <h2 id="fonctionnalites-avancees">4. Fonctionnalités avancées</h2>
+
+    <h3>Système de notifications</h3>
+
+    <h4>Types de notifications</h4>
+    <ul>
+        <li><strong>Nouvelle évaluation</strong> : Notification d'une évaluation complétée</li>
+        <li><strong>Évaluation en cours</strong> : Rappel pour les évaluations non terminées</li>
+        <li><strong>Rapport généré</strong> : Confirmation de génération de rapport</li>
+    </ul>
+
+    <h4>Gestion des notifications</h4>
+    <ul>
+        <li><strong>Marquage lu/non lu</strong> : Statut des notifications</li>
+        <li><strong>Filtrage</strong> : Affichage des notifications non lues</li>
+        <li><strong>Suppression</strong> : Nettoyage des anciennes notifications</li>
+    </ul>
+
+    <h3>Système de rapports</h3>
+
+    <h4>Génération de rapports</h4>
+    <ul>
+        <li><strong>Côté serveur</strong> : Génération PDF avec html-pdf-node</li>
+        <li><strong>Côté client</strong> : Fallback avec jsPDF</li>
+        <li><strong>Templates</strong> : Modèles HTML personnalisés</li>
+        <li><strong>Métadonnées</strong> : Informations de l'entreprise et de l'évaluation</li>
+    </ul>
+
+    <h4>Types de rapports</h4>
+    <ul>
+        <li><strong>Rapport utilisateur</strong> : PDF basique avec résultats</li>
+        <li><strong>Rapport d'évaluation</strong> : Détail des réponses et scores</li>
+        <li><strong>Rapport de statistiques</strong> : Vue d'ensemble des données</li>
+    </ul>
+
+    <h3>Export de données</h3>
+
+    <h4>Formats supportés</h4>
+    <ul>
+        <li><strong>Excel</strong> : Export des utilisateurs et évaluations</li>
+        <li><strong>PDF</strong> : Rapports détaillés</li>
+        <li><strong>CSV</strong> : Données tabulaires</li>
+    </ul>
+
+    <h4>Données exportées</h4>
+    <ul>
+        <li><strong>Utilisateurs</strong> : Liste complète avec informations</li>
+        <li><strong>Évaluations</strong> : Résultats et métadonnées</li>
+        <li><strong>Statistiques</strong> : Analyses et graphiques</li>
+    </ul>
+
+    <h2 id="gestion-administrative">5. Gestion administrative</h2>
+
+    <h3>Panel d'administration</h3>
+
+    <h4>Tableau de bord</h4>
+    <ul>
+        <li><strong>Vue d'ensemble</strong> : Statistiques générales</li>
+        <li><strong>Graphiques</strong> : Visualisation des données</li>
+        <li><strong>Métriques</strong> : KPIs de la plateforme</li>
+    </ul>
+
+    <h4>Gestion des utilisateurs</h4>
+    <ul>
+        <li><strong>Liste des utilisateurs</strong> : Vue complète avec filtres</li>
+        <li><strong>Détails utilisateur</strong> : Informations détaillées</li>
+        <li><strong>Historique</strong> : Évaluations et activités</li>
+        <li><strong>Actions</strong> : Modification, suppression, export</li>
+    </ul>
+
+    <h4>Gestion des évaluations</h4>
+    <ul>
+        <li><strong>Liste des évaluations</strong> : Toutes les évaluations</li>
+        <li><strong>Évaluations en cours</strong> : Brouillons non terminés</li>
+        <li><strong>Détails d'évaluation</strong> : Réponses et scores</li>
+        <li><strong>Actions</strong> : Visualisation, export, suppression</li>
+    </ul>
+
+    <h4>Gestion des emails</h4>
+    <ul>
+        <li><strong>Templates</strong> : Modèles d'emails prédéfinis</li>
+        <li><strong>Envoi individuel</strong> : Email à un utilisateur spécifique</li>
+        <li><strong>Envoi en masse</strong> : Campagne email groupée</li>
+        <li><strong>Historique</strong> : Log des envois</li>
+    </ul>
+
+    <h4>Gestion des rapports</h4>
+    <ul>
+        <li><strong>Génération</strong> : Création de rapports personnalisés</li>
+        <li><strong>Export</strong> : Téléchargement en différents formats</li>
+        <li><strong>Historique</strong> : Log des générations</li>
+        <li><strong>Statistiques</strong> : Métriques d'utilisation</li>
+    </ul>
+
+    <h3>Fonctionnalités avancées admin</h3>
+
+    <h4>Système de relances</h4>
+    <ul>
+        <li><strong>Emails automatiques</strong> : Rappels pour évaluations incomplètes</li>
+        <li><strong>Templates personnalisés</strong> : Messages adaptés</li>
+        <li><strong>Liens de reprise</strong> : Intégration automatique des liens</li>
+        <li><strong>Suivi</strong> : Log des envois et ouvertures</li>
+    </ul>
+
+    <h4>Gestion des brouillons</h4>
+    <ul>
+        <li><strong>Liste des brouillons</strong> : Évaluations non terminées</li>
+        <li><strong>Détails</strong> : Progression et dernières réponses</li>
+        <li><strong>Actions</strong> : Relance, suppression, reprise</li>
+        <li><strong>Statistiques</strong> : Métriques d'abandon</li>
+    </ul>
+
+    <h2 id="systeme-blog">6. Système de blog</h2>
+
+    <h3>Gestion du contenu</h3>
+
+    <h4>Types d'articles</h4>
+    <ul>
+        <li><strong>Article</strong> : Contenu informatif général</li>
+        <li><strong>Étude de cas</strong> : Retours d'expérience clients</li>
+        <li><strong>Tutoriel</strong> : Guides pratiques</li>
+        <li><strong>Actualité</strong> : Nouvelles et mises à jour</li>
+        <li><strong>Témoignage</strong> : Avis clients</li>
+    </ul>
+
+    <h4>Catégories</h4>
+    <ul>
+        <li><strong>Stratégie</strong> : Planification et vision</li>
+        <li><strong>Technologie</strong> : Solutions techniques</li>
+        <li><strong>Finance</strong> : Gestion financière</li>
+        <li><strong>Ressources humaines</strong> : Gestion du personnel</li>
+        <li><strong>Marketing</strong> : Communication et vente</li>
+        <li><strong>Opérations</strong> : Processus internes</li>
+        <li><strong>Gouvernance</strong> : Conformité et éthique</li>
+    </ul>
+
+    <h4>Fonctionnalités éditoriales</h4>
+    <ul>
+        <li><strong>Éditeur riche</strong> : Interface de création intuitive</li>
+        <li><strong>Génération de slug</strong> : URLs SEO-friendly automatiques</li>
+        <li><strong>Métadonnées SEO</strong> : Titre et description optimisés</li>
+        <li><strong>Gestion d'images</strong> : Upload et optimisation</li>
+        <li><strong>Prévisualisation</strong> : Aperçu avant publication</li>
+    </ul>
+
+    <h3>Interface publique</h3>
+
+    <h4>Page blog</h4>
+    <ul>
+        <li><strong>Liste des articles</strong> : Affichage paginé</li>
+        <li><strong>Filtres</strong> : Par type, catégorie, date</li>
+        <li><strong>Recherche</strong> : Fonction de recherche textuelle</li>
+        <li><strong>Tri</strong> : Par date, popularité, pertinence</li>
+    </ul>
+
+    <h4>Page article</h4>
+    <ul>
+        <li><strong>Contenu complet</strong> : Article avec images et formatage</li>
+        <li><strong>Métadonnées</strong> : Auteur, date, catégorie, tags</li>
+        <li><strong>Navigation</strong> : Articles liés et suggestions</li>
+        <li><strong>Partage</strong> : Boutons de partage social</li>
+        <li><strong>Engagement</strong> : Système de likes et vues</li>
+    </ul>
+
+    <h3>Statistiques et analytics</h3>
+
+    <h4>Métriques de contenu</h4>
+    <ul>
+        <li><strong>Vues</strong> : Nombre de lectures par article</li>
+        <li><strong>Likes</strong> : Engagement des lecteurs</li>
+        <li><strong>Partages</strong> : Diffusion sur les réseaux</li>
+        <li><strong>Temps de lecture</strong> : Engagement moyen</li>
+    </ul>
+
+    <h4>Tableaux de bord</h4>
+    <ul>
+        <li><strong>Graphiques</strong> : Visualisation des données</li>
+        <li><strong>Tendances</strong> : Évolution dans le temps</li>
+        <li><strong>Top contenu</strong> : Articles les plus populaires</li>
+        <li><strong>Performance</strong> : KPIs de contenu</li>
+    </ul>
+
+    <h2 id="faq">7. FAQ et dépannage</h2>
+
+    <h3>Questions fréquentes</h3>
+
+    <div class="info-box">
+        <h4>Q: Comment reprendre une évaluation interrompue ?</h4>
+        <p><strong>R:</strong> Un lien de reprise est automatiquement généré et peut être envoyé par email. Ce lien permet de reprendre exactement où vous vous êtes arrêté.</p>
+    </div>
+
+    <div class="info-box">
+        <h4>Q: Puis-je modifier mes réponses après soumission ?</h4>
+        <p><strong>R:</strong> Non, une fois l'évaluation soumise, les réponses sont finales. Cependant, vous pouvez créer une nouvelle évaluation.</p>
+    </div>
+
+    <div class="info-box">
+        <h4>Q: Combien de temps prend une évaluation complète ?</h4>
+        <p><strong>R:</strong> L'évaluation complète prend généralement 10-15 minutes, selon le temps de réflexion sur chaque question.</p>
+    </div>
+
+    <div class="info-box">
+        <h4>Q: Mes données sont-elles sécurisées ?</h4>
+        <p><strong>R:</strong> Oui, toutes les données sont chiffrées et stockées de manière sécurisée. Nous respectons le RGPD.</p>
+    </div>
+
+    <div class="info-box">
+        <h4>Q: Puis-je exporter mes résultats ?</h4>
+        <p><strong>R:</strong> Oui, vous pouvez télécharger votre rapport en PDF et l'administrateur peut exporter les données en Excel.</p>
+    </div>
+
+    <h3>Problèmes techniques courants</h3>
+
+    <div class="warning-box">
+        <h4>Erreur de chargement des questions</h4>
+        <ul>
+            <li><strong>Cause :</strong> Problème de connexion ou de serveur</li>
+            <li><strong>Solution :</strong> Rafraîchir la page ou réessayer plus tard</li>
+            <li><strong>Prévention :</strong> Vérifier la connexion internet</li>
+        </ul>
+    </div>
+
+    <div class="warning-box">
+        <h4>Problème de génération de rapport</h4>
+        <ul>
+            <li><strong>Cause :</strong> Erreur serveur ou données manquantes</li>
+            <li><strong>Solution :</strong> Le système bascule automatiquement sur la génération côté client</li>
+            <li><strong>Prévention :</strong> Vérifier que toutes les données sont complètes</li>
+        </ul>
+    </div>
+
+    <div class="warning-box">
+        <h4>Erreur de sauvegarde de progression</h4>
+        <ul>
+            <li><strong>Cause :</strong> Problème de connexion ou de validation</li>
+            <li><strong>Solution :</strong> Les réponses sont sauvegardées localement et synchronisées</li>
+            <li><strong>Prévention :</strong> Vérifier la stabilité de la connexion</li>
+        </ul>
+    </div>
+
+    <h3>Support technique</h3>
+
+    <h4>Niveaux de support</h4>
+    <ul>
+        <li><strong>Niveau 1</strong> : FAQ et documentation</li>
+        <li><strong>Niveau 2</strong> : Support par email</li>
+        <li><strong>Niveau 3</strong> : Support technique avancé</li>
+    </ul>
+
+    <h4>Canaux de contact</h4>
+    <ul>
+        <li><strong>Email</strong> : support@ubb-ehc.com</li>
+        <li><strong>Documentation</strong> : Guide utilisateur complet</li>
+        <li><strong>Chat</strong> : Support en temps réel (si disponible)</li>
+    </ul>
+
+    <h2>Conclusion</h2>
+
+    <p>UBB Enterprise Health Check est une plateforme complète et moderne qui permet aux entreprises d'évaluer leur santé organisationnelle de manière structurée et professionnelle. Avec ses fonctionnalités avancées, son interface intuitive et son système de rapports détaillés, elle constitue un outil précieux pour l'amélioration continue des organisations.</p>
+
+    <div class="success-box">
+        <h3>Points forts de la solution</h3>
+        <ul>
+            <li><strong>Interface utilisateur moderne</strong> : Design responsive et intuitif</li>
+            <li><strong>Système de scoring intelligent</strong> : Évaluation objective et structurée</li>
+            <li><strong>Rapports personnalisés</strong> : Analyses détaillées et recommandations</li>
+            <li><strong>Gestion administrative complète</strong> : Outils de suivi et d'analyse</li>
+            <li><strong>Système de blog intégré</strong> : Communication et partage de connaissances</li>
+            <li><strong>Sécurité et conformité</strong> : Respect des standards de sécurité</li>
+        </ul>
+    </div>
+
+    <div class="info-box">
+        <h3>Évolutions futures</h3>
+        <ul>
+            <li><strong>Intelligence artificielle</strong> : Recommandations plus précises</li>
+            <li><strong>Intégrations</strong> : Connexion avec d'autres outils métier</li>
+            <li><strong>Mobile app</strong> : Application mobile native</li>
+            <li><strong>Analytics avancés</strong> : Tableaux de bord plus sophistiqués</li>
+        </ul>
+    </div>
+
+    <hr style="margin: 40px 0; border: none; border-top: 2px solid #e5e7eb;">
+    
+    <p style="text-align: center; color: #6b7280; font-size: 14px;">
+        <em>Guide d'utilisation UBB Enterprise Health Check - Version 1.0</em><br>
+        <em>Dernière mise à jour : Septembre 2025</em>
+    </p>
+</body>
+</html>

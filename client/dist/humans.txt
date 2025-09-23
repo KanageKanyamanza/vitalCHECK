@@ -9,7 +9,7 @@
     Frontend: React, Vite, Tailwind CSS
     Backend: Node.js, Express.js, MongoDB
     PWA: Service Worker, Web App Manifest
-    Déploiement: Vercel, Netlify, ou serveur dédié
+    Déploiement: Serveur de production dédié
 
 # Standards
     Standards: HTML5, CSS3, ES6+

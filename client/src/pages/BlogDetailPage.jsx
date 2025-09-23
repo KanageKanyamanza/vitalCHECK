@@ -174,7 +174,7 @@ const BlogDetailPage = () => {
           </button>
 
           {/* Métadonnées */}
-          <div className="flex items-center space-x-4 mb-4">
+          <div className="flex items-center space-x-2 mb-4">
             <div className="flex items-center text-sm text-primary-600">
               <TypeIcon className="h-4 w-4 mr-1" />
               {getTypeLabel(blog.type)}
@@ -191,17 +191,17 @@ const BlogDetailPage = () => {
           </div>
 
           {/* Titre */}
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+          <h1 className="md:text-4xl text-2xl font-bold text-gray-900 mb-4">
             {blog.title}
           </h1>
 
           {/* Extrait */}
-          <p className="text-xl text-gray-600 mb-6">
+          <p className="md:text-xl text-sm text-gray-600 mb-6">
             {blog.excerpt}
           </p>
 
           {/* Auteur et stats */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap content-center items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="flex items-center text-sm text-gray-500">
                 <User className="h-4 w-4 mr-1" />
@@ -243,7 +243,7 @@ const BlogDetailPage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Contenu principal */}
           <div className="lg:col-span-2">
-            <article className="bg-white rounded-lg shadow-sm p-8">
+            <article className="bg-white rounded-lg shadow-sm p-2 sm:p-8">
               {/* Image principale */}
               {blog.featuredImage?.url && (
                 <div className="mb-8">

@@ -233,9 +233,10 @@ heroku config:set NODE_ENV=production
 heroku create ubb-health-check-web
 ```
 
-### Vercel/Netlify
-- Build automatique depuis GitHub
-- Variables d'environnement via dashboard
+### Serveur de Production
+- Déploiement sur serveur dédié
+- Configuration des variables d'environnement
+- Domaine de production : https://www.checkmyenterprise.com
 
 ## 📈 Métriques et Analytics
 
