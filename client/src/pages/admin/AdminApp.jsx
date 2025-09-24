@@ -12,6 +12,7 @@ import DraftAssessmentsPage from './DraftAssessmentsPage';
 import BlogManagement from './BlogManagement';
 import BlogEditPage from './BlogEditPage';
 import BlogStatsPage from './BlogStatsPage';
+import BlogAnalyticsPage from './BlogAnalyticsPage';
 
 const AdminApp = () => {
   const isAuthenticated = () => {
@@ -85,6 +86,12 @@ const AdminApp = () => {
         path="/blog/stats" 
         element={
           isAuthenticated() ? <BlogStatsPage /> : <Navigate to="/admin/login" replace />
+        } 
+      />
+      <Route 
+        path="/blog/analytics" 
+        element={
+          isAuthenticated() ? <BlogAnalyticsPage /> : <Navigate to="/admin/login" replace />
         } 
       />
       <Route 

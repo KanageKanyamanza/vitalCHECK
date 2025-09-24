@@ -183,4 +183,68 @@ blogSchema.methods.incrementLikes = function() {
   return this.save();
 };
 
+// Méthode pour obtenir les statistiques de visites détaillées
+blogSchema.methods.getVisitStats = async function() {
+  const BlogVisit = require('./BlogVisit');
+  
+  const stats = await BlogVisit.aggregate([
+    { $match: { blog: this._id } },
+    {
+      $group: {
+        _id: null,
+        totalVisits: { $sum: 1 },
+        uniqueVisitors: { $addToSet: '$sessionId' },
+        totalTimeOnPage: { $sum: '$timeOnPage' },
+        averageTimeOnPage: { $avg: '$timeOnPage' },
+        bounceRate: {
+          $avg: { $cond: ['$isBounce', 1, 0] }
+        },
+        averageScrollDepth: { $avg: '$scrollDepth' }
+      }
+    }
+  ]);
+  
+  const deviceStats = await BlogVisit.aggregate([
+    { $match: { blog: this._id } },
+    {
+      $group: {
+        _id: '$device.type',
+        count: { $sum: 1 }
+      }
+    }
+  ]);
+  
+  const countryStats = await BlogVisit.aggregate([
+    { $match: { blog: this._id, country: { $ne: null } } },
+    {
+      $group: {
+        _id: '$country',
+        count: { $sum: 1 }
+      }
+    },
+    { $sort: { count: -1 } },
+    { $limit: 10 }
+  ]);
+  
+  const referrerStats = await BlogVisit.aggregate([
+    { $match: { blog: this._id, referrerDomain: { $ne: null } } },
+    {
+      $group: {
+        _id: '$referrerDomain',
+        count: { $sum: 1 }
+      }
+    },
+    { $sort: { count: -1 } },
+    { $limit: 10 }
+  ]);
+  
+  return {
+    ...stats[0],
+    uniqueVisitors: stats[0]?.uniqueVisitors?.length || 0,
+    deviceBreakdown: deviceStats,
+    topCountries: countryStats,
+    topReferrers: referrerStats
+  };
+};
+
 module.exports = mongoose.model('Blog', blogSchema);

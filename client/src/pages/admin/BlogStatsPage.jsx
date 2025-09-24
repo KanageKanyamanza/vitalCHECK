@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ArrowLeft, BarChart2, Eye, Heart, FileText, TrendingUp, Users, Calendar } from 'lucide-react'
+import { ArrowLeft, BarChart2, Eye, Heart, FileText, TrendingUp, Users, Calendar, BarChart3 } from 'lucide-react'
 import { adminBlogApiService } from '../../services/api'
 import toast from 'react-hot-toast'
 import AdminLayout from '../../components/admin/AdminLayout'
@@ -167,6 +167,15 @@ const BlogStatsPage = () => {
               <h1 className="text-2xl font-bold text-gray-900">Statistiques des blogs</h1>
               <p className="text-gray-600">Analyse des performances et de l'engagement</p>
             </div>
+          </div>
+          <div className="flex space-x-3">
+            <button
+              onClick={() => navigate('/admin/blog/analytics')}
+              className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700"
+            >
+              <BarChart3 className="h-4 w-4 mr-2" />
+              Analytics détaillées
+            </button>
           </div>
         </div>
 

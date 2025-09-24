@@ -244,6 +244,12 @@ export const blogApiService = {
   // Liker un blog
   likeBlog: (id) => api.post(`/blogs/${id}/like`),
   
+  // Tracker une visite
+  trackVisit: (visitId, data) => api.post(`/blogs/track`, {
+    visitId,
+    ...data
+  }),
+  
   // Rechercher des blogs
   searchBlogs: (query) => api.get('/blogs', { 
     params: { search: query, limit: 20 } 
@@ -273,6 +279,15 @@ export const adminBlogApiService = {
     const token = localStorage.getItem('adminToken')
     console.log('Admin token present:', !!token)
     return adminApi.get('/blogs/admin/stats')
+  },
+  
+  // Récupérer les visites d'un blog
+  getBlogVisits: (blogId) => adminApi.get(`/blogs/admin/blogs/${blogId}/visits`),
+  
+  // Récupérer toutes les visites
+  getAllVisits: (params = {}) => {
+    const queryParams = new URLSearchParams(params);
+    return adminApi.get(`/blogs/admin/visits?${queryParams}`);
   }
 };
 
