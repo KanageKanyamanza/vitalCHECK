@@ -41,6 +41,7 @@ const BlogAnalyticsPage = () => {
   const [pagination, setPagination] = useState({})
   const [selectedBlog, setSelectedBlog] = useState(null)
   const [blogs, setBlogs] = useState([])
+  const [countries, setCountries] = useState([])
   const navigate = useNavigate()
   
   // Charger les statistiques
@@ -68,11 +69,31 @@ const BlogAnalyticsPage = () => {
     }
   }
 
+  // Charger la liste des pays disponibles
+  const loadCountries = async () => {
+    try {
+      const response = await adminBlogApiService.getAllVisits({ limit: 1000 })
+      const uniqueCountries = [...new Set(response.data.data.map(visit => visit.country).filter(country => country))]
+      setCountries(uniqueCountries.sort())
+    } catch (error) {
+      console.error('Error loading countries:', error)
+    }
+  }
+
   // Charger les visites
   const loadVisits = async () => {
     try {
       console.log('🔍 [BLOG ANALYTICS] Chargement des visites avec filtres:', filters)
-      const response = await adminBlogApiService.getAllVisits(filters)
+      
+      // Préparer les filtres avec format de date correct
+      const processedFilters = { ...filters }
+      if (processedFilters.dateTo) {
+        // Ajouter la fin de journée pour dateTo
+        processedFilters.dateTo = processedFilters.dateTo + 'T23:59:59.999Z'
+      }
+      
+      console.log('🔍 [BLOG ANALYTICS] Filtres traités:', processedFilters)
+      const response = await adminBlogApiService.getAllVisits(processedFilters)
       console.log('✅ [BLOG ANALYTICS] Réponse reçue:', response.data)
       setVisits(response.data.data)
       setPagination(response.data.pagination)
@@ -96,6 +117,7 @@ const BlogAnalyticsPage = () => {
   useEffect(() => {
     loadStats()
     loadBlogs()
+    loadCountries()
     loadVisits()
   }, [])
 
@@ -349,13 +371,16 @@ const BlogAnalyticsPage = () => {
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('analytics.country')}</label>
-            <input
-              type="text"
-              placeholder={`Filtrer par ${t('analytics.country').toLowerCase()}`}
+            <select
               value={filters.country}
               onChange={(e) => setFilters({ ...filters, country: e.target.value, page: 1 })}
               className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-            />
+            >
+              <option value="">{t('analytics.allCountries')}</option>
+              {countries.map((country, index) => (
+                <option key={index} value={country}>{country}</option>
+              ))}
+            </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">{t('analytics.device')}</label>
