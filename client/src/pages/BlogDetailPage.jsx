@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { 
   ArrowLeft, 
   Calendar, 
@@ -15,11 +16,13 @@ import {
   Users,
 } from 'lucide-react'
 import { blogApiService } from '../services/api'
+import trackingService from '../services/trackingService'
 import toast from 'react-hot-toast'
 
 const BlogDetailPage = () => {
   const { slug } = useParams()
   const navigate = useNavigate()
+  const { t } = useTranslation()
   
   const [blog, setBlog] = useState(null)
   const [loading, setLoading] = useState(true)
@@ -33,6 +36,14 @@ const BlogDetailPage = () => {
       const response = await blogApiService.getBlogBySlug(slug)
       setBlog(response.data.data)
       
+      // Initialiser le tracking si un visitId est fourni
+      if (response.data.visitId) {
+        console.log('📖 [BLOG DETAIL] Initialisation du tracking avec visitId:', response.data.visitId)
+        trackingService.initTracking(response.data.visitId)
+      } else {
+        console.log('⚠️ [BLOG DETAIL] Aucun visitId fourni pour le tracking')
+      }
+      
       // Charger des blogs similaires
       const relatedResponse = await blogApiService.getBlogs({
         category: response.data.data.category,
@@ -41,7 +52,7 @@ const BlogDetailPage = () => {
       setRelatedBlogs(relatedResponse.data.data.filter(b => b.slug !== slug))
     } catch (error) {
       console.error('Error loading blog:', error)
-      toast.error('Article non trouvé')
+      toast.error(t('blog.articleNotFound'))
       navigate('/blog')
     } finally {
       setLoading(false)
@@ -50,6 +61,11 @@ const BlogDetailPage = () => {
 
   useEffect(() => {
     loadBlog()
+    
+    // Nettoyer le tracking lors du démontage du composant
+    return () => {
+      trackingService.stopTracking()
+    }
   }, [slug])
 
   // Gérer le like
@@ -60,10 +76,10 @@ const BlogDetailPage = () => {
       await blogApiService.likeBlog(blog._id)
       setBlog({ ...blog, likes: blog.likes + 1 })
       setLiked(true)
-      toast.success('Merci pour votre like !')
+      toast.success(t('blog.likeSuccess'))
     } catch (error) {
       console.error('Error liking blog:', error)
-      toast.error('Erreur lors du like')
+      toast.error(t('blog.likeError'))
     }
   }
 
@@ -82,7 +98,7 @@ const BlogDetailPage = () => {
     } else {
       // Fallback: copier le lien
       navigator.clipboard.writeText(window.location.href)
-      toast.success('Lien copié dans le presse-papiers')
+      toast.success(t('blog.shareSuccess'))
     }
   }
 
@@ -110,25 +126,25 @@ const BlogDetailPage = () => {
   // Obtenir le label du type
   const getTypeLabel = (type) => {
     const typeLabels = {
-      'article': 'Article',
-      'etude-cas': 'Étude de cas',
-      'tutoriel': 'Tutoriel',
-      'actualite': 'Actualité',
-      'temoignage': 'Témoignage'
+      'article': t('blog.types.article'),
+      'etude-cas': t('blog.types.caseStudy'),
+      'tutoriel': t('blog.types.tutorial'),
+      'actualite': t('blog.types.news'),
+      'temoignage': t('blog.types.testimonial')
     }
-    return typeLabels[type] || 'Article'
+    return typeLabels[type] || t('blog.types.article')
   }
 
   // Obtenir le label de la catégorie
   const getCategoryLabel = (category) => {
     const categoryLabels = {
-      'strategie': 'Stratégie',
-      'technologie': 'Technologie',
-      'finance': 'Finance',
-      'ressources-humaines': 'Ressources Humaines',
-      'marketing': 'Marketing',
-      'operations': 'Opérations',
-      'gouvernance': 'Gouvernance'
+      'strategie': t('blog.categories.strategy'),
+      'technologie': t('blog.categories.technology'),
+      'finance': t('blog.categories.finance'),
+      'ressources-humaines': t('blog.categories.hr'),
+      'marketing': t('blog.categories.marketing'),
+      'operations': t('blog.categories.operations'),
+      'gouvernance': t('blog.categories.governance')
     }
     return categoryLabels[category] || category
   }
@@ -145,13 +161,13 @@ const BlogDetailPage = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Article non trouvé</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('blog.articleNotFound')}</h1>
           <button
             onClick={() => navigate('/blog')}
             className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Retour au blog
+            {t('blog.backToBlog')}
           </button>
         </div>
       </div>
@@ -170,7 +186,7 @@ const BlogDetailPage = () => {
             className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-6"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            Retour au blog
+            {t('blog.backToBlog')}
           </button>
 
           {/* Métadonnées */}
@@ -205,11 +221,11 @@ const BlogDetailPage = () => {
             <div className="flex items-center space-x-4">
               <div className="flex items-center text-sm text-gray-500">
                 <User className="h-4 w-4 mr-1" />
-                Par {blog.author?.name || 'Auteur inconnu'}
+                {t('blog.author')} {blog.author?.name || t('blog.unknownAuthor')}
               </div>
               <div className="flex items-center text-sm text-gray-500">
                 <Eye className="h-4 w-4 mr-1" />
-                {blog.views} vues
+                {blog.views} {t('blog.views')}
               </div>
             </div>
 
@@ -232,7 +248,7 @@ const BlogDetailPage = () => {
                 className="flex items-center px-3 py-1 rounded-full text-sm font-medium text-gray-500 hover:text-primary-600 hover:bg-primary-50 transition-colors"
               >
                 <Share2 className="h-4 w-4 mr-1" />
-                Partager
+                {t('blog.share')}
               </button>
             </div>
           </div>
@@ -269,7 +285,7 @@ const BlogDetailPage = () => {
               {/* Tags */}
               {blog.tags && blog.tags.length > 0 && (
                 <div className="mt-8 pt-6 border-t border-gray-200">
-                  <h3 className="text-sm font-medium text-gray-900 mb-3">Tags</h3>
+                  <h3 className="text-sm font-medium text-gray-900 mb-3">{t('blog.tags')}</h3>
                   <div className="flex flex-wrap gap-2">
                     {blog.tags.map((tag, index) => (
                       <span
@@ -291,7 +307,7 @@ const BlogDetailPage = () => {
             <div className="space-y-6">
               {/* Actions */}
               <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">Actions</h3>
+                <h3 className="text-lg font-medium text-gray-900 mb-4">{t('blog.actions')}</h3>
                 <div className="space-y-3">
                   <button
                     onClick={handleLike}
@@ -299,7 +315,7 @@ const BlogDetailPage = () => {
                     className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     <Heart className="h-4 w-4 mr-2" />
-                    {liked ? 'Merci !' : 'J\'aime cet article'}
+                    {liked ? t('blog.thankYou') : t('blog.likeArticle')}
                   </button>
                   
                   <button
@@ -307,7 +323,7 @@ const BlogDetailPage = () => {
                     className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
                   >
                     <Share2 className="h-4 w-4 mr-2" />
-                    Partager
+                    {t('blog.share')}
                   </button>
                 </div>
               </div>
@@ -315,7 +331,7 @@ const BlogDetailPage = () => {
               {/* Articles similaires */}
               {relatedBlogs.length > 0 && (
                 <div className="bg-white rounded-lg shadow-sm p-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">Articles similaires</h3>
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">{t('blog.relatedArticles')}</h3>
                   <div className="space-y-4">
                     {relatedBlogs.map((relatedBlog) => {
                       const RelatedTypeIcon = getTypeIcon(relatedBlog.type)

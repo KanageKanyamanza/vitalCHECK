@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { 
   Search, 
   Filter, 
@@ -22,6 +23,7 @@ import toast from 'react-hot-toast'
 const BlogPage = () => {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
+  const { t } = useTranslation()
   
   const [blogs, setBlogs] = useState([])
   const [loading, setLoading] = useState(true)
@@ -33,23 +35,23 @@ const BlogPage = () => {
 
   // Types et catégories
   const blogTypes = [
-    { value: '', label: 'Tous les types', icon: FileText },
-    { value: 'article', label: 'Articles', icon: FileText },
-    { value: 'etude-cas', label: 'Études de cas', icon: BookOpen },
-    { value: 'tutoriel', label: 'Tutoriels', icon: TrendingUp },
-    { value: 'actualite', label: 'Actualités', icon: Clock },
-    { value: 'temoignage', label: 'Témoignages', icon: Users }
+    { value: '', label: t('blog.types.all'), icon: FileText },
+    { value: 'article', label: t('blog.types.article'), icon: FileText },
+    { value: 'etude-cas', label: t('blog.types.caseStudy'), icon: BookOpen },
+    { value: 'tutoriel', label: t('blog.types.tutorial'), icon: TrendingUp },
+    { value: 'actualite', label: t('blog.types.news'), icon: Clock },
+    { value: 'temoignage', label: t('blog.types.testimonial'), icon: Users }
   ]
 
   const blogCategories = [
-    { value: '', label: 'Toutes les catégories' },
-    { value: 'strategie', label: 'Stratégie' },
-    { value: 'technologie', label: 'Technologie' },
-    { value: 'finance', label: 'Finance' },
-    { value: 'ressources-humaines', label: 'Ressources Humaines' },
-    { value: 'marketing', label: 'Marketing' },
-    { value: 'operations', label: 'Opérations' },
-    { value: 'gouvernance', label: 'Gouvernance' }
+    { value: '', label: t('blog.categories.all') },
+    { value: 'strategie', label: t('blog.categories.strategy') },
+    { value: 'technologie', label: t('blog.categories.technology') },
+    { value: 'finance', label: t('blog.categories.finance') },
+    { value: 'ressources-humaines', label: t('blog.categories.hr') },
+    { value: 'marketing', label: t('blog.categories.marketing') },
+    { value: 'operations', label: t('blog.categories.operations') },
+    { value: 'gouvernance', label: t('blog.categories.governance') }
   ]
 
   // Charger les blogs
@@ -69,7 +71,7 @@ const BlogPage = () => {
       setTotalPages(response.data.pagination.pages)
     } catch (error) {
       console.error('Error loading blogs:', error)
-      toast.error('Erreur lors du chargement des blogs')
+      toast.error(t('blog.error'))
     } finally {
       setLoading(false)
     }
@@ -102,10 +104,10 @@ const BlogPage = () => {
           ? { ...blog, likes: blog.likes + 1 }
           : blog
       ))
-      toast.success('Merci pour votre like !')
+      toast.success(t('blog.likeSuccess'))
     } catch (error) {
       console.error('Error liking blog:', error)
-      toast.error('Erreur lors du like')
+      toast.error(t('blog.likeError'))
     }
   }
 
@@ -131,8 +133,8 @@ const BlogPage = () => {
 
   // Obtenir le label du type
   const getTypeLabel = (type) => {
-    const typeConfig = blogTypes.find(t => t.value === type)
-    return typeConfig ? typeConfig.label : 'Article'
+    const typeConfig = blogTypes.find(typeItem => typeItem.value === type)
+    return typeConfig ? typeConfig.label : t('blog.types.article')
   }
 
   // Obtenir le label de la catégorie
@@ -148,10 +150,10 @@ const BlogPage = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Blog UBB Enterprise Health Check
+              {t('blog.title')}
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              Découvrez nos articles, études de cas et tutoriels pour améliorer la santé de votre entreprise
+              {t('blog.subtitle')}
             </p>
           </div>
         </div>
@@ -166,7 +168,7 @@ const BlogPage = () => {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <input
                 type="text"
-                placeholder="Rechercher un article..."
+                placeholder={t('blog.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
@@ -205,7 +207,7 @@ const BlogPage = () => {
               className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Retour à l'accueil
+              {t('blog.backToHome')}
             </button>
           </div>
         </div>
@@ -218,9 +220,9 @@ const BlogPage = () => {
         ) : blogs.length === 0 ? (
           <div className="text-center py-12">
             <FileText className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">Aucun article trouvé</h3>
+            <h3 className="mt-2 text-sm font-medium text-gray-900">{t('blog.noArticles')}</h3>
             <p className="mt-1 text-sm text-gray-500">
-              Aucun article ne correspond à vos critères de recherche.
+              {t('blog.noArticlesDesc')}
             </p>
           </div>
         ) : (
@@ -288,7 +290,7 @@ const BlogPage = () => {
                         <div className="flex items-center space-x-3">
                           <div className="flex items-center">
                             <User className="h-4 w-4 mr-1" />
-                            {blog.author?.name || 'Auteur'}
+                            {blog.author?.name || t('blog.author')}
                           </div>
                           <div className="flex items-center">
                             <Calendar className="h-4 w-4 mr-1" />
@@ -327,7 +329,7 @@ const BlogPage = () => {
                     disabled={currentPage === 1}
                     className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Précédent
+                    {t('common.previous')}
                   </button>
                   
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
@@ -349,7 +351,7 @@ const BlogPage = () => {
                     disabled={currentPage === totalPages}
                     className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
-                    Suivant
+                    {t('common.next')}
                   </button>
                 </nav>
               </div>

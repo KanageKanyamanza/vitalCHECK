@@ -575,5 +575,48 @@
       "startAssessment": "Start free assessment",
       "contactUs": "Contact us"
     }
+  },
+  "blog": {
+    "title": "UBB Enterprise Health Check Blog",
+    "subtitle": "Discover our articles, case studies and tutorials to improve your business health",
+    "searchPlaceholder": "Search for an article...",
+    "backToHome": "Back to home",
+    "backToBlog": "Back to blog",
+    "noArticles": "No articles found",
+    "noArticlesDesc": "No articles match your search criteria.",
+    "loading": "Loading...",
+    "error": "Error loading blogs",
+    "likeError": "Error liking article",
+    "likeSuccess": "Thank you for your like!",
+    "shareSuccess": "Link copied to clipboard",
+    "articleNotFound": "Article not found",
+    "author": "Author",
+    "unknownAuthor": "Unknown author",
+    "views": "views",
+    "likes": "likes",
+    "share": "Share",
+    "tags": "Tags",
+    "actions": "Actions",
+    "likeArticle": "I like this article",
+    "thankYou": "Thank you!",
+    "relatedArticles": "Related articles",
+    "types": {
+      "all": "All types",
+      "article": "Articles",
+      "caseStudy": "Case studies",
+      "tutorial": "Tutorials",
+      "news": "News",
+      "testimonial": "Testimonials"
+    },
+    "categories": {
+      "all": "All categories",
+      "strategy": "Strategy",
+      "technology": "Technology",
+      "finance": "Finance",
+      "hr": "Human Resources",
+      "marketing": "Marketing",
+      "operations": "Operations",
+      "governance": "Governance"
+    }
   }
 }
