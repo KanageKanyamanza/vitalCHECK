@@ -287,8 +287,11 @@ export const adminBlogApiService = {
   
   // Récupérer toutes les visites
   getAllVisits: (params = {}) => {
+    console.log('🌐 [API] getAllVisits appelé avec params:', params)
     const queryParams = new URLSearchParams(params);
-    return adminApi.get(`/blogs/admin/visits?${queryParams}`);
+    const url = `/blogs/admin/visits?${queryParams}`;
+    console.log('🌐 [API] URL construite:', url)
+    return adminApi.get(url);
   }
 };
 

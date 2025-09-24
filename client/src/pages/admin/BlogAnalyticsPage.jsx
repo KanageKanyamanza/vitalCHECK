@@ -71,11 +71,13 @@ const BlogAnalyticsPage = () => {
   // Charger les visites
   const loadVisits = async () => {
     try {
+      console.log('🔍 [BLOG ANALYTICS] Chargement des visites avec filtres:', filters)
       const response = await adminBlogApiService.getAllVisits(filters)
+      console.log('✅ [BLOG ANALYTICS] Réponse reçue:', response.data)
       setVisits(response.data.data)
       setPagination(response.data.pagination)
     } catch (error) {
-      console.error('Error loading visits:', error)
+      console.error('❌ [BLOG ANALYTICS] Erreur lors du chargement des visites:', error)
       toast.error('Erreur lors du chargement des visites')
     }
   }
