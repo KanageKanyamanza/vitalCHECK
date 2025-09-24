@@ -132,7 +132,6 @@ const AssessmentForm = ({ onFormSubmit }) => {
                   {t('landing.form.language')} *
                 </label>
                 <LanguageSelector 
-                  selectedLanguage={language}
                   onLanguageChange={handleLanguageChange}
                 />
                 <p className="text-xs text-gray-500 mt-1">

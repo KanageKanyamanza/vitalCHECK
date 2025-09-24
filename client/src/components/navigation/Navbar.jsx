@@ -167,7 +167,6 @@ const Navbar = () => {
             {/* Sélecteur de langue - Toujours visible */}
             <NavbarLanguageSelector 
               onLanguageChange={handleLanguageChange}
-              selectedLanguage={state?.language || 'fr'}
               isScrolled={true}
             />
 
