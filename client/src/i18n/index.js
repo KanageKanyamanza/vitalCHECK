@@ -17,17 +17,32 @@ i18n
   .init({
     resources,
     fallbackLng: 'fr',
-    lng: 'fr', // Langue par défaut
     debug: import.meta.env.NODE_ENV === 'development',
     
     detection: {
       order: ['localStorage', 'navigator', 'htmlTag'],
-      caches: ['localStorage']
+      caches: ['localStorage'],
+      lookupLocalStorage: 'i18nextLng',
+      checkWhitelist: true,
+      convertDetectedLanguage: (lng) => {
+        // Convertir les codes de langue détectés vers nos codes supportés
+        if (lng && lng.startsWith('en')) return 'en'
+        if (lng && lng.startsWith('fr')) return 'fr'
+        return 'fr' // Fallback par défaut
+      }
     },
+
+    supportedLngs: ['fr', 'en'],
+    nonExplicitSupportedLngs: false,
 
     interpolation: {
       escapeValue: false
     }
   });
+
+// Forcer la langue par défaut si aucune n'est détectée
+if (!i18n.language || !['fr', 'en'].includes(i18n.language)) {
+  i18n.changeLanguage('fr')
+}
 
 export default i18n;

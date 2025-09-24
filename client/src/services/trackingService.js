@@ -37,6 +37,8 @@ class TrackingService {
   // Tracker le scroll
   startScrollTracking() {
     let ticking = false;
+    let lastScrollPercent = 0;
+    let scrollUpdateCount = 0;
 
     const updateScrollDepth = () => {
       if (!this.isTracking) return;
@@ -47,6 +49,19 @@ class TrackingService {
 
       this.scrollDepth = Math.min(scrollPercent, 100);
       this.maxScrollDepth = Math.max(this.maxScrollDepth, this.scrollDepth);
+
+      // Ne pas envoyer de mise à jour si le scroll n'a pas changé significativement
+      if (Math.abs(scrollPercent - lastScrollPercent) < 5) {
+        return;
+      }
+
+      lastScrollPercent = scrollPercent;
+      scrollUpdateCount++;
+
+      // Limiter la fréquence des mises à jour
+      if (scrollUpdateCount % 3 !== 0) {
+        return;
+      }
 
       if (!ticking) {
         requestAnimationFrame(() => {
@@ -62,12 +77,12 @@ class TrackingService {
 
   // Tracker le temps passé sur la page
   startTimeTracking() {
-    // Mettre à jour le temps toutes les 30 secondes
+    // Mettre à jour le temps toutes les 60 secondes (réduire la fréquence)
     this.timeInterval = setInterval(() => {
       if (this.isTracking) {
         this.sendTrackingUpdate();
       }
-    }, 30000);
+    }, 60000);
   }
 
   // Envoyer les données de tracking au serveur
@@ -77,6 +92,11 @@ class TrackingService {
         visitId: this.visitId,
         isTracking: this.isTracking
       });
+      return;
+    }
+
+    // Debouncing : éviter les requêtes trop fréquentes
+    if (this.lastUpdateTime && Date.now() - this.lastUpdateTime < 2000) {
       return;
     }
 
@@ -96,6 +116,7 @@ class TrackingService {
         action
       });
       
+      this.lastUpdateTime = Date.now();
       console.log('✅ [CLIENT TRACKING] Données envoyées avec succès');
     } catch (error) {
       console.error('❌ [CLIENT TRACKING] Erreur lors de l\'envoi du tracking:', error);

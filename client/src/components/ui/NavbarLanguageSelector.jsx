@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, ChevronDown } from 'lucide-react'
 
-const NavbarLanguageSelector = ({ onLanguageChange, selectedLanguage = 'fr', className = '', isScrolled = false }) => {
+const NavbarLanguageSelector = ({ onLanguageChange, className = '', isScrolled = false }) => {
   const { t, i18n } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
 
@@ -12,7 +12,8 @@ const NavbarLanguageSelector = ({ onLanguageChange, selectedLanguage = 'fr', cla
     { code: 'fr', name: t('languages.fr'), flag: '🇫🇷' }
   ]
 
-  const selectedLang = languages.find(lang => lang.code === selectedLanguage) || languages[0]
+  const currentLanguage = i18n.language || 'fr'
+  const selectedLang = languages.find(lang => lang.code === currentLanguage) || languages[0]
 
   const handleLanguageSelect = async (languageCode) => {
     setIsOpen(false)
@@ -67,14 +68,14 @@ const NavbarLanguageSelector = ({ onLanguageChange, selectedLanguage = 'fr', cla
                   key={language.code}
                   onClick={() => handleLanguageSelect(language.code)}
                   className={`w-full flex items-center justify-between px-3 py-2 text-sm text-left hover:bg-gray-50 transition-colors duration-200 ${
-                    language.code === selectedLanguage ? 'bg-primary-50 text-primary-600' : 'text-gray-700'
+                    language.code === currentLanguage ? 'bg-primary-50 text-primary-600' : 'text-gray-700'
                   }`}
                 >
                   <div className="flex items-center space-x-2">
                     <span className="text-lg">{language.flag}</span>
                     <span>{language.name}</span>
                   </div>
-                  {language.code === selectedLanguage && (
+                  {language.code === currentLanguage && (
                     <Check className="w-3 h-3 text-primary-500" />
                   )}
                 </button>

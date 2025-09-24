@@ -149,13 +149,13 @@ const ReportsPage = () => {
                 </p>
               </div>
               <div className="flex items-center space-x-3">
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-1">
                   <Calendar className="h-4 w-4 text-gray-400" />
                   <input
                     type="date"
                     value={dateRange.from}
                     onChange={(e) => setDateRange(prev => ({ ...prev, from: e.target.value }))}
-                    className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+                    className="border border-gray-300 rounded-md px-1 py-2 text-sm"
                     placeholder="Du"
                   />
                   <span className="text-gray-400">-</span>
@@ -163,7 +163,7 @@ const ReportsPage = () => {
                     type="date"
                     value={dateRange.to}
                     onChange={(e) => setDateRange(prev => ({ ...prev, to: e.target.value }))}
-                    className="border border-gray-300 rounded-md px-3 py-2 text-sm"
+                    className="border border-gray-300 rounded-md px-1 py-2 text-sm"
                     placeholder="Au"
                   />
                 </div>

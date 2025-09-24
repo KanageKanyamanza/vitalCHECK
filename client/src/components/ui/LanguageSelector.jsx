@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Globe, Check, ChevronDown } from 'lucide-react'
 
-const LanguageSelector = ({ onLanguageChange, selectedLanguage = 'fr', className = '' }) => {
+const LanguageSelector = ({ onLanguageChange, className = '' }) => {
   const { t, i18n } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
 
@@ -12,7 +12,8 @@ const LanguageSelector = ({ onLanguageChange, selectedLanguage = 'fr', className
     { code: 'fr', name: t('languages.fr'), flag: '🇫🇷' }
   ]
 
-  const selectedLang = languages.find(lang => lang.code === selectedLanguage) || languages[0]
+  const currentLanguage = i18n.language || 'fr'
+  const selectedLang = languages.find(lang => lang.code === currentLanguage) || languages[0]
 
   const handleLanguageSelect = async (languageCode) => {
     setIsOpen(false)
@@ -67,7 +68,7 @@ const LanguageSelector = ({ onLanguageChange, selectedLanguage = 'fr', className
                   key={language.code}
                   onClick={() => handleLanguageSelect(language.code)}
                   className={`w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 transition-colors duration-200 ${
-                    language.code === selectedLanguage ? 'bg-primary-50' : ''
+                    language.code === currentLanguage ? 'bg-primary-50' : ''
                   }`}
                 >
                   <div className="flex items-center space-x-3">
@@ -76,7 +77,7 @@ const LanguageSelector = ({ onLanguageChange, selectedLanguage = 'fr', className
                       {language.name}
                     </span>
                   </div>
-                  {language.code === selectedLanguage && (
+                  {language.code === currentLanguage && (
                     <Check className="w-4 h-4 text-primary-500" />
                   )}
                 </button>

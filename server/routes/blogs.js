@@ -11,8 +11,33 @@ const router = express.Router();
 // Fonction pour obtenir la géolocalisation par IP
 async function getLocationFromIP(ipAddress) {
   try {
-    // Ignorer les IPs locales
-    if (ipAddress === '127.0.0.1' || ipAddress === '::1' || ipAddress.startsWith('192.168.') || ipAddress.startsWith('10.') || ipAddress.startsWith('172.')) {
+    // Vérifier si l'IP est valide
+    if (!ipAddress || ipAddress === '::1' || ipAddress === '127.0.0.1') {
+      console.log('🌍 [GEOLOCATION] IP locale détectée:', ipAddress);
+      return {
+        country: 'Local',
+        region: 'Local',
+        city: 'Local'
+      };
+    }
+
+    // Vérifier les plages d'IP privées
+    const isPrivateIP = (ip) => {
+      const parts = ip.split('.').map(Number);
+      if (parts.length !== 4) return false;
+      
+      // 192.168.x.x
+      if (parts[0] === 192 && parts[1] === 168) return true;
+      // 10.x.x.x
+      if (parts[0] === 10) return true;
+      // 172.16.x.x - 172.31.x.x
+      if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) return true;
+      
+      return false;
+    };
+
+    if (isPrivateIP(ipAddress)) {
+      console.log('🌍 [GEOLOCATION] IP privée détectée:', ipAddress);
       return {
         country: 'Local',
         region: 'Local',
@@ -24,15 +49,30 @@ async function getLocationFromIP(ipAddress) {
     
     // Utiliser ipapi.co (gratuit, 1000 requêtes/jour)
     const response = await axios.get(`https://ipapi.co/${ipAddress}/json/`, {
-      timeout: 5000
+      timeout: 10000, // Augmenter le timeout
+      headers: {
+        'User-Agent': 'UBB-Health-Check/1.0'
+      }
     });
 
     const data = response.data;
     console.log('🌍 [GEOLOCATION] Données reçues:', {
+      ip: data.ip,
       country: data.country_name,
       region: data.region,
-      city: data.city
+      city: data.city,
+      timezone: data.timezone
     });
+
+    // Vérifier si la réponse est valide
+    if (data.error) {
+      console.log('🌍 [GEOLOCATION] Erreur dans la réponse API:', data.reason);
+      return {
+        country: 'Inconnu',
+        region: 'Inconnu',
+        city: 'Inconnu'
+      };
+    }
 
     return {
       country: data.country_name || 'Inconnu',
@@ -40,7 +80,38 @@ async function getLocationFromIP(ipAddress) {
       city: data.city || 'Inconnu'
     };
   } catch (error) {
-    console.error('❌ [GEOLOCATION] Erreur lors de la géolocalisation:', error.message);
+    console.error('❌ [GEOLOCATION] Erreur lors de la géolocalisation:', {
+      ip: ipAddress,
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data
+    });
+    
+    // En cas d'erreur, essayer une API de fallback
+    try {
+      console.log('🌍 [GEOLOCATION] Tentative avec API de fallback...');
+      const fallbackResponse = await axios.get(`http://ip-api.com/json/${ipAddress}`, {
+        timeout: 5000
+      });
+      
+      const fallbackData = fallbackResponse.data;
+      if (fallbackData.status === 'success') {
+        console.log('🌍 [GEOLOCATION] Fallback réussi:', {
+          country: fallbackData.country,
+          region: fallbackData.regionName,
+          city: fallbackData.city
+        });
+        
+        return {
+          country: fallbackData.country || 'Inconnu',
+          region: fallbackData.regionName || 'Inconnu',
+          city: fallbackData.city || 'Inconnu'
+        };
+      }
+    } catch (fallbackError) {
+      console.error('❌ [GEOLOCATION] Fallback échoué:', fallbackError.message);
+    }
+    
     return {
       country: 'Inconnu',
       region: 'Inconnu',
@@ -155,13 +226,38 @@ router.get('/:slug', async (req, res) => {
       
       const userAgent = req.get('User-Agent') || '';
       const referrer = req.get('Referer') || '';
-      const ipAddress = req.ip || req.connection.remoteAddress || req.socket.remoteAddress;
+      
+      // Récupérer l'IP réelle en tenant compte des proxies
+      const getRealIP = (req) => {
+        // Vérifier les headers de proxy en premier
+        const forwardedFor = req.get('X-Forwarded-For');
+        if (forwardedFor) {
+          // X-Forwarded-For peut contenir plusieurs IPs séparées par des virgules
+          // La première est généralement l'IP du client
+          return forwardedFor.split(',')[0].trim();
+        }
+        
+        const realIP = req.get('X-Real-IP');
+        if (realIP) {
+          return realIP;
+        }
+        
+        // Fallback sur les méthodes standard
+        return req.ip || req.connection.remoteAddress || req.socket.remoteAddress;
+      };
+      
+      const ipAddress = getRealIP(req);
       
       console.log('🔍 [TRACKING] Données de base:', {
         userAgent: userAgent.substring(0, 50) + '...',
         referrer: referrer.substring(0, 50) + '...',
         ipAddress,
-        blogId: blog._id
+        blogId: blog._id,
+        headers: {
+          'X-Forwarded-For': req.get('X-Forwarded-For'),
+          'X-Real-IP': req.get('X-Real-IP'),
+          'CF-Connecting-IP': req.get('CF-Connecting-IP')
+        }
       });
       
       // Générer un ID de session si pas présent
