@@ -2,8 +2,52 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const Blog = require('../models/Blog');
+const BlogVisit = require('../models/BlogVisit');
 const Admin = require('../models/Admin');
+const { analyzeDevice, extractReferrerDomain, extractUTMParameters, generateSessionId, isBounce } = require('../utils/deviceAnalyzer');
+const axios = require('axios');
 const router = express.Router();
+
+// Fonction pour obtenir la géolocalisation par IP
+async function getLocationFromIP(ipAddress) {
+  try {
+    // Ignorer les IPs locales
+    if (ipAddress === '127.0.0.1' || ipAddress === '::1' || ipAddress.startsWith('192.168.') || ipAddress.startsWith('10.') || ipAddress.startsWith('172.')) {
+      return {
+        country: 'Local',
+        region: 'Local',
+        city: 'Local'
+      };
+    }
+
+    console.log('🌍 [GEOLOCATION] Recherche de géolocalisation pour IP:', ipAddress);
+    
+    // Utiliser ipapi.co (gratuit, 1000 requêtes/jour)
+    const response = await axios.get(`https://ipapi.co/${ipAddress}/json/`, {
+      timeout: 5000
+    });
+
+    const data = response.data;
+    console.log('🌍 [GEOLOCATION] Données reçues:', {
+      country: data.country_name,
+      region: data.region,
+      city: data.city
+    });
+
+    return {
+      country: data.country_name || 'Inconnu',
+      region: data.region || 'Inconnu', 
+      city: data.city || 'Inconnu'
+    };
+  } catch (error) {
+    console.error('❌ [GEOLOCATION] Erreur lors de la géolocalisation:', error.message);
+    return {
+      country: 'Inconnu',
+      region: 'Inconnu',
+      city: 'Inconnu'
+    };
+  }
+}
 
 // Middleware d'authentification admin
 const authenticateAdmin = async (req, res, next) => {
@@ -105,10 +149,111 @@ router.get('/:slug', async (req, res) => {
     // Incrémenter les vues
     await blog.incrementViews();
 
-    res.json({
-      success: true,
-      data: blog
-    });
+    // Enregistrer la visite détaillée
+    try {
+      console.log('🔍 [TRACKING] Début du tracking pour le blog:', blog.title);
+      
+      const userAgent = req.get('User-Agent') || '';
+      const referrer = req.get('Referer') || '';
+      const ipAddress = req.ip || req.connection.remoteAddress || req.socket.remoteAddress;
+      
+      console.log('🔍 [TRACKING] Données de base:', {
+        userAgent: userAgent.substring(0, 50) + '...',
+        referrer: referrer.substring(0, 50) + '...',
+        ipAddress,
+        blogId: blog._id
+      });
+      
+      // Générer un ID de session si pas présent
+      let sessionId = null;
+      
+      // Vérifier les cookies de manière plus robuste
+      if (req.cookies && typeof req.cookies === 'object') {
+        sessionId = req.cookies.sessionId;
+        console.log('🔍 [TRACKING] Cookies détectés:', Object.keys(req.cookies));
+      } else {
+        console.log('🔍 [TRACKING] Aucun cookie détecté, req.cookies:', req.cookies);
+      }
+      
+      if (!sessionId) {
+        sessionId = generateSessionId();
+        console.log('🔍 [TRACKING] Nouveau sessionId généré:', sessionId);
+        res.cookie('sessionId', sessionId, { 
+          maxAge: 30 * 24 * 60 * 60 * 1000, // 30 jours
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax'
+        });
+      } else {
+        console.log('🔍 [TRACKING] SessionId existant:', sessionId);
+      }
+
+      // Analyser l'appareil
+      const deviceInfo = analyzeDevice(userAgent);
+      console.log('🔍 [TRACKING] Informations appareil:', deviceInfo);
+      
+      // Extraire les informations du référent
+      const referrerDomain = extractReferrerDomain(referrer);
+      console.log('🔍 [TRACKING] Domaine référent:', referrerDomain);
+      
+      // Extraire les paramètres UTM
+      const utmParams = extractUTMParameters(req.originalUrl);
+      console.log('🔍 [TRACKING] Paramètres UTM:', utmParams);
+      
+      // Obtenir la géolocalisation
+      const location = await getLocationFromIP(ipAddress);
+      console.log('🔍 [TRACKING] Géolocalisation:', location);
+      
+      // Créer l'enregistrement de visite
+      const visitData = {
+        blog: blog._id,
+        user: req.user?._id || null,
+        sessionId,
+        ipAddress,
+        country: location.country,
+        region: location.region,
+        city: location.city,
+        userAgent,
+        device: deviceInfo,
+        referrer,
+        referrerDomain,
+        ...utmParams,
+        pageTitle: blog.title,
+        pageUrl: req.originalUrl
+      };
+      
+      console.log('🔍 [TRACKING] Données de visite à sauvegarder:', {
+        blog: visitData.blog,
+        sessionId: visitData.sessionId,
+        deviceType: visitData.device.type,
+        referrerDomain: visitData.referrerDomain
+      });
+      
+      const visit = new BlogVisit(visitData);
+      const savedVisit = await visit.save();
+      
+      console.log('✅ [TRACKING] Visite sauvegardée avec succès:', {
+        visitId: savedVisit._id,
+        blogTitle: blog.title,
+        sessionId: savedVisit.sessionId
+      });
+      
+      // Ajouter l'ID de visite à la réponse pour le tracking côté client
+      res.json({
+        success: true,
+        data: blog,
+        visitId: visit._id
+      });
+      
+    } catch (trackingError) {
+      console.error('❌ [TRACKING] Erreur lors du tracking:', trackingError);
+      console.error('❌ [TRACKING] Stack trace:', trackingError.stack);
+      // Ne pas faire échouer la requête si le tracking échoue
+      res.json({
+        success: true,
+        data: blog
+      });
+    }
 
   } catch (error) {
     console.error('Get blog error:', error);
@@ -358,12 +503,90 @@ router.delete('/admin/blogs/:id', authenticateAdmin, async (req, res) => {
   }
 });
 
+// POST /blogs/track - Mettre à jour le tracking d'une visite
+router.post('/track', async (req, res) => {
+  try {
+    const { visitId, timeOnPage, scrollDepth, action } = req.body;
+    
+    console.log('🔄 [TRACKING UPDATE] Mise à jour du tracking:', {
+      visitId,
+      timeOnPage,
+      scrollDepth,
+      action
+    });
+    
+    if (!visitId) {
+      console.log('❌ [TRACKING UPDATE] ID de visite manquant');
+      return res.status(400).json({
+        success: false,
+        message: 'ID de visite requis'
+      });
+    }
+
+    const visit = await BlogVisit.findById(visitId);
+    if (!visit) {
+      console.log('❌ [TRACKING UPDATE] Visite non trouvée:', visitId);
+      return res.status(404).json({
+        success: false,
+        message: 'Visite non trouvée'
+      });
+    }
+
+    console.log('✅ [TRACKING UPDATE] Visite trouvée:', {
+      visitId: visit._id,
+      blogId: visit.blog,
+      sessionId: visit.sessionId
+    });
+
+    // Mettre à jour les métriques
+    if (timeOnPage !== undefined) {
+      visit.timeOnPage = timeOnPage;
+      console.log('🔄 [TRACKING UPDATE] Temps mis à jour:', timeOnPage);
+    }
+    
+    if (scrollDepth !== undefined) {
+      visit.scrollDepth = scrollDepth;
+      console.log('🔄 [TRACKING UPDATE] Scroll mis à jour:', scrollDepth);
+    }
+
+    // Marquer la visite selon l'action
+    if (action === 'leave') {
+      console.log('🔄 [TRACKING UPDATE] Marquer comme terminée');
+      await visit.markAsCompleted();
+    } else if (action === 'bounce') {
+      console.log('🔄 [TRACKING UPDATE] Marquer comme rebond');
+      await visit.markAsBounced();
+    } else {
+      console.log('🔄 [TRACKING UPDATE] Sauvegarde simple');
+      await visit.save();
+    }
+
+    console.log('✅ [TRACKING UPDATE] Mise à jour réussie');
+
+    res.json({
+      success: true,
+      message: 'Tracking mis à jour'
+    });
+
+  } catch (error) {
+    console.error('❌ [TRACKING UPDATE] Erreur:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la mise à jour du tracking'
+    });
+  }
+});
+
 // GET /admin/stats - Statistiques des blogs
 router.get('/admin/stats', authenticateAdmin, async (req, res) => {
   try {
+    console.log('📊 [ADMIN STATS] Récupération des statistiques...');
+    
     const totalBlogs = await Blog.countDocuments();
     const publishedBlogs = await Blog.countDocuments({ status: 'published' });
     const draftBlogs = await Blog.countDocuments({ status: 'draft' });
+    
+    console.log('📊 [ADMIN STATS] Blogs:', { totalBlogs, publishedBlogs, draftBlogs });
     
     const blogsByType = await Blog.aggregate([
       { $group: { _id: '$type', count: { $sum: 1 } } }
@@ -381,6 +604,53 @@ router.get('/admin/stats', authenticateAdmin, async (req, res) => {
       { $group: { _id: null, totalLikes: { $sum: '$likes' } } }
     ]);
 
+    console.log('📊 [ADMIN STATS] Vues et likes:', {
+      totalViews: totalViews[0]?.totalViews || 0,
+      totalLikes: totalLikes[0]?.totalLikes || 0
+    });
+
+    // Statistiques de tracking détaillées
+    const totalVisits = await BlogVisit.countDocuments();
+    const uniqueVisitors = await BlogVisit.distinct('sessionId').length;
+    
+    console.log('📊 [ADMIN STATS] Tracking:', {
+      totalVisits,
+      uniqueVisitors
+    });
+    
+    const deviceStats = await BlogVisit.aggregate([
+      {
+        $group: {
+          _id: '$device.type',
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+    
+    const countryStats = await BlogVisit.aggregate([
+      { $match: { country: { $ne: null } } },
+      {
+        $group: {
+          _id: '$country',
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { count: -1 } },
+      { $limit: 10 }
+    ]);
+    
+    const referrerStats = await BlogVisit.aggregate([
+      { $match: { referrerDomain: { $ne: null } } },
+      {
+        $group: {
+          _id: '$referrerDomain',
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { count: -1 } },
+      { $limit: 10 }
+    ]);
+
     res.json({
       success: true,
       data: {
@@ -390,7 +660,14 @@ router.get('/admin/stats', authenticateAdmin, async (req, res) => {
         byType: blogsByType,
         byCategory: blogsByCategory,
         totalViews: totalViews[0]?.totalViews || 0,
-        totalLikes: totalLikes[0]?.totalLikes || 0
+        totalLikes: totalLikes[0]?.totalLikes || 0,
+        tracking: {
+          totalVisits,
+          uniqueVisitors,
+          deviceBreakdown: deviceStats,
+          topCountries: countryStats,
+          topReferrers: referrerStats
+        }
       }
     });
 
@@ -399,6 +676,99 @@ router.get('/admin/stats', authenticateAdmin, async (req, res) => {
     res.status(500).json({ 
       success: false, 
       message: 'Erreur lors de la récupération des statistiques' 
+    });
+  }
+});
+
+// GET /admin/blogs/:id/visits - Statistiques détaillées d'un blog
+router.get('/admin/blogs/:id/visits', authenticateAdmin, async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    if (!blog) {
+      return res.status(404).json({
+        success: false,
+        message: 'Blog non trouvé'
+      });
+    }
+
+    const visitStats = await blog.getVisitStats();
+    
+    // Visites récentes
+    const recentVisits = await BlogVisit.find({ blog: blog._id })
+      .sort({ visitedAt: -1 })
+      .limit(50)
+      .select('sessionId ipAddress country city device userAgent visitedAt timeOnPage scrollDepth isBounce referrerDomain utmSource utmMedium utmCampaign');
+
+    res.json({
+      success: true,
+      data: {
+        blog: {
+          _id: blog._id,
+          title: blog.title,
+          slug: blog.slug
+        },
+        stats: visitStats,
+        recentVisits
+      }
+    });
+
+  } catch (error) {
+    console.error('Get blog visits error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des visites'
+    });
+  }
+});
+
+// GET /admin/visits - Toutes les visites (admin)
+router.get('/admin/visits', authenticateAdmin, async (req, res) => {
+  try {
+    const { 
+      page = 1, 
+      limit = 50, 
+      blogId,
+      country,
+      deviceType,
+      dateFrom,
+      dateTo
+    } = req.query;
+
+    const query = {};
+    if (blogId) query.blog = blogId;
+    if (country) query.country = country;
+    if (deviceType) query['device.type'] = deviceType;
+    
+    if (dateFrom || dateTo) {
+      query.visitedAt = {};
+      if (dateFrom) query.visitedAt.$gte = new Date(dateFrom);
+      if (dateTo) query.visitedAt.$lte = new Date(dateTo);
+    }
+
+    const visits = await BlogVisit.find(query)
+      .populate('blog', 'title slug')
+      .populate('user', 'name email companyName')
+      .sort({ visitedAt: -1 })
+      .limit(limit * 1)
+      .skip((page - 1) * limit);
+
+    const total = await BlogVisit.countDocuments(query);
+
+    res.json({
+      success: true,
+      data: visits,
+      pagination: {
+        current: parseInt(page),
+        pages: Math.ceil(total / limit),
+        total
+      }
+    });
+
+  } catch (error) {
+    console.error('Get visits error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des visites'
     });
   }
 });

@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
 const helmet = require("helmet");
+const cookieParser = require("cookie-parser");
 // Rate limiting désactivé - express-rate-limit retiré
 const { initAdmin } = require("./scripts/init-admin");
 require("dotenv").config();
@@ -43,6 +44,9 @@ app.use(
 // Body parsing middleware
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ extended: true }));
+
+// Cookie parsing middleware
+app.use(cookieParser());
 
 // Routes - Aucune limitation de rate-limiting appliquée
 app.use("/api/auth", require("./routes/auth"));
