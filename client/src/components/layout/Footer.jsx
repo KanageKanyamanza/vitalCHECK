@@ -52,7 +52,7 @@ const Footer = () => {
 
 	const quickLinks = [
 		{ label: t("footer.about"), href: "/about" },
-		{ label: t("footer.services"), href: "#services", scrollTo: "services" },
+		{ label: t("footer.services"), href: "/about", scrollTo: "what-we-do" },
 		{ label: t("footer.contact"), href: "/contact" },
 		// { label: t('footer.privacy'), href: '/privacy' },
 		// { label: t('footer.terms'), href: '/terms' }
@@ -65,10 +65,27 @@ const Footer = () => {
 		});
 	};
 
-	const handleNavigation = (path) => {
+	const handleNavigation = (path, scrollToId = null) => {
 		navigate(path);
-		// Ramener au top de la page
-		window.scrollTo({ top: 0, behavior: 'smooth' });
+		// Si on a un scrollToId, attendre un peu que la page se charge puis scroll vers la section
+		if (scrollToId) {
+			setTimeout(() => {
+				const element = document.getElementById(scrollToId);
+				if (element) {
+					// Calculer la position avec un offset pour laisser de l'espace au-dessus
+					const elementPosition = element.offsetTop;
+					const offsetPosition = elementPosition - 100; // 100px d'offset pour voir le titre
+					
+					window.scrollTo({
+						top: offsetPosition,
+						behavior: 'smooth'
+					});
+				}
+			}, 100);
+		} else {
+			// Ramener au top de la page si pas de section spécifique
+			window.scrollTo({ top: 0, behavior: 'smooth' });
+		}
 	};
 
 	return (
@@ -120,7 +137,7 @@ const Footer = () => {
 								<li key={index}>
 									{link.href.startsWith("/") ? (
 										<button
-											onClick={() => handleNavigation(link.href)}
+											onClick={() => handleNavigation(link.href, link.scrollTo)}
 											className="text-white hover:text-gray-800 transition-colors duration-200 text-left"
 										>
 											{link.label}

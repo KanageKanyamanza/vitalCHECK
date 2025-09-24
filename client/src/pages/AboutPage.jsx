@@ -199,6 +199,7 @@ const AboutPage = () => {
 
         {/* What We Do */}
         <motion.div
+        id="what-we-do"
           variants={sectionVariants}
           initial="hidden"
           whileInView="visible"
