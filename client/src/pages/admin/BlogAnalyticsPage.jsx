@@ -60,7 +60,7 @@ const BlogAnalyticsPage = () => {
   // Charger la liste des blogs
   const loadBlogs = async () => {
     try {
-      const response = await adminBlogApiService.getAllBlogs({ status: 'published' })
+      const response = await adminBlogApiService.getBlogs({ status: 'published' })
       setBlogs(response.data.data)
     } catch (error) {
       console.error('Error loading blogs:', error)
