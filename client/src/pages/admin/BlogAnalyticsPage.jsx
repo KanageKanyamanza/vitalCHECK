@@ -165,12 +165,12 @@ const BlogAnalyticsPage = () => {
     <div className="space-y-6 px-4 pb-20 pt-5">
       <button onClick={() => navigate('/admin/blog/stats')} className="text-primary-600 hover:text-primary-700"><span className="flex items-center"><ArrowLeft className="h-4 w-4 mr-2" /> Retour</span></button>
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">{t('analytics.title')}</h1>
           <p className="text-gray-600">{t('analytics.subtitle')}</p>
         </div>
-        <div className="flex space-x-3">
+        <div className="flex flex-wrap space-x-3">
           <button
             onClick={loadStats}
             className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
