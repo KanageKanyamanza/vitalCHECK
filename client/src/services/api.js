@@ -273,6 +273,12 @@ export const adminBlogApiService = {
   // Supprimer un blog
   deleteBlog: (id) => adminApi.delete(`/blogs/admin/blogs/${id}`),
   
+  // Récupérer tous les blogs (admin)
+  getAllBlogs: (params = {}) => {
+    const queryParams = new URLSearchParams(params);
+    return adminApi.get(`/blogs/admin/blogs?${queryParams}`);
+  },
+  
   // Récupérer les statistiques
   getStats: () => {
     console.log('Getting blog stats...')
