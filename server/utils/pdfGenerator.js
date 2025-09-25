@@ -502,7 +502,7 @@ function generateHTMLContent(assessment) {
        <div class="premium-teaser">
          <h3>${language === 'fr' ? 'Débloquez Votre Rapport Complet de Santé d\'Entreprise' : 'Unlock Your Full Enterprise Health Report'}</h3>
          <p>${language === 'fr' ? 'Obtenez des insights détaillés, des recommandations personnalisées, un benchmarking par rapport aux pairs, et un appel de consultation avec nos experts.' : 'Get detailed insights, tailored recommendations, benchmarking against peers, and a consultation call with our experts.'}</p>
-         <a href="mailto:ambrose.nzeyi@gmail.com?subject=Full%20Report%20Request" class="premium-button">
+         <a href="mailto:info@checkmyenterprise.com?subject=Full%20Report%20Request" class="premium-button">
            ${language === 'fr' ? 'Réservez Votre Rapport Complet' : 'Book Your Full Report'}
          </a>
        </div>
@@ -694,7 +694,7 @@ function generateSimpleHTMLContent(assessment) {
       <div class="premium-teaser">
         <h3>${language === 'fr' ? 'Débloquez Votre Rapport Complet de Santé d\'Entreprise' : 'Unlock Your Full Enterprise Health Report'}</h3>
         <p>${language === 'fr' ? 'Obtenez des insights détaillés, des recommandations personnalisées, un benchmarking par rapport aux pairs, et un appel de consultation avec nos experts.' : 'Get detailed insights, tailored recommendations, benchmarking against peers, and a consultation call with our experts.'}</p>
-        <a href="mailto:ambrose.nzeyi@gmail.com?subject=Full%20Report%20Request" class="premium-button">
+        <a href="mailto:info@checkmyenterprise.com?subject=Full%20Report%20Request" class="premium-button">
           ${language === 'fr' ? 'Réservez Votre Rapport Complet' : 'Book Your Full Report'}
         </a>
       </div>

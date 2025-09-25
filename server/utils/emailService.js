@@ -26,12 +26,32 @@ const sendEmail = async (emailOptions) => {
       attachments: emailOptions.attachments || []
     };
 
+    console.log('📧 [EMAIL] Envoi d\'email en cours...', {
+      to: mailOptions.to,
+      subject: mailOptions.subject,
+      from: mailOptions.from,
+      attachmentsCount: mailOptions.attachments.length
+    });
+
     const result = await transporter.sendMail(mailOptions);
-    console.log('Email sent successfully:', result.messageId);
+    
+    console.log('✅ [EMAIL] Email envoyé avec succès:', {
+      messageId: result.messageId,
+      to: mailOptions.to,
+      subject: mailOptions.subject,
+      response: result.response
+    });
+    
     return result;
     
   } catch (error) {
-    console.error('Email sending error:', error);
+    console.error('❌ [EMAIL] Erreur lors de l\'envoi d\'email:', {
+      to: emailOptions.to,
+      subject: emailOptions.subject,
+      error: error.message,
+      code: error.code,
+      responseCode: error.responseCode
+    });
     throw error;
   }
 };

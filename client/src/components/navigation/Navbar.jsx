@@ -70,16 +70,16 @@ const Navbar = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo et titre */}
           <div className="flex items-center space-x-3">
-            <div className="flex items-center space-x-3 cursor-pointer" onClick={() => handleDesktopNavigation('/')}>
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
+            <div className="flex items-center cursor-pointer" onClick={() => handleDesktopNavigation('/')}>
+              <div className="w-10 h-10 rounded-lg flex items-center justify-center shadow-lg overflow-hidden">
                 <img 
                   src={logoIcon} 
                   alt="UBB Logo" 
                   className="w-full h-full object-contain"
                 />
               </div>
-              <div className="flex flex-col">
-                <span className="text-lg font-display  text-primary-500">
+              <div className="flex ms-1 ">
+                <span className="text-[11px] sm:text-md md:text-lg font-display  text-primary-500">
                   Ubuntu Business Builders
                 </span>
               </div>

@@ -20,14 +20,20 @@ router.post('/generate/:assessmentId', async (req, res) => {
     }
 
     // Generate PDF report - try complex version first, fallback to simple
+    console.log('📄 [REPORT] Génération du PDF...', {
+      assessmentId: assessment._id,
+      companyName: assessment.user.companyName,
+      language: assessment.language || 'fr'
+    });
+
     let pdfBuffer;
     try {
       pdfBuffer = await generatePDFReport(assessment);
-      console.log('Complex PDF generation successful');
+      console.log('✅ [REPORT] PDF complexe généré avec succès');
     } catch (error) {
-      console.warn('Complex PDF generation failed, trying simple version:', error.message);
+      console.warn('⚠️ [REPORT] Échec génération PDF complexe, tentative version simple:', error.message);
       pdfBuffer = await generateSimplePDFReport(assessment);
-      console.log('Simple PDF generation successful');
+      console.log('✅ [REPORT] PDF simple généré avec succès');
     }
 
     // Convert Uint8Array to Buffer for Mongoose
@@ -38,6 +44,14 @@ router.post('/generate/:assessmentId', async (req, res) => {
     const template = emailTemplates[language] || emailTemplates.fr;
     
     // Send email with PDF attachment
+    console.log('📧 [REPORT] Envoi du rapport par email...', {
+      assessmentId: assessment._id,
+      userEmail: assessment.user.email,
+      companyName: assessment.user.companyName,
+      language: language,
+      pdfSize: pdfBuffer.length + ' bytes'
+    });
+
     await sendEmail({
       to: assessment.user.email,
       subject: template.reportReady.subject,
@@ -46,6 +60,11 @@ router.post('/generate/:assessmentId', async (req, res) => {
         filename: `UBB-Health-Check-${assessment.user.companyName}-${new Date().toISOString().split('T')[0]}.pdf`,
         content: pdfBuffer
       }]
+    });
+
+    console.log('✅ [REPORT] Rapport envoyé avec succès à:', {
+      userEmail: assessment.user.email,
+      companyName: assessment.user.companyName
     });
 
     // Update assessment with report status and save PDF buffer

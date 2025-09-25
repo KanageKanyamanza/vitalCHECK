@@ -45,7 +45,7 @@ const emailTemplates = {
               <!-- Score principal -->
               <div style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); border-radius: 16px; padding: 30px; margin: 30px 0; text-align: center; border: 1px solid #e2e8f0;">
                 <div style="width: 120px; height: 120px; border-radius: 50%; background: ${assessment.overallStatus === 'green' ? 'linear-gradient(135deg, #10B981, #059669)' : assessment.overallStatus === 'amber' ? 'linear-gradient(135deg, #F59E0B, #D97706)' : 'linear-gradient(135deg, #EF4444, #DC2626)'}; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; box-shadow: 0 8px 25px rgba(0,0,0,0.15);">
-                  <div style="color: white; font-size: 32px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                  <div style="color: white; font-size: 32px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3); line-height: 120px; text-align: center; vertical-align: middle; margin: 0; padding: 0;">
                     ${assessment.overallScore}
                   </div>
                 </div>
@@ -60,7 +60,7 @@ const emailTemplates = {
               <!-- Détails de l'entreprise -->
               <div style="background: white; border-radius: 12px; padding: 25px; margin: 30px 0; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                 <h3 style="color: #2d3748; margin: 0 0 20px 0; font-size: 18px; font-weight: 600; display: flex; align-items: center;">
-                  <span style="background: #fbc350; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 12px;">📊</span>
+                  <span style="background: #fbc350; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-block; text-align: center; line-height: 24px; margin-right: 10px; font-size: 12px; vertical-align: middle;">📊</span>
                   Assessment Details
                 </h3>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
@@ -99,7 +99,7 @@ const emailTemplates = {
                    style="background: linear-gradient(135deg, #fbc350 0%, #f59e0b 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(251, 195, 80, 0.3); margin: 0 10px 10px 0;">
                   📊 View Full Report
                 </a>
-                <a href="mailto:ambrose.nzeyi@gmail.com?subject=Consultation%20Request" 
+                <a href="mailto:info@checkmyenterprise.com?subject=Consultation%20Request" 
                    style="background: transparent; color: #fbc350; padding: 16px 32px; text-decoration: none; border: 2px solid #fbc350; border-radius: 8px; display: inline-block; font-weight: 600; font-size: 16px; margin: 0 0 10px 10px;">
                   💬 Book Consultation
                 </a>
@@ -126,7 +126,7 @@ const emailTemplates = {
               </p>
               <div style="margin: 20px 0; padding: 20px 0; border-top: 1px solid #4a5568;">
                 <p style="margin: 0 0 10px 0; font-size: 12px; color: #a0aec0;">
-                  📧 ambrose.nzeyi@gmail.com | 📞 +221 771970713 (SEN) / +44 7546756325 (GB)
+                  📧 info@checkmyenterprise.com | 📞 +221 771970713 (SEN) / +44 7546756325 (GB)
                 </p>
                 <p style="margin: 0; font-size: 11px; color: #718096;">
                   Generated on ${new Date().toLocaleString('en-US')} | UBB Enterprise Health Check v1.0
@@ -185,7 +185,7 @@ const emailTemplates = {
               <!-- Score principal -->
               <div style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); border-radius: 16px; padding: 30px; margin: 30px 0; text-align: center; border: 1px solid #e2e8f0;">
                 <div style="width: 120px; height: 120px; border-radius: 50%; background: ${assessment.overallStatus === 'green' ? 'linear-gradient(135deg, #10B981, #059669)' : assessment.overallStatus === 'amber' ? 'linear-gradient(135deg, #F59E0B, #D97706)' : 'linear-gradient(135deg, #EF4444, #DC2626)'}; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; box-shadow: 0 8px 25px rgba(0,0,0,0.15);">
-                  <div style="color: white; font-size: 32px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+                  <div style="color: white; font-size: 32px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3); line-height: 120px; text-align: center; vertical-align: middle; margin: 0; padding: 0;">
                     ${assessment.overallScore}
                   </div>
                 </div>
@@ -200,7 +200,7 @@ const emailTemplates = {
               <!-- Détails de l'entreprise -->
               <div style="background: white; border-radius: 12px; padding: 25px; margin: 30px 0; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
                 <h3 style="color: #2d3748; margin: 0 0 20px 0; font-size: 18px; font-weight: 600; display: flex; align-items: center;">
-                  <span style="background: #fbc350; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 10px; font-size: 12px;">📊</span>
+                  <span style="background: #fbc350; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-block; text-align: center; line-height: 24px; margin-right: 10px; font-size: 12px; vertical-align: middle;">📊</span>
                   Détails de l'Évaluation
                 </h3>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
@@ -239,7 +239,7 @@ const emailTemplates = {
                    style="background: linear-gradient(135deg, #fbc350 0%, #f59e0b 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(251, 195, 80, 0.3); margin: 0 10px 10px 0;">
                   📊 Voir le Rapport Complet
                 </a>
-                <a href="mailto:ambrose.nzeyi@gmail.com?subject=Demande%20de%20Consultation" 
+                <a href="mailto:info@checkmyenterprise.com?subject=Demande%20de%20Consultation" 
                    style="background: transparent; color: #fbc350; padding: 16px 32px; text-decoration: none; border: 2px solid #fbc350; border-radius: 8px; display: inline-block; font-weight: 600; font-size: 16px; margin: 0 0 10px 10px;">
                   💬 Réserver une Consultation
                 </a>
@@ -266,7 +266,7 @@ const emailTemplates = {
               </p>
               <div style="margin: 20px 0; padding: 20px 0; border-top: 1px solid #4a5568;">
                 <p style="margin: 0 0 10px 0; font-size: 12px; color: #a0aec0;">
-                  📧 ambrose.nzeyi@gmail.com | 📞 +221 771970713 (SEN) / +44 7546756325 (GB)
+                  📧 info@checkmyenterprise.com | 📞 +221 771970713 (SEN) / +44 7546756325 (GB)
                 </p>
                 <p style="margin: 0; font-size: 11px; color: #718096;">
                   Généré le ${new Date().toLocaleString('fr-FR')} | UBB Enterprise Health Check v1.0
