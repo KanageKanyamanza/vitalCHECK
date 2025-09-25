@@ -53,6 +53,13 @@ const ResultsPage = () => {
 	}, [assessment, navigate, scrollToTop]);
 
 	const handleGenerateReport = async () => {
+		console.log('🚀 [FRONTEND] Début de la génération de rapport...', {
+			assessmentId: assessment.id,
+			userEmail: user.email,
+			companyName: user.companyName,
+			language: assessment.language
+		});
+
 		setGeneratingReport(true);
 		setReportError(null);
 
@@ -62,38 +69,61 @@ const ResultsPage = () => {
 
 			// Essayer d'abord la génération côté serveur
 			try {
+				console.log('📡 [FRONTEND] Appel API serveur pour génération PDF...', {
+					assessmentId: assessment.id,
+					apiUrl: `/reports/generate/${assessment.id}`
+				});
+
 				const response = await reportsAPI.generateReport(assessment.id);
+
+				console.log('✅ [FRONTEND] Réponse serveur reçue:', {
+					success: response.data.success,
+					message: response.data.message,
+					assessmentId: response.data.assessmentId
+				});
 
 				if (response.data.success) {
 					setReportGenerated(true);
 					setShowSuccessModal(true);
+					console.log('🎉 [FRONTEND] Rapport généré avec succès côté serveur');
 					return;
 				}
 			} catch (serverError) {
-				console.warn(
-					"Server PDF generation failed, trying client-side:",
-					serverError.message
-				);
+				console.error('❌ [FRONTEND] Erreur génération serveur:', {
+					error: serverError.message,
+					status: serverError.response?.status,
+					data: serverError.response?.data,
+					assessmentId: assessment.id
+				});
 
 				// Fallback: génération côté client
+				console.log('🔄 [FRONTEND] Fallback vers génération côté client...');
 				try {
 					// Créer un objet assessment complet avec les données utilisateur
 					const fullAssessment = {
 						...assessment,
 						user: user,
 					};
+					
+					console.log('📄 [FRONTEND] Génération PDF côté client...', {
+						companyName: user.companyName,
+						overallScore: assessment.overallScore
+					});
+					
 					await generateClientPDF(fullAssessment);
 					setReportGenerated(true);
 					setShowSuccessModal(true);
 					toast.success("Rapport PDF généré avec succès !");
+					console.log('✅ [FRONTEND] PDF côté client généré avec succès');
 					return;
 				} catch (clientError) {
-					console.warn(
-						"Client PDF generation failed, trying simple version:",
-						clientError.message
-					);
+					console.error('❌ [FRONTEND] Erreur génération PDF côté client:', {
+						error: clientError.message,
+						companyName: user.companyName
+					});
 
 					// Dernier recours: PDF simple
+					console.log('🔄 [FRONTEND] Dernier recours: PDF simple...');
 					const fullAssessment = {
 						...assessment,
 						user: user,
@@ -102,17 +132,24 @@ const ResultsPage = () => {
 					setReportGenerated(true);
 					setShowSuccessModal(true);
 					toast.success("Rapport PDF simple généré avec succès !");
+					console.log('✅ [FRONTEND] PDF simple généré avec succès');
 					return;
 				}
 			}
 		} catch (error) {
-			console.error("Report generation error:", error);
+			console.error("❌ [FRONTEND] Erreur finale génération rapport:", {
+				error: error.message,
+				assessmentId: assessment.id,
+				userEmail: user.email,
+				companyName: user.companyName
+			});
 			setReportError({
 				message: "Impossible de générer le rapport PDF. Veuillez réessayer.",
 			});
 			toast.error("Erreur lors de la génération du rapport");
 		} finally {
 			setGeneratingReport(false);
+			console.log('🏁 [FRONTEND] Génération de rapport terminée');
 		}
 	};
 

@@ -37,7 +37,7 @@ router.post('/draft', [
   body('language').optional().isString()
 ], async (req, res) => {
   try {
-    console.log('📝 [DRAFT] Création/récupération de draft pour userId:', req.body.userId);
+    // console.log('📝 [DRAFT] Création/récupération de draft pour userId:', req.body.userId);
     
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -63,18 +63,18 @@ router.post('/draft', [
     });
 
     if (draftAssessment) {
-      console.log('📋 [DRAFT] Draft existant trouvé:', {
-        id: draftAssessment._id,
-        currentQuestionIndex: draftAssessment.currentQuestionIndex,
-        answersCount: draftAssessment.answers.length,
-        hasResumeToken: !!draftAssessment.resumeToken
-      });
+      // console.log('📋 [DRAFT] Draft existant trouvé:', {
+      //   id: draftAssessment._id,
+      //   currentQuestionIndex: draftAssessment.currentQuestionIndex,
+      //   answersCount: draftAssessment.answers.length,
+      //   hasResumeToken: !!draftAssessment.resumeToken
+      // });
       
       // Update resume token if needed
       if (!draftAssessment.resumeToken) {
         draftAssessment.resumeToken = generateResumeToken(userId, draftAssessment._id);
         await draftAssessment.save();
-        console.log('🔑 [DRAFT] ResumeToken généré pour draft existant');
+        // console.log('🔑 [DRAFT] ResumeToken généré pour draft existant');
       }
       
       return res.json({
@@ -94,7 +94,7 @@ router.post('/draft', [
     const selectedQuestions = language === 'fr' ? questionsDataFR : questionsData;
     const totalQuestions = selectedQuestions.pillars.reduce((total, pillar) => total + pillar.questions.length, 0);
 
-    console.log('🆕 [DRAFT] Création d\'un nouveau draft pour:', user.companyName);
+    // console.log('🆕 [DRAFT] Création d\'un nouveau draft pour:', user.companyName);
 
     // Create new draft assessment
     const assessment = new Assessment({
@@ -111,11 +111,11 @@ router.post('/draft', [
     assessment.resumeToken = generateResumeToken(userId, assessment._id);
     await assessment.save();
 
-    console.log('✅ [DRAFT] Nouveau draft créé:', {
-      id: assessment._id,
-      resumeToken: assessment.resumeToken,
-      totalQuestions: assessment.totalQuestions
-    });
+    // console.log('✅ [DRAFT] Nouveau draft créé:', {
+    //   id: assessment._id,
+    //   resumeToken: assessment.resumeToken,
+    //   totalQuestions: assessment.totalQuestions
+    // });
 
     res.json({
       success: true,
@@ -237,11 +237,11 @@ router.put('/progress/:assessmentId', [
   body('currentQuestionIndex').isInt({ min: 0 })
 ], async (req, res) => {
   try {
-    console.log('💾 [PROGRESS] Sauvegarde de progression pour assessmentId:', req.params.assessmentId);
+    // console.log('💾 [PROGRESS] Sauvegarde de progression pour assessmentId:', req.params.assessmentId);
     
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      console.log('❌ [PROGRESS] Erreurs de validation:', errors.array());
+      // console.log('❌ [PROGRESS] Erreurs de validation:', errors.array());
       return res.status(400).json({ errors: errors.array() });
     }
 
@@ -250,22 +250,22 @@ router.put('/progress/:assessmentId', [
 
     // Validate assessmentId
     if (!mongoose.Types.ObjectId.isValid(assessmentId)) {
-      console.log('❌ [PROGRESS] AssessmentId invalide:', assessmentId);
+      // console.log('❌ [PROGRESS] AssessmentId invalide:', assessmentId);
       return res.status(400).json({ 
         success: false, 
         message: 'Invalid assessment ID' 
       });
     }
 
-    console.log('📊 [PROGRESS] Données reçues:', {
-      answersCount: answers.length,
-      currentQuestionIndex,
-      assessmentId
-    });
+    // console.log('📊 [PROGRESS] Données reçues:', {
+    //   answersCount: answers.length,
+    //   currentQuestionIndex,
+    //   assessmentId
+    // });
 
     const assessment = await Assessment.findById(assessmentId);
     if (!assessment) {
-      console.log('❌ [PROGRESS] Assessment non trouvé:', assessmentId);
+      // console.log('❌ [PROGRESS] Assessment non trouvé:', assessmentId);
       return res.status(404).json({ 
         success: false, 
         message: 'Assessment not found' 
@@ -273,7 +273,7 @@ router.put('/progress/:assessmentId', [
     }
 
     if (assessment.status === 'completed') {
-      console.log('⚠️ [PROGRESS] Tentative de sauvegarde sur évaluation terminée:', assessmentId);
+      // console.log('⚠️ [PROGRESS] Tentative de sauvegarde sur évaluation terminée:', assessmentId);
       return res.status(400).json({ 
         success: false, 
         message: 'Assessment already completed' 
@@ -289,11 +289,11 @@ router.put('/progress/:assessmentId', [
       typeof answer.answer === 'number'
     );
 
-    console.log('📊 [PROGRESS] Réponses valides filtrées:', {
-      originalCount: answers.length,
-      validCount: validAnswers.length,
-      invalidAnswers: answers.length - validAnswers.length
-    });
+    // console.log('📊 [PROGRESS] Réponses valides filtrées:', {
+    //   originalCount: answers.length,
+    //   validCount: validAnswers.length,
+    //   invalidAnswers: answers.length - validAnswers.length
+    // });
 
     // Update assessment progress
     const previousAnswersCount = assessment.answers.length;
@@ -302,13 +302,13 @@ router.put('/progress/:assessmentId', [
     assessment.lastAnsweredAt = new Date();
     await assessment.save();
 
-    console.log('✅ [PROGRESS] Progression sauvegardée:', {
-      assessmentId,
-      previousAnswersCount,
-      newAnswersCount: validAnswers.length,
-      currentQuestionIndex,
-      progressPercentage: Math.round((validAnswers.length / assessment.totalQuestions) * 100)
-    });
+    // console.log('✅ [PROGRESS] Progression sauvegardée:', {
+    //   assessmentId,
+    //   previousAnswersCount,
+    //   newAnswersCount: validAnswers.length,
+    //   currentQuestionIndex,
+    //   progressPercentage: Math.round((validAnswers.length / assessment.totalQuestions) * 100)
+    // });
 
     res.json({
       success: true,

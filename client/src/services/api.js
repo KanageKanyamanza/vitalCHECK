@@ -22,6 +22,24 @@ const api = axios.create({
   },
 });
 
+// Intercepteur de requête pour l'API publique
+api.interceptors.request.use(
+  (config) => {
+    // Log des requêtes importantes
+    if (config.url && config.url.includes('/reports/generate/')) {
+      console.log('📡 [API REQUEST] Génération de rapport:', {
+        method: config.method,
+        url: config.url,
+        baseURL: config.baseURL
+      });
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
 // Instance Axios pour les requêtes admin
 const adminApi = axios.create({
   baseURL: API_BASE_URL,
@@ -49,9 +67,25 @@ adminApi.interceptors.request.use(
 const setupResponseInterceptor = (instance, isAdmin = false) => {
   instance.interceptors.response.use(
     (response) => {
+      // Log des réponses importantes
+      if (response.config.url && response.config.url.includes('/reports/generate/')) {
+        console.log('✅ [API RESPONSE] Génération de rapport réussie:', {
+          status: response.status,
+          data: response.data
+        });
+      }
       return response;
     },
     (error) => {
+      // Log des erreurs importantes
+      if (error.config && error.config.url && error.config.url.includes('/reports/generate/')) {
+        console.error('❌ [API RESPONSE] Erreur génération rapport:', {
+          status: error.response?.status,
+          data: error.response?.data,
+          message: error.message
+        });
+      }
+
       // Gestion des erreurs HTTP
       if (error.response) {
         const { status, data } = error.response;
@@ -118,7 +152,7 @@ export const publicApi = {
   saveProgress: (assessmentId, data) => api.put(`/assessments/progress/${assessmentId}`, data),
   
   // Reports
-  generateReport: (assessmentId) => api.get(`/reports/${assessmentId}`),
+  generateReport: (assessmentId) => api.post(`/reports/generate/${assessmentId}`),
   downloadReport: (assessmentId) => api.get(`/reports/download/${assessmentId}`, {
     responseType: 'blob',
   }),

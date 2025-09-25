@@ -86,9 +86,9 @@ JWT_EXPIRE=7d
 # Configuration Email
 EMAIL_HOST=smtp.gmail.com
 EMAIL_PORT=587
-EMAIL_USER=your-email@gmail.com
+EMAIL_USER=info@checkmyenterprise.com
 EMAIL_PASS=your-app-password
-EMAIL_FROM=noreply@ubb.com
+EMAIL_FROM=info@checkmyenterprise.com
 
 # Note: CORS configuration is now hardcoded in server/index.js
 ```
