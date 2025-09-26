@@ -7,6 +7,7 @@ Votre système de blog est maintenant **entièrement bilingue** ! Vous pouvez é
 ## ✨ Fonctionnalités
 
 ### 🔄 Contenu Bilingue
+
 - **Titre** : Français et Anglais
 - **Résumé** : Français et Anglais  
 - **Contenu** : Français et Anglais
@@ -14,11 +15,13 @@ Votre système de blog est maintenant **entièrement bilingue** ! Vous pouvez é
 - **Slugs** : Uniques pour chaque langue
 
 ### 🎯 Détection Automatique de Langue
+
 - **Paramètre URL** : `?lang=fr` ou `?lang=en`
 - **Header Accept-Language** : Détection automatique
 - **Fallback** : Français par défaut
 
 ### 🔍 Recherche Intelligente
+
 - Recherche dans la langue appropriée
 - Index de recherche séparés pour chaque langue
 - Résultats localisés
@@ -59,6 +62,7 @@ Votre système de blog est maintenant **entièrement bilingue** ! Vous pouvez é
 ### 2. API Endpoints
 
 #### Créer un Article
+
 ```bash
 POST /api/blogs/admin/blogs
 Authorization: Bearer <admin-token>
@@ -83,6 +87,7 @@ Content-Type: application/json
 ```
 
 #### Récupérer les Articles
+
 ```bash
 # Articles en français (par défaut)
 GET /api/blogs
@@ -108,6 +113,7 @@ npm run migrate-blog
 ### 2. Création d'Articles
 
 #### Via l'Interface Admin
+
 1. Connectez-vous à l'interface admin
 2. Allez dans "Gestion du Blog"
 3. Cliquez sur "Créer un nouvel article"
@@ -115,6 +121,7 @@ npm run migrate-blog
 5. Publiez l'article
 
 #### Via l'API
+
 ```javascript
 const response = await fetch('/api/blogs/admin/blogs', {
   method: 'POST',
@@ -144,6 +151,7 @@ const response = await fetch('/api/blogs/admin/blogs', {
 ### 3. Affichage Frontend
 
 #### Récupération des Articles
+
 ```javascript
 // Détecter la langue de l'utilisateur
 const userLanguage = i18n.language; // 'fr' ou 'en'
@@ -160,6 +168,7 @@ articles.forEach(article => {
 ```
 
 #### Affichage d'un Article
+
 ```javascript
 // Récupérer un article spécifique
 const response = await fetch(`/api/blogs/${slug}?lang=${userLanguage}`);
@@ -176,6 +185,7 @@ document.querySelector('.content').innerHTML = article.content;
 ### Variables d'Environnement
 
 Aucune configuration supplémentaire n'est requise. Le système utilise :
+
 - La langue détectée automatiquement
 - Les traductions i18n existantes
 - La base de données MongoDB
@@ -183,12 +193,14 @@ Aucune configuration supplémentaire n'est requise. Le système utilise :
 ### Personnalisation
 
 #### Ajouter une Nouvelle Langue
+
 1. Modifiez le modèle `Blog.js` pour ajouter la nouvelle langue
 2. Mettez à jour les routes dans `blogs.js`
 3. Ajoutez les traductions dans les fichiers i18n
 4. Mettez à jour la fonction `detectLanguage()`
 
 #### Modifier la Langue par Défaut
+
 ```javascript
 // Dans server/routes/blogs.js
 function detectLanguage(req) {
@@ -202,16 +214,19 @@ function detectLanguage(req) {
 ## 📊 Avantages
 
 ### 🎯 SEO Optimisé
+
 - **URLs localisées** : `/blog/mon-article` vs `/blog/my-article`
 - **Métadonnées SEO** : Titres et descriptions dans chaque langue
 - **Indexation** : Recherche séparée pour chaque langue
 
 ### 👥 Expérience Utilisateur
+
 - **Détection automatique** : Langue basée sur les préférences du navigateur
 - **Basculement facile** : Paramètre `?lang=` pour changer de langue
 - **Contenu cohérent** : Interface traduite + contenu localisé
 
 ### 🔧 Gestion Simplifiée
+
 - **Un seul article** : Contenu français et anglais dans le même document
 - **Slugs automatiques** : Génération automatique des URLs
 - **Validation** : Vérification que les deux langues sont remplies
@@ -219,11 +234,13 @@ function detectLanguage(req) {
 ## 🚨 Points d'Attention
 
 ### ⚠️ Obligations
+
 - **Contenu complet** : Vous DEVEZ fournir le contenu dans les deux langues
 - **Slugs uniques** : Chaque slug doit être unique dans sa langue
 - **Validation** : Le système vérifie que tous les champs requis sont remplis
 
 ### 🔄 Migration
+
 - **Script automatique** : Utilisez `npm run migrate-blog` pour migrer les anciens articles
 - **Sauvegarde** : Faites une sauvegarde avant la migration
 - **Test** : Vérifiez que tout fonctionne après la migration
