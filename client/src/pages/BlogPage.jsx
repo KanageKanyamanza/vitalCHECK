@@ -19,6 +19,7 @@ import {
 } from 'lucide-react'
 import { blogApiService } from '../services/api'
 import toast from 'react-hot-toast'
+import { normalizeTags } from '../utils/tagUtils'
 
 const BlogPage = () => {
   const navigate = useNavigate()
@@ -310,19 +311,22 @@ const BlogPage = () => {
                       </p>
 
                       {/* Tags */}
-                      {blog.tags && blog.tags.length > 0 && (
-                        <div className="flex flex-wrap gap-2 mb-4">
-                          {blog.tags.slice(0, 3).map((tag, index) => (
-                            <span
-                              key={index}
-                              className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800"
-                            >
-                              <Tag className="h-3 w-3 mr-1" />
-                              {translateTag(tag)}
-                            </span>
-                          ))}
-                        </div>
-                      )}
+                      {(() => {
+                        const normalizedTags = normalizeTags(blog.tags)
+                        return normalizedTags.length > 0 && (
+                          <div className="flex flex-wrap gap-2 mb-4">
+                            {normalizedTags.slice(0, 3).map((tag, index) => (
+                              <span
+                                key={index}
+                                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800"
+                              >
+                                <Tag className="h-3 w-3 mr-1" />
+                                {translateTag(tag)}
+                              </span>
+                            ))}
+                          </div>
+                        )
+                      })()}
 
                       {/* Footer */}
                       <div className="flex flex-wrap items-center justify-between text-sm text-gray-500">
