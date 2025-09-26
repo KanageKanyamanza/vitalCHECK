@@ -1,30 +1,59 @@
 const mongoose = require('mongoose');
 
 const blogSchema = new mongoose.Schema({
+  // Contenu bilingue
   title: {
-    type: String,
-    required: [true, 'Le titre est requis'],
-    trim: true,
-    maxlength: [200, 'Le titre ne peut pas dépasser 200 caractères']
+    fr: {
+      type: String,
+      required: [true, 'Le titre français est requis'],
+      trim: true,
+      maxlength: [200, 'Le titre ne peut pas dépasser 200 caractères']
+    },
+    en: {
+      type: String,
+      required: [true, 'Le titre anglais est requis'],
+      trim: true,
+      maxlength: [200, 'Le titre ne peut pas dépasser 200 caractères']
+    }
   },
   
   slug: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
-    trim: true
+    fr: {
+      type: String,
+      required: true,
+      lowercase: true,
+      trim: true
+    },
+    en: {
+      type: String,
+      required: true,
+      lowercase: true,
+      trim: true
+    }
   },
   
   excerpt: {
-    type: String,
-    required: [true, 'Le résumé est requis'],
-    maxlength: [500, 'Le résumé ne peut pas dépasser 500 caractères']
+    fr: {
+      type: String,
+      required: [true, 'Le résumé français est requis'],
+      maxlength: [500, 'Le résumé ne peut pas dépasser 500 caractères']
+    },
+    en: {
+      type: String,
+      required: [true, 'Le résumé anglais est requis'],
+      maxlength: [500, 'Le résumé ne peut pas dépasser 500 caractères']
+    }
   },
   
   content: {
-    type: String,
-    required: [true, 'Le contenu est requis']
+    fr: {
+      type: String,
+      required: [true, 'Le contenu français est requis']
+    },
+    en: {
+      type: String,
+      required: [true, 'Le contenu anglais est requis']
+    }
   },
   
   type: {
@@ -80,15 +109,27 @@ const blogSchema = new mongoose.Schema({
     required: true
   },
   
-  // Métadonnées SEO
+  // Métadonnées SEO bilingues
   metaTitle: {
-    type: String,
-    maxlength: [60, 'Le titre SEO ne peut pas dépasser 60 caractères']
+    fr: {
+      type: String,
+      maxlength: [60, 'Le titre SEO ne peut pas dépasser 60 caractères']
+    },
+    en: {
+      type: String,
+      maxlength: [60, 'Le titre SEO ne peut pas dépasser 60 caractères']
+    }
   },
   
   metaDescription: {
-    type: String,
-    maxlength: [160, 'La description SEO ne peut pas dépasser 160 caractères']
+    fr: {
+      type: String,
+      maxlength: [160, 'La description SEO ne peut pas dépasser 160 caractères']
+    },
+    en: {
+      type: String,
+      maxlength: [160, 'La description SEO ne peut pas dépasser 160 caractères']
+    }
   },
   
   // Statistiques
@@ -144,22 +185,37 @@ const blogSchema = new mongoose.Schema({
   timestamps: true
 });
 
-// Index pour les recherches
-blogSchema.index({ title: 'text', content: 'text', excerpt: 'text' });
+// Index pour les recherches bilingues
+blogSchema.index({ 'title.fr': 'text', 'content.fr': 'text', 'excerpt.fr': 'text' });
+blogSchema.index({ 'title.en': 'text', 'content.en': 'text', 'excerpt.en': 'text' });
 blogSchema.index({ status: 1, publishedAt: -1 });
 blogSchema.index({ type: 1, category: 1 });
 blogSchema.index({ tags: 1 });
+blogSchema.index({ 'slug.fr': 1 }, { unique: true });
+blogSchema.index({ 'slug.en': 1 }, { unique: true });
 
-// Middleware pour générer le slug
+// Middleware pour générer les slugs bilingues
 blogSchema.pre('save', function(next) {
-  if (this.isModified('title') && !this.slug) {
-    this.slug = this.title
+  // Générer le slug français
+  if (this.isModified('title.fr') && (!this.slug.fr || this.slug.fr === '')) {
+    this.slug.fr = this.title.fr
       .toLowerCase()
       .replace(/[^a-z0-9\s-]/g, '')
       .replace(/\s+/g, '-')
       .replace(/-+/g, '-')
       .trim('-');
   }
+  
+  // Générer le slug anglais
+  if (this.isModified('title.en') && (!this.slug.en || this.slug.en === '')) {
+    this.slug.en = this.title.en
+      .toLowerCase()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim('-');
+  }
+  
   next();
 });
 
@@ -181,6 +237,43 @@ blogSchema.methods.incrementViews = function() {
 blogSchema.methods.incrementLikes = function() {
   this.likes += 1;
   return this.save();
+};
+
+// Méthodes utilitaires pour le contenu bilingue
+blogSchema.methods.getTitle = function(language = 'fr') {
+  return this.title[language] || this.title.fr;
+};
+
+blogSchema.methods.getSlug = function(language = 'fr') {
+  return this.slug[language] || this.slug.fr;
+};
+
+blogSchema.methods.getExcerpt = function(language = 'fr') {
+  return this.excerpt[language] || this.excerpt.fr;
+};
+
+blogSchema.methods.getContent = function(language = 'fr') {
+  return this.content[language] || this.content.fr;
+};
+
+blogSchema.methods.getMetaTitle = function(language = 'fr') {
+  return this.metaTitle[language] || this.metaTitle.fr || this.getTitle(language);
+};
+
+blogSchema.methods.getMetaDescription = function(language = 'fr') {
+  return this.metaDescription[language] || this.metaDescription.fr || this.getExcerpt(language);
+};
+
+// Méthode pour obtenir le contenu dans une langue spécifique
+blogSchema.methods.getLocalizedContent = function(language = 'fr') {
+  return {
+    title: this.getTitle(language),
+    slug: this.getSlug(language),
+    excerpt: this.getExcerpt(language),
+    content: this.getContent(language),
+    metaTitle: this.getMetaTitle(language),
+    metaDescription: this.getMetaDescription(language)
+  };
 };
 
 // Méthode pour obtenir les statistiques de visites détaillées

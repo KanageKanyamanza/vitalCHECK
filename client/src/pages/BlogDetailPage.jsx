@@ -22,12 +22,13 @@ import toast from 'react-hot-toast'
 const BlogDetailPage = () => {
   const { slug } = useParams()
   const navigate = useNavigate()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   
   const [blog, setBlog] = useState(null)
   const [loading, setLoading] = useState(true)
   const [relatedBlogs, setRelatedBlogs] = useState([])
   const [liked, setLiked] = useState(false)
+  const [language, setLanguage] = useState(i18n.language)
 
   // Charger le blog
   const loadBlog = async () => {
@@ -67,6 +68,22 @@ const BlogDetailPage = () => {
       trackingService.stopTracking()
     }
   }, [slug])
+
+  // Effet pour détecter les changements de langue
+  useEffect(() => {
+    const handleLanguageChange = (lng) => {
+      console.log('🌐 [BLOG DETAIL] Changement de langue détecté:', lng)
+      setLanguage(lng)
+      // Ne pas recharger le blog, juste mettre à jour l'affichage
+      // Le contenu bilingue est déjà chargé
+    }
+
+    i18n.on('languageChanged', handleLanguageChange)
+    
+    return () => {
+      i18n.off('languageChanged', handleLanguageChange)
+    }
+  }, [i18n])
 
   // Gérer le like
   const handleLike = async () => {
@@ -127,10 +144,10 @@ const BlogDetailPage = () => {
   const getTypeLabel = (type) => {
     const typeLabels = {
       'article': t('blog.types.article'),
-      'etude-cas': t('blog.types.caseStudy'),
-      'tutoriel': t('blog.types.tutorial'),
-      'actualite': t('blog.types.news'),
-      'temoignage': t('blog.types.testimonial')
+      'etude-cas': t('blog.types.etude-cas'),
+      'tutoriel': t('blog.types.tutoriel'),
+      'actualite': t('blog.types.actualite'),
+      'temoignage': t('blog.types.temoignage')
     }
     return typeLabels[type] || t('blog.types.article')
   }
@@ -138,15 +155,36 @@ const BlogDetailPage = () => {
   // Obtenir le label de la catégorie
   const getCategoryLabel = (category) => {
     const categoryLabels = {
-      'strategie': t('blog.categories.strategy'),
-      'technologie': t('blog.categories.technology'),
+      'strategie': t('blog.categories.strategie'),
+      'technologie': t('blog.categories.technologie'),
       'finance': t('blog.categories.finance'),
-      'ressources-humaines': t('blog.categories.hr'),
+      'ressources-humaines': t('blog.categories.ressources-humaines'),
       'marketing': t('blog.categories.marketing'),
       'operations': t('blog.categories.operations'),
-      'gouvernance': t('blog.categories.governance')
+      'gouvernance': t('blog.categories.gouvernance')
     }
     return categoryLabels[category] || category
+  }
+
+  // Obtenir le contenu localisé d'un blog
+  const getLocalizedContent = (content, fallback = '') => {
+    if (!content) return fallback
+    
+    // Si c'est déjà une chaîne (ancien format), la retourner
+    if (typeof content === 'string') return content
+    
+    // Si c'est un objet bilingue, retourner selon la langue
+    if (typeof content === 'object') {
+      const currentLanguage = language || i18n.language || 'fr'
+      return content[currentLanguage] || content.fr || content.en || fallback
+    }
+    
+    return fallback
+  }
+
+  // Traduire un tag
+  const translateTag = (tag) => {
+    return t(`blog.tags.${tag}`) || tag
   }
 
   if (loading) {
@@ -208,12 +246,12 @@ const BlogDetailPage = () => {
 
           {/* Titre */}
           <h1 className="md:text-4xl text-2xl font-bold text-gray-900 mb-4">
-            {blog.title}
+            {getLocalizedContent(blog.title, 'Titre non disponible')}
           </h1>
 
           {/* Extrait */}
           <p className="md:text-xl text-sm text-gray-600 mb-6">
-            {blog.excerpt}
+            {getLocalizedContent(blog.excerpt, 'Extrait non disponible')}
           </p>
 
           {/* Auteur et stats */}
@@ -279,7 +317,7 @@ const BlogDetailPage = () => {
               {/* Contenu */}
               <div 
                 className="prose prose-lg max-w-none"
-                dangerouslySetInnerHTML={{ __html: blog.content }}
+                dangerouslySetInnerHTML={{ __html: getLocalizedContent(blog.content, 'Contenu non disponible') }}
               />
 
               {/* Tags */}
@@ -293,7 +331,7 @@ const BlogDetailPage = () => {
                         className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-800"
                       >
                         <Tag className="h-3 w-3 mr-1" />
-                        {tag}
+                        {translateTag(tag)}
                       </span>
                     ))}
                   </div>
@@ -339,7 +377,10 @@ const BlogDetailPage = () => {
                         <div
                           key={relatedBlog._id}
                           className="flex space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded-md"
-                          onClick={() => navigate(`/blog/${relatedBlog.slug}`)}
+                          onClick={() => {
+                            const localizedSlug = getLocalizedContent(relatedBlog.slug, relatedBlog.slug)
+                            navigate(`/blog/${localizedSlug}`)
+                          }}
                         >
                           {relatedBlog.featuredImage?.url && (
                             <img
@@ -354,7 +395,7 @@ const BlogDetailPage = () => {
                               {getTypeLabel(relatedBlog.type)}
                             </div>
                             <h4 className="text-sm font-medium text-gray-900 line-clamp-2">
-                              {relatedBlog.title}
+                              {getLocalizedContent(relatedBlog.title, 'Titre non disponible')}
                             </h4>
                             <p className="text-xs text-gray-500 mt-1">
                               {formatDate(relatedBlog.publishedAt || relatedBlog.createdAt)}

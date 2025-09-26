@@ -25,7 +25,8 @@
     "assessment": "Évaluation",
     "results": "Résultats",
     "contact": "Contact",
-    "newAssessment": "Nouvelle Évaluation"
+    "newAssessment": "Nouvelle Évaluation",
+    "blog": "Blog"
   },
   "results": {
     "title": "UBB Enterprise Health Check – Résultats",
@@ -551,7 +552,7 @@
       "title": "Ce que nous faisons",
       "subtitle": "Nous soutenons les PME dans trois domaines interconnectés :",
       "healthCheck": {
-        "title": "Enterprise Health Check (gratuit)",
+        "title": "Enterprise Health Check (gratuit et premium)",
         "description": "Un outil de diagnostic pour évaluer la santé financière et opérationnelle."
       },
       "visibility": {
@@ -574,49 +575,6 @@
       "subtitle": "Construisons ensemble votre prochain chapitre.",
       "startAssessment": "Commencer l'évaluation gratuite",
       "contactUs": "Nous contacter"
-    }
-  },
-  "blog": {
-    "title": "Blog UBB Enterprise Health Check",
-    "subtitle": "Découvrez nos articles, études de cas et tutoriels pour améliorer la santé de votre entreprise",
-    "searchPlaceholder": "Rechercher un article...",
-    "backToHome": "Retour à l'accueil",
-    "backToBlog": "Retour au blog",
-    "noArticles": "Aucun article trouvé",
-    "noArticlesDesc": "Aucun article ne correspond à vos critères de recherche.",
-    "loading": "Chargement...",
-    "error": "Erreur lors du chargement des blogs",
-    "likeError": "Erreur lors du like",
-    "likeSuccess": "Merci pour votre like !",
-    "shareSuccess": "Lien copié dans le presse-papiers",
-    "articleNotFound": "Article non trouvé",
-    "author": "Auteur",
-    "unknownAuthor": "Auteur inconnu",
-    "views": "vues",
-    "likes": "likes",
-    "share": "Partager",
-    "tags": "Tags",
-    "actions": "Actions",
-    "likeArticle": "J'aime cet article",
-    "thankYou": "Merci !",
-    "relatedArticles": "Articles similaires",
-    "types": {
-      "all": "Tous les types",
-      "article": "Articles",
-      "caseStudy": "Études de cas",
-      "tutorial": "Tutoriels",
-      "news": "Actualités",
-      "testimonial": "Témoignages"
-    },
-    "categories": {
-      "all": "Toutes les catégories",
-      "strategy": "Stratégie",
-      "technology": "Technologie",
-      "finance": "Finance",
-      "hr": "Ressources Humaines",
-      "marketing": "Marketing",
-      "operations": "Opérations",
-      "governance": "Gouvernance"
     }
   },
   "analytics": {
@@ -664,5 +622,119 @@
     "seconds": "s",
     "minutes": "m",
     "hours": "h"
+  },
+  "blog": {
+    "title": "Blog UBB Enterprise Health Check",
+    "subtitle": "Découvrez nos articles, études de cas et conseils pour améliorer la santé de votre entreprise",
+    "searchPlaceholder": "Rechercher un article...",
+    "backToHome": "Retour à l'accueil",
+    "backToBlog": "Retour au blog",
+    "noArticles": "Aucun article trouvé",
+    "noArticlesDesc": "Aucun article ne correspond à vos critères de recherche.",
+    "loading": "Chargement...",
+    "error": "Erreur lors du chargement des blogs",
+    "likeError": "Erreur lors du like",
+    "likeSuccess": "Merci pour votre like !",
+    "shareSuccess": "Lien copié dans le presse-papiers",
+    "articleNotFound": "Article non trouvé",
+    "author": "Auteur",
+    "unknownAuthor": "Auteur inconnu",
+    "readMore": "Lire la suite",
+    "readTime": "min de lecture",
+    "publishedOn": "Publié le",
+    "by": "par",
+    "views": "vues",
+    "likes": "likes",
+    "share": "Partager",
+    "search": "Rechercher dans le blog...",
+    "noResults": "Aucun article trouvé",
+    "actions": "Actions",
+    "likeArticle": "J'aime cet article",
+    "thankYou": "Merci !",
+    "relatedArticles": "Articles similaires",
+    "types": {
+      "all": "Tous les types",
+      "article": "Articles",
+      "etude-cas": "Études de cas",
+      "tutoriel": "Tutoriels",
+      "actualite": "Actualités",
+      "temoignage": "Témoignages"
+    },
+    "categories": {
+      "all": "Toutes les catégories",
+      "strategie": "Stratégie",
+      "technologie": "Technologie",
+      "finance": "Finance",
+      "ressources-humaines": "Ressources Humaines",
+      "marketing": "Marketing",
+      "operations": "Opérations",
+      "gouvernance": "Gouvernance"
+    },
+    "tags": {
+      "diagnostic": "Diagnostic",
+      "entreprise": "Entreprise",
+      "santé": "Santé",
+      "management": "Management",
+      "trésorerie": "Trésorerie",
+      "finance": "Finance",
+      "gestion": "Gestion",
+      "témoignage": "Témoignage",
+      "croissance": "Croissance",
+      "chiffre d'affaires": "Chiffre d'affaires",
+      "productivité": "Productivité",
+      "étude de cas": "Étude de cas",
+      "pme": "PME",
+      "services": "Services"
+    },
+    "filters": {
+      "all": "Tous",
+      "type": "Type",
+      "category": "Catégorie",
+      "sortBy": "Trier par",
+      "sortOptions": {
+        "publishedAt": "Date de publication",
+        "views": "Nombre de vues",
+        "likes": "Nombre de likes",
+        "title": "Titre"
+      }
+    },
+    "admin": {
+      "title": "Gestion du Blog",
+      "createNew": "Créer un nouvel article",
+      "edit": "Modifier l'article",
+      "delete": "Supprimer l'article",
+      "publish": "Publier",
+      "unpublish": "Dépublier",
+      "draft": "Brouillon",
+      "published": "Publié",
+      "archived": "Archivé",
+      "form": {
+        "titleFr": "Titre (Français)",
+        "titleEn": "Titre (Anglais)",
+        "excerptFr": "Résumé (Français)",
+        "excerptEn": "Résumé (Anglais)",
+        "contentFr": "Contenu (Français)",
+        "contentEn": "Contenu (Anglais)",
+        "metaTitleFr": "Titre SEO (Français)",
+        "metaTitleEn": "Titre SEO (Anglais)",
+        "metaDescriptionFr": "Description SEO (Français)",
+        "metaDescriptionEn": "Description SEO (Anglais)",
+        "type": "Type d'article",
+        "category": "Catégorie",
+        "tags": "Tags (séparés par des virgules)",
+        "featuredImage": "Image mise en avant",
+        "status": "Statut",
+        "save": "Enregistrer",
+        "saveAndPublish": "Enregistrer et publier",
+        "cancel": "Annuler"
+      },
+      "messages": {
+        "created": "Article créé avec succès",
+        "updated": "Article mis à jour avec succès",
+        "deleted": "Article supprimé avec succès",
+        "published": "Article publié avec succès",
+        "unpublished": "Article dépublié avec succès"
+      }
+    }
   }
 }

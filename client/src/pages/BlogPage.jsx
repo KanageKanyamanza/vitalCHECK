@@ -23,7 +23,7 @@ import toast from 'react-hot-toast'
 const BlogPage = () => {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   
   const [blogs, setBlogs] = useState([])
   const [loading, setLoading] = useState(true)
@@ -32,26 +32,27 @@ const BlogPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('')
   const [currentPage, setCurrentPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
+  const [language, setLanguage] = useState(i18n.language)
 
   // Types et catégories
   const blogTypes = [
     { value: '', label: t('blog.types.all'), icon: FileText },
     { value: 'article', label: t('blog.types.article'), icon: FileText },
-    { value: 'etude-cas', label: t('blog.types.caseStudy'), icon: BookOpen },
-    { value: 'tutoriel', label: t('blog.types.tutorial'), icon: TrendingUp },
-    { value: 'actualite', label: t('blog.types.news'), icon: Clock },
-    { value: 'temoignage', label: t('blog.types.testimonial'), icon: Users }
+    { value: 'etude-cas', label: t('blog.types.etude-cas'), icon: BookOpen },
+    { value: 'tutoriel', label: t('blog.types.tutoriel'), icon: TrendingUp },
+    { value: 'actualite', label: t('blog.types.actualite'), icon: Clock },
+    { value: 'temoignage', label: t('blog.types.temoignage'), icon: Users }
   ]
 
   const blogCategories = [
     { value: '', label: t('blog.categories.all') },
-    { value: 'strategie', label: t('blog.categories.strategy') },
-    { value: 'technologie', label: t('blog.categories.technology') },
+    { value: 'strategie', label: t('blog.categories.strategie') },
+    { value: 'technologie', label: t('blog.categories.technologie') },
     { value: 'finance', label: t('blog.categories.finance') },
-    { value: 'ressources-humaines', label: t('blog.categories.hr') },
+    { value: 'ressources-humaines', label: t('blog.categories.ressources-humaines') },
     { value: 'marketing', label: t('blog.categories.marketing') },
     { value: 'operations', label: t('blog.categories.operations') },
-    { value: 'gouvernance', label: t('blog.categories.governance') }
+    { value: 'gouvernance', label: t('blog.categories.gouvernance') }
   ]
 
   // Charger les blogs
@@ -80,7 +81,23 @@ const BlogPage = () => {
   // Effet pour charger les blogs
   useEffect(() => {
     loadBlogs()
-  }, [currentPage, selectedType, selectedCategory])
+  }, [currentPage, selectedType, selectedCategory, language])
+
+  // Effet pour détecter les changements de langue
+  useEffect(() => {
+    const handleLanguageChange = (lng) => {
+      console.log('🌐 [BLOG PAGE] Changement de langue détecté:', lng)
+      setLanguage(lng)
+      // Recharger les blogs avec la nouvelle langue
+      loadBlogs()
+    }
+
+    i18n.on('languageChanged', handleLanguageChange)
+    
+    return () => {
+      i18n.off('languageChanged', handleLanguageChange)
+    }
+  }, [i18n])
 
   // Effet pour la recherche avec debounce
   useEffect(() => {
@@ -112,8 +129,9 @@ const BlogPage = () => {
   }
 
   // Naviguer vers un blog
-  const handleBlogClick = (slug) => {
-    navigate(`/blog/${slug}`)
+  const handleBlogClick = (blog) => {
+    const localizedSlug = getLocalizedContent(blog.slug, blog.slug)
+    navigate(`/blog/${localizedSlug}`)
   }
 
   // Formater la date
@@ -141,6 +159,27 @@ const BlogPage = () => {
   const getCategoryLabel = (category) => {
     const categoryConfig = blogCategories.find(c => c.value === category)
     return categoryConfig ? categoryConfig.label : category
+  }
+
+  // Obtenir le contenu localisé d'un blog
+  const getLocalizedContent = (content, fallback = '') => {
+    if (!content) return fallback
+    
+    // Si c'est déjà une chaîne (ancien format), la retourner
+    if (typeof content === 'string') return content
+    
+    // Si c'est un objet bilingue, retourner selon la langue
+    if (typeof content === 'object') {
+      const currentLanguage = language || i18n.language || 'fr'
+      return content[currentLanguage] || content.fr || content.en || fallback
+    }
+    
+    return fallback
+  }
+
+  // Traduire un tag
+  const translateTag = (tag) => {
+    return t(`blog.tags.${tag}`) || tag
   }
 
   return (
@@ -234,7 +273,7 @@ const BlogPage = () => {
                   <article
                     key={blog._id}
                     className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer"
-                    onClick={() => handleBlogClick(blog.slug)}
+                    onClick={() => handleBlogClick(blog)}
                   >
                     {/* Image */}
                     {blog.featuredImage?.url && (
@@ -262,12 +301,12 @@ const BlogPage = () => {
 
                       {/* Titre */}
                       <h2 className="text-xl font-semibold text-gray-900 mb-3 line-clamp-2">
-                        {blog.title}
+                        {getLocalizedContent(blog.title, 'Titre non disponible')}
                       </h2>
 
                       {/* Extrait */}
                       <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                        {blog.excerpt}
+                        {getLocalizedContent(blog.excerpt, 'Extrait non disponible')}
                       </p>
 
                       {/* Tags */}
@@ -279,7 +318,7 @@ const BlogPage = () => {
                               className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800"
                             >
                               <Tag className="h-3 w-3 mr-1" />
-                              {tag}
+                              {translateTag(tag)}
                             </span>
                           ))}
                         </div>

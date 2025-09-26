@@ -270,10 +270,24 @@ export const resetConnection = () => {
 // Services publics pour les blogs
 export const blogApiService = {
   // Récupérer tous les blogs publiés
-  getBlogs: (params = {}) => api.get('/blogs', { params }),
+  getBlogs: (params = {}) => {
+    // Ajouter la langue actuelle aux paramètres
+    const currentLanguage = localStorage.getItem('i18nextLng') || 'fr';
+    return api.get('/blogs', { 
+      params: { 
+        ...params, 
+        lang: currentLanguage 
+      } 
+    });
+  },
   
   // Récupérer un blog par slug
-  getBlogBySlug: (slug) => api.get(`/blogs/${slug}`),
+  getBlogBySlug: (slug) => {
+    const currentLanguage = localStorage.getItem('i18nextLng') || 'fr';
+    return api.get(`/blogs/${slug}`, {
+      params: { lang: currentLanguage }
+    });
+  },
   
   // Liker un blog
   likeBlog: (id) => api.post(`/blogs/${id}/like`),
@@ -285,9 +299,16 @@ export const blogApiService = {
   }),
   
   // Rechercher des blogs
-  searchBlogs: (query) => api.get('/blogs', { 
-    params: { search: query, limit: 20 } 
-  })
+  searchBlogs: (query) => {
+    const currentLanguage = localStorage.getItem('i18nextLng') || 'fr';
+    return api.get('/blogs', { 
+      params: { 
+        search: query, 
+        limit: 20,
+        lang: currentLanguage
+      } 
+    });
+  }
 };
 
 // Services admin pour les blogs

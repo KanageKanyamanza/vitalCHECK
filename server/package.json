@@ -7,6 +7,8 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "build": "./build.sh",
+    "migrate-blog": "node scripts/migrate-blog-to-bilingual.js",
+    "migrate-production-blog": "node scripts/migrate-production-blog.js",
     "postinstall": "echo 'Post-install completed'"
   },
   "dependencies": {

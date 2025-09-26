@@ -8,6 +8,24 @@ const { analyzeDevice, extractReferrerDomain, extractUTMParameters, generateSess
 const axios = require('axios');
 const router = express.Router();
 
+// Fonction utilitaire pour détecter la langue
+function detectLanguage(req) {
+  // 1. Vérifier le paramètre de langue dans l'URL
+  if (req.query.lang && ['fr', 'en'].includes(req.query.lang)) {
+    return req.query.lang;
+  }
+  
+  // 2. Vérifier le header Accept-Language
+  const acceptLanguage = req.get('Accept-Language');
+  if (acceptLanguage) {
+    if (acceptLanguage.includes('en')) return 'en';
+    if (acceptLanguage.includes('fr')) return 'fr';
+  }
+  
+  // 3. Fallback par défaut
+  return 'fr';
+}
+
 // Fonction pour obtenir la géolocalisation par IP
 async function getLocationFromIP(ipAddress) {
   try {
@@ -157,6 +175,7 @@ router.get('/', async (req, res) => {
       sort = 'publishedAt' 
     } = req.query;
 
+    const language = detectLanguage(req);
     const query = { status: 'published' };
     
     // Filtres
@@ -164,7 +183,12 @@ router.get('/', async (req, res) => {
     if (category) query.category = category;
     if (tag) query.tags = { $in: [tag] };
     if (search) {
-      query.$text = { $search: search };
+      // Recherche dans la langue appropriée
+      if (language === 'en') {
+        query.$text = { $search: search };
+      } else {
+        query.$text = { $search: search };
+      }
     }
 
     // Options de tri
@@ -172,20 +196,39 @@ router.get('/', async (req, res) => {
     if (sort === 'publishedAt') sortOptions.publishedAt = -1;
     if (sort === 'views') sortOptions.views = -1;
     if (sort === 'likes') sortOptions.likes = -1;
-    if (sort === 'title') sortOptions.title = 1;
+    if (sort === 'title') {
+      sortOptions[`title.${language}`] = 1;
+    }
 
     const blogs = await Blog.find(query)
       .populate('author', 'name email')
       .sort(sortOptions)
       .limit(limit * 1)
-      .skip((page - 1) * limit)
-      .select('-content'); // Exclure le contenu complet pour la liste
+      .skip((page - 1) * limit);
 
     const total = await Blog.countDocuments(query);
 
+    // Transformer les données pour inclure le contenu localisé
+    const localizedBlogs = blogs.map(blog => {
+      const blogObj = blog.toObject();
+      const localizedContent = blog.getLocalizedContent(language);
+      
+      return {
+        ...blogObj,
+        title: localizedContent.title,
+        slug: localizedContent.slug,
+        excerpt: localizedContent.excerpt,
+        metaTitle: localizedContent.metaTitle,
+        metaDescription: localizedContent.metaDescription,
+        // Exclure le contenu complet pour la liste
+        content: undefined
+      };
+    });
+
     res.json({
       success: true,
-      data: blogs,
+      data: localizedBlogs,
+      language,
       pagination: {
         current: parseInt(page),
         pages: Math.ceil(total / limit),
@@ -205,15 +248,18 @@ router.get('/', async (req, res) => {
 // GET /blogs/:slug - Récupérer un blog par son slug
 router.get('/:slug', async (req, res) => {
   try {
+    const language = detectLanguage(req);
+    
+    // Chercher le blog par slug dans la langue appropriée
     const blog = await Blog.findOne({ 
-      slug: req.params.slug, 
+      [`slug.${language}`]: req.params.slug, 
       status: 'published' 
     }).populate('author', 'name email');
 
     if (!blog) {
       return res.status(404).json({ 
         success: false, 
-        message: 'Blog non trouvé' 
+        message: language === 'en' ? 'Blog not found' : 'Blog non trouvé' 
       });
     }
 
@@ -335,9 +381,21 @@ router.get('/:slug', async (req, res) => {
       });
       
       // Ajouter l'ID de visite à la réponse pour le tracking côté client
+      const blogObj = blog.toObject();
+      const localizedContent = blog.getLocalizedContent(language);
+      
       res.json({
         success: true,
-        data: blog,
+        data: {
+          ...blogObj,
+          title: localizedContent.title,
+          slug: localizedContent.slug,
+          excerpt: localizedContent.excerpt,
+          content: localizedContent.content,
+          metaTitle: localizedContent.metaTitle,
+          metaDescription: localizedContent.metaDescription
+        },
+        language,
         visitId: visit._id
       });
       
@@ -461,9 +519,12 @@ router.get('/admin/blogs/:id', authenticateAdmin, async (req, res) => {
 
 // POST /admin/blogs - Créer un nouveau blog
 router.post('/admin/blogs', authenticateAdmin, [
-  body('title').trim().isLength({ min: 1 }).withMessage('Le titre est requis'),
-  body('excerpt').trim().isLength({ min: 1 }).withMessage('Le résumé est requis'),
-  body('content').trim().isLength({ min: 1 }).withMessage('Le contenu est requis'),
+  body('title.fr').trim().isLength({ min: 1 }).withMessage('Le titre français est requis'),
+  body('title.en').trim().isLength({ min: 1 }).withMessage('Le titre anglais est requis'),
+  body('excerpt.fr').trim().isLength({ min: 1 }).withMessage('Le résumé français est requis'),
+  body('excerpt.en').trim().isLength({ min: 1 }).withMessage('Le résumé anglais est requis'),
+  body('content.fr').trim().isLength({ min: 1 }).withMessage('Le contenu français est requis'),
+  body('content.en').trim().isLength({ min: 1 }).withMessage('Le contenu anglais est requis'),
   body('type').isIn(['article', 'etude-cas', 'tutoriel', 'actualite', 'temoignage']).withMessage('Type invalide'),
   body('category').isIn(['strategie', 'technologie', 'finance', 'ressources-humaines', 'marketing', 'operations', 'gouvernance']).withMessage('Catégorie invalide')
 ], async (req, res) => {
@@ -478,13 +539,27 @@ router.post('/admin/blogs', authenticateAdmin, [
       author: req.admin._id
     };
 
-    // Générer le slug si pas fourni
-    if (!blogData.slug && blogData.title) {
-      blogData.slug = slugify(blogData.title, { 
-        lower: true, 
-        strict: true, 
-        locale: 'fr' 
-      });
+    // Générer les slugs si pas fournis
+    if (!blogData.slug) {
+      blogData.slug = {};
+    }
+    
+    if (!blogData.slug.fr && blogData.title.fr) {
+      blogData.slug.fr = blogData.title.fr
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim('-');
+    }
+    
+    if (!blogData.slug.en && blogData.title.en) {
+      blogData.slug.en = blogData.title.en
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim('-');
     }
 
     const blog = new Blog(blogData);
@@ -507,9 +582,12 @@ router.post('/admin/blogs', authenticateAdmin, [
 
 // PUT /admin/blogs/:id - Mettre à jour un blog
 router.put('/admin/blogs/:id', authenticateAdmin, [
-  body('title').optional().trim().isLength({ min: 1 }),
-  body('excerpt').optional().trim().isLength({ min: 1 }),
-  body('content').optional().trim().isLength({ min: 1 }),
+  body('title.fr').optional().trim().isLength({ min: 1 }),
+  body('title.en').optional().trim().isLength({ min: 1 }),
+  body('excerpt.fr').optional().trim().isLength({ min: 1 }),
+  body('excerpt.en').optional().trim().isLength({ min: 1 }),
+  body('content.fr').optional().trim().isLength({ min: 1 }),
+  body('content.en').optional().trim().isLength({ min: 1 }),
   body('type').optional().isIn(['article', 'etude-cas', 'tutoriel', 'actualite', 'temoignage']),
   body('category').optional().isIn(['strategie', 'technologie', 'finance', 'ressources-humaines', 'marketing', 'operations', 'gouvernance'])
 ], async (req, res) => {
@@ -536,13 +614,29 @@ router.put('/admin/blogs/:id', authenticateAdmin, [
       });
     }
 
-    // Générer le slug si le titre a changé et qu'aucun slug n'est fourni
-    if (req.body.title && req.body.title !== blog.title && !req.body.slug) {
-      req.body.slug = slugify(req.body.title, { 
-        lower: true, 
-        strict: true, 
-        locale: 'fr' 
-      });
+    // Générer les slugs si les titres ont changé
+    if (req.body.title) {
+      if (!req.body.slug) {
+        req.body.slug = {};
+      }
+      
+      if (req.body.title.fr && req.body.title.fr !== blog.title.fr && !req.body.slug.fr) {
+        req.body.slug.fr = req.body.title.fr
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-')
+          .trim('-');
+      }
+      
+      if (req.body.title.en && req.body.title.en !== blog.title.en && !req.body.slug.en) {
+        req.body.slug.en = req.body.title.en
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, '')
+          .replace(/\s+/g, '-')
+          .replace(/-+/g, '-')
+          .trim('-');
+      }
     }
 
     Object.assign(blog, req.body);

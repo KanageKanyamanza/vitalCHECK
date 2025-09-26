@@ -25,7 +25,8 @@
     "assessment": "Assessment",
     "results": "Results",
     "contact": "Contact",
-    "newAssessment": "New Assessment"
+    "newAssessment": "New Assessment",
+    "blog": "Blog"
   },
   "results": {
     "title": "UBB Enterprise Health Check – Results",
@@ -551,7 +552,7 @@
       "title": "What We Do",
       "subtitle": "We support SMEs in three interconnected areas:",
       "healthCheck": {
-        "title": "Enterprise Health Check (free)",
+        "title": "Enterprise Health Check (free and premium)",
         "description": "A diagnostic tool to assess financial and operational health."
       },
       "visibility": {
@@ -574,49 +575,6 @@
       "subtitle": "Let's build your next chapter together.",
       "startAssessment": "Start free assessment",
       "contactUs": "Contact us"
-    }
-  },
-  "blog": {
-    "title": "UBB Enterprise Health Check Blog",
-    "subtitle": "Discover our articles, case studies and tutorials to improve your business health",
-    "searchPlaceholder": "Search for an article...",
-    "backToHome": "Back to home",
-    "backToBlog": "Back to blog",
-    "noArticles": "No articles found",
-    "noArticlesDesc": "No articles match your search criteria.",
-    "loading": "Loading...",
-    "error": "Error loading blogs",
-    "likeError": "Error liking article",
-    "likeSuccess": "Thank you for your like!",
-    "shareSuccess": "Link copied to clipboard",
-    "articleNotFound": "Article not found",
-    "author": "Author",
-    "unknownAuthor": "Unknown author",
-    "views": "views",
-    "likes": "likes",
-    "share": "Share",
-    "tags": "Tags",
-    "actions": "Actions",
-    "likeArticle": "I like this article",
-    "thankYou": "Thank you!",
-    "relatedArticles": "Related articles",
-    "types": {
-      "all": "All types",
-      "article": "Articles",
-      "caseStudy": "Case studies",
-      "tutorial": "Tutorials",
-      "news": "News",
-      "testimonial": "Testimonials"
-    },
-    "categories": {
-      "all": "All categories",
-      "strategy": "Strategy",
-      "technology": "Technology",
-      "finance": "Finance",
-      "hr": "Human Resources",
-      "marketing": "Marketing",
-      "operations": "Operations",
-      "governance": "Governance"
     }
   },
   "analytics": {
@@ -664,5 +622,119 @@
     "seconds": "s",
     "minutes": "m",
     "hours": "h"
+  },
+  "blog": {
+    "title": "UBB Enterprise Health Check Blog",
+    "subtitle": "Discover our articles, case studies and tips to improve your business health",
+    "searchPlaceholder": "Search for an article...",
+    "backToHome": "Back to home",
+    "backToBlog": "Back to blog",
+    "noArticles": "No articles found",
+    "noArticlesDesc": "No articles match your search criteria.",
+    "loading": "Loading...",
+    "error": "Error loading blogs",
+    "likeError": "Error liking article",
+    "likeSuccess": "Thank you for your like!",
+    "shareSuccess": "Link copied to clipboard",
+    "articleNotFound": "Article not found",
+    "author": "Author",
+    "unknownAuthor": "Unknown author",
+    "readMore": "Read more",
+    "readTime": "min read",
+    "publishedOn": "Published on",
+    "by": "by",
+    "views": "views",
+    "likes": "likes",
+    "share": "Share",
+    "search": "Search in blog...",
+    "noResults": "No articles found",
+    "actions": "Actions",
+    "likeArticle": "I like this article",
+    "thankYou": "Thank you!",
+    "relatedArticles": "Related articles",
+    "types": {
+      "all": "All types",
+      "article": "Articles",
+      "etude-cas": "Case studies",
+      "tutoriel": "Tutorials",
+      "actualite": "News",
+      "temoignage": "Testimonials"
+    },
+    "categories": {
+      "all": "All categories",
+      "strategie": "Strategy",
+      "technologie": "Technology",
+      "finance": "Finance",
+      "ressources-humaines": "Human Resources",
+      "marketing": "Marketing",
+      "operations": "Operations",
+      "gouvernance": "Governance"
+    },
+    "tags": {
+      "diagnostic": "Diagnostic",
+      "entreprise": "Business",
+      "santé": "Health",
+      "management": "Management",
+      "trésorerie": "Cash Flow",
+      "finance": "Finance",
+      "gestion": "Management",
+      "témoignage": "Testimonial",
+      "croissance": "Growth",
+      "chiffre d'affaires": "Revenue",
+      "productivité": "Productivity",
+      "étude de cas": "Case Study",
+      "pme": "SME",
+      "services": "Services"
+    },
+    "filters": {
+      "all": "All",
+      "type": "Type",
+      "category": "Category",
+      "sortBy": "Sort by",
+      "sortOptions": {
+        "publishedAt": "Publication date",
+        "views": "Number of views",
+        "likes": "Number of likes",
+        "title": "Title"
+      }
+    },
+    "admin": {
+      "title": "Blog Management",
+      "createNew": "Create new article",
+      "edit": "Edit article",
+      "delete": "Delete article",
+      "publish": "Publish",
+      "unpublish": "Unpublish",
+      "draft": "Draft",
+      "published": "Published",
+      "archived": "Archived",
+      "form": {
+        "titleFr": "Title (French)",
+        "titleEn": "Title (English)",
+        "excerptFr": "Excerpt (French)",
+        "excerptEn": "Excerpt (English)",
+        "contentFr": "Content (French)",
+        "contentEn": "Content (English)",
+        "metaTitleFr": "SEO Title (French)",
+        "metaTitleEn": "SEO Title (English)",
+        "metaDescriptionFr": "SEO Description (French)",
+        "metaDescriptionEn": "SEO Description (English)",
+        "type": "Article type",
+        "category": "Category",
+        "tags": "Tags (comma separated)",
+        "featuredImage": "Featured image",
+        "status": "Status",
+        "save": "Save",
+        "saveAndPublish": "Save and publish",
+        "cancel": "Cancel"
+      },
+      "messages": {
+        "created": "Article created successfully",
+        "updated": "Article updated successfully",
+        "deleted": "Article deleted successfully",
+        "published": "Article published successfully",
+        "unpublished": "Article unpublished successfully"
+      }
+    }
   }
 }
