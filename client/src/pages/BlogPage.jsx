@@ -20,6 +20,7 @@ import {
 import { blogApiService } from '../services/api'
 import toast from 'react-hot-toast'
 import { normalizeTags } from '../utils/tagUtils'
+import { autoTranslateTag } from '../utils/autoTranslateTags'
 
 const BlogPage = () => {
   const navigate = useNavigate()
@@ -178,9 +179,19 @@ const BlogPage = () => {
     return fallback
   }
 
-  // Traduire un tag
+  // Traduire un tag (avec auto-traduction en fallback)
   const translateTag = (tag) => {
-    return t(`blog.tags.${tag}`) || tag
+    const translation = t(`blog.tags.${tag}`)
+    
+    // Si la traduction retourne la clé (pas de traduction trouvée)
+    if (translation === `blog.tags.${tag}`) {
+      // Essayer l'auto-traduction
+      const currentLanguage = i18n.language || 'fr'
+      const autoTranslated = autoTranslateTag(tag, currentLanguage)
+      return autoTranslated
+    }
+    
+    return translation
   }
 
   return (
