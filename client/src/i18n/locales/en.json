@@ -708,6 +708,9 @@
       "draft": "Draft",
       "published": "Published",
       "archived": "Archived",
+      "languageSelector": {
+        "title": "Change language"
+      },
       "form": {
         "titleFr": "Title (French)",
         "titleEn": "Title (English)",

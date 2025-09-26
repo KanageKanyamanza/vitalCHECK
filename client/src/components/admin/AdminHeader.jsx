@@ -2,6 +2,7 @@ import React from 'react';
 import { Menu, Bell, User, LogOut } from 'lucide-react';
 import Logo from '../../assets/Logo.png';
 import NotificationDropdown from './NotificationDropdown';
+import LanguageSelector from './LanguageSelector';
 
 const AdminHeader = ({ onMenuClick, adminData, onLogout }) => {
   return (
@@ -37,6 +38,9 @@ const AdminHeader = ({ onMenuClick, adminData, onLogout }) => {
 
         {/* Right side - User info and actions */}
         <div className="flex items-center space-x-4">
+          {/* Language Selector - visible on all screens */}
+          <LanguageSelector />
+
           {/* Notifications - visible on all screens */}
           <NotificationDropdown />
 

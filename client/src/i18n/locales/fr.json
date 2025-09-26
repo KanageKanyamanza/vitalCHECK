@@ -708,6 +708,9 @@
       "draft": "Brouillon",
       "published": "Publié",
       "archived": "Archivé",
+      "languageSelector": {
+        "title": "Changer de langue"
+      },
       "form": {
         "titleFr": "Titre (Français)",
         "titleEn": "Titre (Anglais)",
