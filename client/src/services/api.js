@@ -270,22 +270,22 @@ export const resetConnection = () => {
 // Services publics pour les blogs
 export const blogApiService = {
   // Récupérer tous les blogs publiés
-  getBlogs: (params = {}) => {
-    // Ajouter la langue actuelle aux paramètres
-    const currentLanguage = localStorage.getItem('i18nextLng') || 'fr';
+  getBlogs: (params = {}, currentLanguage = null) => {
+    // Utiliser la langue passée en paramètre ou celle du localStorage
+    const lang = currentLanguage || localStorage.getItem('i18nextLng') || 'fr';
     return api.get('/blogs', { 
       params: { 
         ...params, 
-        lang: currentLanguage 
+        lang: lang 
       } 
     });
   },
   
   // Récupérer un blog par slug
-  getBlogBySlug: (slug) => {
-    const currentLanguage = localStorage.getItem('i18nextLng') || 'fr';
+  getBlogBySlug: (slug, currentLanguage = null) => {
+    const lang = currentLanguage || localStorage.getItem('i18nextLng') || 'fr';
     return api.get(`/blogs/${slug}`, {
-      params: { lang: currentLanguage }
+      params: { lang: lang }
     });
   },
   

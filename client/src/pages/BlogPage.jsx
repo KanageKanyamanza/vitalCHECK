@@ -169,8 +169,9 @@ const BlogPage = () => {
     if (typeof content === 'string') return content
     
     // Si c'est un objet bilingue, retourner selon la langue
-    if (typeof content === 'object') {
-      const currentLanguage = language || i18n.language || 'fr'
+    if (typeof content === 'object' && content !== null) {
+      const currentLanguage = i18n.language || 'fr'
+      console.log('🌐 [BLOG PAGE] Extraction contenu pour langue:', currentLanguage, 'Contenu:', content)
       return content[currentLanguage] || content.fr || content.en || fallback
     }
     
