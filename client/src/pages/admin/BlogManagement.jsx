@@ -56,7 +56,6 @@ const BlogManagement = () => {
 		// Si c'est un objet bilingue, retourner selon la langue
 		if (typeof content === 'object' && content !== null) {
 			const currentLanguage = i18n.language || 'fr';
-			console.log('🌐 [BLOG MANAGEMENT] Extraction contenu pour langue:', currentLanguage, 'Contenu:', content);
 			return content[currentLanguage] || content.fr || content.en || fallback;
 		}
 		
