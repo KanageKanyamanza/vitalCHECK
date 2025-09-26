@@ -14,9 +14,6 @@ const Hero = ({ onStartAssessment }) => {
 
     // style={{ backgroundImage: `url(${bgHero})` }}
     >
-      {/* Overlay pour améliorer la lisibilité */}
-      {/* <div className="absolute inset-0 bg-black/60"></div> */}
-
       {/* Hero Content */}
       <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 sm:py-16 relative z-10 w-full">
         <div className="text-center">
@@ -26,7 +23,7 @@ const Hero = ({ onStartAssessment }) => {
             transition={{ duration: 0.6 }}
             className="md:text-7xl text-6xl font-display font-bold mb-6"
           >
-            <span className="text-primary-500">{t('landing.title1')}</span>
+            <span className="text-accent-500 md:text-8xl">{t('landing.title1')}</span>
             <br />
             <span className="text-primary-500 ml-4">{t('landing.title2')}</span>
           </motion.h1>

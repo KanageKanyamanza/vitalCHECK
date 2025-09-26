@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 const getApiBaseUrl = () => {
   // En production, utiliser l'URL du serveur backend
   if (import.meta.env.PROD) {
-    return 'https://ubb-enterprise-health-check.onrender.com/api';
+    return 'https://VitalCheck-enterprise-health-check.onrender.com/api';
   }
   // En développement, utiliser l'URL locale ou celle définie dans .env
   return import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -270,22 +270,22 @@ export const resetConnection = () => {
 // Services publics pour les blogs
 export const blogApiService = {
   // Récupérer tous les blogs publiés
-  getBlogs: (params = {}, currentLanguage = null) => {
-    // Utiliser la langue passée en paramètre ou celle du localStorage
-    const lang = currentLanguage || localStorage.getItem('i18nextLng') || 'fr';
+  getBlogs: (params = {}) => {
+    // Ajouter la langue actuelle aux paramètres
+    const currentLanguage = localStorage.getItem('i18nextLng') || 'fr';
     return api.get('/blogs', { 
       params: { 
         ...params, 
-        lang: lang 
+        lang: currentLanguage 
       } 
     });
   },
   
   // Récupérer un blog par slug
-  getBlogBySlug: (slug, currentLanguage = null) => {
-    const lang = currentLanguage || localStorage.getItem('i18nextLng') || 'fr';
+  getBlogBySlug: (slug) => {
+    const currentLanguage = localStorage.getItem('i18nextLng') || 'fr';
     return api.get(`/blogs/${slug}`, {
-      params: { lang: lang }
+      params: { lang: currentLanguage }
     });
   },
   

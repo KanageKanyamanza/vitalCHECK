@@ -14,7 +14,7 @@ async function migrateBlogs() {
     console.log('🚀 [MIGRATION] Démarrage de la migration des blogs vers le format bilingue...\n');
     
     // Connexion à MongoDB
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ubb-health-check');
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/VitalCheck-health-check');
     console.log('✅ [MIGRATION] Connecté à MongoDB');
     
     // Récupérer tous les blogs existants

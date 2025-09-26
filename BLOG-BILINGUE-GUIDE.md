@@ -1,4 +1,4 @@
-# Guide du Blog Bilingue - UBB Enterprise Health Check
+# Guide du Blog Bilingue - VitalCheck Enterprise Health Check
 
 ## 🌍 Vue d'Ensemble
 
@@ -42,8 +42,8 @@ Votre système de blog est maintenant **entièrement bilingue** ! Vous pouvez é
     "en": "The complete content in English..."
   },
   "metaTitle": {
-    "fr": "Santé Entreprise - Conseils UBB",
-    "en": "Business Health - UBB Tips"
+    "fr": "Santé Entreprise - Conseils VitalCheck",
+    "en": "Business Health - VitalCheck Tips"
   },
   "metaDescription": {
     "fr": "Conseils pour améliorer la santé de votre entreprise",

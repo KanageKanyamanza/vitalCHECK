@@ -74,7 +74,7 @@ const Navbar = () => {
               <div className="w-10 h-10 rounded-lg flex items-center justify-center shadow-lg overflow-hidden">
                 <img 
                   src={logoIcon} 
-                  alt="UBB Logo" 
+                  alt="VitalCheck Logo" 
                   className="w-full h-full object-contain"
                 />
               </div>

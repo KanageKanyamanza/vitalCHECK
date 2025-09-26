@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ubb-health-check-v1.0.1';
+const CACHE_NAME = 'VitalCheck-health-check-v1.0.1';
 const urlsToCache = [
   '/',
   '/assessment',
@@ -96,7 +96,7 @@ self.addEventListener('fetch', (event) => {
 // Gestion des notifications push (optionnel)
 self.addEventListener('push', (event) => {
   const options = {
-    body: event.data ? event.data.text() : 'Nouvelle notification UBB',
+    body: event.data ? event.data.text() : 'Nouvelle notification VitalCheck',
     icon: '/android-icon-192x192.png',
     badge: '/android-icon-96x96.png',
     vibrate: [100, 50, 100],
@@ -119,7 +119,7 @@ self.addEventListener('push', (event) => {
   };
 
   event.waitUntil(
-    self.registration.showNotification('UBB Enterprise Health Check', options)
+    self.registration.showNotification('VitalCheck Enterprise Health Check', options)
   );
 });
 

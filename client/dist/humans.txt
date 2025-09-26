@@ -1,9 +1,9 @@
-# UBB Enterprise Health Check - humans.txt
+# VitalCheck Enterprise Health Check - humans.txt
 
 # Équipe
-    Développeur: UBB Development Team
+    Développeur: VitalCheck Development Team
     Contact: info@checkmyenterprise.com
-    Site: https://growthubb.space
+    Site: https://growthVitalCheck.space
 
 # Technologies
     Frontend: React, Vite, Tailwind CSS

@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: ubb-health-check-api
+    name: VitalCheck-health-check-api
     env: docker
     plan: starter
     dockerfilePath: ./Dockerfile

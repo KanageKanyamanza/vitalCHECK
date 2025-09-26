@@ -59,7 +59,7 @@ app.use("/api", require("./routes/ping"));
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
-	res.json({ status: "OK", message: "UBB Health Check API is running" });
+	res.json({ status: "OK", message: "VitalCheck Health Check API is running" });
 });
 
 // Error handling middleware
@@ -79,7 +79,7 @@ app.use("*", (req, res) => {
 // Database connection
 mongoose
 	.connect(
-		process.env.MONGODB_URI || "mongodb://localhost:27017/ubb-health-check"
+		process.env.MONGODB_URI || "mongodb://localhost:27017/VitalCheck-health-check"
 	)
 	.then(async () => {
 		console.log("Connected to MongoDB");

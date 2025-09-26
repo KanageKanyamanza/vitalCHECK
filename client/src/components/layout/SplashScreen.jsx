@@ -12,7 +12,7 @@ import {
   Briefcase,
   Zap
 } from 'lucide-react'
-import { UBBLogo } from '../ui'
+import { VitalCheckLogo } from '../ui'
 
 const SplashScreen = ({ onLoadingComplete }) => {
   const [loading, setLoading] = useState(true)
@@ -211,18 +211,24 @@ const SplashScreen = ({ onLoadingComplete }) => {
 
           {/* Contenu principal */}
           <div className="relative z-10 flex flex-col items-center justify-center h-full">
-            {/* Logo UBB */}
+            {/* Texte VitalCheck */}
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
-              className="mb-8"
+              className="mb-8 text-center"
             >
-              <UBBLogo 
+              {/* <VitalCheckLogo 
                 size="large" 
                 showText={true} 
                 animated={true}
-              />
+              /> */}
+              <h1 className="text-6xl md:text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary-500 to-accent-500 mb-4">
+                VitalCheck
+              </h1>
+              <p className="text-xl md:text-2xl text-gray-600 font-medium">
+                Enterprise Health Check
+              </p>
             </motion.div>
 
             {/* Barre de progression */}

@@ -1,26 +1,26 @@
 const emailTemplates = {
   en: {
     reportReady: {
-      subject: 'Your UBB Enterprise Health Check Report is Ready!',
+      subject: 'Your VitalCheck Enterprise Health Check Report is Ready!',
       html: (user, assessment) => `
         <!DOCTYPE html>
         <html>
         <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>UBB Enterprise Health Check Report</title>
+          <title>VitalCheck Enterprise Health Check Report</title>
         </head>
         <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
           <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
             
-            <!-- Header avec logo UBB -->
+            <!-- Header avec logo VitalCheck -->
             <div style="background: linear-gradient(135deg, #fbc350 0%, #f59e0b 100%); padding: 40px 30px; text-align: center; position: relative; overflow: hidden;">
               <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIyIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMSkiLz48Y2lyY2xlIGN4PSI4MCIgY3k9IjQwIiByPSIxLjUiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPjxjaXJjbGUgY3g9IjQwIiBjeT0iODAiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPjwvc3ZnPg==') repeat; opacity: 0.3;"></div>
               
-              <!-- Logo UBB -->
+              <!-- Logo VitalCheck -->
               <div style="position: relative; z-index: 2;">
                 <div style="display: inline-block; background: rgba(255, 255, 255, 0.2); padding: 20px; border-radius: 50%; margin-bottom: 20px; backdrop-filter: blur(10px);">
-                  <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="UBB Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: contain;" />
+                  <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="VitalCheck Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: contain;" />
                 </div>
                 <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
                   Enterprise Health Check
@@ -116,7 +116,7 @@ const emailTemplates = {
             <!-- Footer professionnel -->
             <div style="background: #2d3748; padding: 30px; text-align: center; color: #a0aec0;">
               <div style="margin-bottom: 20px;">
-                <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="UBB Logo" style="width: 50px; height: 50px; border-radius: 50%; object-fit: contain; margin: 0 auto 10px auto;" />
+                <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="VitalCheck Logo" style="width: 50px; height: 50px; border-radius: 50%; object-fit: contain; margin: 0 auto 10px auto;" />
                 <div style="color: #e2e8f0; font-weight: 600; font-size: 14px; margin-top: 5px;">
                   Enterprise Health Check
                 </div>
@@ -129,7 +129,7 @@ const emailTemplates = {
                   📧 info@checkmyenterprise.com | 📞 +221 771970713 (SEN) / +44 7546756325 (GB)
                 </p>
                 <p style="margin: 0; font-size: 11px; color: #718096;">
-                  Generated on ${new Date().toLocaleString('en-US')} | UBB Enterprise Health Check v1.0
+                  Generated on ${new Date().toLocaleString('en-US')} | VitalCheck Enterprise Health Check v1.0
                 </p>
               </div>
             </div>
@@ -141,26 +141,26 @@ const emailTemplates = {
   },
   fr: {
     reportReady: {
-      subject: 'Votre rapport UBB Enterprise Health Check est prêt !',
+      subject: 'Votre rapport VitalCheck Enterprise Health Check est prêt !',
       html: (user, assessment) => `
         <!DOCTYPE html>
         <html>
         <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>Rapport UBB Enterprise Health Check</title>
+          <title>Rapport VitalCheck Enterprise Health Check</title>
         </head>
         <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
           <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
             
-            <!-- Header avec logo UBB -->
+            <!-- Header avec logo VitalCheck -->
             <div style="background: linear-gradient(135deg, #fbc350 0%, #f59e0b 100%); padding: 40px 30px; text-align: center; position: relative; overflow: hidden;">
               <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIyIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMSkiLz48Y2lyY2xlIGN4PSI4MCIgY3k9IjQwIiByPSIxLjUiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPjxjaXJjbGUgY3g9IjQwIiBjeT0iODAiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPjwvc3ZnPg==') repeat; opacity: 0.3;"></div>
               
-              <!-- Logo UBB -->
+              <!-- Logo VitalCheck -->
               <div style="position: relative; z-index: 2;">
                 <div style="display: inline-block; background: rgba(255, 255, 255, 0.2); padding: 20px; border-radius: 50%; margin-bottom: 20px; backdrop-filter: blur(10px);">
-                  <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="UBB Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: contain;" />
+                  <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="VitalCheck Logo" style="width: 80px; height: 80px; border-radius: 50%; object-fit: contain;" />
                 </div>
                 <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
                   Enterprise Health Check
@@ -256,7 +256,7 @@ const emailTemplates = {
             <!-- Footer professionnel -->
             <div style="background: #2d3748; padding: 30px; text-align: center; color: #a0aec0;">
               <div style="margin-bottom: 20px;">
-                <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="UBB Logo" style="width: 50px; height: 50px; border-radius: 50%; object-fit: contain; margin: 0 auto 10px auto;" />
+                <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="VitalCheck Logo" style="width: 50px; height: 50px; border-radius: 50%; object-fit: contain; margin: 0 auto 10px auto;" />
                 <div style="color: #e2e8f0; font-weight: 600; font-size: 14px; margin-top: 5px;">
                   Enterprise Health Check
                 </div>
@@ -269,7 +269,7 @@ const emailTemplates = {
                   📧 info@checkmyenterprise.com | 📞 +221 771970713 (SEN) / +44 7546756325 (GB)
                 </p>
                 <p style="margin: 0; font-size: 11px; color: #718096;">
-                  Généré le ${new Date().toLocaleString('fr-FR')} | UBB Enterprise Health Check v1.0
+                  Généré le ${new Date().toLocaleString('fr-FR')} | VitalCheck Enterprise Health Check v1.0
                 </p>
               </div>
             </div>

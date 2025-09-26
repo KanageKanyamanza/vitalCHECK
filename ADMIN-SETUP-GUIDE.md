@@ -1,8 +1,8 @@
-# Guide de Configuration du Système d'Administration UBB
+# Guide de Configuration du Système d'Administration VitalCheck
 
 ## Vue d'ensemble
 
-Le système d'administration UBB permet aux administrateurs de gérer les utilisateurs, consulter les évaluations et envoyer des emails de relance.
+Le système d'administration VitalCheck permet aux administrateurs de gérer les utilisateurs, consulter les évaluations et envoyer des emails de relance.
 
 ## Configuration du Serveur
 
@@ -39,7 +39,7 @@ node scripts/create-admin.js
 ```
 
 **Identifiants par défaut :**
-- Email: admin@ubb.com
+- Email: admin@VitalCheck.com
 - Mot de passe: admin123
 
 ⚠️ **IMPORTANT** : Changez le mot de passe en production !

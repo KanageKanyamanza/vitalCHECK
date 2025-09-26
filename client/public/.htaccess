@@ -1,4 +1,4 @@
-# Configuration Apache pour UBB Enterprise Health Check
+# Configuration Apache pour VitalCheck Enterprise Health Check
 
 # Redirection HTTPS
 RewriteEngine On

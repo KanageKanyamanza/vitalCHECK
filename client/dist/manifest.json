@@ -1,7 +1,7 @@
 {
-  "name": "UBB Enterprise Health Check",
-  "short_name": "UBB Health Check",
-  "description": "Évaluez la santé organisationnelle de votre entreprise africaine avec UBB",
+  "name": "VitalCheck Enterprise Health Check",
+  "short_name": "VitalCheck Health Check",
+  "description": "Évaluez la santé organisationnelle de votre entreprise africaine avec VitalCheck",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -17,8 +17,14 @@
   ],
   "icons": [
     {
-      "src": "/android-icon-36x36.png",
-      "sizes": "36x36",
+      "src": "/favicon-16x16.png",
+      "sizes": "16x16",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-32x32.png",
+      "sizes": "32x32",
       "type": "image/png",
       "purpose": "any"
     },

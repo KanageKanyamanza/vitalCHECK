@@ -1,7 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 
-const UBBLogo = ({ 
+const VitalCheckLogo = ({ 
   size = 'large', 
   showText = true, 
   animated = true,
@@ -68,7 +68,7 @@ const UBBLogo = ({
       >
         <img 
           src={logoPaths[logoType]} 
-          alt="UBB Logo" 
+          alt="VitalCheck Logo" 
           className={`${sizeClasses[size]} drop-shadow-2xl rounded-xl`}
         />
       </motion.div>
@@ -83,12 +83,12 @@ const UBBLogo = ({
             duration: 0.8, 
             delay: 0.8 
           } : {}}
-          className="  ubb-gradient-text px-8 py-4 rounded-2xl"
+          className="  vitalcheck-gradient-text px-8 py-4 rounded-2xl"
         >
           {/* <h1 className={`${textSizes[size]} font-bold tracking-wider`}>
-            UBB
+            VitalCheck
           </h1> */}
-          <p className="text-2xl  ubb-gradient-text font-medium text-center mt-1 opacity-90">
+          <p className="text-2xl  vitalcheck-gradient-text font-medium text-center mt-1 opacity-90">
             Enterprise Health Check
           </p>
         </motion.div>
@@ -97,4 +97,4 @@ const UBBLogo = ({
   )
 }
 
-export default UBBLogo
+export default VitalCheckLogo

@@ -76,11 +76,11 @@ const testEmailConfig = async () => {
 const sendContactConfirmation = async (clientEmail, clientName, subject) => {
   const emailOptions = {
     to: clientEmail,
-    subject: 'Confirmation de réception - UBB Enterprise Health Check',
+    subject: 'Confirmation de réception - VitalCheck Enterprise Health Check',
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
         <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px; text-align: center; margin-bottom: 30px;">
-          <h1 style="color: white; margin: 0; font-size: 24px;">UBB Enterprise Health Check</h1>
+          <h1 style="color: white; margin: 0; font-size: 24px;">VitalCheck Enterprise Health Check</h1>
           <p style="color: white; margin: 10px 0 0 0; opacity: 0.9;">Confirmation de réception</p>
         </div>
         
@@ -110,13 +110,13 @@ const sendContactConfirmation = async (clientEmail, clientName, subject) => {
           
           <p style="color: #666; line-height: 1.6;">
             Cordialement,<br>
-            <strong>L'équipe UBB</strong>
+            <strong>L'équipe VitalCheck</strong>
           </p>
         </div>
         
         <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
           <p style="color: #999; font-size: 12px;">
-            UBB Enterprise Health Check - Douala, Cameroun<br>
+            VitalCheck Enterprise Health Check - Douala, Cameroun<br>
             Cet email a été envoyé automatiquement, merci de ne pas y répondre directement.
           </p>
         </div>
@@ -127,7 +127,7 @@ const sendContactConfirmation = async (clientEmail, clientName, subject) => {
   return await sendEmail(emailOptions);
 };
 
-// Send contact notification to UBB team
+// Send contact notification to VitalCheck team
 const sendContactNotification = async (contactData) => {
   const { name, email, company, phone, subject, message, inquiryType } = contactData;
   
@@ -146,7 +146,7 @@ const sendContactNotification = async (contactData) => {
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 5px;">
         <div style="background: linear-gradient(135deg, #4CAF50 0%, #16a34a 100%); padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 15px;">
-          <h1 style="color: white; margin: 0; font-size: 22px; font-weight: 600;">UBB Enterprise Health Check</h1>
+          <h1 style="color: white; margin: 0; font-size: 22px; font-weight: 600;">VitalCheck Enterprise Health Check</h1>
           <p style="color: white; margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">Nouveau message de contact</p>
         </div>
         
@@ -197,7 +197,7 @@ const sendContactNotification = async (contactData) => {
         
         <div style="text-align: center; margin-top: 15px; padding-top: 10px; border-top: 1px solid #e2e8f0;">
           <p style="color: #999; font-size: 11px; margin: 0;">
-            UBB Enterprise Health Check - Dakar, Sénégal | Système de notification automatique
+            VitalCheck Enterprise Health Check - Dakar, Sénégal | Système de notification automatique
           </p>
         </div>
       </div>

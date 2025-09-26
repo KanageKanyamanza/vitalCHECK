@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const token = jwt.sign(
   { 
     id: '68c800bb9c68b2911131424b',
-    email: 'admin@ubb.com',
+    email: 'admin@VitalCheck.com',
     role: 'admin'
   }, 
   'your-secret-key',

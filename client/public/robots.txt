@@ -2,7 +2,7 @@ User-agent: *
 Allow: /
 
 # Sitemap
-Sitemap: https://healthcheck.growthubb.space/sitemap.xml
+Sitemap: https://healthcheck.growthVitalCheck.space/sitemap.xml
 
 # Crawl-delay
 Crawl-delay: 1
@@ -21,4 +21,4 @@ Allow: /privacy
 Allow: /terms
 
 # Host
-Host: https://healthcheck.growthubb.space
+Host: https://healthcheck.growthVitalCheck.space

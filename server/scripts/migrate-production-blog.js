@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 const Blog = require('../models/Blog');
 
 // Configuration de la base de données
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/ubb-health-check';
+const MONGODB_URI ='mongodb+srv://haurlyroll:cH7bRk7ogQyjd6Uj@cluster0.5dr5yol.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
 
 async function migrateProductionBlogs() {
   try {
