@@ -25,7 +25,7 @@ import toast from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 
 const BlogAnalyticsPage = () => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [loading, setLoading] = useState(true)
   const [stats, setStats] = useState(null)
   const [visits, setVisits] = useState([])
@@ -43,6 +43,22 @@ const BlogAnalyticsPage = () => {
   const [blogs, setBlogs] = useState([])
   const [countries, setCountries] = useState([])
   const navigate = useNavigate()
+  
+  // Obtenir le contenu localisé d'un blog
+  const getLocalizedContent = (content, fallback = '') => {
+    if (!content) return fallback
+    
+    // Si c'est déjà une chaîne (ancien format), la retourner
+    if (typeof content === 'string') return content
+    
+    // Si c'est un objet bilingue, retourner selon la langue
+    if (typeof content === 'object' && content !== null) {
+      const currentLanguage = i18n.language || 'fr'
+      return content[currentLanguage] || content.fr || content.en || fallback
+    }
+    
+    return fallback
+  }
   
   // Charger les statistiques
   const loadStats = async () => {
@@ -347,7 +363,7 @@ const BlogAnalyticsPage = () => {
             >
               <option value="">{t('analytics.allBlogs')}</option>
               {blogs?.map((blog, index) => (
-                <option key={index} value={blog._id}>{blog.title}</option>
+                <option key={index} value={blog._id}>{getLocalizedContent(blog.title, 'Titre non disponible')}</option>
               ))}
             </select>
           </div>
@@ -444,8 +460,8 @@ const BlogAnalyticsPage = () => {
                       {formatDate(visit.visitedAt)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      <div className="max-w-xs truncate" title={visit.blog?.title}>
-                        {visit.blog?.title || 'N/A'}
+                      <div className="max-w-xs truncate" title={getLocalizedContent(visit.blog?.title, 'N/A')}>
+                        {getLocalizedContent(visit.blog?.title, 'N/A')}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">

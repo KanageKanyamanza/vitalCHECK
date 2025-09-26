@@ -29,7 +29,7 @@
     "blog": "Blog"
   },
   "results": {
-    "title": "UBB Enterprise Health Check – Résultats",
+    "title": "VitalCheck Enterprise Health Check – Résultats",
     "newAssessment": "Nouvelle évaluation",
     "overallScore": "Section A – Score Global",
     "pillarBreakdown": "Section B – Répartition par Piliers (Graphique Radar)",
@@ -55,7 +55,7 @@
     "generateReportBtn": "Générer le rapport",
     "reportSent": "Rapport envoyé",
     "reportSuccessTitle": "Rapport généré avec succès !",
-    "reportSuccessDesc": "Votre rapport UBB Enterprise Health Check a été généré et envoyé par email.",
+    "reportSuccessDesc": "Votre rapport VitalCheck Enterprise Health Check a été généré et envoyé par email.",
     "reportSentTo": "Envoyé à",
     "stayOnResults": "Rester sur les résultats",
     "reportNote": "Vous pouvez maintenant passer au premium pour des insights plus approfondis ou retourner à l'accueil pour une nouvelle évaluation.",
@@ -81,7 +81,7 @@
       "description": "Pour des recommandations plus détaillées, un plan d'action personnalisé et un benchmarking sectoriel, consultez notre rapport premium."
     },
     "consultationModal": {
-      "title": "Consultation Premium UBB",
+      "title": "Consultation Premium VitalCheck",
       "unlockText": "Débloquez votre rapport premium avec :",
       "features": {
         "detailedAnalysis": "Analyse détaillée par pilier",
@@ -167,7 +167,7 @@
     }
   },
   "landing": {
-    "title1": "UBB",
+    "title1": "VitalCheck",
     "title2": "Enterprise Health Check",
     "subtitle1": "Votre entreprise est-elle prête à grandir ?",
     "subtitle2": "Effectuez cette évaluation <span class='text-green-500 font-bold uppercase'>GRATUITE</span> de 10 minutes et découvrez le score de santé de votre entreprise",
@@ -228,7 +228,7 @@
     "submissionError": "Erreur lors de la soumission de l'évaluation"
   },
   "resume": {
-    "title": "Évaluation UBB - Reprise",
+    "title": "Évaluation VitalCheck - Reprise",
     "loading": "Reprise de l'évaluation en cours...",
     "error": "Erreur de reprise",
     "errorMessage": "Impossible de reprendre l'évaluation",
@@ -244,7 +244,7 @@
     "fr": "Français"
   },
   "footer": {
-    "description": "UBB aide les entreprises africaines à évaluer leur santé organisationnelle et à développer des stratégies de croissance durables.",
+    "description": "VitalCheck aide les entreprises africaines à évaluer leur santé organisationnelle et à développer des stratégies de croissance durables.",
     "quickLinks": "Liens Rapides",
     "about": "À Propos",
     "services": "Services",
@@ -260,7 +260,7 @@
     "lastUpdated": "Dernière mise à jour",
     "introduction": {
       "title": "Introduction",
-      "content": "UBB (Ubuntu Business Builders) s'engage à protéger votre vie privée et vos données personnelles conformément aux lois sénégalaises et africaines en vigueur, notamment la Loi n° 2008-12 du 25 janvier 2008 sur la protection des données à caractère personnel au Sénégal."
+      "content": "VitalCheck s'engage à protéger votre vie privée et vos données personnelles conformément aux lois sénégalaises et africaines en vigueur, notamment la Loi n° 2008-12 du 25 janvier 2008 sur la protection des données à caractère personnel au Sénégal."
     },
     "dataCollection": {
       "title": "Collecte des Données",
@@ -340,7 +340,7 @@
     "lastUpdated": "Dernière mise à jour",
     "introduction": {
       "title": "Introduction",
-      "content": "Ces conditions d'utilisation régissent votre utilisation de la plateforme UBB Enterprise Health Check. En utilisant nos services, vous acceptez d'être lié par ces conditions."
+      "content": "Ces conditions d'utilisation régissent votre utilisation de la plateforme VitalCheck Enterprise Health Check. En utilisant nos services, vous acceptez d'être lié par ces conditions."
     },
     "acceptance": {
       "title": "Acceptation des Conditions",
@@ -348,7 +348,7 @@
     },
     "serviceDescription": {
       "title": "Description du Service",
-      "content": "UBB Enterprise Health Check est une plateforme d'évaluation de la santé organisationnelle des entreprises africaines. Nos services incluent :",
+      "content": "VitalCheck Enterprise Health Check est une plateforme d'évaluation de la santé organisationnelle des entreprises africaines. Nos services incluent :",
       "features": {
         "assessment": "Évaluation en ligne de la santé de votre entreprise",
         "reports": "Génération de rapports détaillés et personnalisés",
@@ -368,11 +368,11 @@
     },
     "intellectualProperty": {
       "title": "Propriété Intellectuelle",
-      "content": "Tous les contenus, marques et technologies de la plateforme UBB sont protégés par les droits de propriété intellectuelle.",
+      "content": "Tous les contenus, marques et technologies de la plateforme VitalCheck sont protégés par les droits de propriété intellectuelle.",
       "rights": {
-        "ubb": "UBB détient tous les droits sur la plateforme et ses contenus",
+        "vitalcheck": "VitalCheck détient tous les droits sur la plateforme et ses contenus",
         "user": "Vous conservez les droits sur vos données et contenus",
-        "license": "Vous accordez à UBB une licence limitée pour traiter vos données"
+        "license": "Vous accordez à VitalCheck une licence limitée pour traiter vos données"
       }
     },
     "paymentTerms": {
@@ -387,7 +387,7 @@
     },
     "limitationLiability": {
       "title": "Limitation de Responsabilité",
-      "content": "Dans les limites autorisées par la loi sénégalaise, UBB décline toute responsabilité pour :",
+      "content": "Dans les limites autorisées par la loi sénégalaise, VitalCheck décline toute responsabilité pour :",
       "limitations": {
         "advice": "Les conseils générés par notre plateforme sont informatifs uniquement",
         "accuracy": "L'exactitude des données fournies par les utilisateurs",
@@ -411,7 +411,7 @@
     },
     "termination": {
       "title": "Résiliation",
-      "content": "Vous pouvez résilier votre compte à tout moment. UBB se réserve le droit de suspendre ou résilier votre accès en cas de violation de ces conditions."
+      "content": "Vous pouvez résilier votre compte à tout moment. VitalCheck se réserve le droit de suspendre ou résilier votre accès en cas de violation de ces conditions."
     },
     "contact": {
       "title": "Contact",
@@ -436,7 +436,7 @@
   "pwa": {
     "installButton": {
       "text": "Installer l'app",
-      "ariaLabel": "Installer l'application UBB Enterprise Health Check"
+      "ariaLabel": "Installer l'application VitalCheck Enterprise Health Check"
     },
     "updateAvailable": {
       "title": "Mise à jour disponible",
@@ -504,7 +504,7 @@
     }
   },
   "about": {
-    "title": "À Propos d'UBB",
+    "title": "À Propos de VitalCheck",
     "subtitle": "Aider les PME à diagnostiquer, grandir et se digitaliser",
     "mission": {
       "title": "Notre Mission",
@@ -512,7 +512,7 @@
     },
     "vision": {
       "title": "Notre Vision",
-      "content": "UBB joue son rôle incontournable dans le processus transformateur d'un monde où les PME africaines et mondiales sont financièrement stables, technologiquement équipées et prêtes à grandir au-delà des frontières."
+      "content": "VitalCheck joue son rôle incontournable dans le processus transformateur d'un monde où les PME africaines et mondiales sont financièrement stables, technologiquement équipées et prêtes à grandir au-delà des frontières."
     },
     "values": {
       "title": "Nos Valeurs",
@@ -540,7 +540,7 @@
     },
     "story": {
       "title": "Notre Histoire",
-      "content1": "UBB est né de la conviction que trop de PME échouent non pas par manque de potentiel, mais parce qu'elles manquent du bon soutien.",
+      "content1": "VitalCheck est né de la conviction que trop de PME échouent non pas par manque de potentiel, mais parce qu'elles manquent du bon soutien.",
       "example": {
         "title": "Un exemple concret",
         "content": "Notre travail avec STM, une entreprise au bord de la faillite, Grâce au diagnostic, aux conseils stratégiques et à la mise en œuvre, nous les avons aidés à se stabiliser, se restructurer et retrouver la confiance.",
@@ -624,7 +624,7 @@
     "hours": "h"
   },
   "blog": {
-    "title": "Blog UBB Enterprise Health Check",
+    "title": "Blog VitalCheck Enterprise Health Check",
     "subtitle": "Découvrez nos articles, études de cas et conseils pour améliorer la santé de votre entreprise",
     "searchPlaceholder": "Rechercher un article...",
     "backToHome": "Retour à l'accueil",
@@ -708,6 +708,9 @@
       "draft": "Brouillon",
       "published": "Publié",
       "archived": "Archivé",
+      "languageSelector": {
+        "title": "Changer de langue"
+      },
       "form": {
         "titleFr": "Titre (Français)",
         "titleEn": "Titre (Anglais)",

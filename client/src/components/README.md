@@ -21,7 +21,7 @@ Composants d'interface utilisateur réutilisables
 - `ScoreGauge.jsx` - Jauge de score circulaire
 - `PillarChart.jsx` - Graphique en barres des piliers
 - `RecommendationsList.jsx` - Liste des recommandations
-- `UBBLogo.jsx` - Logo UBB réutilisable
+- `VitalCheckLogo.jsx` - Logo VitalCheck réutilisable
 - `InstallPWAButton.jsx` - Bouton d'installation PWA
 - `LanguageSelector.jsx` - Sélecteur de langue
 - `NavbarLanguageSelector.jsx` - Sélecteur de langue pour navbar
@@ -46,7 +46,7 @@ Composants de test et développement
 ```javascript
 import { Navbar, BackToTop } from '../components/navigation';
 import { Hero, SplashScreen } from '../components/layout';
-import { ScoreGauge, UBBLogo } from '../components/ui';
+import { ScoreGauge, VitalCheckLogo } from '../components/ui';
 import { AssessmentForm, QuestionCard } from '../components/assessment';
 ```
 

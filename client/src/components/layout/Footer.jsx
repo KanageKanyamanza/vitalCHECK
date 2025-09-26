@@ -30,7 +30,7 @@ const Footer = () => {
 	const socialLinks = [
 		{
 			icon: Instagram,
-			href: "https://www.instagram.com/ubb1957_?igsh=MW8xdDlsMGRzM2Jidg==",
+			href: "https://www.instagram.com/VitalCheck1957_?igsh=MW8xdDlsMGRzM2Jidg==",
 			label: "Instagram",
 		},
 		{
@@ -40,7 +40,7 @@ const Footer = () => {
 		},
 		{
 			icon: TikTokIcon,
-			href: "https://www.tiktok.com/@ubb545?_t=ZN-8vKxXkXQe4g&_r=1",
+			href: "https://www.tiktok.com/@VitalCheck545?_t=ZN-8vKxXkXQe4g&_r=1",
 			label: "TikTok",
 		},
 		{
@@ -98,7 +98,7 @@ const Footer = () => {
 							<div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
 								<img
 									src={logoIcon}
-									alt="UBB Logo"
+									alt="VitalCheck Logo"
 									className="w-full h-full object-contain"
 								/>
 							</div>
@@ -186,7 +186,7 @@ const Footer = () => {
 				<div className="border-t border-gray-300 mt-4 pt-8">
 					<div className="flex flex-col md:flex-row justify-between items-center">
 						<p className="text-white text-sm">
-							&copy; {currentYear} UBB Enterprise Health Check.{" "}
+							&copy; {currentYear} VitalCheck Enterprise Health Check.{" "}
 							{t("footer.allRightsReserved")}
 						</p>
 						<div className="flex items-center space-x-6 mt-4 md:mt-0">

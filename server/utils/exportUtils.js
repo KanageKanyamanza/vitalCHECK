@@ -248,7 +248,7 @@ const generateStatsHTML = (stats) => {
     <html>
     <head>
       <meta charset="UTF-8">
-      <title>Rapport Statistiques UBB</title>
+      <title>Rapport Statistiques VitalCheck</title>
       <style>
         * {
           margin: 0;
@@ -419,9 +419,9 @@ const generateStatsHTML = (stats) => {
       <div class="header">
         <div class="header-content">
           <div class="logo-container">
-            <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="UBB Logo" class="logo" />
+            <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="VitalCheck Logo" class="logo" />
           </div>
-          <h1>UBB Enterprise Health Check</h1>
+          <h1>VitalCheck Enterprise Health Check</h1>
           <p>Rapport Statistiques Administrateur</p>
           <p>Généré le ${new Date().toLocaleDateString('fr-FR')}</p>
         </div>
@@ -501,8 +501,8 @@ const generateStatsHTML = (stats) => {
       ` : ''}
 
       <div class="footer">
-        <p>Rapport généré automatiquement par UBB Enterprise Health Check</p>
-        <p>© ${new Date().getFullYear()} UBB. Tous droits réservés.</p>
+        <p>Rapport généré automatiquement par VitalCheck Enterprise Health Check</p>
+        <p>© ${new Date().getFullYear()} VitalCheck. Tous droits réservés.</p>
       </div>
     </body>
     </html>
@@ -566,7 +566,7 @@ const generateUsersHTML = (users) => {
     <html>
     <head>
       <meta charset="UTF-8">
-      <title>Rapport Utilisateurs UBB</title>
+      <title>Rapport Utilisateurs VitalCheck</title>
       <style>
         * {
           margin: 0;
@@ -752,9 +752,9 @@ const generateUsersHTML = (users) => {
       <div class="header">
         <div class="header-content">
           <div class="logo-container">
-            <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="UBB Logo" class="logo" />
+            <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="VitalCheck Logo" class="logo" />
           </div>
-          <h1>UBB Enterprise Health Check</h1>
+          <h1>VitalCheck Enterprise Health Check</h1>
           <p>Rapport Utilisateurs Administrateur</p>
           <p>Généré le ${new Date().toLocaleDateString('fr-FR')}</p>
         </div>
@@ -826,8 +826,8 @@ const generateUsersHTML = (users) => {
       </div>
 
       <div class="footer">
-        <p>Rapport généré automatiquement par UBB Enterprise Health Check</p>
-        <p>© ${new Date().getFullYear()} UBB. Tous droits réservés.</p>
+        <p>Rapport généré automatiquement par VitalCheck Enterprise Health Check</p>
+        <p>© ${new Date().getFullYear()} VitalCheck. Tous droits réservés.</p>
       </div>
     </body>
     </html>
@@ -891,7 +891,7 @@ const generateAssessmentsHTML = (assessments) => {
     <html>
     <head>
       <meta charset="UTF-8">
-      <title>Rapport Évaluations UBB</title>
+      <title>Rapport Évaluations VitalCheck</title>
       <style>
         * {
           margin: 0;
@@ -1078,9 +1078,9 @@ const generateAssessmentsHTML = (assessments) => {
       <div class="header">
         <div class="header-content">
           <div class="logo-container">
-            <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="UBB Logo" class="logo" />
+            <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="VitalCheck Logo" class="logo" />
           </div>
-          <h1>UBB Enterprise Health Check</h1>
+          <h1>VitalCheck Enterprise Health Check</h1>
           <p>Rapport Évaluations Administrateur</p>
           <p>Généré le ${new Date().toLocaleDateString('fr-FR')}</p>
         </div>
@@ -1145,8 +1145,8 @@ const generateAssessmentsHTML = (assessments) => {
       </div>
 
       <div class="footer">
-        <p>Rapport généré automatiquement par UBB Enterprise Health Check</p>
-        <p>© ${new Date().getFullYear()} UBB. Tous droits réservés.</p>
+        <p>Rapport généré automatiquement par VitalCheck Enterprise Health Check</p>
+        <p>© ${new Date().getFullYear()} VitalCheck. Tous droits réservés.</p>
       </div>
     </body>
     </html>

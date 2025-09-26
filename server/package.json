@@ -1,7 +1,7 @@
 {
-  "name": "ubb-health-check-server",
+  "name": "vitalcheck-health-check-server",
   "version": "1.0.0",
-  "description": "Backend server for UBB Enterprise Health Check",
+  "description": "Backend server for VitalCheck Enterprise Health Check",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

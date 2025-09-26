@@ -57,7 +57,7 @@ router.post('/generate/:assessmentId', async (req, res) => {
       subject: template.reportReady.subject,
       html: template.reportReady.html(assessment.user, assessment),
       attachments: [{
-        filename: `UBB-Health-Check-${assessment.user.companyName}-${new Date().toISOString().split('T')[0]}.pdf`,
+        filename: `VitalCheck-Health-Check-${assessment.user.companyName}-${new Date().toISOString().split('T')[0]}.pdf`,
         content: pdfBuffer
       }]
     });
@@ -208,7 +208,7 @@ router.get('/download/:assessmentId', async (req, res) => {
     }
 
     // Set headers for PDF download
-    const filename = `UBB-Health-Check-${assessment.user.companyName}-${assessment.pdfGeneratedAt.toISOString().split('T')[0]}.pdf`;
+    const filename = `VitalCheck-Health-Check-${assessment.user.companyName}-${assessment.pdfGeneratedAt.toISOString().split('T')[0]}.pdf`;
     
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);

@@ -56,34 +56,34 @@
     @apply bg-green-500 text-white;
   }
   
-  /* UBB Brand Components */
-  .ubb-gradient {
+  /* VitalCheck Brand Components */
+  .VitalCheck-gradient {
     @apply bg-gradient-to-r from-primary-500 via-accent-500 to-accent-500;
   }
   
-  .ubb-gradient-text {
+  .VitalCheck-gradient-text {
     @apply bg-primary-600 bg-clip-text text-transparent;
   }
   
-  .ubb-card {
+  .VitalCheck-card {
     @apply bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 p-6;
   }
   
-  .ubb-button {
+  .VitalCheck-button {
     @apply bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-500 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
   }
   
-  .ubb-button-outline {
+  .VitalCheck-button-outline {
     @apply border-2 border-primary-500 text-primary-600 hover:bg-primary-500 hover:text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
   }
   
-  .ubb-pattern {
+  .VitalCheck-pattern {
     background-image: 
       radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
       radial-gradient(circle at 75% 75%, rgba(251, 195, 80, 0.1) 0%, transparent 50%);
   }
   
-  .ubb-african-pattern {
+  .VitalCheck-african-pattern {
     background-image: 
       linear-gradient(45deg, rgba(59, 130, 246, 0.05) 25%, transparent 25%),
       linear-gradient(-45deg, rgba(251, 195, 80, 0.05) 25%, transparent 25%),
@@ -106,7 +106,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #fbc350; /* UBB Orange */
+  background: #fbc350; /* VitalCheck Orange */
   border-radius: 4px;
   transition: background-color 0.2s ease;
 }

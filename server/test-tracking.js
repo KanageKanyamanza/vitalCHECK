@@ -5,7 +5,7 @@ require('dotenv').config();
 async function testTracking() {
   try {
     // Connexion à MongoDB
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ubb-health-check');
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/VitalCheck-health-check');
     console.log('✅ Connecté à MongoDB');
 
     // Créer une visite de test

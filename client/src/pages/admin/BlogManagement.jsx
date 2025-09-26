@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import {
 	Plus,
 	Edit,
@@ -25,6 +26,7 @@ import AdminLayout from "../../components/admin/AdminLayout";
 
 const BlogManagement = () => {
 	const navigate = useNavigate();
+	const { t, i18n } = useTranslation();
 	const { loading, error, getBlogs, deleteBlog, updateBlog } = useAdminApi();
 
 	const [blogs, setBlogs] = useState([]);
@@ -42,6 +44,22 @@ const BlogManagement = () => {
 		} catch (err) {
 			console.error("Error loading blogs:", err);
 		}
+	};
+
+	// Obtenir le contenu localisé d'un blog
+	const getLocalizedContent = (content, fallback = '') => {
+		if (!content) return fallback;
+		
+		// Si c'est déjà une chaîne (ancien format), la retourner
+		if (typeof content === 'string') return content;
+		
+		// Si c'est un objet bilingue, retourner selon la langue
+		if (typeof content === 'object' && content !== null) {
+			const currentLanguage = i18n.language || 'fr';
+			return content[currentLanguage] || content.fr || content.en || fallback;
+		}
+		
+		return fallback;
 	};
 
 	// Effet pour charger les blogs au montage
@@ -77,10 +95,12 @@ const BlogManagement = () => {
 
 	// Filtrer les blogs
 	const filteredBlogs = blogs.filter((blog) => {
+		const localizedTitle = getLocalizedContent(blog.title, '');
+		const localizedExcerpt = getLocalizedContent(blog.excerpt, '');
 		const matchesSearch =
 			!searchTerm ||
-			blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-			blog.excerpt.toLowerCase().includes(searchTerm.toLowerCase());
+			localizedTitle.toLowerCase().includes(searchTerm.toLowerCase()) ||
+			localizedExcerpt.toLowerCase().includes(searchTerm.toLowerCase());
 
 		const matchesStatus = !statusFilter || blog.status === statusFilter;
 		const matchesType = !typeFilter || blog.type === typeFilter;
@@ -335,11 +355,11 @@ const BlogManagement = () => {
 
 											<div>
 												<h3 className="text-lg font-medium text-gray-900 mb-2">
-													{blog.title}
+													{getLocalizedContent(blog.title, 'Titre non disponible')}
 												</h3>
 
 												<p className="text-sm text-gray-600 mb-3 line-clamp-2">
-													{blog.excerpt}
+													{getLocalizedContent(blog.excerpt, 'Extrait non disponible')}
 												</p>
 											</div>
 

@@ -1,4 +1,4 @@
-# UBB Enterprise Health Check
+# VitalCheck Enterprise Health Check
 
 Une application web complète pour évaluer la santé d'entreprise avec la stack MERN + Vite + Tailwind CSS.
 
@@ -59,7 +59,7 @@ Une application web complète pour évaluer la santé d'entreprise avec la stack
 ```bash
 # Cloner le projet
 git clone <repository-url>
-cd UBB_Enterprise_Health_Check
+cd VitalCheck_Enterprise_Health_Check
 
 # Installer toutes les dépendances
 npm run install-all
@@ -79,7 +79,7 @@ cp client/env.example client/.env
 ```env
 NODE_ENV=development
 PORT=5000
-MONGODB_URI=mongodb://localhost:27017/ubb-health-check
+MONGODB_URI=mongodb://localhost:27017/vitalcheck-health-check
 JWT_SECRET=your-super-secret-jwt-key
 JWT_EXPIRE=7d
 
@@ -121,7 +121,7 @@ npm start
 ## 📁 Structure du Projet
 
 ```
-UBB_Enterprise_Health_Check/
+VitalCheck_Enterprise_Health_Check/
 ├── server/                 # Backend Node.js
 │   ├── models/            # Modèles MongoDB
 │   ├── routes/            # Routes API
@@ -225,12 +225,12 @@ Modifier `server/data/questions.js` pour :
 ### Heroku
 ```bash
 # Backend
-heroku create ubb-health-check-api
+heroku create vitalcheck-health-check-api
 heroku addons:create mongolab:sandbox
 heroku config:set NODE_ENV=production
 
 # Frontend
-heroku create ubb-health-check-web
+heroku create vitalcheck-health-check-web
 ```
 
 ### Serveur de Production
@@ -267,8 +267,8 @@ MIT License - Voir le fichier LICENSE pour plus de détails.
 
 Pour toute question ou problème :
 - Créer une issue sur GitHub
-- Contacter l'équipe UBB
+- Contacter l'équipe VitalCheck
 
 ---
 
-**UBB Enterprise Health Check** - Évaluez la santé de votre entreprise en 10 minutes ! 🚀
+**VitalCheck Enterprise Health Check** - Évaluez la santé de votre entreprise en 10 minutes ! 🚀

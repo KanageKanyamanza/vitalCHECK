@@ -97,7 +97,7 @@ function assessmentReducer(state, action) {
       }
     
     case 'CLEAR_STORAGE':
-      localStorage.removeItem('ubb-assessment-data')
+      localStorage.removeItem('VitalCheck-assessment-data')
       return initialState
     
     default:
@@ -110,7 +110,7 @@ export function AssessmentProvider({ children }) {
 
   // Load from localStorage on mount
   useEffect(() => {
-    const savedData = localStorage.getItem('ubb-assessment-data')
+    const savedData = localStorage.getItem('VitalCheck-assessment-data')
     if (savedData) {
       try {
         const parsedData = JSON.parse(savedData)
@@ -124,7 +124,7 @@ export function AssessmentProvider({ children }) {
         dispatch({ type: 'LOAD_FROM_STORAGE', payload: parsedData })
       } catch (error) {
         console.error('❌ [CONTEXT] Erreur lors du chargement depuis localStorage:', error)
-        localStorage.removeItem('ubb-assessment-data')
+        localStorage.removeItem('VitalCheck-assessment-data')
       }
     }
   }, [])
@@ -151,7 +151,7 @@ export function AssessmentProvider({ children }) {
         answersCount: state.answers.length,
         currentQuestionIndex: state.currentQuestionIndex
       });
-      localStorage.setItem('ubb-assessment-data', JSON.stringify(dataToSave))
+      localStorage.setItem('VitalCheck-assessment-data', JSON.stringify(dataToSave))
     }
   }, [state.user, state.questions, state.currentQuestionIndex, state.answers, state.assessment, state.assessmentId, state.resumeToken, state.language])
 

@@ -154,8 +154,8 @@ const EmailManagement = () => {
   const predefinedTemplates = [
     {
       name: 'Relance évaluation incomplète',
-      subject: 'Complétez votre évaluation UBB Enterprise Health Check',
-      message: `Nous avons remarqué que vous avez commencé votre évaluation UBB Enterprise Health Check mais ne l'avez pas encore terminée.
+      subject: 'Complétez votre évaluation VitalCheck Enterprise Health Check',
+      message: `Nous avons remarqué que vous avez commencé votre évaluation VitalCheck Enterprise Health Check mais ne l'avez pas encore terminée.
 
 Cette évaluation vous permettra d'obtenir un rapport détaillé sur la santé de votre entreprise et des recommandations personnalisées pour l'améliorer.
 
@@ -165,8 +165,8 @@ Si vous avez des questions, n'hésitez pas à nous contacter.`
     },
     {
       name: 'Relance nouvelle évaluation',
-      subject: 'Nouvelle évaluation UBB Enterprise Health Check disponible',
-      message: `Nous sommes ravis de vous informer qu'une nouvelle évaluation UBB Enterprise Health Check est maintenant disponible.
+      subject: 'Nouvelle évaluation VitalCheck Enterprise Health Check disponible',
+      message: `Nous sommes ravis de vous informer qu'une nouvelle évaluation VitalCheck Enterprise Health Check est maintenant disponible.
 
 Cette mise à jour inclut de nouvelles questions et des recommandations améliorées basées sur les dernières tendances du marché.
 
@@ -174,8 +174,8 @@ Pour commencer votre nouvelle évaluation, cliquez sur le lien suivant : ${windo
     },
     {
       name: 'Rappel de connexion',
-      subject: 'Accédez à votre tableau de bord UBB',
-      message: `Nous vous rappelons que vous pouvez accéder à votre tableau de bord UBB à tout moment pour consulter vos évaluations précédentes et télécharger vos rapports.
+      subject: 'Accédez à votre tableau de bord VitalCheck',
+      message: `Nous vous rappelons que vous pouvez accéder à votre tableau de bord VitalCheck à tout moment pour consulter vos évaluations précédentes et télécharger vos rapports.
 
 Connectez-vous ici : ${window.location.origin}/`
     }

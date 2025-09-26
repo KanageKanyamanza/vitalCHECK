@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: ubb-health-check-api-node
+    name: VitalCheck-health-check-api-node
     env: node
     plan: starter
     buildCommand: |

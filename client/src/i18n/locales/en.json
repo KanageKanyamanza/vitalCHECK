@@ -29,7 +29,7 @@
     "blog": "Blog"
   },
   "results": {
-    "title": "UBB Enterprise Health Check – Results",
+    "title": "VitalCheck Enterprise Health Check – Results",
     "newAssessment": "New Assessment",
     "overallScore": "Section A – Overall Score",
     "pillarBreakdown": "Section B – Pillar Breakdown (Radar Chart)",
@@ -55,7 +55,7 @@
     "generateReportBtn": "Generate report",
     "reportSent": "Report sent",
     "reportSuccessTitle": "Report generated successfully!",
-    "reportSuccessDesc": "Your UBB Enterprise Health Check report has been generated and sent by email.",
+    "reportSuccessDesc": "Your VitalCheck Enterprise Health Check report has been generated and sent by email.",
     "reportSentTo": "Sent to",
     "stayOnResults": "Stay on results",
     "reportNote": "You can now upgrade to premium for deeper insights or return home for a new assessment.",
@@ -81,7 +81,7 @@
       "description": "For more detailed recommendations, a personalized action plan and sector benchmarking, check out our premium report."
     },
     "consultationModal": {
-      "title": "UBB Premium Consultation",
+      "title": "VitalCheck Premium Consultation",
       "unlockText": "Unlock your premium report with:",
       "features": {
         "detailedAnalysis": "Detailed analysis by pillar",
@@ -167,7 +167,7 @@
     }
   },
   "landing": {
-    "title1": "UBB",
+    "title1": "VitalCheck",
     "title2": "Enterprise Health Check",
     "subtitle1": "Is your business fit to grow?",
     "subtitle2": "Take this <span class='text-green-500 font-bold uppercase'>FREE</span> 10-minute self-assessment and discover your company's health score",
@@ -228,7 +228,7 @@
     "submissionError": "Error submitting assessment"
   },
   "resume": {
-    "title": "UBB Assessment - Resume",
+    "title": "VitalCheck Assessment - Resume",
     "loading": "Resuming assessment...",
     "error": "Resume Error",
     "errorMessage": "Unable to resume assessment",
@@ -244,7 +244,7 @@
     "fr": "Français"
   },
   "footer": {
-    "description": "UBB helps African businesses assess their organizational health and develop sustainable growth strategies.",
+    "description": "VitalCheck helps African businesses assess their organizational health and develop sustainable growth strategies.",
     "quickLinks": "Quick Links",
     "about": "About",
     "services": "Services",
@@ -260,7 +260,7 @@
     "lastUpdated": "Last updated",
     "introduction": {
       "title": "Introduction",
-      "content": "UBB (Ubuntu Business Builders) is committed to protecting your privacy and personal data in accordance with applicable Senegalese and African laws, including Law No. 2008-12 of January 25, 2008 on the protection of personal data in Senegal."
+      "content": "VitalCheck is committed to protecting your privacy and personal data in accordance with applicable Senegalese and African laws, including Law No. 2008-12 of January 25, 2008 on the protection of personal data in Senegal."
     },
     "dataCollection": {
       "title": "Data Collection",
@@ -340,7 +340,7 @@
     "lastUpdated": "Last updated",
     "introduction": {
       "title": "Introduction",
-      "content": "These terms of service govern your use of the UBB Enterprise Health Check platform. By using our services, you agree to be bound by these terms."
+      "content": "These terms of service govern your use of the VitalCheck Enterprise Health Check platform. By using our services, you agree to be bound by these terms."
     },
     "acceptance": {
       "title": "Acceptance of Terms",
@@ -348,7 +348,7 @@
     },
     "serviceDescription": {
       "title": "Service Description",
-      "content": "UBB Enterprise Health Check is a platform for assessing the organizational health of African businesses. Our services include:",
+      "content": "VitalCheck Enterprise Health Check is a platform for assessing the organizational health of African businesses. Our services include:",
       "features": {
         "assessment": "Online assessment of your business health",
         "reports": "Generation of detailed and personalized reports",
@@ -368,11 +368,11 @@
     },
     "intellectualProperty": {
       "title": "Intellectual Property",
-      "content": "All content, trademarks, and technologies of the UBB platform are protected by intellectual property rights.",
+      "content": "All content, trademarks, and technologies of the VitalCheck platform are protected by intellectual property rights.",
       "rights": {
-        "ubb": "UBB holds all rights to the platform and its content",
+        "vitalcheck": "VitalCheck holds all rights to the platform and its content",
         "user": "You retain rights to your data and content",
-        "license": "You grant UBB a limited license to process your data"
+        "license": "You grant VitalCheck a limited license to process your data"
       }
     },
     "paymentTerms": {
@@ -387,7 +387,7 @@
     },
     "limitationLiability": {
       "title": "Limitation of Liability",
-      "content": "Within the limits allowed by Senegalese law, UBB disclaims any liability for:",
+      "content": "Within the limits allowed by Senegalese law, VitalCheck disclaims any liability for:",
       "limitations": {
         "advice": "Advice generated by our platform is for informational purposes only",
         "accuracy": "Accuracy of data provided by users",
@@ -411,7 +411,7 @@
     },
     "termination": {
       "title": "Termination",
-      "content": "You can terminate your account at any time. UBB reserves the right to suspend or terminate your access in case of violation of these terms."
+      "content": "You can terminate your account at any time. VitalCheck reserves the right to suspend or terminate your access in case of violation of these terms."
     },
     "contact": {
       "title": "Contact",
@@ -436,7 +436,7 @@
   "pwa": {
     "installButton": {
       "text": "Install App",
-      "ariaLabel": "Install UBB Enterprise Health Check application"
+      "ariaLabel": "Install VitalCheck Enterprise Health Check application"
     },
     "updateAvailable": {
       "title": "Update available",
@@ -504,7 +504,7 @@
     }
   },
   "about": {
-    "title": "About UBB",
+    "title": "About VitalCheck",
     "subtitle": "Helping SMEs diagnose, grow, and go digital",
     "mission": {
       "title": "Our Mission",
@@ -512,7 +512,7 @@
     },
     "vision": {
       "title": "Our Vision",
-      "content": "UBB plays its unavoidable role in the transformative process of a world where African and global SMEs are financially stable, technologically equipped, and ready to grow beyond borders."
+      "content": "VitalCheck plays its unavoidable role in the transformative process of a world where African and global SMEs are financially stable, technologically equipped, and ready to grow beyond borders."
     },
     "values": {
       "title": "Our Values",
@@ -540,7 +540,7 @@
     },
     "story": {
       "title": "Our Story",
-      "content1": "UBB was born from the belief that too many SMEs fail not because of a lack of potential, but because they lack the right support.",
+      "content1": "VitalCheck was born from the belief that too many SMEs fail not because of a lack of potential, but because they lack the right support.",
       "example": {
         "title": "One concrete example",
         "content": "Our work with STM, a company on the brink of bankruptcy, Through diagnosis, strategic guidance, and implementation, we helped them stabilize, restructure, and regain trust.",
@@ -624,7 +624,7 @@
     "hours": "h"
   },
   "blog": {
-    "title": "UBB Enterprise Health Check Blog",
+    "title": "VitalCheck Enterprise Health Check Blog",
     "subtitle": "Discover our articles, case studies and tips to improve your business health",
     "searchPlaceholder": "Search for an article...",
     "backToHome": "Back to home",
@@ -708,6 +708,9 @@
       "draft": "Draft",
       "published": "Published",
       "archived": "Archived",
+      "languageSelector": {
+        "title": "Change language"
+      },
       "form": {
         "titleFr": "Title (French)",
         "titleEn": "Title (English)",

@@ -1,7 +1,7 @@
 {
-  "name": "ubb-enterprise-health-check",
+  "name": "vitalcheck-enterprise-health-check",
   "version": "1.0.0",
-  "description": "UBB Enterprise Health Check - Self-assessment tool for business health evaluation",
+  "description": "VitalCheck Enterprise Health Check - Self-assessment tool for business health evaluation",
   "main": "server/index.js",
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",
@@ -16,9 +16,9 @@
     "health-check",
     "assessment",
     "enterprise",
-    "UBB"
+    "VitalCheck"
   ],
-  "author": "UBB",
+  "author": "VitalCheck",
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2"

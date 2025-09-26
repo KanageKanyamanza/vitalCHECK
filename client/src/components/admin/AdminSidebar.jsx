@@ -113,7 +113,7 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
               <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-white border border-gray-200">
                 <img 
                   src={Logo} 
-                  alt="UBB Logo" 
+                  alt="VitalCheck Logo" 
                   className="w-full h-full object-contain"
                 />
               </div>
@@ -127,7 +127,7 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
               <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-white border border-gray-200">
                 <img 
                   src={Logo} 
-                  alt="UBB Logo" 
+                  alt="VitalCheck Logo" 
                   className="w-full h-full object-contain"
                 />
               </div>

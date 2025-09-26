@@ -1,11 +1,11 @@
-# Système de Navigation Admin UBB
+# Système de Navigation Admin VitalCheck
 
 ## Vue d'ensemble
 
 Le système de navigation admin utilise une approche responsive avec :
 - **Sidebar** sur desktop (1024px+)
 - **Bottom Navigation** sur mobile et tablette (< 1024px)
-- **Palette de couleurs UBB** intégrée
+- **Palette de couleurs VitalCheck** intégrée
 - **Design moderne** avec animations fluides
 
 ## Architecture des Composants
@@ -35,9 +35,9 @@ Sidebar responsive avec :
 - **Authentification :** Bouton de déconnexion intégré
 
 **Sections de navigation :**
-1. **Tableau de bord** - `primary` (vert UBB)
+1. **Tableau de bord** - `primary` (vert VitalCheck)
 2. **Utilisateurs** - `secondary` (ocre terreux)
-3. **Évaluations** - `accent` (jaune UBB)
+3. **Évaluations** - `accent` (jaune VitalCheck)
 4. **Emails** - `earth` (vert profond)
 5. **Rapports** - `success` (vert)
 6. **Paramètres** - `warning` (ambre)
@@ -47,7 +47,7 @@ Sidebar responsive avec :
 
 Navigation mobile avec :
 - **6 boutons** en grille (2x3)
-- **Icônes colorées** selon la palette UBB
+- **Icônes colorées** selon la palette VitalCheck
 - **États actifs** avec couleurs de fond
 - **Masquage automatique** sur desktop
 
@@ -60,13 +60,13 @@ Header responsive avec :
 - **Notifications** avec indicateur
 - **Bouton de déconnexion** (desktop uniquement)
 
-## Palette de Couleurs UBB
+## Palette de Couleurs VitalCheck
 
 ### Couleurs Principales
 ```css
-/* UBB Green - Growth, trust, knowledge */
+/* VitalCheck Green - Growth, trust, knowledge */
 primary: {
-  500: '#4CAF50',  // UBB Green principal
+  500: '#4CAF50',  // VitalCheck Green principal
   600: '#16a34a',  // Hover states
   100: '#dcfce7',  // Backgrounds légers
 }
@@ -80,7 +80,7 @@ secondary: {
 
 /* Vibrant African Accents */
 accent: {
-  500: '#F4C542',  // UBB Yellow
+  500: '#F4C542',  // VitalCheck Yellow
   600: '#f59e0b',  // Hover states
   100: '#fef9e7',  // Backgrounds légers
 }
@@ -182,7 +182,7 @@ useEffect(() => {
 1. Ajouter l'item dans `AdminSidebar.jsx`
 2. Ajouter l'item dans `AdminBottomNav.jsx`
 3. Créer la route dans `AdminApp.jsx`
-4. Choisir une couleur de la palette UBB
+4. Choisir une couleur de la palette VitalCheck
 
 ### Modification des Couleurs
 1. Modifier `tailwind.config.js`
@@ -237,9 +237,9 @@ useEffect(() => {
 
 ## Conclusion
 
-Le système de navigation admin UBB offre :
+Le système de navigation admin VitalCheck offre :
 - **Expérience utilisateur** optimale sur tous les appareils
-- **Design cohérent** avec l'identité UBB
+- **Design cohérent** avec l'identité VitalCheck
 - **Performance** élevée
 - **Accessibilité** respectée
 - **Maintenabilité** facilitée

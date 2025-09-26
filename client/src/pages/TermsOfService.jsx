@@ -27,7 +27,7 @@ const TermsOfService = () => {
           <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <FileText className="w-8 h-8 text-primary-600" />
           </div>
-          <h1 className="text-4xl font-display font-bold ubb-gradient-text mb-4">
+          <h1 className="text-4xl font-display font-bold VitalCheck-gradient-text mb-4">
             {t('terms.title')}
           </h1>
           <p className="text-lg text-gray-600">
@@ -110,7 +110,7 @@ const TermsOfService = () => {
                 {t('terms.intellectualProperty.content')}
               </p>
               <ul className="list-disc list-inside text-gray-700 space-y-1">
-                <li>{t('terms.intellectualProperty.rights.ubb')}</li>
+                <li>{t('terms.intellectualProperty.rights.VitalCheck')}</li>
                 <li>{t('terms.intellectualProperty.rights.user')}</li>
                 <li>{t('terms.intellectualProperty.rights.license')}</li>
               </ul>

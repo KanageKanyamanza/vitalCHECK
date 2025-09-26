@@ -4,7 +4,7 @@ const { execSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
 
-console.log('🚀 Déploiement PWA UBB Enterprise Health Check');
+console.log('🚀 Déploiement PWA VitalCheck Enterprise Health Check');
 console.log('==============================================\n');
 
 // Fonction pour exécuter une commande
@@ -40,8 +40,8 @@ function updateVersions(newVersion) {
   const swPath = path.join(__dirname, '../client/public/sw.js');
   let swContent = fs.readFileSync(swPath, 'utf8');
   swContent = swContent.replace(
-    /const CACHE_NAME = 'ubb-health-check-v[\d.]+';/,
-    `const CACHE_NAME = 'ubb-health-check-v${newVersion}';`
+    /const CACHE_NAME = 'VitalCheck-health-check-v[\d.]+';/,
+    `const CACHE_NAME = 'VitalCheck-health-check-v${newVersion}';`
   );
   fs.writeFileSync(swPath, swContent);
   

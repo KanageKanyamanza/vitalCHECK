@@ -71,7 +71,7 @@ const AdminLogin = () => {
           <div className="mx-auto h-20 w-20 bg-accent-500 rounded-full flex items-center justify-center shadow-lg mb-4 p-1">
             <img 
               src={Logo} 
-              alt="UBB Logo" 
+              alt="VitalCheck Logo" 
               className="w-full h-full object-contain rounded-full"
             />
           </div>
@@ -79,7 +79,7 @@ const AdminLogin = () => {
             Connexion Admin
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            Accédez au panneau d'administration UBB
+            Accédez au panneau d'administration VitalCheck
           </p>
         </div>
 
@@ -104,7 +104,7 @@ const AdminLogin = () => {
                   value={formData.email}
                   onChange={handleChange}
                   className="block w-full pl-10 pr-3 py-3 border border-gray-200 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 sm:text-sm bg-white/50 backdrop-blur-sm transition-all duration-200"
-                  placeholder="admin@ubb.com"
+                  placeholder="admin@VitalCheck.com"
                 />
               </div>
             </div>
@@ -188,7 +188,7 @@ const AdminLogin = () => {
                   Accès Administrateur
                 </h3>
                 <div className="mt-1 text-sm text-primary-700">
-                  <p>Cette interface est réservée aux administrateurs autorisés de l'UBB Enterprise Health Check.</p>
+                  <p>Cette interface est réservée aux administrateurs autorisés de l'VitalCheck Enterprise Health Check.</p>
                 </div>
               </div>
             </div>
@@ -198,7 +198,7 @@ const AdminLogin = () => {
         {/* Footer */}
         <div className="mt-8 text-center">
           <p className="text-xs text-gray-500">
-            © 2024 UBB Enterprise Health Check. Tous droits réservés.
+            © 2024 VitalCheck Enterprise Health Check. Tous droits réservés.
           </p>
         </div>
       </div>
