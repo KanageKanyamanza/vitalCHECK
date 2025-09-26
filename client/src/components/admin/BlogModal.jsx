@@ -5,10 +5,22 @@ import toast from 'react-hot-toast'
 
 const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
   const [formData, setFormData] = useState({
-    title: '',
-    slug: '',
-    excerpt: '',
-    content: '',
+    title: {
+      fr: '',
+      en: ''
+    },
+    slug: {
+      fr: '',
+      en: ''
+    },
+    excerpt: {
+      fr: '',
+      en: ''
+    },
+    content: {
+      fr: '',
+      en: ''
+    },
     type: 'article',
     category: 'strategie',
     tags: [],
@@ -50,6 +62,39 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
   const [newTag, setNewTag] = useState('')
   const [newMetric, setNewMetric] = useState({ label: '', value: '', description: '' })
   const [newPrerequisite, setNewPrerequisite] = useState('')
+  const [selectedLanguage, setSelectedLanguage] = useState('fr') // Langue sélectionnée pour l'édition
+
+  // Clé pour la mémorisation dans localStorage
+  const STORAGE_KEY = 'blog-form-draft'
+
+  // Sauvegarder les données dans localStorage
+  const saveToStorage = (data) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+    } catch (error) {
+      console.warn('Impossible de sauvegarder le brouillon:', error)
+    }
+  }
+
+  // Charger les données depuis localStorage
+  const loadFromStorage = () => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY)
+      return saved ? JSON.parse(saved) : null
+    } catch (error) {
+      console.warn('Impossible de charger le brouillon:', error)
+      return null
+    }
+  }
+
+  // Effacer les données sauvegardées
+  const clearStorage = () => {
+    try {
+      localStorage.removeItem(STORAGE_KEY)
+    } catch (error) {
+      console.warn('Impossible d\'effacer le brouillon:', error)
+    }
+  }
 
   // Types et catégories
   const blogTypes = [
@@ -76,14 +121,30 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
     { value: 'avance', label: 'Avancé' }
   ]
 
+  // Fonction pour convertir les données en format bilingue
+  const convertToBilingual = (data) => {
+    if (typeof data === 'string') {
+      // Ancien format : chaîne simple -> convertir en objet bilingue
+      return { fr: data, en: '' }
+    } else if (typeof data === 'object' && data !== null) {
+      // Nouveau format : objet bilingue -> garder tel quel
+      return { fr: data.fr || '', en: data.en || '' }
+    }
+    return { fr: '', en: '' }
+  }
+
   // Charger les données du blog si en mode édition
   useEffect(() => {
     if (blog) {
+      console.log('🔍 [BLOG MODAL] Blog data received:', blog);
+      console.log('🔍 [BLOG MODAL] Title type:', typeof blog.title, blog.title);
+      console.log('🔍 [BLOG MODAL] Converted title:', convertToBilingual(blog.title));
+      
       setFormData({
-        title: blog.title || '',
-        slug: blog.slug || '',
-        excerpt: blog.excerpt || '',
-        content: blog.content || '',
+        title: convertToBilingual(blog.title),
+        slug: convertToBilingual(blog.slug),
+        excerpt: convertToBilingual(blog.excerpt),
+        content: convertToBilingual(blog.content),
         type: blog.type || 'article',
         category: blog.category || 'strategie',
         tags: blog.tags || [],
@@ -114,19 +175,24 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
         }
       })
     } else {
-      // Réinitialiser le formulaire pour un nouveau blog
-      setFormData({
-        title: '',
-        slug: '',
-        excerpt: '',
-        content: '',
-        type: 'article',
-        category: 'strategie',
-        tags: [],
-        status: 'draft',
-        metaTitle: '',
-        metaDescription: '',
-        featuredImage: { url: '', alt: '', caption: '' },
+      // Charger le brouillon sauvegardé ou réinitialiser le formulaire pour un nouveau blog
+      const savedData = loadFromStorage()
+      if (savedData) {
+        setFormData(savedData)
+        console.log('📝 Brouillon chargé depuis localStorage')
+      } else {
+        setFormData({
+          title: { fr: '', en: '' },
+          slug: { fr: '', en: '' },
+          excerpt: { fr: '', en: '' },
+          content: { fr: '', en: '' },
+          type: 'article',
+          category: 'strategie',
+          tags: [],
+          status: 'draft',
+          metaTitle: '',
+          metaDescription: '',
+          featuredImage: { url: '', alt: '', caption: '' },
         caseStudy: {
           company: '',
           sector: '',
@@ -152,6 +218,13 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
     }
   }, [blog, isOpen])
 
+  // Sauvegarder automatiquement les données (sauf en mode édition)
+  useEffect(() => {
+    if (!blog && isOpen) {
+      saveToStorage(formData)
+    }
+  }, [formData, blog, isOpen])
+
   // Gérer les changements de formulaire
   const handleChange = (field, value) => {
     if (field.includes('.')) {
@@ -171,6 +244,17 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
     }
   }
 
+  // Gérer les changements pour les champs bilingues
+  const handleBilingualChange = (field, language, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: {
+        ...prev[field],
+        [language]: value
+      }
+    }))
+  }
+
   // Générer le slug automatiquement à partir du titre
   const generateSlug = (title) => {
     return title
@@ -184,11 +268,17 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
   }
 
   // Gérer le changement de titre et générer le slug
-  const handleTitleChange = (value) => {
+  const handleTitleChange = (language, value) => {
     setFormData(prev => ({
       ...prev,
-      title: value,
-      slug: generateSlug(value)
+      title: {
+        ...prev.title,
+        [language]: value
+      },
+      slug: {
+        ...prev.slug,
+        [language]: generateSlug(value)
+      }
     }))
   }
 
@@ -279,8 +369,11 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     
-    if (!formData.title.trim() || !formData.excerpt.trim() || !formData.content.trim()) {
-      toast.error('Veuillez remplir tous les champs obligatoires')
+    // Validation des champs bilingues
+    if (!formData.title.fr.trim() || !formData.title.en.trim() || 
+        !formData.excerpt.fr.trim() || !formData.excerpt.en.trim() || 
+        !formData.content.fr.trim() || !formData.content.en.trim()) {
+      toast.error('Veuillez remplir tous les champs obligatoires en français ET en anglais')
       return
     }
 
@@ -294,6 +387,8 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
         // Mode création
         await adminBlogApiService.createBlog(formData)
         toast.success('Blog créé avec succès')
+        // Effacer le brouillon après création réussie
+        clearStorage()
       }
       onSuccess()
       onClose()
@@ -316,7 +411,12 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
             {blog ? 'Modifier le blog' : 'Créer un nouveau blog'}
           </h2>
           <button
-            onClick={onClose}
+            onClick={() => {
+              if (!blog) {
+                clearStorage()
+              }
+              onClose()
+            }}
             className="text-gray-400 hover:text-gray-600"
           >
             <X className="h-6 w-6" />
@@ -325,18 +425,64 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
 
         {/* Formulaire */}
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
+          {/* Sélecteur de langue */}
+          <div className="bg-blue-50 p-4 rounded-lg">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Langue d'édition
+            </label>
+            <div className="flex space-x-4">
+              <button
+                type="button"
+                onClick={() => setSelectedLanguage('fr')}
+                className={`px-4 py-2 rounded-md font-medium ${
+                  selectedLanguage === 'fr'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                <span className="text-lg">🇫🇷</span>
+                <span className="hidden sm:inline ml-2">Français</span>
+                {formData.title.fr && formData.excerpt.fr && formData.content.fr && (
+                  <span className="ml-2 text-green-500">✓</span>
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedLanguage('en')}
+                className={`px-4 py-2 rounded-md font-medium ${
+                  selectedLanguage === 'en'
+                    ? 'bg-blue-600 text-white'
+                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                }`}
+              >
+                <span className="text-lg">🇬🇧</span>
+                <span className="hidden sm:inline ml-2">English</span>
+                {formData.title.en && formData.excerpt.en && formData.content.en && (
+                  <span className="ml-2 text-green-500">✓</span>
+                )}
+              </button>
+            </div>
+            <p className="text-sm text-gray-600 mt-2">
+              Les deux langues sont obligatoires pour publier un blog
+            </p>
+          </div>
+
           {/* Informations de base */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Titre *
+                Titre {selectedLanguage === 'fr' ? 'Français' : 'Anglais'} *
               </label>
               <input
                 type="text"
-                value={formData.title}
-                onChange={(e) => handleTitleChange(e.target.value)}
+                value={formData.title[selectedLanguage] || ''}
+                onChange={(e) => {
+                  console.log('🔍 [BLOG MODAL] Title input value:', e.target.value);
+                  console.log('🔍 [BLOG MODAL] Current formData.title:', formData.title);
+                  handleTitleChange(selectedLanguage, e.target.value);
+                }}
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                placeholder="Titre du blog"
+                placeholder={`Titre du blog en ${selectedLanguage === 'fr' ? 'français' : 'anglais'}`}
                 required
               />
             </div>
@@ -360,17 +506,17 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
           </div>
 
           {/* Slug généré automatiquement */}
-          {formData.slug && (
+          {formData.slug[selectedLanguage] && (
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                URL du blog (générée automatiquement)
+                URL du blog {selectedLanguage === 'fr' ? 'Français' : 'Anglais'} (générée automatiquement)
               </label>
               <div className="flex items-center space-x-2">
                 <span className="text-sm text-gray-500">/blog/</span>
                 <input
                   type="text"
-                  value={formData.slug}
-                  onChange={(e) => handleChange('slug', e.target.value)}
+                  value={formData.slug[selectedLanguage]}
+                  onChange={(e) => handleBilingualChange('slug', selectedLanguage, e.target.value)}
                   className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500 bg-gray-50"
                   placeholder="slug-du-blog"
                 />
@@ -414,14 +560,14 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Résumé *
+              Résumé {selectedLanguage === 'fr' ? 'Français' : 'Anglais'} *
             </label>
             <textarea
-              value={formData.excerpt}
-              onChange={(e) => handleChange('excerpt', e.target.value)}
+              value={formData.excerpt[selectedLanguage]}
+              onChange={(e) => handleBilingualChange('excerpt', selectedLanguage, e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
               rows={3}
-              placeholder="Résumé du blog"
+              placeholder={`Résumé du blog en ${selectedLanguage === 'fr' ? 'français' : 'anglais'}`}
               required
             />
           </div>
@@ -662,14 +808,14 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
           {/* Contenu */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Contenu *
+              Contenu {selectedLanguage === 'fr' ? 'Français' : 'Anglais'} *
             </label>
             <textarea
-              value={formData.content}
-              onChange={(e) => handleChange('content', e.target.value)}
+              value={formData.content[selectedLanguage]}
+              onChange={(e) => handleBilingualChange('content', selectedLanguage, e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
               rows={10}
-              placeholder="Contenu du blog (HTML supporté)"
+              placeholder={`Contenu du blog en ${selectedLanguage === 'fr' ? 'français' : 'anglais'} (HTML supporté)`}
               required
             />
           </div>
@@ -737,7 +883,12 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
           <div className="flex justify-end space-x-3 pt-6 border-t border-gray-200">
             <button
               type="button"
-              onClick={onClose}
+              onClick={() => {
+                if (!blog) {
+                  clearStorage()
+                }
+                onClose()
+              }}
               className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
             >
               Annuler
