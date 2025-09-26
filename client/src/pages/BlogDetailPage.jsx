@@ -18,6 +18,7 @@ import {
 import { blogApiService } from '../services/api'
 import trackingService from '../services/trackingService'
 import toast from 'react-hot-toast'
+import { normalizeTags } from '../utils/tagUtils'
 
 const BlogDetailPage = () => {
   const { slug } = useParams()
@@ -321,22 +322,25 @@ const BlogDetailPage = () => {
               />
 
               {/* Tags */}
-              {blog.tags && blog.tags.length > 0 && (
-                <div className="mt-8 pt-6 border-t border-gray-200">
-                  <h3 className="text-sm font-medium text-gray-900 mb-3">{t('blog.tags')}</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {blog.tags.map((tag, index) => (
-                      <span
-                        key={index}
-                        className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-800"
-                      >
-                        <Tag className="h-3 w-3 mr-1" />
-                        {translateTag(tag)}
-                      </span>
-                    ))}
+              {(() => {
+                const normalizedTags = normalizeTags(blog.tags)
+                return normalizedTags.length > 0 && (
+                  <div className="mt-8 pt-6 border-t border-gray-200">
+                    <h3 className="text-sm font-medium text-gray-900 mb-3">{t('blog.tags')}</h3>
+                    <div className="flex flex-wrap gap-2">
+                      {normalizedTags.map((tag, index) => (
+                        <span
+                          key={index}
+                          className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-800"
+                        >
+                          <Tag className="h-3 w-3 mr-1" />
+                          {translateTag(tag)}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )
+              })()}
             </article>
           </div>
 
