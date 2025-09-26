@@ -95,7 +95,8 @@ const setupResponseInterceptor = (instance, isAdmin = false) => {
             if (isAdmin) {
               localStorage.removeItem('adminToken');
               localStorage.removeItem('adminData');
-              window.location.href = '/admin/login';
+              // Ne pas recharger la page, laisser le composant gérer la navigation
+              // window.location.href = '/admin/login';
             }
             toast.error('Session expirée. Veuillez vous reconnecter.');
             break;
