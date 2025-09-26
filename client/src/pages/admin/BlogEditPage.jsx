@@ -11,10 +11,10 @@ const BlogEditPage = () => {
   const isEdit = Boolean(id)
 
   const [formData, setFormData] = useState({
-    title: '',
-    slug: '',
-    excerpt: '',
-    content: '',
+    title: { fr: '', en: '' },
+    slug: { fr: '', en: '' },
+    excerpt: { fr: '', en: '' },
+    content: { fr: '', en: '' },
     type: 'article',
     category: 'strategie',
     tags: [],
@@ -56,6 +56,7 @@ const BlogEditPage = () => {
   const [newTag, setNewTag] = useState('')
   const [newMetric, setNewMetric] = useState({ label: '', value: '', description: '' })
   const [newPrerequisite, setNewPrerequisite] = useState('')
+  const [selectedLanguage, setSelectedLanguage] = useState('fr') // Langue sélectionnée pour l'édition
 
   // Types et catégories
   const blogTypes = [
@@ -110,11 +111,23 @@ const BlogEditPage = () => {
       console.log('Blog title:', blog.title)
       console.log('Blog content:', blog.content)
       
+      // Fonction pour convertir les données en format bilingue
+      const convertToBilingual = (data) => {
+        if (typeof data === 'string') {
+          // Ancien format : chaîne simple -> convertir en objet bilingue
+          return { fr: data, en: '' }
+        } else if (typeof data === 'object' && data !== null) {
+          // Nouveau format : objet bilingue -> garder tel quel
+          return { fr: data.fr || '', en: data.en || '' }
+        }
+        return { fr: '', en: '' }
+      }
+
       setFormData({
-        title: blog.title || '',
-        slug: blog.slug || '',
-        excerpt: blog.excerpt || '',
-        content: blog.content || '',
+        title: convertToBilingual(blog.title),
+        slug: convertToBilingual(blog.slug),
+        excerpt: convertToBilingual(blog.excerpt),
+        content: convertToBilingual(blog.content),
         type: blog.type || 'article',
         category: blog.category || 'strategie',
         tags: blog.tags || [],
@@ -172,6 +185,17 @@ const BlogEditPage = () => {
     }
   }
 
+  // Gérer les changements pour les champs bilingues
+  const handleBilingualChange = (field, language, value) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: {
+        ...prev[field],
+        [language]: value
+      }
+    }))
+  }
+
   // Générer le slug automatiquement à partir du titre
   const generateSlug = (title) => {
     return title
@@ -185,11 +209,17 @@ const BlogEditPage = () => {
   }
 
   // Gérer le changement de titre et générer le slug
-  const handleTitleChange = (value) => {
+  const handleTitleChange = (language, value) => {
     setFormData(prev => ({
       ...prev,
-      title: value,
-      slug: generateSlug(value)
+      title: {
+        ...prev.title,
+        [language]: value
+      },
+      slug: {
+        ...prev.slug,
+        [language]: generateSlug(value)
+      }
     }))
   }
 
@@ -280,8 +310,11 @@ const BlogEditPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     
-    if (!formData.title.trim() || !formData.excerpt.trim() || !formData.content.trim()) {
-      toast.error('Veuillez remplir tous les champs obligatoires')
+    // Validation des champs bilingues
+    if (!formData.title.fr.trim() || !formData.title.en.trim() || 
+        !formData.excerpt.fr.trim() || !formData.excerpt.en.trim() || 
+        !formData.content.fr.trim() || !formData.content.en.trim()) {
+      toast.error('Veuillez remplir tous les champs obligatoires en français ET en anglais')
       return
     }
 
@@ -341,18 +374,60 @@ const BlogEditPage = () => {
         {/* Formulaire */}
         <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="p-6 space-y-6">
+            {/* Sélecteur de langue */}
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Langue d'édition
+              </label>
+              <div className="flex space-x-4">
+                <button
+                  type="button"
+                  onClick={() => setSelectedLanguage('fr')}
+                  className={`px-4 py-2 rounded-md font-medium ${
+                    selectedLanguage === 'fr'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <span className="text-lg">🇫🇷</span>
+                  <span className="hidden sm:inline ml-2">Français</span>
+                  {formData.title.fr && formData.excerpt.fr && formData.content.fr && (
+                    <span className="ml-2 text-green-500">✓</span>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedLanguage('en')}
+                  className={`px-4 py-2 rounded-md font-medium ${
+                    selectedLanguage === 'en'
+                      ? 'bg-blue-600 text-white'
+                      : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                  }`}
+                >
+                  <span className="text-lg">🇬🇧</span>
+                  <span className="hidden sm:inline ml-2">English</span>
+                  {formData.title.en && formData.excerpt.en && formData.content.en && (
+                    <span className="ml-2 text-green-500">✓</span>
+                  )}
+                </button>
+              </div>
+              <p className="text-sm text-gray-600 mt-2">
+                Les deux langues sont obligatoires pour publier un blog
+              </p>
+            </div>
+
             {/* Informations de base */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Titre *
+                  Titre {selectedLanguage === 'fr' ? 'Français' : 'Anglais'} *
                 </label>
                 <input
                   type="text"
-                  value={formData.title}
-                  onChange={(e) => handleTitleChange(e.target.value)}
+                  value={formData.title[selectedLanguage] || ''}
+                  onChange={(e) => handleTitleChange(selectedLanguage, e.target.value)}
                   className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                  placeholder="Titre du blog"
+                  placeholder={`Titre du blog en ${selectedLanguage === 'fr' ? 'français' : 'anglais'}`}
                   required
                 />
               </div>
@@ -376,17 +451,17 @@ const BlogEditPage = () => {
             </div>
 
             {/* Slug généré automatiquement */}
-            {formData.slug && (
+            {formData.slug[selectedLanguage] && (
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  URL du blog (générée automatiquement)
+                  URL du blog {selectedLanguage === 'fr' ? 'Français' : 'Anglais'} (générée automatiquement)
                 </label>
                 <div className="flex items-center space-x-2">
                   <span className="text-sm text-gray-500">/blog/</span>
                   <input
                     type="text"
-                    value={formData.slug}
-                    onChange={(e) => handleChange('slug', e.target.value)}
+                    value={formData.slug[selectedLanguage] || ''}
+                    onChange={(e) => handleBilingualChange('slug', selectedLanguage, e.target.value)}
                     className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500 bg-gray-50"
                     placeholder="slug-du-blog"
                   />
@@ -430,14 +505,14 @@ const BlogEditPage = () => {
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Résumé *
+                Résumé {selectedLanguage === 'fr' ? 'Français' : 'Anglais'} *
               </label>
               <textarea
-                value={formData.excerpt}
-                onChange={(e) => handleChange('excerpt', e.target.value)}
+                value={formData.excerpt[selectedLanguage] || ''}
+                onChange={(e) => handleBilingualChange('excerpt', selectedLanguage, e.target.value)}
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                 rows={3}
-                placeholder="Résumé du blog"
+                placeholder={`Résumé du blog en ${selectedLanguage === 'fr' ? 'français' : 'anglais'}`}
                 required
               />
             </div>
@@ -678,14 +753,14 @@ const BlogEditPage = () => {
             {/* Contenu */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Contenu *
+                Contenu {selectedLanguage === 'fr' ? 'Français' : 'Anglais'} *
               </label>
               <textarea
-                value={formData.content}
-                onChange={(e) => handleChange('content', e.target.value)}
+                value={formData.content[selectedLanguage] || ''}
+                onChange={(e) => handleBilingualChange('content', selectedLanguage, e.target.value)}
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                 rows={10}
-                placeholder="Contenu du blog (HTML supporté)"
+                placeholder={`Contenu du blog en ${selectedLanguage === 'fr' ? 'français' : 'anglais'} (HTML supporté)`}
                 required
               />
             </div>

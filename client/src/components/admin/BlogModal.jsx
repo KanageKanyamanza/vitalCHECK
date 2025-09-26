@@ -121,14 +121,30 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
     { value: 'avance', label: 'Avancé' }
   ]
 
+  // Fonction pour convertir les données en format bilingue
+  const convertToBilingual = (data) => {
+    if (typeof data === 'string') {
+      // Ancien format : chaîne simple -> convertir en objet bilingue
+      return { fr: data, en: '' }
+    } else if (typeof data === 'object' && data !== null) {
+      // Nouveau format : objet bilingue -> garder tel quel
+      return { fr: data.fr || '', en: data.en || '' }
+    }
+    return { fr: '', en: '' }
+  }
+
   // Charger les données du blog si en mode édition
   useEffect(() => {
     if (blog) {
+      console.log('🔍 [BLOG MODAL] Blog data received:', blog);
+      console.log('🔍 [BLOG MODAL] Title type:', typeof blog.title, blog.title);
+      console.log('🔍 [BLOG MODAL] Converted title:', convertToBilingual(blog.title));
+      
       setFormData({
-        title: blog.title || { fr: '', en: '' },
-        slug: blog.slug || { fr: '', en: '' },
-        excerpt: blog.excerpt || { fr: '', en: '' },
-        content: blog.content || { fr: '', en: '' },
+        title: convertToBilingual(blog.title),
+        slug: convertToBilingual(blog.slug),
+        excerpt: convertToBilingual(blog.excerpt),
+        content: convertToBilingual(blog.content),
         type: blog.type || 'article',
         category: blog.category || 'strategie',
         tags: blog.tags || [],
@@ -424,7 +440,8 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
                     : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                 }`}
               >
-                🇫🇷 Français
+                <span className="text-lg">🇫🇷</span>
+                <span className="hidden sm:inline ml-2">Français</span>
                 {formData.title.fr && formData.excerpt.fr && formData.content.fr && (
                   <span className="ml-2 text-green-500">✓</span>
                 )}
@@ -438,7 +455,8 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
                     : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
                 }`}
               >
-                🇬🇧 English
+                <span className="text-lg">🇬🇧</span>
+                <span className="hidden sm:inline ml-2">English</span>
                 {formData.title.en && formData.excerpt.en && formData.content.en && (
                   <span className="ml-2 text-green-500">✓</span>
                 )}
@@ -457,8 +475,12 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
               </label>
               <input
                 type="text"
-                value={formData.title[selectedLanguage]}
-                onChange={(e) => handleTitleChange(selectedLanguage, e.target.value)}
+                value={formData.title[selectedLanguage] || ''}
+                onChange={(e) => {
+                  console.log('🔍 [BLOG MODAL] Title input value:', e.target.value);
+                  console.log('🔍 [BLOG MODAL] Current formData.title:', formData.title);
+                  handleTitleChange(selectedLanguage, e.target.value);
+                }}
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                 placeholder={`Titre du blog en ${selectedLanguage === 'fr' ? 'français' : 'anglais'}`}
                 required
