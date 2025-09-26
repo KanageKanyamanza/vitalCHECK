@@ -22,16 +22,18 @@ const AdminLogin = () => {
   };
 
   const handleSubmit = async (e) => {
+    console.log('🔐 [ADMIN LOGIN] handleSubmit called', { formData, loading });
+    
     e.preventDefault();
     e.stopPropagation(); // Empêcher la propagation de l'événement
     
-    // Empêcher tout rechargement de page
-    if (e.defaultPrevented) return;
-    
+    console.log('🔐 [ADMIN LOGIN] Setting loading to true');
     setLoading(true);
 
     try {
+      console.log('🔐 [ADMIN LOGIN] Calling adminApiService.login with:', formData);
       const response = await adminApiService.login(formData);
+      console.log('🔐 [ADMIN LOGIN] Response received:', response);
       const data = response.data;
 
       if (data.success) {
