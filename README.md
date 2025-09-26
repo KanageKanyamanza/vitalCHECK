@@ -15,6 +15,7 @@ Une application web complète pour évaluer la santé d'entreprise avec la stack
 ## 🏗️ Architecture
 
 ### Backend (Node.js + Express + MongoDB)
+
 - **API REST** : Routes pour authentification, évaluations et rapports
 - **Modèles de Données** : User, Assessment avec relations
 - **Génération PDF** : Rapports automatiques avec html-pdf-node
@@ -22,6 +23,7 @@ Une application web complète pour évaluer la santé d'entreprise avec la stack
 - **Sécurité** : Helmet, CORS, Rate Limiting
 
 ### Frontend (React + Vite + Tailwind CSS)
+
 - **Pages** : Landing, Assessment, Results
 - **Composants** : QuestionCard, ScoreGauge, PillarChart
 - **État Global** : Context API pour la gestion des données
@@ -50,6 +52,7 @@ Une application web complète pour évaluer la santé d'entreprise avec la stack
 ## 🛠️ Installation
 
 ### Prérequis
+
 - Node.js (v16+)
 - MongoDB
 - npm ou yarn
@@ -76,6 +79,7 @@ cp client/env.example client/.env
 ### Variables d'Environnement
 
 #### Backend (server/.env)
+
 ```env
 NODE_ENV=development
 PORT=5000
@@ -94,6 +98,7 @@ EMAIL_FROM=info@checkmyenterprise.com
 ```
 
 #### Frontend (client/.env)
+
 ```env
 VITE_API_URL=http://localhost:5000/api
 ```
@@ -101,6 +106,7 @@ VITE_API_URL=http://localhost:5000/api
 ## 🚀 Démarrage
 
 ### Développement
+
 ```bash
 # Démarrer MongoDB
 mongod
@@ -110,6 +116,7 @@ npm run dev
 ```
 
 ### Production
+
 ```bash
 # Build du frontend
 npm run build
@@ -168,6 +175,7 @@ Pour l'envoi automatique des rapports :
 L'application supporte plusieurs langues avec i18next (gratuit) :
 
 ### Langues Supportées
+
 - 🇺🇸 **Anglais** (en) - Langue par défaut
 - 🇫🇷 **Français** (fr) - Questions traduites
 - 🇪🇸 **Espagnol** (es) - Interface traduite
@@ -184,6 +192,7 @@ L'application supporte plusieurs langues avec i18next (gratuit) :
 ### Configuration i18next
 
 1. **Installation des dépendances** :
+
    ```bash
    cd client && npm install react-i18next i18next i18next-browser-languagedetector
    ```
@@ -208,6 +217,7 @@ L'application supporte plusieurs langues avec i18next (gratuit) :
 ## 🎨 Personnalisation
 
 ### Couleurs (Tailwind)
+
 - **Primary** : Orange (#f97316)
 - **Secondary** : Bleu (#0ea5e9)
 - **Success** : Vert (#10b981)
@@ -215,7 +225,9 @@ L'application supporte plusieurs langues avec i18next (gratuit) :
 - **Danger** : Rouge (#ef4444)
 
 ### Questions
+
 Modifier `server/data/questions.js` pour :
+
 - Ajouter/modifier des questions
 - Ajuster les recommandations
 - Personnaliser les piliers
@@ -223,6 +235,7 @@ Modifier `server/data/questions.js` pour :
 ## 🚀 Déploiement
 
 ### Heroku
+
 ```bash
 # Backend
 heroku create vitalcheck-health-check-api
@@ -234,9 +247,10 @@ heroku create vitalcheck-health-check-web
 ```
 
 ### Serveur de Production
+
 - Déploiement sur serveur dédié
 - Configuration des variables d'environnement
-- Domaine de production : https://www.checkmyenterprise.com
+- Domaine de production : <https://www.checkmyenterprise.com>
 
 ## 📈 Métriques et Analytics
 
@@ -266,6 +280,7 @@ MIT License - Voir le fichier LICENSE pour plus de détails.
 ## 📞 Support
 
 Pour toute question ou problème :
+
 - Créer une issue sur GitHub
 - Contacter l'équipe VitalCheck
 
