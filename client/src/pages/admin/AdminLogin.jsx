@@ -22,11 +22,18 @@ const AdminLogin = () => {
   };
 
   const handleSubmit = async (e) => {
+    console.log('🔐 [ADMIN LOGIN] handleSubmit called', { formData, loading });
+    
     e.preventDefault();
+    e.stopPropagation(); // Empêcher la propagation de l'événement
+    
+    console.log('🔐 [ADMIN LOGIN] Setting loading to true');
     setLoading(true);
 
     try {
+      console.log('🔐 [ADMIN LOGIN] Calling adminApiService.login with:', formData);
       const response = await adminApiService.login(formData);
+      console.log('🔐 [ADMIN LOGIN] Response received:', response);
       const data = response.data;
 
       if (data.success) {
@@ -39,10 +46,18 @@ const AdminLogin = () => {
       }
     } catch (error) {
       console.error('Login error:', error);
-      if (error.response && error.response.data && error.response.data.message) {
+      
+      // Empêcher tout rechargement de page
+      if (error.code === 'ERR_NETWORK' || error.message === 'Network Error') {
+        toast.error('Impossible de se connecter au serveur. Vérifiez votre connexion internet.');
+      } else if (error.response && error.response.data && error.response.data.message) {
         toast.error(error.response.data.message);
+      } else if (error.response && error.response.status === 401) {
+        toast.error('Email ou mot de passe incorrect');
+      } else if (error.response && error.response.status >= 500) {
+        toast.error('Erreur serveur. Veuillez réessayer plus tard.');
       } else {
-        toast.error('Erreur de connexion au serveur');
+        toast.error('Erreur de connexion. Veuillez réessayer.');
       }
     } finally {
       setLoading(false);
@@ -85,7 +100,7 @@ const AdminLogin = () => {
 
         {/* Login Form */}
         <div className="bg-white/80 w-[90%] sm:w-full mx-auto backdrop-blur-sm py-8 px-6 shadow-2xl sm:rounded-2xl sm:px-10 border border-white/20">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6" onSubmit={handleSubmit} onError={(e) => e.preventDefault()}>
             {/* Email Field */}
             <div>
               <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">

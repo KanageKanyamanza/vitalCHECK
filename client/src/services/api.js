@@ -5,7 +5,7 @@ import { toast } from 'react-hot-toast';
 const getApiBaseUrl = () => {
   // En production, utiliser l'URL du serveur backend
   if (import.meta.env.PROD) {
-    return 'https://VitalCheck-enterprise-health-check.onrender.com/api';
+    return 'https://ubb-enterprise-health-check.onrender.com/api';
   }
   // En développement, utiliser l'URL locale ou celle définie dans .env
   return import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -95,7 +95,8 @@ const setupResponseInterceptor = (instance, isAdmin = false) => {
             if (isAdmin) {
               localStorage.removeItem('adminToken');
               localStorage.removeItem('adminData');
-              window.location.href = '/admin/login';
+              // Ne pas recharger la page, laisser le composant gérer la navigation
+              // window.location.href = '/admin/login';
             }
             toast.error('Session expirée. Veuillez vous reconnecter.');
             break;
