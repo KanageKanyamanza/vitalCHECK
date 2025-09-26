@@ -962,38 +962,40 @@ router.get('/draft-assessments', authenticateAdmin, checkPermission('viewAssessm
     // Generate resume links for all assessments
     const { generateResumeToken } = require('../utils/resumeToken');
     const assessmentsWithLinks = await Promise.all(
-      draftAssessments.map(async (assessment) => {
-        // Ensure resume token exists
-        if (!assessment.resumeToken) {
-          assessment.resumeToken = generateResumeToken(assessment.user._id, assessment._id);
-          await assessment.save();
-        }
-
-        const resumeLink = `${process.env.CLIENT_URL || 'http://localhost:3000'}/resume/${assessment.resumeToken}`;
-        const progressPercentage = assessment.totalQuestions > 0 
-          ? Math.round((assessment.answers.length / assessment.totalQuestions) * 100)
-          : 0;
-
-        return {
-          id: assessment._id,
-          resumeToken: assessment.resumeToken,
-          resumeLink,
-          currentQuestionIndex: assessment.currentQuestionIndex,
-          totalQuestions: assessment.totalQuestions,
-          answersCount: assessment.answers.length,
-          progressPercentage,
-          startedAt: assessment.startedAt,
-          lastAnsweredAt: assessment.lastAnsweredAt,
-          language: assessment.language,
-          user: {
-            id: assessment.user._id,
-            companyName: assessment.user.companyName,
-            email: assessment.user.email,
-            sector: assessment.user.sector,
-            companySize: assessment.user.companySize
+      draftAssessments
+        .filter(assessment => assessment.user) // Filtrer les assessments sans utilisateur
+        .map(async (assessment) => {
+          // Ensure resume token exists
+          if (!assessment.resumeToken) {
+            assessment.resumeToken = generateResumeToken(assessment.user._id, assessment._id);
+            await assessment.save();
           }
-        };
-      })
+
+          const resumeLink = `${process.env.CLIENT_URL || 'http://localhost:3000'}/resume/${assessment.resumeToken}`;
+          const progressPercentage = assessment.totalQuestions > 0 
+            ? Math.round((assessment.answers.length / assessment.totalQuestions) * 100)
+            : 0;
+
+          return {
+            id: assessment._id,
+            resumeToken: assessment.resumeToken,
+            resumeLink,
+            currentQuestionIndex: assessment.currentQuestionIndex,
+            totalQuestions: assessment.totalQuestions,
+            answersCount: assessment.answers.length,
+            progressPercentage,
+            startedAt: assessment.startedAt,
+            lastAnsweredAt: assessment.lastAnsweredAt,
+            language: assessment.language,
+            user: {
+              id: assessment.user._id,
+              companyName: assessment.user.companyName,
+              email: assessment.user.email,
+              sector: assessment.user.sector,
+              companySize: assessment.user.companySize
+            }
+          };
+        })
     );
 
     res.json({
