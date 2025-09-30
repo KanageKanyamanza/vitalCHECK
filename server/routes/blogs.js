@@ -9,6 +9,18 @@ const axios = require('axios');
 const fetch = require('node-fetch');
 const router = express.Router();
 
+// Middleware de debug pour toutes les requêtes
+router.use((req, res, next) => {
+  console.log('📝 [BLOGS ROUTER] Requête reçue:', {
+    method: req.method,
+    url: req.url,
+    originalUrl: req.originalUrl,
+    path: req.path,
+    baseUrl: req.baseUrl
+  });
+  next();
+});
+
 // Fonction utilitaire pour détecter la langue
 function detectLanguage(req) {
   // 1. Vérifier le paramètre de langue dans l'URL
@@ -997,9 +1009,35 @@ router.get('/admin/visits', authenticateAdmin, async (req, res) => {
   }
 });
 
-// POST /api/blogs/translate - Traduction via proxy serveur
+// GET /translate/test - Test de la route de traduction
+router.get('/translate/test', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Route de traduction accessible',
+    timestamp: new Date().toISOString()
+  });
+});
+
+// POST /translate/test - Test de la route de traduction POST
+router.post('/translate/test', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Route de traduction POST accessible',
+    timestamp: new Date().toISOString(),
+    body: req.body
+  });
+});
+
+// POST /translate - Traduction via proxy serveur
 router.post('/translate', authenticateAdmin, async (req, res) => {
   try {
+    console.log('🌐 [TRANSLATE] Requête de traduction reçue:', {
+      method: req.method,
+      url: req.url,
+      body: req.body,
+      headers: req.headers
+    });
+    
     const { text, fromLang = 'fr', toLang = 'en' } = req.body;
 
     if (!text || text.trim() === '') {
