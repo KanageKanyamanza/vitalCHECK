@@ -17,6 +17,7 @@ import {
 } from 'lucide-react'
 import { blogApiService } from '../services/api'
 import trackingService from '../services/trackingService'
+import BlogImageGallery from '../components/blog/BlogImageGallery'
 import toast from 'react-hot-toast'
 import { normalizeTags } from '../utils/tagUtils'
 import { autoTranslateTag } from '../utils/autoTranslateTags'
@@ -305,24 +306,22 @@ const BlogDetailPage = () => {
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Contenu principal */}
           <div className="lg:col-span-2">
             <article className="bg-white rounded-lg shadow-sm p-2 sm:p-8">
-              {/* Image principale */}
-              {blog.featuredImage?.url && (
+              {/* Images en haut */}
+              {blog.images && blog.images.filter(img => img.position === 'top').length > 0 && (
                 <div className="mb-8">
-                  <img
-                    src={blog.featuredImage.url}
-                    alt={blog.featuredImage.alt || blog.title}
-                    className="w-full h-64 object-cover rounded-lg"
-                  />
-                  {blog.featuredImage.caption && (
-                    <p className="text-sm text-gray-500 mt-2 text-center italic">
-                      {blog.featuredImage.caption}
-                    </p>
-                  )}
+                  <BlogImageGallery images={blog.images.filter(img => img.position === 'top')} />
+                </div>
+              )}
+
+              {/* Images au début du contenu */}
+              {blog.images && blog.images.filter(img => img.position === 'content-start').length > 0 && (
+                <div className="mb-8">
+                  <BlogImageGallery images={blog.images.filter(img => img.position === 'content-start')} />
                 </div>
               )}
 
@@ -331,6 +330,27 @@ const BlogDetailPage = () => {
                 className="prose prose-lg max-w-none"
                 dangerouslySetInnerHTML={{ __html: getLocalizedContent(blog.content, 'Contenu non disponible') }}
               />
+
+              {/* Images au milieu */}
+              {blog.images && blog.images.filter(img => img.position === 'middle').length > 0 && (
+                <div className="my-8">
+                  <BlogImageGallery images={blog.images.filter(img => img.position === 'middle')} />
+                </div>
+              )}
+
+              {/* Images en bas */}
+              {blog.images && blog.images.filter(img => img.position === 'bottom').length > 0 && (
+                <div className="mt-8">
+                  <BlogImageGallery images={blog.images.filter(img => img.position === 'bottom')} />
+                </div>
+              )}
+
+              {/* Images à la fin du contenu */}
+              {blog.images && blog.images.filter(img => img.position === 'content-end').length > 0 && (
+                <div className="mt-8">
+                  <BlogImageGallery images={blog.images.filter(img => img.position === 'content-end')} />
+                </div>
+              )}
 
               {/* Tags */}
               {(() => {

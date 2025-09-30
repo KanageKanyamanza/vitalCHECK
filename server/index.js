@@ -22,6 +22,7 @@ app.use(
 			
 			const allowedOrigins = [
 				"http://localhost:5173",
+				"http://localhost:5174",
 				"https://www.checkmyenterprise.com",
 			];
 			
@@ -55,6 +56,7 @@ app.use("/api/reports", require("./routes/reports"));
 app.use("/api/contact", require("./routes/contact"));
 app.use("/api/admin", require("./routes/admin"));
 app.use("/api/blogs", require("./routes/blogs"));
+app.use("/api/upload", require("./routes/upload"));
 app.use("/api", require("./routes/ping"));
 
 // Health check endpoint

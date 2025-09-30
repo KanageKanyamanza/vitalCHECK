@@ -351,4 +351,43 @@ export const adminBlogApiService = {
   }
 };
 
+// Services d'upload d'images
+export const uploadApiService = {
+  // Upload multiple d'images
+  uploadImages: (formData) => {
+    const token = localStorage.getItem('adminToken');
+    return axios.post(`${API_BASE_URL}/upload/images`, formData, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
+      },
+      timeout: 60000 // 60 secondes pour l'upload
+    });
+  },
+
+  // Upload d'une seule image
+  uploadImage: (formData) => {
+    const token = localStorage.getItem('adminToken');
+    return axios.post(`${API_BASE_URL}/upload/image`, formData, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'multipart/form-data'
+      },
+      timeout: 30000 // 30 secondes pour l'upload
+    });
+  },
+
+  // Supprimer une image
+  deleteImage: (imageId) => {
+    const token = localStorage.getItem('adminToken');
+    return adminApi.delete(`/upload/image/${imageId}`);
+  },
+
+  // Lister les images
+  getImages: () => {
+    const token = localStorage.getItem('adminToken');
+    return adminApi.get('/upload/images');
+  }
+};
+
 export default api;
