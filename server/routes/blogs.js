@@ -1018,6 +1018,16 @@ router.get('/translate/test', (req, res) => {
   });
 });
 
+// POST /translate/test - Test de la route de traduction POST
+router.post('/translate/test', (req, res) => {
+  res.json({
+    success: true,
+    message: 'Route de traduction POST accessible',
+    timestamp: new Date().toISOString(),
+    body: req.body
+  });
+});
+
 // POST /translate - Traduction via proxy serveur
 router.post('/translate', authenticateAdmin, async (req, res) => {
   try {

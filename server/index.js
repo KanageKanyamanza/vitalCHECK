@@ -64,6 +64,19 @@ app.get("/api/health", (req, res) => {
 	res.json({ status: "OK", message: "VitalCheck Health Check API is running" });
 });
 
+// Test endpoint pour vérifier les routes
+app.get("/api/test", (req, res) => {
+	res.json({ 
+		status: "OK", 
+		message: "Test endpoint accessible",
+		timestamp: new Date().toISOString(),
+		routes: {
+			translate: "/api/blogs/translate",
+			translateTest: "/api/blogs/translate/test"
+		}
+	});
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
 	console.error(err.stack);
