@@ -6,6 +6,7 @@ const BlogVisit = require('../models/BlogVisit');
 const Admin = require('../models/Admin');
 const { analyzeDevice, extractReferrerDomain, extractUTMParameters, generateSessionId, isBounce } = require('../utils/deviceAnalyzer');
 const axios = require('axios');
+const fetch = require('node-fetch');
 const router = express.Router();
 
 // Fonction utilitaire pour détecter la langue
@@ -519,12 +520,31 @@ router.get('/admin/blogs/:id', authenticateAdmin, async (req, res) => {
 
 // POST /admin/blogs - Créer un nouveau blog
 router.post('/admin/blogs', authenticateAdmin, [
-  body('title.fr').trim().isLength({ min: 1 }).withMessage('Le titre français est requis'),
-  body('title.en').trim().isLength({ min: 1 }).withMessage('Le titre anglais est requis'),
-  body('excerpt.fr').trim().isLength({ min: 1 }).withMessage('Le résumé français est requis'),
-  body('excerpt.en').trim().isLength({ min: 1 }).withMessage('Le résumé anglais est requis'),
-  body('content.fr').trim().isLength({ min: 1 }).withMessage('Le contenu français est requis'),
-  body('content.en').trim().isLength({ min: 1 }).withMessage('Le contenu anglais est requis'),
+  // Validation flexible pour supporter la traduction automatique
+  body('title').custom((value) => {
+    if (!value || typeof value !== 'object') {
+      throw new Error('Le titre est requis');
+    }
+    if (!value.fr?.trim() && !value.en?.trim()) {
+      throw new Error('Au moins un titre (français ou anglais) est requis');
+    }
+    return true;
+  }),
+  body('excerpt').custom((value) => {
+    if (!value || typeof value !== 'object') {
+      return true; // Excerpt est optionnel
+    }
+    return true;
+  }),
+  body('content').custom((value) => {
+    if (!value || typeof value !== 'object') {
+      throw new Error('Le contenu est requis');
+    }
+    if (!value.fr?.trim() && !value.en?.trim()) {
+      throw new Error('Au moins un contenu (français ou anglais) est requis');
+    }
+    return true;
+  }),
   body('type').isIn(['article', 'etude-cas', 'tutoriel', 'actualite', 'temoignage']).withMessage('Type invalide'),
   body('category').isIn(['strategie', 'technologie', 'finance', 'ressources-humaines', 'marketing', 'operations', 'gouvernance']).withMessage('Catégorie invalide')
 ], async (req, res) => {
@@ -539,12 +559,13 @@ router.post('/admin/blogs', authenticateAdmin, [
       author: req.admin._id
     };
 
-    // Générer les slugs si pas fournis
+    // Générer les slugs si pas fournis - seulement pour les langues remplies
     if (!blogData.slug) {
       blogData.slug = {};
     }
     
-    if (!blogData.slug.fr && blogData.title.fr) {
+    // Générer le slug français si le titre français existe
+    if (!blogData.slug.fr && blogData.title?.fr?.trim()) {
       blogData.slug.fr = blogData.title.fr
         .toLowerCase()
         .replace(/[^a-z0-9\s-]/g, '')
@@ -553,7 +574,8 @@ router.post('/admin/blogs', authenticateAdmin, [
         .trim('-');
     }
     
-    if (!blogData.slug.en && blogData.title.en) {
+    // Générer le slug anglais si le titre anglais existe
+    if (!blogData.slug.en && blogData.title?.en?.trim()) {
       blogData.slug.en = blogData.title.en
         .toLowerCase()
         .replace(/[^a-z0-9\s-]/g, '')
@@ -582,12 +604,24 @@ router.post('/admin/blogs', authenticateAdmin, [
 
 // PUT /admin/blogs/:id - Mettre à jour un blog
 router.put('/admin/blogs/:id', authenticateAdmin, [
-  body('title.fr').optional().trim().isLength({ min: 1 }),
-  body('title.en').optional().trim().isLength({ min: 1 }),
-  body('excerpt.fr').optional().trim().isLength({ min: 1 }),
-  body('excerpt.en').optional().trim().isLength({ min: 1 }),
-  body('content.fr').optional().trim().isLength({ min: 1 }),
-  body('content.en').optional().trim().isLength({ min: 1 }),
+  // Validation flexible pour supporter la traduction automatique
+  body('title').optional().custom((value) => {
+    if (value && typeof value === 'object') {
+      if (!value.fr?.trim() && !value.en?.trim()) {
+        throw new Error('Au moins un titre (français ou anglais) est requis');
+      }
+    }
+    return true;
+  }),
+  body('excerpt').optional(),
+  body('content').optional().custom((value) => {
+    if (value && typeof value === 'object') {
+      if (!value.fr?.trim() && !value.en?.trim()) {
+        throw new Error('Au moins un contenu (français ou anglais) est requis');
+      }
+    }
+    return true;
+  }),
   body('type').optional().isIn(['article', 'etude-cas', 'tutoriel', 'actualite', 'temoignage']),
   body('category').optional().isIn(['strategie', 'technologie', 'finance', 'ressources-humaines', 'marketing', 'operations', 'gouvernance'])
 ], async (req, res) => {
@@ -959,6 +993,98 @@ router.get('/admin/visits', authenticateAdmin, async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération des visites'
+    });
+  }
+});
+
+// POST /api/blogs/translate - Traduction via proxy serveur
+router.post('/translate', authenticateAdmin, async (req, res) => {
+  try {
+    const { text, fromLang = 'fr', toLang = 'en' } = req.body;
+
+    if (!text || text.trim() === '') {
+      return res.status(400).json({
+        success: false,
+        message: 'Texte à traduire requis'
+      });
+    }
+
+    console.log('🔄 Traduction serveur:', { text: text.substring(0, 50) + '...', fromLang, toLang });
+
+    // Essayer d'abord MyMemory
+    try {
+      const myMemoryUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${fromLang}|${toLang}`;
+      
+      const response = await fetch(myMemoryUrl, {
+        method: 'GET',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('📄 Données MyMemory reçues:', data);
+        
+        if (data && data.responseData && data.responseData.translatedText) {
+          console.log('✅ Traduction MyMemory réussie');
+          return res.json({
+            success: true,
+            translatedText: data.responseData.translatedText
+          });
+        }
+      }
+    } catch (myMemoryError) {
+      console.warn('⚠️ MyMemory échoué, essai LibreTranslate:', myMemoryError.message);
+    }
+
+    // Fallback vers LibreTranslate
+    try {
+      const libreTranslateUrl = 'https://libretranslate.de/translate';
+      
+      const response = await fetch(libreTranslateUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        },
+        body: JSON.stringify({
+          q: text,
+          source: fromLang === 'auto' ? 'fr' : fromLang,
+          target: toLang,
+          format: 'text'
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        console.log('📄 Données LibreTranslate reçues:', data);
+        
+        if (data && data.translatedText) {
+          console.log('✅ Traduction LibreTranslate réussie');
+          return res.json({
+            success: true,
+            translatedText: data.translatedText
+          });
+        }
+      }
+    } catch (libreError) {
+      console.warn('⚠️ LibreTranslate échoué:', libreError.message);
+    }
+
+    // Si tout échoue, retourner le texte original
+    console.log('⚠️ Toutes les APIs ont échoué, retour du texte original');
+    return res.json({
+      success: true,
+      translatedText: text
+    });
+
+  } catch (error) {
+    console.error('❌ Erreur de traduction serveur:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la traduction',
+      error: error.message
     });
   }
 });

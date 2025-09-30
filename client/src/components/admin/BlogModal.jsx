@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { X, Save, Upload, Image as ImageIcon, Tag, Calendar, User, Eye, EyeOff } from 'lucide-react'
 import { adminBlogApiService } from '../../services/api'
+import ImageUploader from './ImageUploader'
+import SimpleTextEditor from './SimpleTextEditor'
+import AutoTranslation from './AutoTranslation'
 import toast from 'react-hot-toast'
 
 const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
+  const [isFormatting, setIsFormatting] = useState(false)
   const [formData, setFormData] = useState({
     title: {
       fr: '',
@@ -32,6 +36,7 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
       alt: '',
       caption: ''
     },
+    images: [],
     // Champs spécifiques aux études de cas
     caseStudy: {
       company: '',
@@ -63,6 +68,8 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
   const [newMetric, setNewMetric] = useState({ label: '', value: '', description: '' })
   const [newPrerequisite, setNewPrerequisite] = useState('')
   const [selectedLanguage, setSelectedLanguage] = useState('fr') // Langue sélectionnée pour l'édition
+  const [useAutoTranslation, setUseAutoTranslation] = useState(false)
+  const [validationErrors, setValidationErrors] = useState({})
 
   // Clé pour la mémorisation dans localStorage
   const STORAGE_KEY = 'blog-form-draft'
@@ -152,6 +159,7 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
         metaTitle: blog.metaTitle || '',
         metaDescription: blog.metaDescription || '',
         featuredImage: blog.featuredImage || { url: '', alt: '', caption: '' },
+        images: blog.images || [],
         caseStudy: blog.caseStudy || {
           company: '',
           sector: '',
@@ -193,6 +201,7 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
           metaTitle: '',
           metaDescription: '',
           featuredImage: { url: '', alt: '', caption: '' },
+          images: [],
         caseStudy: {
           company: '',
           sector: '',
@@ -218,15 +227,33 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
     }
   }, [blog, isOpen])
 
-  // Sauvegarder automatiquement les données (sauf en mode édition)
+  // Sauvegarder automatiquement les données (sauf en mode édition) avec délai
   useEffect(() => {
-    if (!blog && isOpen) {
-      saveToStorage(formData)
+    if (!blog && isOpen && !isFormatting) {
+      const timeoutId = setTimeout(() => {
+        // Vérifier qu'il y a du contenu avant de sauvegarder
+        const hasContent = formData.title?.fr?.trim() || 
+                          formData.title?.en?.trim() || 
+                          formData.content?.fr?.trim() || 
+                          formData.content?.en?.trim()
+        
+        if (hasContent) {
+          saveToStorage(formData)
+        }
+      }, 3000) // Délai de 3 secondes pour éviter les sauvegardes trop fréquentes
+
+      return () => clearTimeout(timeoutId)
     }
-  }, [formData, blog, isOpen])
+  }, [formData, blog, isOpen, isFormatting])
 
   // Gérer les changements de formulaire
   const handleChange = (field, value) => {
+    // Désactiver temporairement la sauvegarde automatique pour les changements de contenu
+    if (field.includes('content')) {
+      setIsFormatting(true)
+      setTimeout(() => setIsFormatting(false), 1000) // Réactiver après 1 seconde
+    }
+    
     if (field.includes('.')) {
       const [parent, child] = field.split('.')
       setFormData(prev => ({
@@ -246,6 +273,12 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
 
   // Gérer les changements pour les champs bilingues
   const handleBilingualChange = (field, language, value) => {
+    // Désactiver temporairement la sauvegarde automatique pour les changements de contenu
+    if (field.includes('content')) {
+      setIsFormatting(true)
+      setTimeout(() => setIsFormatting(false), 1000) // Réactiver après 1 seconde
+    }
+    
     setFormData(prev => ({
       ...prev,
       [field]: {
@@ -369,11 +402,17 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     
-    // Validation des champs bilingues
-    if (!formData.title.fr.trim() || !formData.title.en.trim() || 
-        !formData.excerpt.fr.trim() || !formData.excerpt.en.trim() || 
-        !formData.content.fr.trim() || !formData.content.en.trim()) {
-      toast.error('Veuillez remplir tous les champs obligatoires en français ET en anglais')
+    // Réinitialiser les erreurs de validation
+    setValidationErrors({})
+    
+    // Validation simple - seulement les champs essentiels
+    if (!formData.title[selectedLanguage]?.trim()) {
+      toast.error('Le titre est obligatoire')
+      return
+    }
+    
+    if (!formData.content[selectedLanguage]?.trim()) {
+      toast.error('Le contenu est obligatoire')
       return
     }
 
@@ -427,44 +466,64 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           {/* Sélecteur de langue */}
           <div className="bg-blue-50 p-4 rounded-lg">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Langue d'édition
-            </label>
-            <div className="flex space-x-4">
-              <button
-                type="button"
-                onClick={() => setSelectedLanguage('fr')}
-                className={`px-4 py-2 rounded-md font-medium ${
-                  selectedLanguage === 'fr'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                }`}
-              >
-                <span className="text-lg">🇫🇷</span>
-                <span className="hidden sm:inline ml-2">Français</span>
-                {formData.title.fr && formData.excerpt.fr && formData.content.fr && (
-                  <span className="ml-2 text-green-500">✓</span>
-                )}
-              </button>
-              <button
-                type="button"
-                onClick={() => setSelectedLanguage('en')}
-                className={`px-4 py-2 rounded-md font-medium ${
-                  selectedLanguage === 'en'
-                    ? 'bg-blue-600 text-white'
-                    : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                }`}
-              >
-                <span className="text-lg">🇬🇧</span>
-                <span className="hidden sm:inline ml-2">English</span>
-                {formData.title.en && formData.excerpt.en && formData.content.en && (
-                  <span className="ml-2 text-green-500">✓</span>
-                )}
-              </button>
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-medium text-gray-700">
+                Configuration de rédaction
+              </h3>
+              <div className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  id="auto-translation"
+                  checked={useAutoTranslation}
+                  onChange={(e) => setUseAutoTranslation(e.target.checked)}
+                  className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                />
+                <label htmlFor="auto-translation" className="text-sm text-gray-700">
+                  Traduction automatique
+                </label>
+              </div>
             </div>
-            <p className="text-sm text-gray-600 mt-2">
-              Les deux langues sont obligatoires pour publier un blog
-            </p>
+            
+            {useAutoTranslation ? (
+              <div className="space-y-3">
+                <div className="text-sm text-blue-600 bg-blue-100 p-3 rounded-lg">
+                  💡 <strong>Mode traduction automatique :</strong> Rédigez dans votre langue préférée, 
+                  la traduction automatique générera l'autre version. Vous pourrez réviser les traductions avant de les appliquer.
+                </div>
+                
+                <div className="flex items-center space-x-4">
+                  <span className="text-sm text-gray-600">Langue de rédaction :</span>
+                  <div className="flex space-x-2">
+                    <button
+                      type="button"
+                      onClick={() => setSelectedLanguage('fr')}
+                      className={`px-3 py-1 rounded-md text-sm font-medium ${
+                        selectedLanguage === 'fr'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                      }`}
+                    >
+                      🇫🇷 Français
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedLanguage('en')}
+                      className={`px-3 py-1 rounded-md text-sm font-medium ${
+                        selectedLanguage === 'en'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                      }`}
+                    >
+                      🇬🇧 English
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-sm text-gray-600">
+                Mode manuel : Remplissez les champs en français et en anglais séparément.
+              </div>
+            )}
           </div>
 
           {/* Informations de base */}
@@ -563,12 +622,11 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
               Résumé {selectedLanguage === 'fr' ? 'Français' : 'Anglais'} *
             </label>
             <textarea
-              value={formData.excerpt[selectedLanguage]}
+              value={formData.excerpt[selectedLanguage] || ''}
               onChange={(e) => handleBilingualChange('excerpt', selectedLanguage, e.target.value)}
               className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
               rows={3}
-              placeholder={`Résumé du blog en ${selectedLanguage === 'fr' ? 'français' : 'anglais'}`}
-              required
+              placeholder={`Résumé de votre article en ${selectedLanguage === 'fr' ? 'français' : 'anglais'}...`}
             />
           </div>
 
@@ -775,34 +833,29 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
             </div>
           </div>
 
-          {/* Image principale */}
+
+          {/* Images du blog */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Image principale
+              Images du blog
             </label>
-            <div className="space-y-2">
-              <input
-                type="url"
-                value={formData.featuredImage.url}
-                onChange={(e) => handleChange('featuredImage.url', e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                placeholder="URL de l'image"
-              />
-              <input
-                type="text"
-                value={formData.featuredImage.alt}
-                onChange={(e) => handleChange('featuredImage.alt', e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                placeholder="Texte alternatif"
-              />
-              <input
-                type="text"
-                value={formData.featuredImage.caption}
-                onChange={(e) => handleChange('featuredImage.caption', e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                placeholder="Légende de l'image"
-              />
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+              <h4 className="text-sm font-medium text-blue-900 mb-2">💡 Comment positionner vos images :</h4>
+              <ul className="text-sm text-blue-800 space-y-1">
+                <li><strong>En haut :</strong> Images avant le contenu</li>
+                <li><strong>Début du contenu :</strong> Images juste avant le premier paragraphe</li>
+                <li><strong>Au milieu :</strong> Images entre les paragraphes</li>
+                <li><strong>En bas :</strong> Images après le contenu</li>
+                <li><strong>Fin du contenu :</strong> Images juste après le dernier paragraphe</li>
+                <li><strong>Dans le texte :</strong> Copiez le HTML généré et collez-le dans votre contenu HTML</li>
+              </ul>
             </div>
+            <ImageUploader
+              images={formData.images}
+              onImagesChange={(images) => handleChange('images', images)}
+              maxImages={10}
+              showPositionControls={true}
+            />
           </div>
 
           {/* Contenu */}
@@ -810,15 +863,23 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Contenu {selectedLanguage === 'fr' ? 'Français' : 'Anglais'} *
             </label>
-            <textarea
-              value={formData.content[selectedLanguage]}
-              onChange={(e) => handleBilingualChange('content', selectedLanguage, e.target.value)}
-              className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-              rows={10}
-              placeholder={`Contenu du blog en ${selectedLanguage === 'fr' ? 'français' : 'anglais'} (HTML supporté)`}
-              required
+            <SimpleTextEditor
+              value={formData.content[selectedLanguage] || ''}
+              onChange={(value) => handleBilingualChange('content', selectedLanguage, value)}
+              placeholder={`Rédigez votre article en ${selectedLanguage === 'fr' ? 'français' : 'anglais'}...`}
+              className="w-full"
+              editorId="blog-modal-content-editor"
             />
           </div>
+
+          {/* Traduction automatique */}
+          {useAutoTranslation && (
+            <AutoTranslation
+              formData={formData}
+              onFormDataChange={setFormData}
+              selectedLanguage={selectedLanguage}
+            />
+          )}
 
           {/* SEO */}
           <div className="border-t border-gray-200 pt-6">

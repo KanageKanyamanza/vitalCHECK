@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, Save, X, Upload, Image as ImageIcon, Tag } from 'lucide-react'
 import { adminBlogApiService } from '../../services/api'
+import ImageUploader from '../../components/admin/ImageUploader'
+import SimpleTextEditor from '../../components/admin/SimpleTextEditor'
+import AutoTranslation from '../../components/admin/AutoTranslation'
 import toast from 'react-hot-toast'
 import AdminLayout from '../../components/admin/AdminLayout'
 
@@ -26,6 +29,7 @@ const BlogEditPage = () => {
       alt: '',
       caption: ''
     },
+    images: [],
     // Champs spécifiques aux études de cas
     caseStudy: {
       company: '',
@@ -57,6 +61,39 @@ const BlogEditPage = () => {
   const [newMetric, setNewMetric] = useState({ label: '', value: '', description: '' })
   const [newPrerequisite, setNewPrerequisite] = useState('')
   const [selectedLanguage, setSelectedLanguage] = useState('fr') // Langue sélectionnée pour l'édition
+  const [useAutoTranslation, setUseAutoTranslation] = useState(false)
+
+  // Clé pour la mémorisation dans localStorage
+  const STORAGE_KEY = `blog-edit-draft-${id || 'new'}`
+
+  // Sauvegarder les données dans localStorage
+  const saveToStorage = (data) => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
+    } catch (error) {
+      console.warn('Impossible de sauvegarder le brouillon:', error)
+    }
+  }
+
+  // Charger les données depuis localStorage
+  const loadFromStorage = () => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY)
+      return saved ? JSON.parse(saved) : null
+    } catch (error) {
+      console.warn('Impossible de charger le brouillon:', error)
+      return null
+    }
+  }
+
+  // Effacer les données du localStorage
+  const clearStorage = () => {
+    try {
+      localStorage.removeItem(STORAGE_KEY)
+    } catch (error) {
+      console.warn('Impossible d\'effacer le brouillon:', error)
+    }
+  }
 
   // Types et catégories
   const blogTypes = [
@@ -88,8 +125,48 @@ const BlogEditPage = () => {
     if (isEdit && id) {
       console.log('Loading blog with ID:', id)
       loadBlog()
+    } else if (!isEdit) {
+      // Mode création : charger le brouillon depuis localStorage
+      const savedData = loadFromStorage()
+      if (savedData) {
+        console.log('Chargement du brouillon depuis localStorage:', savedData)
+        setFormData(savedData)
+        toast.success('Brouillon restauré depuis la dernière session')
+      }
     }
   }, [id, isEdit])
+
+  // Sauvegarder automatiquement les données avec délai
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      const dataToSave = {
+        ...formData,
+        selectedLanguage,
+        useAutoTranslation,
+        lastSaved: new Date().toISOString()
+      }
+      saveToStorage(dataToSave)
+      
+      // Afficher un message discret de sauvegarde
+      if (formData.title?.fr?.trim() || formData.title?.en?.trim() || 
+          formData.content?.fr?.trim() || formData.content?.en?.trim()) {
+        toast.success('Brouillon sauvegardé automatiquement', { duration: 2000 })
+      }
+    }, 2000) // Délai de 2 secondes pour éviter les sauvegardes trop fréquentes
+
+    return () => clearTimeout(timeoutId)
+  }, [formData, selectedLanguage, useAutoTranslation])
+
+  // Sauvegarder les préférences de langue et traduction
+  useEffect(() => {
+    const savedPrefs = loadFromStorage()
+    if (savedPrefs && savedPrefs.selectedLanguage) {
+      setSelectedLanguage(savedPrefs.selectedLanguage)
+    }
+    if (savedPrefs && savedPrefs.useAutoTranslation) {
+      setUseAutoTranslation(savedPrefs.useAutoTranslation)
+    }
+  }, [])
 
   const loadBlog = async () => {
     try {
@@ -135,6 +212,7 @@ const BlogEditPage = () => {
         metaTitle: blog.metaTitle || '',
         metaDescription: blog.metaDescription || '',
         featuredImage: blog.featuredImage || { url: '', alt: '', caption: '' },
+        images: blog.images || [],
         caseStudy: blog.caseStudy || {
           company: '',
           sector: '',
@@ -310,11 +388,14 @@ const BlogEditPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     
-    // Validation des champs bilingues
-    if (!formData.title.fr.trim() || !formData.title.en.trim() || 
-        !formData.excerpt.fr.trim() || !formData.excerpt.en.trim() || 
-        !formData.content.fr.trim() || !formData.content.en.trim()) {
-      toast.error('Veuillez remplir tous les champs obligatoires en français ET en anglais')
+    // Validation simple - seulement les champs essentiels
+    if (!formData.title[selectedLanguage]?.trim()) {
+      toast.error('Le titre est obligatoire')
+      return
+    }
+    
+    if (!formData.content[selectedLanguage]?.trim()) {
+      toast.error('Le contenu est obligatoire')
       return
     }
 
@@ -328,6 +409,8 @@ const BlogEditPage = () => {
         // Mode création
         await adminBlogApiService.createBlog(formData)
         toast.success('Blog créé avec succès')
+        // Effacer le brouillon après création réussie
+        clearStorage()
       }
       navigate('/admin/blog')
     } catch (error) {
@@ -366,54 +449,109 @@ const BlogEditPage = () => {
               </h1>
               <p className="text-gray-600">
                 {isEdit ? 'Modifiez les informations du blog' : 'Remplissez les informations pour créer un nouveau blog'}
+                {!isEdit && loadFromStorage() && (
+                  <span className="ml-2 text-blue-600 text-sm">💾 Brouillon sauvegardé automatiquement</span>
+                )}
               </p>
             </div>
           </div>
+          
+          {/* Bouton pour effacer le brouillon */}
+          {!isEdit && (
+            <button
+              type="button"
+              onClick={() => {
+                if (window.confirm('Êtes-vous sûr de vouloir effacer le brouillon ?')) {
+                  clearStorage()
+                  setFormData({
+                    title: { fr: '', en: '' },
+                    excerpt: { fr: '', en: '' },
+                    content: { fr: '', en: '' },
+                    type: 'article',
+                    category: 'strategie',
+                    tags: [],
+                    status: 'draft',
+                    metaTitle: '',
+                    metaDescription: '',
+                    featuredImage: { url: '', alt: '', caption: '' },
+                    images: [],
+                    caseStudy: { company: '', sector: '', companySize: '', challenge: '', solution: '', results: '', metrics: [] },
+                    tutorial: { difficulty: 'debutant', duration: '', prerequisites: [] },
+                    testimonial: { clientName: '', clientCompany: '', clientPosition: '', clientPhoto: '', rating: 5 }
+                  })
+                  toast.success('Brouillon effacé')
+                }
+              }}
+              className="px-3 py-2 text-sm text-red-600 hover:text-red-700 hover:bg-red-50 rounded-md border border-red-200"
+            >
+              Effacer le brouillon
+            </button>
+          )}
         </div>
 
         {/* Formulaire */}
         <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-sm border border-gray-200">
           <div className="p-6 space-y-6">
-            {/* Sélecteur de langue */}
+            {/* Configuration de rédaction */}
             <div className="bg-blue-50 p-4 rounded-lg">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Langue d'édition
-              </label>
-              <div className="flex space-x-4">
-                <button
-                  type="button"
-                  onClick={() => setSelectedLanguage('fr')}
-                  className={`px-4 py-2 rounded-md font-medium ${
-                    selectedLanguage === 'fr'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <span className="text-lg">🇫🇷</span>
-                  <span className="hidden sm:inline ml-2">Français</span>
-                  {formData.title.fr && formData.excerpt.fr && formData.content.fr && (
-                    <span className="ml-2 text-green-500">✓</span>
-                  )}
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setSelectedLanguage('en')}
-                  className={`px-4 py-2 rounded-md font-medium ${
-                    selectedLanguage === 'en'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
-                  }`}
-                >
-                  <span className="text-lg">🇬🇧</span>
-                  <span className="hidden sm:inline ml-2">English</span>
-                  {formData.title.en && formData.excerpt.en && formData.content.en && (
-                    <span className="ml-2 text-green-500">✓</span>
-                  )}
-                </button>
+              <div className="flex items-center justify-between mb-3">
+                <h3 className="text-sm font-medium text-gray-700">
+                  Configuration de rédaction
+                </h3>
+                <div className="flex items-center space-x-2">
+                  <input
+                    type="checkbox"
+                    id="auto-translation"
+                    checked={useAutoTranslation}
+                    onChange={(e) => setUseAutoTranslation(e.target.checked)}
+                    className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
+                  />
+                  <label htmlFor="auto-translation" className="text-sm text-gray-700">
+                    Traduction automatique
+                  </label>
+                </div>
               </div>
-              <p className="text-sm text-gray-600 mt-2">
-                Les deux langues sont obligatoires pour publier un blog
-              </p>
+              
+              {useAutoTranslation ? (
+                <div className="space-y-3">
+                  <div className="text-sm text-blue-600 bg-blue-100 p-3 rounded-lg">
+                    💡 <strong>Mode traduction automatique :</strong> Rédigez dans votre langue préférée, 
+                    la traduction automatique générera l'autre version. Vous pourrez réviser les traductions avant de les appliquer.
+                  </div>
+                  
+                  <div className="flex items-center space-x-4">
+                    <span className="text-sm text-gray-600">Langue de rédaction :</span>
+                    <div className="flex space-x-2">
+                      <button
+                        type="button"
+                        onClick={() => setSelectedLanguage('fr')}
+                        className={`px-3 py-1 rounded-md text-sm font-medium ${
+                          selectedLanguage === 'fr'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                        }`}
+                      >
+                        🇫🇷 Français
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setSelectedLanguage('en')}
+                        className={`px-3 py-1 rounded-md text-sm font-medium ${
+                          selectedLanguage === 'en'
+                            ? 'bg-blue-600 text-white'
+                            : 'bg-white text-gray-700 border border-gray-300 hover:bg-gray-50'
+                        }`}
+                      >
+                        🇬🇧 English
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div className="text-sm text-gray-600">
+                  Mode manuel : Remplissez les champs en français et en anglais séparément.
+                </div>
+              )}
             </div>
 
             {/* Informations de base */}
@@ -512,8 +650,7 @@ const BlogEditPage = () => {
                 onChange={(e) => handleBilingualChange('excerpt', selectedLanguage, e.target.value)}
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                 rows={3}
-                placeholder={`Résumé du blog en ${selectedLanguage === 'fr' ? 'français' : 'anglais'}`}
-                required
+                placeholder={`Résumé de votre article en ${selectedLanguage === 'fr' ? 'français' : 'anglais'}...`}
               />
             </div>
 
@@ -720,34 +857,29 @@ const BlogEditPage = () => {
               </div>
             </div>
 
-            {/* Image principale */}
+
+            {/* Images du blog */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Image principale
+                Images du blog
               </label>
-              <div className="space-y-2">
-                <input
-                  type="url"
-                  value={formData.featuredImage.url}
-                  onChange={(e) => handleChange('featuredImage.url', e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                  placeholder="URL de l'image"
-                />
-                <input
-                  type="text"
-                  value={formData.featuredImage.alt}
-                  onChange={(e) => handleChange('featuredImage.alt', e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                  placeholder="Texte alternatif"
-                />
-                <input
-                  type="text"
-                  value={formData.featuredImage.caption}
-                  onChange={(e) => handleChange('featuredImage.caption', e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                  placeholder="Légende de l'image"
-                />
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                <h4 className="text-sm font-medium text-blue-900 mb-2">💡 Comment positionner vos images :</h4>
+                <ul className="text-sm text-blue-800 space-y-1">
+                  <li><strong>En haut :</strong> Images avant le contenu</li>
+                  <li><strong>Début du contenu :</strong> Images juste avant le premier paragraphe</li>
+                  <li><strong>Au milieu :</strong> Images entre les paragraphes</li>
+                  <li><strong>En bas :</strong> Images après le contenu</li>
+                  <li><strong>Fin du contenu :</strong> Images juste après le dernier paragraphe</li>
+                  <li><strong>Dans le texte :</strong> Copiez le HTML généré et collez-le dans votre contenu HTML</li>
+                </ul>
               </div>
+              <ImageUploader
+                images={formData.images}
+                onImagesChange={(images) => handleChange('images', images)}
+                maxImages={10}
+                showPositionControls={true}
+              />
             </div>
 
             {/* Contenu */}
@@ -755,15 +887,23 @@ const BlogEditPage = () => {
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Contenu {selectedLanguage === 'fr' ? 'Français' : 'Anglais'} *
               </label>
-              <textarea
+              <SimpleTextEditor
                 value={formData.content[selectedLanguage] || ''}
-                onChange={(e) => handleBilingualChange('content', selectedLanguage, e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                rows={10}
-                placeholder={`Contenu du blog en ${selectedLanguage === 'fr' ? 'français' : 'anglais'} (HTML supporté)`}
-                required
+                onChange={(value) => handleBilingualChange('content', selectedLanguage, value)}
+                placeholder={`Rédigez votre article en ${selectedLanguage === 'fr' ? 'français' : 'anglais'}...`}
+                className="w-full"
+                editorId="blog-content-editor"
               />
             </div>
+
+            {/* Traduction automatique */}
+            {useAutoTranslation && (
+              <AutoTranslation
+                formData={formData}
+                onFormDataChange={setFormData}
+                selectedLanguage={selectedLanguage}
+              />
+            )}
 
             {/* SEO */}
             <div className="border-t border-gray-200 pt-6">

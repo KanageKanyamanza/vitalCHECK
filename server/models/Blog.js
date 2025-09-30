@@ -5,13 +5,13 @@ const blogSchema = new mongoose.Schema({
   title: {
     fr: {
       type: String,
-      required: [true, 'Le titre français est requis'],
+      required: false, // Rendu optionnel pour supporter la traduction automatique
       trim: true,
       maxlength: [200, 'Le titre ne peut pas dépasser 200 caractères']
     },
     en: {
       type: String,
-      required: [true, 'Le titre anglais est requis'],
+      required: false, // Rendu optionnel pour supporter la traduction automatique
       trim: true,
       maxlength: [200, 'Le titre ne peut pas dépasser 200 caractères']
     }
@@ -20,13 +20,13 @@ const blogSchema = new mongoose.Schema({
   slug: {
     fr: {
       type: String,
-      required: true,
+      required: false, // Rendu optionnel pour supporter la traduction automatique
       lowercase: true,
       trim: true
     },
     en: {
       type: String,
-      required: true,
+      required: false, // Rendu optionnel pour supporter la traduction automatique
       lowercase: true,
       trim: true
     }
@@ -35,12 +35,12 @@ const blogSchema = new mongoose.Schema({
   excerpt: {
     fr: {
       type: String,
-      required: [true, 'Le résumé français est requis'],
+      required: false, // Rendu optionnel pour supporter la traduction automatique
       maxlength: [500, 'Le résumé ne peut pas dépasser 500 caractères']
     },
     en: {
       type: String,
-      required: [true, 'Le résumé anglais est requis'],
+      required: false, // Rendu optionnel pour supporter la traduction automatique
       maxlength: [500, 'Le résumé ne peut pas dépasser 500 caractères']
     }
   },
@@ -48,11 +48,11 @@ const blogSchema = new mongoose.Schema({
   content: {
     fr: {
       type: String,
-      required: [true, 'Le contenu français est requis']
+      required: false // Rendu optionnel pour supporter la traduction automatique
     },
     en: {
       type: String,
-      required: [true, 'Le contenu anglais est requis']
+      required: false // Rendu optionnel pour supporter la traduction automatique
     }
   },
   
@@ -82,14 +82,35 @@ const blogSchema = new mongoose.Schema({
   },
   
   images: [{
-    url: String,
-    alt: String,
-    caption: String,
+    cloudinaryId: {
+      type: String,
+      required: true
+    },
+    url: {
+      type: String,
+      required: true
+    },
+    alt: {
+      type: String,
+      default: ''
+    },
+    caption: {
+      type: String,
+      default: ''
+    },
     position: {
       type: String,
       enum: ['top', 'middle', 'bottom', 'inline'],
       default: 'inline'
-    }
+    },
+    order: {
+      type: Number,
+      default: 0
+    },
+    width: Number,
+    height: Number,
+    format: String,
+    size: Number
   }],
   
   status: {
@@ -339,5 +360,19 @@ blogSchema.methods.getVisitStats = async function() {
     topReferrers: referrerStats
   };
 };
+
+// Validation personnalisée pour s'assurer qu'au moins une langue est remplie
+blogSchema.pre('validate', function(next) {
+  const hasFrenchContent = (this.title?.fr?.trim() || this.content?.fr?.trim());
+  const hasEnglishContent = (this.title?.en?.trim() || this.content?.en?.trim());
+  
+  if (!hasFrenchContent && !hasEnglishContent) {
+    const error = new Error('Au moins un titre ou contenu (français ou anglais) est requis');
+    error.name = 'ValidationError';
+    return next(error);
+  }
+  
+  next();
+});
 
 module.exports = mongoose.model('Blog', blogSchema);
