@@ -123,13 +123,11 @@ const BlogEditPage = () => {
   // Charger les données du blog si en mode édition
   useEffect(() => {
     if (isEdit && id) {
-      console.log('Loading blog with ID:', id)
       loadBlog()
     } else if (!isEdit) {
       // Mode création : charger le brouillon depuis localStorage
       const savedData = loadFromStorage()
       if (savedData) {
-        console.log('Chargement du brouillon depuis localStorage:', savedData)
         setFormData(savedData)
         toast.success('Brouillon restauré depuis la dernière session')
       }
@@ -172,7 +170,6 @@ const BlogEditPage = () => {
     try {
       setLoading(true)
       const response = await adminBlogApiService.getBlog(id)
-      console.log('API Response:', response)
       
       // Vérifier la structure de la réponse
       let blog
@@ -184,9 +181,6 @@ const BlogEditPage = () => {
         throw new Error('Structure de réponse invalide')
       }
       
-      console.log('Blog data to load:', blog)
-      console.log('Blog title:', blog.title)
-      console.log('Blog content:', blog.content)
       
       // Fonction pour convertir les données en format bilingue
       const convertToBilingual = (data) => {

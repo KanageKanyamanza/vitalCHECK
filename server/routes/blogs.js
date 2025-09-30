@@ -1009,8 +1009,6 @@ router.post('/translate', authenticateAdmin, async (req, res) => {
       });
     }
 
-    console.log('🔄 Traduction serveur:', { text: text.substring(0, 50) + '...', fromLang, toLang });
-
     // Essayer d'abord MyMemory
     try {
       const myMemoryUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${fromLang}|${toLang}`;
@@ -1024,10 +1022,8 @@ router.post('/translate', authenticateAdmin, async (req, res) => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('📄 Données MyMemory reçues:', data);
         
         if (data && data.responseData && data.responseData.translatedText) {
-          console.log('✅ Traduction MyMemory réussie');
           return res.json({
             success: true,
             translatedText: data.responseData.translatedText
@@ -1035,7 +1031,7 @@ router.post('/translate', authenticateAdmin, async (req, res) => {
         }
       }
     } catch (myMemoryError) {
-      console.warn('⚠️ MyMemory échoué, essai LibreTranslate:', myMemoryError.message);
+      // MyMemory échoué, essai LibreTranslate
     }
 
     // Fallback vers LibreTranslate
@@ -1058,10 +1054,8 @@ router.post('/translate', authenticateAdmin, async (req, res) => {
 
       if (response.ok) {
         const data = await response.json();
-        console.log('📄 Données LibreTranslate reçues:', data);
         
         if (data && data.translatedText) {
-          console.log('✅ Traduction LibreTranslate réussie');
           return res.json({
             success: true,
             translatedText: data.translatedText
@@ -1069,18 +1063,17 @@ router.post('/translate', authenticateAdmin, async (req, res) => {
         }
       }
     } catch (libreError) {
-      console.warn('⚠️ LibreTranslate échoué:', libreError.message);
+      // LibreTranslate échoué
     }
 
     // Si tout échoue, retourner le texte original
-    console.log('⚠️ Toutes les APIs ont échoué, retour du texte original');
     return res.json({
       success: true,
       translatedText: text
     });
 
   } catch (error) {
-    console.error('❌ Erreur de traduction serveur:', error);
+    console.error('Erreur de traduction serveur:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la traduction',

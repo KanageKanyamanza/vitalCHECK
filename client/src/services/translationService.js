@@ -27,8 +27,6 @@ export const translationService = {
   // Appel via notre API serveur (contourne CORS)
   async callGoogleTranslateAPI(text, fromLang, toLang) {
     try {
-      console.log('🔄 Traduction via serveur:', { text: text.substring(0, 50) + '...', fromLang, toLang })
-      
       const token = localStorage.getItem('adminToken')
       const response = await fetch('/api/blogs/translate', {
         method: 'POST',
@@ -43,23 +41,19 @@ export const translationService = {
         })
       })
 
-      console.log('📡 Réponse serveur:', response.status, response.statusText)
-
       if (!response.ok) {
         throw new Error(`Erreur HTTP: ${response.status}`)
       }
 
       const data = await response.json()
-      console.log('📄 Données serveur reçues:', data)
       
       if (data.success && data.translatedText) {
-        console.log('✅ Traduction serveur réussie:', data.translatedText.substring(0, 50) + '...')
         return data.translatedText
       }
       
       throw new Error('Format de réponse invalide')
     } catch (error) {
-      console.error('❌ Erreur API serveur:', error)
+      console.error('Erreur API serveur:', error)
       throw error
     }
   },
@@ -67,22 +61,18 @@ export const translationService = {
   // Traduire un objet avec des champs bilingues
   async translateBilingualObject(obj, fromLang = 'fr', toLang = 'en') {
     try {
-      console.log('🌐 Traduction bilingue:', { fromLang, toLang, obj: Object.keys(obj) })
-      
       // Essayer d'abord la traduction normale
       try {
         const result = await this.translateBilingualObjectInternal(obj, fromLang, toLang)
-        console.log('✅ Traduction bilingue réussie')
         return result
       } catch (error) {
-        console.warn('⚠️ Traduction normale échouée, utilisation du fallback:', error)
+        console.warn('Traduction normale échouée, utilisation du fallback:', error)
         // Utiliser le service de fallback
         const fallbackResult = await fallbackTranslationService.translateBilingualObject(obj, fromLang, toLang)
-        console.log('✅ Traduction fallback réussie')
         return fallbackResult
       }
     } catch (error) {
-      console.error('❌ Erreur de traduction bilingue:', error)
+      console.error('Erreur de traduction bilingue:', error)
       throw error
     }
   },
@@ -98,7 +88,6 @@ export const translationService = {
       if (obj[field] && obj[field][fromLang]) {
         const sourceText = obj[field][fromLang]
         if (sourceText.trim() !== '') {
-          console.log(`🔄 Traduction du champ ${field}:`, sourceText.substring(0, 30) + '...')
           try {
             let translatedText
             if (field === 'content' && sourceText.length > 400) {
@@ -107,13 +96,12 @@ export const translationService = {
             } else {
               translatedText = await this.translateText(sourceText, fromLang, toLang)
             }
-            console.log(`✅ ${field} traduit:`, translatedText.substring(0, 30) + '...')
             translatedObj[field] = {
               ...obj[field],
               [toLang]: translatedText
             }
           } catch (error) {
-            console.error(`❌ Erreur de traduction pour ${field}:`, error)
+            console.error(`Erreur de traduction pour ${field}:`, error)
             // Garder le texte original en cas d'erreur
             translatedObj[field] = {
               ...obj[field],
@@ -152,23 +140,19 @@ export const translationService = {
       parts.push(part)
     }
     
-    console.log(`📝 Texte divisé en ${parts.length} parties`)
-    
     // Traduire chaque partie avec un délai
     const translatedParts = []
     for (let i = 0; i < parts.length; i++) {
-      console.log(`🔄 Traduction partie ${i + 1}/${parts.length}`)
       try {
         const translatedPart = await this.translateText(parts[i], fromLang, toLang)
         translatedParts.push(translatedPart)
         
         // Délai de 1 seconde entre les traductions pour éviter de surcharger l'API
         if (i < parts.length - 1) {
-          console.log('⏳ Attente 1 seconde avant la prochaine traduction...')
           await new Promise(resolve => setTimeout(resolve, 1000))
         }
       } catch (error) {
-        console.warn(`⚠️ Erreur traduction partie ${i + 1}, utilisation du texte original`)
+        console.warn(`Erreur traduction partie ${i + 1}, utilisation du texte original`)
         translatedParts.push(parts[i])
       }
     }

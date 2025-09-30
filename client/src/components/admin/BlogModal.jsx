@@ -143,9 +143,6 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
   // Charger les données du blog si en mode édition
   useEffect(() => {
     if (blog) {
-      console.log('🔍 [BLOG MODAL] Blog data received:', blog);
-      console.log('🔍 [BLOG MODAL] Title type:', typeof blog.title, blog.title);
-      console.log('🔍 [BLOG MODAL] Converted title:', convertToBilingual(blog.title));
       
       setFormData({
         title: convertToBilingual(blog.title),
@@ -187,7 +184,6 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
       const savedData = loadFromStorage()
       if (savedData) {
         setFormData(savedData)
-        console.log('📝 Brouillon chargé depuis localStorage')
       } else {
         setFormData({
           title: { fr: '', en: '' },
@@ -536,8 +532,6 @@ const BlogModal = ({ isOpen, onClose, blog, onSuccess }) => {
                 type="text"
                 value={formData.title[selectedLanguage] || ''}
                 onChange={(e) => {
-                  console.log('🔍 [BLOG MODAL] Title input value:', e.target.value);
-                  console.log('🔍 [BLOG MODAL] Current formData.title:', formData.title);
                   handleTitleChange(selectedLanguage, e.target.value);
                 }}
                 className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
