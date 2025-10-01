@@ -1,6 +1,4 @@
-import fallbackTranslationService from './fallbackTranslationService'
-
-// Service de traduction automatique utilisant l'API Google Translate avec fallback
+// Service de traduction automatique via notre backend (évite les problèmes CORS)
 export const translationService = {
   // Traduire du texte simple
   async translateText(text, fromLang = 'auto', toLang = 'en') {
@@ -14,9 +12,9 @@ export const translationService = {
         const result = await this.callGoogleTranslateAPI(text, fromLang, toLang)
         return result
       } catch (googleError) {
-        console.warn('Google Translate échoué, utilisation du fallback:', googleError)
-        // Utiliser le service de fallback
-        return await fallbackTranslationService.translateText(text, fromLang, toLang)
+        console.warn('Traduction via serveur échouée:', googleError)
+        // Retourner le texte original si la traduction échoue
+        return text
       }
     } catch (error) {
       console.error('Erreur de traduction:', error)
@@ -28,7 +26,13 @@ export const translationService = {
   async callGoogleTranslateAPI(text, fromLang, toLang) {
     try {
       const token = localStorage.getItem('adminToken')
-      const response = await fetch('/api/blogs/translate', {
+      
+      // Utiliser l'URL complète en production
+      const apiUrl = import.meta.env.PROD 
+        ? 'https://ubb-enterprise-health-check.onrender.com/api/blogs/translate'
+        : '/api/blogs/translate'
+      
+      const response = await fetch(apiUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -61,19 +65,24 @@ export const translationService = {
   // Traduire un objet avec des champs bilingues
   async translateBilingualObject(obj, fromLang = 'fr', toLang = 'en') {
     try {
-      // Essayer d'abord la traduction normale
-      try {
-        const result = await this.translateBilingualObjectInternal(obj, fromLang, toLang)
-        return result
-      } catch (error) {
-        console.warn('Traduction normale échouée, utilisation du fallback:', error)
-        // Utiliser le service de fallback
-        const fallbackResult = await fallbackTranslationService.translateBilingualObject(obj, fromLang, toLang)
-        return fallbackResult
-      }
+      const result = await this.translateBilingualObjectInternal(obj, fromLang, toLang)
+      return result
     } catch (error) {
       console.error('Erreur de traduction bilingue:', error)
-      throw error
+      // En cas d'erreur, retourner l'objet avec le texte original copié
+      const translatedObj = { ...obj }
+      const fieldsToTranslate = ['title', 'excerpt', 'content', 'metaDescription', 'metaKeywords']
+      
+      for (const field of fieldsToTranslate) {
+        if (obj[field] && obj[field][fromLang]) {
+          translatedObj[field] = {
+            ...obj[field],
+            [toLang]: obj[field][fromLang] // Utiliser le texte original
+          }
+        }
+      }
+      
+      return translatedObj
     }
   },
 
