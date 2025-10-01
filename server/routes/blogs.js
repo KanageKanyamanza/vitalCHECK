@@ -175,6 +175,98 @@ const authenticateAdmin = async (req, res, next) => {
 
 // ===== ROUTES PUBLIQUES =====
 
+// POST /translate - Route de traduction (DOIT être avant /:slug pour éviter les conflits)
+router.post('/translate', authenticateAdmin, async (req, res) => {
+  try {
+    console.log('🌐 [TRANSLATE] Requête de traduction reçue:', {
+      method: req.method,
+      url: req.url,
+      body: req.body
+    });
+    
+    const { text, fromLang = 'fr', toLang = 'en' } = req.body;
+
+    if (!text || text.trim() === '') {
+      return res.status(400).json({
+        success: false,
+        message: 'Texte à traduire requis'
+      });
+    }
+
+    // Essayer d'abord MyMemory
+    try {
+      const myMemoryUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${fromLang}|${toLang}`;
+      
+      const response = await fetch(myMemoryUrl, {
+        method: 'GET',
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (data && data.responseData && data.responseData.translatedText) {
+          return res.json({
+            success: true,
+            translatedText: data.responseData.translatedText
+          });
+        }
+      }
+    } catch (myMemoryError) {
+      console.log('⚠️ [TRANSLATE] MyMemory échoué, tentative LibreTranslate');
+    }
+
+    // Fallback vers LibreTranslate
+    try {
+      const libreTranslateUrl = 'https://libretranslate.de/translate';
+      
+      const response = await fetch(libreTranslateUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+        },
+        body: JSON.stringify({
+          q: text,
+          source: fromLang === 'auto' ? 'fr' : fromLang,
+          target: toLang,
+          format: 'text'
+        })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        
+        if (data && data.translatedText) {
+          return res.json({
+            success: true,
+            translatedText: data.translatedText
+          });
+        }
+      }
+    } catch (libreError) {
+      console.log('⚠️ [TRANSLATE] LibreTranslate échoué');
+    }
+
+    // Si tout échoue, retourner le texte original
+    console.log('⚠️ [TRANSLATE] Toutes les API ont échoué, retour du texte original');
+    return res.json({
+      success: true,
+      translatedText: text
+    });
+
+  } catch (error) {
+    console.error('❌ [TRANSLATE] Erreur de traduction serveur:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la traduction',
+      error: error.message
+    });
+  }
+});
+
 // GET /blogs - Récupérer tous les blogs publiés
 router.get('/', async (req, res) => {
   try {
@@ -1005,117 +1097,6 @@ router.get('/admin/visits', authenticateAdmin, async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la récupération des visites'
-    });
-  }
-});
-
-// GET /translate/test - Test de la route de traduction
-router.get('/translate/test', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Route de traduction accessible',
-    timestamp: new Date().toISOString()
-  });
-});
-
-// POST /translate/test - Test de la route de traduction POST
-router.post('/translate/test', (req, res) => {
-  res.json({
-    success: true,
-    message: 'Route de traduction POST accessible',
-    timestamp: new Date().toISOString(),
-    body: req.body
-  });
-});
-
-// POST /translate - Traduction via proxy serveur
-router.post('/translate', authenticateAdmin, async (req, res) => {
-  try {
-    console.log('🌐 [TRANSLATE] Requête de traduction reçue:', {
-      method: req.method,
-      url: req.url,
-      body: req.body,
-      headers: req.headers
-    });
-    
-    const { text, fromLang = 'fr', toLang = 'en' } = req.body;
-
-    if (!text || text.trim() === '') {
-      return res.status(400).json({
-        success: false,
-        message: 'Texte à traduire requis'
-      });
-    }
-
-    // Essayer d'abord MyMemory
-    try {
-      const myMemoryUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${fromLang}|${toLang}`;
-      
-      const response = await fetch(myMemoryUrl, {
-        method: 'GET',
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        }
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        
-        if (data && data.responseData && data.responseData.translatedText) {
-          return res.json({
-            success: true,
-            translatedText: data.responseData.translatedText
-          });
-        }
-      }
-    } catch (myMemoryError) {
-      // MyMemory échoué, essai LibreTranslate
-    }
-
-    // Fallback vers LibreTranslate
-    try {
-      const libreTranslateUrl = 'https://libretranslate.de/translate';
-      
-      const response = await fetch(libreTranslateUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
-        },
-        body: JSON.stringify({
-          q: text,
-          source: fromLang === 'auto' ? 'fr' : fromLang,
-          target: toLang,
-          format: 'text'
-        })
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        
-        if (data && data.translatedText) {
-          return res.json({
-            success: true,
-            translatedText: data.translatedText
-          });
-        }
-      }
-    } catch (libreError) {
-      // LibreTranslate échoué
-    }
-
-    // Si tout échoue, retourner le texte original
-    return res.json({
-      success: true,
-      translatedText: text
-    });
-
-  } catch (error) {
-    console.error('Erreur de traduction serveur:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de la traduction',
-      error: error.message
     });
   }
 });
