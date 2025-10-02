@@ -17,7 +17,11 @@
     "close": "Fermer",
     "yes": "Oui",
     "no": "Non",
-    "goHome": "Retour à l'accueil"
+    "goHome": "Retour à l'accueil",
+    "userGuide": "Guide d'utilisation",
+    "downloadGuide": "Télécharger le guide",
+    "downloading": "Téléchargement...",
+    "downloadUserGuide": "Télécharger le guide d'utilisation en PDF"
   },
   "navigation": {
     "home": "Accueil",
@@ -26,7 +30,8 @@
     "results": "Résultats",
     "contact": "Contact",
     "newAssessment": "Nouvelle Évaluation",
-    "blog": "Blog"
+    "blog": "Blog",
+    "userGuide": "Guide"
   },
   "results": {
     "title": "VitalCheck Enterprise Health Check – Résultats",
@@ -253,7 +258,8 @@
     "location": "Dakar, Sénégal",
     "openHours": "Heures d'ouverture",
     "allRightsReserved": "Tous droits réservés",
-    "terms": "Conditions d'utilisation"
+    "terms": "Conditions d'utilisation",
+    "userGuide": "Guide d'utilisation"
   },
   "privacy": {
     "title": "Politique de Confidentialité",

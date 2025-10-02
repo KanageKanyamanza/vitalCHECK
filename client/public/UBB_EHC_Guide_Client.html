@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guide Utilisateur - VitalCheck Enterprise Health Check</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+        }
+        
+        h1 {
+            color: #2563eb;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 10px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        
+        h2 {
+            color: #1e40af;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 8px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+        
+        h3 {
+            color: #374151;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 25px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .highlight {
+            background-color: #fef3c7;
+            padding: 15px;
+            border-left: 4px solid #f59e0b;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .info-box {
+            background-color: #dbeafe;
+            padding: 15px;
+            border-left: 4px solid #2563eb;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .success-box {
+            background-color: #f0fdf4;
+            padding: 15px;
+            border-left: 4px solid #10b981;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .warning-box {
+            background-color: #fef2f2;
+            padding: 15px;
+            border-left: 4px solid #ef4444;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .step-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .step-number {
+            background-color: #2563eb;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        
+        .toc {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .toc h2 {
+            margin-top: 0;
+            color: #1f2937;
+        }
+        
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .toc li {
+            margin-bottom: 5px;
+        }
+        
+        .toc a {
+            color: #4b5563;
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+        
+        .score-example {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .score-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .score-red { background-color: #ef4444; }
+        .score-amber { background-color: #f59e0b; }
+        .score-green { background-color: #10b981; }
+        
+        @media print {
+            body {
+                font-size: 12px;
+            }
+            
+            h1 {
+                font-size: 18px;
+            }
+            
+            h2 {
+                font-size: 16px;
+            }
+            
+            h3 {
+                font-size: 14px;
+            }
+            
+            /* Éviter les coupures de mots */
+            * {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            /* Éviter les coupures dans les paragraphes */
+            p {
+                orphans: 3;
+                widows: 3;
+                page-break-inside: avoid;
+            }
+            
+            /* Éviter les coupures dans les listes */
+            ul, ol {
+                page-break-inside: avoid;
+            }
+            
+            /* Éviter les coupures dans les boîtes importantes */
+            .step-box, .info-box, .success-box, .warning-box, .highlight {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            /* Éviter les coupures dans les titres */
+            h1, h2, h3, h4, h5, h6 {
+                page-break-after: avoid;
+                break-after: avoid;
+            }
+            
+            /* Forcer les sauts de page avant les sections importantes */
+            h2 {
+                page-break-before: auto;
+                break-before: auto;
+            }
+            
+            /* Éviter les coupures dans les tableaux */
+            table {
+                page-break-inside: avoid;
+            }
+            
+            /* Éviter les coupures dans les éléments avec des numéros */
+            .step-number {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Guide Utilisateur - VitalCheck Enterprise Health Check</h1>
+    
+    <div class="info-box">
+        <h3>🎯 À propos de ce guide</h3>
+        <p>Ce guide vous accompagne pas à pas dans l'utilisation d'VitalCheck Enterprise Health Check. Vous apprendrez à évaluer la santé de votre entreprise et à interpréter vos résultats pour prendre les meilleures décisions.</p>
+    </div>
+    
+    <div class="toc">
+        <h2>Table des Matières</h2>
+        <ul>
+            <li><a href="#introduction">1. Qu'est-ce qu'VitalCheck Enterprise Health Check ?</a></li>
+            <li><a href="#evaluation">2. Comment fonctionne l'évaluation ?</a></li>
+            <li><a href="#parcours">3. Votre parcours étape par étape</a></li>
+            <li><a href="#resultats">4. Comprendre vos résultats</a></li>
+            <li><a href="#rapports">5. Vos rapports personnalisés</a></li>
+            <li><a href="#conseils">6. Conseils et recommandations</a></li>
+            <li><a href="#faq">7. Questions fréquentes</a></li>
+        </ul>
+    </div>
+
+    <h2 id="introduction">1. Qu'est-ce qu'VitalCheck Enterprise Health Check ?</h2>
+    
+    <p><strong>VitalCheck Enterprise Health Check</strong> est un outil d'évaluation qui vous permet de mesurer la santé globale de votre entreprise. En répondant à 12 questions stratégiques, vous obtenez une analyse complète de 6 domaines clés de votre organisation.</p>
+
+    <div class="success-box">
+        <h3>🎯 Pourquoi évaluer votre entreprise ?</h3>
+        <ul>
+            <li><strong>Identifier les points forts</strong> : Mettre en valeur ce qui fonctionne bien</li>
+            <li><strong>Détecter les faiblesses</strong> : Repérer les domaines à améliorer</li>
+            <li><strong>Prioriser les actions</strong> : Savoir où concentrer vos efforts</li>
+            <li><strong>Mesurer les progrès</strong> : Suivre l'évolution dans le temps</li>
+            <li><strong>Prendre des décisions éclairées</strong> : Baser vos choix sur des données concrètes</li>
+        </ul>
+    </div>
+
+    <h3>Les 6 piliers de la santé d'entreprise</h3>
+    <ol>
+        <li><strong>💰 Finance & Trésorerie</strong> - Gestion financière et flux de trésorerie</li>
+        <li><strong>⚙️ Opérations & Processus</strong> - Efficacité opérationnelle et organisation</li>
+        <li><strong>📈 Ventes & Marketing</strong> - Stratégies commerciales et de communication</li>
+        <li><strong>👥 Ressources Humaines</strong> - Gestion du personnel et développement</li>
+        <li><strong>🎯 Stratégie & Gouvernance</strong> - Vision d'entreprise et pilotage</li>
+        <li><strong>💻 Technologie & Digital</strong> - Maturité numérique et outils</li>
+    </ol>
+
+    <h2 id="evaluation">2. Comment fonctionne l'évaluation ?</h2>
+
+    <h3>Le système de notation</h3>
+    <p>Chaque question vous propose 4 options de réponse, notées de 0 à 3 points :</p>
+    
+    <div class="step-box">
+        <h4>Exemple de question :</h4>
+        <p><strong>"Avez-vous des états financiers à jour (Bilan, Compte de résultat, Flux de trésorerie) ?"</strong></p>
+        <ul>
+            <li><strong>0 point</strong> : Aucun document</li>
+            <li><strong>1 point</strong> : Documents basiques, non mis à jour</li>
+            <li><strong>2 points</strong> : Mis à jour trimestriellement</li>
+            <li><strong>3 points</strong> : Mis à jour mensuellement</li>
+        </ul>
+    </div>
+
+    <h3>Calcul des scores</h3>
+    <ul>
+        <li><strong>Score par pilier</strong> : Moyenne des 2 questions × 25 (0-100 points)</li>
+        <li><strong>Score global</strong> : Moyenne de tous les piliers</li>
+        <li><strong>Durée</strong> : Environ 10-15 minutes</li>
+    </ul>
+
+    <h3>Les seuils de performance</h3>
+    <div class="score-example">
+        <span class="score-badge score-red">🔴 Rouge (0-39)</span>
+        <span>Critique - Action immédiate requise</span>
+    </div>
+    <div class="score-example">
+        <span class="score-badge score-amber">🟡 Ambre (40-69)</span>
+        <span>En développement - Amélioration nécessaire</span>
+    </div>
+    <div class="score-example">
+        <span class="score-badge score-green">🟢 Vert (70-100)</span>
+        <span>Excellent - Maintien et optimisation</span>
+    </div>
+
+    <h2 id="parcours">3. Votre parcours étape par étape</h2>
+
+    <div class="step-box">
+        <h3><span class="step-number">1</span>Inscription et informations</h3>
+        <p><strong>Durée :</strong> 2-3 minutes</p>
+        <p>Renseignez les informations de base sur votre entreprise :</p>
+        <ul>
+            <li>Nom de l'entreprise</li>
+            <li>Secteur d'activité</li>
+            <li>Taille de l'entreprise</li>
+            <li>Email de contact</li>
+            <li>Langue préférée (Français/English)</li>
+        </ul>
+        <div class="info-box">
+            <p><strong>💡 Conseil :</strong> Choisissez la langue dans laquelle vous vous sentez le plus à l'aise pour réfléchir aux questions stratégiques.</p>
+        </div>
+    </div>
+
+    <div class="step-box">
+        <h3><span class="step-number">2</span>Répondre aux questions</h3>
+        <p><strong>Durée :</strong> 10-15 minutes</p>
+        <p>L'évaluation comprend 12 questions réparties en 6 piliers :</p>
+        <ul>
+            <li>2 questions par pilier</li>
+            <li>Navigation libre (précédent/suivant)</li>
+            <li>Sauvegarde automatique de vos réponses</li>
+            <li>Possibilité de reprendre plus tard</li>
+        </ul>
+        <div class="highlight">
+            <p><strong>⚠️ Important :</strong> Vos réponses sont sauvegardées automatiquement. Si vous interrompez l'évaluation, vous recevrez un lien pour reprendre où vous vous êtes arrêté.</p>
+        </div>
+    </div>
+
+    <div class="step-box">
+        <h3><span class="step-number">3</span>Visualiser vos résultats</h3>
+        <p><strong>Durée :</strong> 2-3 minutes</p>
+        <p>Découvrez immédiatement :</p>
+        <ul>
+            <li>Votre score global avec indicateur coloré</li>
+            <li>Les scores détaillés par pilier</li>
+            <li>Les recommandations personnalisées</li>
+            <li>Les domaines prioritaires à améliorer</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h3><span class="step-number">4</span>Générer votre rapport</h3>
+        <p><strong>Durée :</strong> 1-2 minutes</p>
+        <p>Créez votre rapport personnalisé :</p>
+        <ul>
+            <li>Rapport PDF gratuit avec vos résultats</li>
+            <li>Envoi automatique par email</li>
+            <li>Téléchargement direct possible</li>
+            <li>Option rapport premium disponible</li>
+        </ul>
+    </div>
+
+    <h2 id="resultats">4. Comprendre vos résultats</h2>
+
+    <h3>Le score global</h3>
+    <p>Votre score global (0-100) reflète la santé générale de votre entreprise. Il est calculé comme la moyenne des 6 piliers.</p>
+
+    <div class="info-box">
+        <h4>Comment interpréter votre score global :</h4>
+        <ul>
+            <li><strong>70-100 (Vert)</strong> : Votre entreprise est en excellente santé. Concentrez-vous sur l'optimisation et l'innovation.</li>
+            <li><strong>40-69 (Ambre)</strong> : Votre entreprise a de bonnes bases mais nécessite des améliorations. Identifiez les priorités.</li>
+            <li><strong>0-39 (Rouge)</strong> : Votre entreprise nécessite une attention immédiate. Planifiez des actions correctives urgentes.</li>
+        </ul>
+    </div>
+
+    <h3>Les scores par pilier</h3>
+    <p>Chaque pilier est évalué indépendamment, vous permettant d'identifier précisément vos forces et faiblesses.</p>
+
+    <div class="step-box">
+        <h4>💰 Finance & Trésorerie</h4>
+        <p>Évalue la gestion financière, la trésorerie et la planification budgétaire.</p>
+        <ul>
+            <li><strong>Points clés :</strong> États financiers, trésorerie, prévisions</li>
+            <li><strong>Impact :</strong> Stabilité financière et capacité d'investissement</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h4>⚙️ Opérations & Processus</h4>
+        <p>Mesure l'efficacité opérationnelle et la qualité des processus.</p>
+        <ul>
+            <li><strong>Points clés :</strong> Processus, qualité, efficacité</li>
+            <li><strong>Impact :</strong> Productivité et satisfaction client</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h4>📈 Ventes & Marketing</h4>
+        <p>Analyse les stratégies commerciales et de communication.</p>
+        <ul>
+            <li><strong>Points clés :</strong> Stratégie commerciale, marketing, relation client</li>
+            <li><strong>Impact :</strong> Croissance et positionnement</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h4>👥 Ressources Humaines</h4>
+        <p>Évalue la gestion du personnel et le développement des compétences.</p>
+        <ul>
+            <li><strong>Points clés :</strong> Recrutement, formation, motivation</li>
+            <li><strong>Impact :</strong> Performance et fidélisation</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h4>🎯 Stratégie & Gouvernance</h4>
+        <p>Examine la vision stratégique et les mécanismes de pilotage.</p>
+        <ul>
+            <li><strong>Points clés :</strong> Vision, planification, gouvernance</li>
+            <li><strong>Impact :</strong> Direction et cohérence</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h4>💻 Technologie & Digital</h4>
+        <p>Assesse la maturité numérique et l'utilisation des outils technologiques.</p>
+        <ul>
+            <li><strong>Points clés :</strong> Outils numériques, cybersécurité, innovation</li>
+            <li><strong>Impact :</strong> Compétitivité et efficacité</li>
+        </ul>
+    </div>
+
+    <h2 id="rapports">5. Vos rapports personnalisés</h2>
+
+    <h3>Rapport gratuit</h3>
+    <div class="success-box">
+        <h4>📄 Ce que contient votre rapport gratuit :</h4>
+        <ul>
+            <li>Vos scores détaillés par pilier</li>
+            <li>Votre score global avec interprétation</li>
+            <li>Recommandations personnalisées</li>
+            <li>Graphiques de visualisation</li>
+            <li>Informations sur votre entreprise</li>
+        </ul>
+    </div>
+
+    <h3>Rapport premium</h3>
+    <div class="highlight">
+        <h4>⭐ Rapport premium (optionnel) :</h4>
+        <ul>
+            <li>Analyse comparative avec votre secteur</li>
+            <li>Plan d'action détaillé</li>
+            <li>Priorisation des actions</li>
+            <li>Consultation personnalisée</li>
+            <li>Suivi des progrès</li>
+        </ul>
+    </div>
+
+    <h3>Comment obtenir votre rapport</h3>
+    <ol>
+        <li>Terminez votre évaluation</li>
+        <li>Cliquez sur "Générer le rapport"</li>
+        <li>Attendez la génération (1-2 minutes)</li>
+        <li>Recevez le rapport par email</li>
+        <li>Téléchargez-le directement si souhaité</li>
+    </ol>
+
+    <h2 id="conseils">6. Conseils et recommandations</h2>
+
+    <h3>Comment bien répondre aux questions</h3>
+    <div class="info-box">
+        <h4>💡 Nos conseils pour une évaluation réussie :</h4>
+        <ul>
+            <li><strong>Soyez honnête</strong> : L'objectif est d'identifier les vrais besoins</li>
+            <li><strong>Pensez à votre situation actuelle</strong> : Pas à vos projets futurs</li>
+            <li><strong>Consultez votre équipe</strong> : Demandez l'avis de vos collaborateurs</li>
+            <li><strong>Prenez votre temps</strong> : Réfléchissez à chaque réponse</li>
+            <li><strong>Notez vos idées</strong> : Utilisez un bloc-notes pour vos réflexions</li>
+        </ul>
+    </div>
+
+    <h3>Que faire après l'évaluation</h3>
+    <div class="step-box">
+        <h4>📋 Plan d'action recommandé :</h4>
+        <ol>
+            <li><strong>Analysez vos résultats</strong> : Identifiez les piliers les plus faibles</li>
+            <li><strong>Priorisez les actions</strong> : Commencez par les domaines critiques</li>
+            <li><strong>Impliquez votre équipe</strong> : Partagez les résultats et les objectifs</li>
+            <li><strong>Planifiez les améliorations</strong> : Définissez des étapes concrètes</li>
+            <li><strong>Mesurez les progrès</strong> : Refaites l'évaluation dans 6 mois</li>
+        </ol>
+    </div>
+
+    <h3>Exemples d'actions par pilier</h3>
+
+    <div class="step-box">
+        <h4>💰 Finance & Trésorerie</h4>
+        <ul>
+            <li>Mettre en place une comptabilité mensuelle</li>
+            <li>Créer des prévisions de trésorerie</li>
+            <li>Séparer les finances personnelles et professionnelles</li>
+            <li>Établir un budget annuel</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h4>⚙️ Opérations & Processus</h4>
+        <ul>
+            <li>Documenter les processus clés</li>
+            <li>Mettre en place des indicateurs de performance</li>
+            <li>Améliorer la qualité des produits/services</li>
+            <li>Optimiser les flux de travail</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h4>📈 Ventes & Marketing</h4>
+        <ul>
+            <li>Définir une stratégie commerciale claire</li>
+            <li>Améliorer la présence digitale</li>
+            <li>Développer la relation client</li>
+            <li>Mesurer l'efficacité marketing</li>
+        </ul>
+    </div>
+
+    <h2 id="faq">7. Questions fréquentes</h2>
+
+    <div class="info-box">
+        <h4>❓ Puis-je reprendre mon évaluation plus tard ?</h4>
+        <p><strong>Réponse :</strong> Oui ! Si vous interrompez l'évaluation, vous recevrez un lien par email pour reprendre exactement où vous vous êtes arrêté. Vos réponses sont sauvegardées automatiquement.</p>
+    </div>
+
+    <div class="info-box">
+        <h4>❓ Combien de temps prend l'évaluation ?</h4>
+        <p><strong>Réponse :</strong> L'évaluation complète prend généralement 10-15 minutes. Prenez le temps de réfléchir à chaque question pour obtenir des résultats précis.</p>
+    </div>
+
+    <div class="info-box">
+        <h4>❓ Puis-je modifier mes réponses après soumission ?</h4>
+        <p><strong>Réponse :</strong> Non, une fois l'évaluation soumise, les réponses sont finales. Cependant, vous pouvez créer une nouvelle évaluation à tout moment.</p>
+    </div>
+
+    <div class="info-box">
+        <h4>❓ Mes données sont-elles sécurisées ?</h4>
+        <p><strong>Réponse :</strong> Absolument ! Toutes vos données sont chiffrées et stockées de manière sécurisée. Nous respectons le RGPD et ne partageons jamais vos informations.</p>
+    </div>
+
+    <div class="info-box">
+        <h4>❓ Que faire si je n'ai pas reçu mon rapport ?</h4>
+        <p><strong>Réponse :</strong> Vérifiez votre dossier spam. Si le problème persiste, contactez notre support. Vous pouvez aussi télécharger le rapport directement depuis la page de résultats.</p>
+    </div>
+
+    <div class="info-box">
+        <h4>❓ À quelle fréquence dois-je refaire l'évaluation ?</h4>
+        <p><strong>Réponse :</strong> Nous recommandons de refaire l'évaluation tous les 6 mois pour suivre vos progrès et ajuster vos priorités d'amélioration.</p>
+    </div>
+
+    <div class="warning-box">
+        <h4>❓ Que faire si j'ai des questions techniques ?</h4>
+        <p><strong>Réponse :</strong> Contactez notre support technique :</p>
+        <ul>
+            <li>Email : support@VitalCheck-ehc.com</li>
+            <li>Heures d'ouverture : 9h-18h (lundi-vendredi)</li>
+            <li>Réponse sous 24h en moyenne</li>
+        </ul>
+    </div>
+
+    <h2>Conclusion</h2>
+
+    <div class="success-box">
+        <h3>🎯 Prêt à évaluer votre entreprise ?</h3>
+        <p>VitalCheck Enterprise Health Check vous donne les clés pour comprendre et améliorer la santé de votre entreprise. En quelques minutes, vous obtiendrez une vision claire de vos forces et faiblesses, avec des recommandations concrètes pour progresser.</p>
+        
+        <p><strong>Commencez dès maintenant votre évaluation gratuite !</strong></p>
+    </div>
+
+    <hr style="margin: 40px 0; border: none; border-top: 2px solid #e5e7eb;">
+    
+    <p style="text-align: center; color: #6b7280; font-size: 14px;">
+        <em>Guide Utilisateur VitalCheck Enterprise Health Check - Version 1.0</em><br>
+        <em>Dernière mise à jour : Septembre 2025</em>
+    </p>
+</body>
+</html>

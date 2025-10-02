@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Guide - VitalCheck Enterprise Health Check</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #ffffff;
+        }
+        
+        h1 {
+            color: #2563eb;
+            border-bottom: 3px solid #2563eb;
+            padding-bottom: 10px;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            font-size: 28px;
+        }
+        
+        h2 {
+            color: #1e40af;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 8px;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+        
+        h3 {
+            color: #374151;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+        
+        p {
+            margin-bottom: 15px;
+            text-align: justify;
+        }
+        
+        ul, ol {
+            margin-bottom: 15px;
+            padding-left: 25px;
+        }
+        
+        li {
+            margin-bottom: 8px;
+        }
+        
+        .highlight {
+            background-color: #fef3c7;
+            padding: 15px;
+            border-left: 4px solid #f59e0b;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .info-box {
+            background-color: #dbeafe;
+            padding: 15px;
+            border-left: 4px solid #2563eb;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .success-box {
+            background-color: #f0fdf4;
+            padding: 15px;
+            border-left: 4px solid #10b981;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .warning-box {
+            background-color: #fef2f2;
+            padding: 15px;
+            border-left: 4px solid #ef4444;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+        
+        .step-box {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .step-number {
+            background-color: #2563eb;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+        
+        .toc {
+            background-color: #f9fafb;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        .toc h2 {
+            margin-top: 0;
+            color: #1f2937;
+        }
+        
+        .toc ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .toc li {
+            margin-bottom: 5px;
+        }
+        
+        .toc a {
+            color: #4b5563;
+            text-decoration: none;
+        }
+        
+        .toc a:hover {
+            color: #2563eb;
+            text-decoration: underline;
+        }
+        
+        .score-example {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        
+        .score-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: bold;
+            color: white;
+        }
+        
+        .score-red { background-color: #ef4444; }
+        .score-amber { background-color: #f59e0b; }
+        .score-green { background-color: #10b981; }
+        
+        @media print {
+            body {
+                font-size: 12px;
+            }
+            
+            h1 {
+                font-size: 18px;
+            }
+            
+            h2 {
+                font-size: 16px;
+            }
+            
+            h3 {
+                font-size: 14px;
+            }
+            
+            * {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            p {
+                orphans: 3;
+                widows: 3;
+                page-break-inside: avoid;
+            }
+            
+            ul, ol {
+                page-break-inside: avoid;
+            }
+            
+            .step-box, .info-box, .success-box, .warning-box, .highlight {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            h1, h2, h3, h4, h5, h6 {
+                page-break-after: avoid;
+                break-after: avoid;
+            }
+            
+            h2 {
+                page-break-before: auto;
+                break-before: auto;
+            }
+            
+            table {
+                page-break-inside: avoid;
+            }
+            
+            .step-number {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>User Guide - VitalCheck Enterprise Health Check</h1>
+    
+    <div class="info-box">
+        <h3>🎯 About this guide</h3>
+        <p>This guide will walk you through using VitalCheck Enterprise Health Check step by step. You'll learn how to assess your business health and interpret your results to make the best decisions.</p>
+    </div>
+    
+    <div class="toc">
+        <h2>Table of Contents</h2>
+        <ul>
+            <li><a href="#introduction">1. What is VitalCheck Enterprise Health Check?</a></li>
+            <li><a href="#evaluation">2. How does the assessment work?</a></li>
+            <li><a href="#journey">3. Your step-by-step journey</a></li>
+            <li><a href="#results">4. Understanding your results</a></li>
+            <li><a href="#reports">5. Your personalized reports</a></li>
+            <li><a href="#tips">6. Tips and recommendations</a></li>
+            <li><a href="#faq">7. Frequently asked questions</a></li>
+        </ul>
+    </div>
+
+    <h2 id="introduction">1. What is VitalCheck Enterprise Health Check?</h2>
+    
+    <p><strong>VitalCheck Enterprise Health Check</strong> is an assessment tool that allows you to measure the overall health of your business. By answering 12 strategic questions, you get a comprehensive analysis of 6 key areas of your organization.</p>
+
+    <div class="success-box">
+        <h3>🎯 Why assess your business?</h3>
+        <ul>
+            <li><strong>Identify strengths</strong>: Highlight what's working well</li>
+            <li><strong>Detect weaknesses</strong>: Spot areas for improvement</li>
+            <li><strong>Prioritize actions</strong>: Know where to focus your efforts</li>
+            <li><strong>Measure progress</strong>: Track evolution over time</li>
+            <li><strong>Make informed decisions</strong>: Base your choices on concrete data</li>
+        </ul>
+    </div>
+
+    <h3>The 6 pillars of business health</h3>
+    <ol>
+        <li><strong>💰 Finance & Cash Flow</strong> - Financial management and cash flow</li>
+        <li><strong>⚙️ Operations & Processes</strong> - Operational efficiency and organization</li>
+        <li><strong>📈 Sales & Marketing</strong> - Commercial and communication strategies</li>
+        <li><strong>👥 Human Resources</strong> - Staff management and development</li>
+        <li><strong>🎯 Strategy & Governance</strong> - Business vision and steering</li>
+        <li><strong>💻 Technology & Digital</strong> - Digital maturity and tools</li>
+    </ol>
+
+    <h2 id="evaluation">2. How does the assessment work?</h2>
+
+    <h3>Scoring system</h3>
+    <p>Each question offers 4 answer options, scored from 0 to 3 points:</p>
+    
+    <div class="step-box">
+        <h4>Example question:</h4>
+        <p><strong>"Do you have up-to-date financial statements (Balance Sheet, Income Statement, Cash Flow)?"</strong></p>
+        <ul>
+            <li><strong>0 points</strong>: No documents</li>
+            <li><strong>1 point</strong>: Basic documents, not updated</li>
+            <li><strong>2 points</strong>: Updated quarterly</li>
+            <li><strong>3 points</strong>: Updated monthly</li>
+        </ul>
+    </div>
+
+    <h3>Score calculation</h3>
+    <ul>
+        <li><strong>Pillar score</strong>: Average of 2 questions × 25 (0-100 points)</li>
+        <li><strong>Overall score</strong>: Average of all pillars</li>
+        <li><strong>Duration</strong>: About 10-15 minutes</li>
+    </ul>
+
+    <h3>Performance thresholds</h3>
+    <div class="score-example">
+        <span class="score-badge score-red">🔴 Red (0-39)</span>
+        <span>Critical - Immediate action required</span>
+    </div>
+    <div class="score-example">
+        <span class="score-badge score-amber">🟡 Amber (40-69)</span>
+        <span>Developing - Improvement needed</span>
+    </div>
+    <div class="score-example">
+        <span class="score-badge score-green">🟢 Green (70-100)</span>
+        <span>Excellent - Maintain and optimize</span>
+    </div>
+
+    <h2 id="journey">3. Your step-by-step journey</h2>
+
+    <div class="step-box">
+        <h3><span class="step-number">1</span>Registration and information</h3>
+        <p><strong>Duration:</strong> 2-3 minutes</p>
+        <p>Provide basic information about your business:</p>
+        <ul>
+            <li>Company name</li>
+            <li>Industry sector</li>
+            <li>Company size</li>
+            <li>Contact email</li>
+            <li>Preferred language (English/Français)</li>
+        </ul>
+        <div class="info-box">
+            <p><strong>💡 Tip:</strong> Choose the language you feel most comfortable with for thinking about strategic questions.</p>
+        </div>
+    </div>
+
+    <div class="step-box">
+        <h3><span class="step-number">2</span>Answer the questions</h3>
+        <p><strong>Duration:</strong> 10-15 minutes</p>
+        <p>The assessment includes 12 questions divided into 6 pillars:</p>
+        <ul>
+            <li>2 questions per pillar</li>
+            <li>Free navigation (previous/next)</li>
+            <li>Automatic saving of your answers</li>
+            <li>Possibility to resume later</li>
+        </ul>
+        <div class="highlight">
+            <p><strong>⚠️ Important:</strong> Your answers are automatically saved. If you interrupt the assessment, you'll receive a link to resume where you left off.</p>
+        </div>
+    </div>
+
+    <div class="step-box">
+        <h3><span class="step-number">3</span>View your results</h3>
+        <p><strong>Duration:</strong> 2-3 minutes</p>
+        <p>Discover immediately:</p>
+        <ul>
+            <li>Your overall score with color indicator</li>
+            <li>Detailed scores by pillar</li>
+            <li>Personalized recommendations</li>
+            <li>Priority areas for improvement</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h3><span class="step-number">4</span>Generate your report</h3>
+        <p><strong>Duration:</strong> 1-2 minutes</p>
+        <p>Create your personalized report:</p>
+        <ul>
+            <li>Free PDF report with your results</li>
+            <li>Automatic email delivery</li>
+            <li>Direct download option available</li>
+            <li>Premium report option available</li>
+        </ul>
+    </div>
+
+    <h2 id="results">4. Understanding your results</h2>
+
+    <h3>Overall score</h3>
+    <p>Your overall score (0-100) reflects the general health of your business. It's calculated as the average of the 6 pillars.</p>
+
+    <div class="info-box">
+        <h4>How to interpret your overall score:</h4>
+        <ul>
+            <li><strong>70-100 (Green)</strong>: Your business is in excellent health. Focus on optimization and innovation.</li>
+            <li><strong>40-69 (Amber)</strong>: Your business has good foundations but needs improvements. Identify priorities.</li>
+            <li><strong>0-39 (Red)</strong>: Your business requires immediate attention. Plan urgent corrective actions.</li>
+        </ul>
+    </div>
+
+    <h3>Scores by pillar</h3>
+    <p>Each pillar is evaluated independently, allowing you to precisely identify your strengths and weaknesses.</p>
+
+    <div class="step-box">
+        <h4>💰 Finance & Cash Flow</h4>
+        <p>Evaluates financial management, cash flow and budget planning.</p>
+        <ul>
+            <li><strong>Key points:</strong> Financial statements, cash flow, forecasts</li>
+            <li><strong>Impact:</strong> Financial stability and investment capacity</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h4>⚙️ Operations & Processes</h4>
+        <p>Measures operational efficiency and process quality.</p>
+        <ul>
+            <li><strong>Key points:</strong> Processes, quality, efficiency</li>
+            <li><strong>Impact:</strong> Productivity and customer satisfaction</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h4>📈 Sales & Marketing</h4>
+        <p>Analyzes commercial and communication strategies.</p>
+        <ul>
+            <li><strong>Key points:</strong> Sales strategy, marketing, customer relationship</li>
+            <li><strong>Impact:</strong> Growth and positioning</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h4>👥 Human Resources</h4>
+        <p>Evaluates staff management and skills development.</p>
+        <ul>
+            <li><strong>Key points:</strong> Recruitment, training, motivation</li>
+            <li><strong>Impact:</strong> Performance and retention</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h4>🎯 Strategy & Governance</h4>
+        <p>Examines strategic vision and steering mechanisms.</p>
+        <ul>
+            <li><strong>Key points:</strong> Vision, planning, governance</li>
+            <li><strong>Impact:</strong> Direction and coherence</li>
+        </ul>
+    </div>
+
+    <div class="step-box">
+        <h4>💻 Technology & Digital</h4>
+        <p>Assesses digital maturity and use of technological tools.</p>
+        <ul>
+            <li><strong>Key points:</strong> Digital tools, cybersecurity, innovation</li>
+            <li><strong>Impact:</strong> Competitiveness and efficiency</li>
+        </ul>
+    </div>
+
+    <h2 id="reports">5. Your personalized reports</h2>
+
+    <h3>Free report</h3>
+    <div class="success-box">
+        <h4>📄 What your free report contains:</h4>
+        <ul>
+            <li>Your detailed scores by pillar</li>
+            <li>Your overall score with interpretation</li>
+            <li>Personalized recommendations</li>
+            <li>Visualization charts</li>
+            <li>Information about your business</li>
+        </ul>
+    </div>
+
+    <h3>Premium report</h3>
+    <div class="highlight">
+        <h4>⭐ Premium report (optional):</h4>
+        <ul>
+            <li>Comparative analysis with your sector</li>
+            <li>Detailed action plan</li>
+            <li>Action prioritization</li>
+            <li>Personalized consultation</li>
+            <li>Progress tracking</li>
+        </ul>
+    </div>
+
+    <h3>How to get your report</h3>
+    <ol>
+        <li>Complete your assessment</li>
+        <li>Click "Generate Report"</li>
+        <li>Wait for generation (1-2 minutes)</li>
+        <li>Receive the report by email</li>
+        <li>Download directly if desired</li>
+    </ol>
+
+    <h2 id="tips">6. Tips and recommendations</h2>
+
+    <h3>How to answer questions well</h3>
+    <div class="info-box">
+        <h4>💡 Our tips for a successful assessment:</h4>
+        <ul>
+            <li><strong>Be honest</strong>: The goal is to identify real needs</li>
+            <li><strong>Think about your current situation</strong>: Not about your future projects</li>
+            <li><strong>Consult your team</strong>: Ask for your collaborators' opinions</li>
+            <li><strong>Take your time</strong>: Think about each answer</li>
+            <li><strong>Note your ideas</strong>: Use a notepad for your reflections</li>
+        </ul>
+    </div>
+
+    <h3>What to do after the assessment</h3>
+    <div class="step-box">
+        <h4>📋 Recommended action plan:</h4>
+        <ol>
+            <li><strong>Analyze your results</strong>: Identify the weakest pillars</li>
+            <li><strong>Prioritize actions</strong>: Start with critical areas</li>
+            <li><strong>Involve your team</strong>: Share results and objectives</li>
+            <li><strong>Plan improvements</strong>: Define concrete steps</li>
+            <li><strong>Measure progress</strong>: Retake the assessment in 6 months</li>
+        </ol>
+    </div>
+
+    <h2 id="faq">7. Frequently asked questions</h2>
+
+    <div class="info-box">
+        <h4>❓ Can I resume my assessment later?</h4>
+        <p><strong>Answer:</strong> Yes! If you interrupt the assessment, you'll receive a link by email to resume exactly where you left off. Your answers are automatically saved.</p>
+    </div>
+
+    <div class="info-box">
+        <h4>❓ How long does the assessment take?</h4>
+        <p><strong>Answer:</strong> The complete assessment usually takes 10-15 minutes. Take time to think about each question to get accurate results.</p>
+    </div>
+
+    <div class="info-box">
+        <h4>❓ Can I modify my answers after submission?</h4>
+        <p><strong>Answer:</strong> No, once the assessment is submitted, the answers are final. However, you can create a new assessment at any time.</p>
+    </div>
+
+    <div class="info-box">
+        <h4>❓ Is my data secure?</h4>
+        <p><strong>Answer:</strong> Absolutely! All your data is encrypted and stored securely. We comply with GDPR and never share your information.</p>
+    </div>
+
+    <div class="info-box">
+        <h4>❓ What if I didn't receive my report?</h4>
+        <p><strong>Answer:</strong> Check your spam folder. If the problem persists, contact our support. You can also download the report directly from the results page.</p>
+    </div>
+
+    <div class="info-box">
+        <h4>❓ How often should I retake the assessment?</h4>
+        <p><strong>Answer:</strong> We recommend retaking the assessment every 6 months to track your progress and adjust your improvement priorities.</p>
+    </div>
+
+    <div class="warning-box">
+        <h4>❓ What if I have technical questions?</h4>
+        <p><strong>Answer:</strong> Contact our technical support:</p>
+        <ul>
+            <li>Email: support@VitalCheck-ehc.com</li>
+            <li>Opening hours: 9am-6pm (Monday-Friday)</li>
+            <li>Average response time: 24 hours</li>
+        </ul>
+    </div>
+
+    <h2>Conclusion</h2>
+
+    <div class="success-box">
+        <h3>🎯 Ready to assess your business?</h3>
+        <p>VitalCheck Enterprise Health Check gives you the keys to understand and improve your business health. In just a few minutes, you'll get a clear view of your strengths and weaknesses, with concrete recommendations to progress.</p>
+        
+        <p><strong>Start your free assessment now!</strong></p>
+    </div>
+
+    <hr style="margin: 40px 0; border: none; border-top: 2px solid #e5e7eb;">
+    
+    <p style="text-align: center; color: #6b7280; font-size: 14px;">
+        <em>VitalCheck Enterprise Health Check User Guide - Version 1.0</em><br>
+        <em>Last updated: September 2025</em>
+    </p>
+</body>
+</html>

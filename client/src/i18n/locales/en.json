@@ -17,7 +17,11 @@
     "close": "Close",
     "yes": "Yes",
     "no": "No",
-    "goHome": "Go Home"
+    "goHome": "Go Home",
+    "userGuide": "User Guide",
+    "downloadGuide": "Download Guide",
+    "downloading": "Downloading...",
+    "downloadUserGuide": "Download user guide as PDF"
   },
   "navigation": {
     "home": "Home",
@@ -26,7 +30,8 @@
     "results": "Results",
     "contact": "Contact",
     "newAssessment": "New Assessment",
-    "blog": "Blog"
+    "blog": "Blog",
+    "userGuide": "Guide"
   },
   "results": {
     "title": "VitalCheck Enterprise Health Check – Results",
@@ -253,7 +258,8 @@
     "location": "Dakar, Senegal",
     "openHours": "Open Hours",
     "allRightsReserved": "All rights reserved",
-    "terms": "Terms of Service"
+    "terms": "Terms of Service",
+    "userGuide": "User Guide"
   },
   "privacy": {
     "title": "Privacy Policy",
