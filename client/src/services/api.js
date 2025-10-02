@@ -228,6 +228,17 @@ export const adminApiService = {
   exportAssessmentsPDF: () => adminApi.get('/admin/export/assessments/pdf', { responseType: 'blob' }),
   exportStatsExcel: () => adminApi.get('/admin/export/stats/excel', { responseType: 'blob' }),
   exportStatsPDF: () => adminApi.get('/admin/export/stats/pdf', { responseType: 'blob' }),
+  
+  // Admins
+  getAdmins: () => adminApi.get('/admin/admins'),
+  updateAdmin: (data) => adminApi.put('/admin/profile', data),
+  createAdmin: (data) => adminApi.post('/admin/admins', data),
+  deleteAdmin: (adminId) => adminApi.delete(`/admin/admins/${adminId}`),
+  uploadAvatar: (formData) => adminApi.post('/admin/profile/avatar', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }),
 };
 
 // Fonction utilitaire pour gérer les erreurs de rate limiting

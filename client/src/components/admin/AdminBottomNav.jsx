@@ -7,7 +7,8 @@ import {
   Mail, 
   BarChart3, 
   Clock,
-  BookOpen
+  BookOpen,
+  Settings
 } from 'lucide-react';
 
 const AdminBottomNav = () => {
@@ -63,6 +64,13 @@ const AdminBottomNav = () => {
       icon: BarChart3,
       color: 'text-success-600',
       bgColor: 'bg-success-50'
+    },
+    {
+      name: 'Paramètres',
+      path: '/admin/settings',
+      icon: Settings,
+      color: 'text-gray-600',
+      bgColor: 'bg-gray-50'
     }
   ];
 
@@ -72,7 +80,7 @@ const AdminBottomNav = () => {
 
   return (
     <div className="fixed-bottom-nav bg-white border-t border-gray-200 shadow-lg lg:hidden safe-area-pb">
-      <div className="grid grid-cols-7 h-16 pb-safe">
+      <div className="grid grid-cols-8 h-16 pb-safe">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.path);

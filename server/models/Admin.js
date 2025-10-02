@@ -30,6 +30,16 @@ const adminSchema = new mongoose.Schema({
   lastLogin: {
     type: Date
   },
+  avatar: {
+    url: {
+      type: String,
+      default: null
+    },
+    publicId: {
+      type: String,
+      default: null
+    }
+  },
   permissions: {
     viewUsers: { type: Boolean, default: true },
     manageUsers: { type: Boolean, default: true },

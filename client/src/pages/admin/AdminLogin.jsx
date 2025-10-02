@@ -39,6 +39,7 @@ const AdminLogin = () => {
       if (data.success) {
         localStorage.setItem('adminToken', data.token);
         localStorage.setItem('adminData', JSON.stringify(data.admin));
+        console.log('🔐 [ADMIN LOGIN] Admin data saved:', data.admin);
         toast.success('Connexion réussie !');
         navigate('/admin/dashboard');
       } else {

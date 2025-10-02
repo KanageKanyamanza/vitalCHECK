@@ -13,6 +13,7 @@ import BlogManagement from './BlogManagement';
 import BlogEditPage from './BlogEditPage';
 import BlogStatsPage from './BlogStatsPage';
 import BlogAnalyticsPage from './BlogAnalyticsPage';
+import SettingsPage from './SettingsPage';
 
 const AdminApp = () => {
   const isAuthenticated = () => {
@@ -104,6 +105,12 @@ const AdminApp = () => {
         path="/reports" 
         element={
           isAuthenticated() ? <ReportsPage /> : <Navigate to="/admin/login" replace />
+        } 
+      />
+      <Route 
+        path="/settings" 
+        element={
+          isAuthenticated() ? <SettingsPage /> : <Navigate to="/admin/login" replace />
         } 
       />
       <Route 

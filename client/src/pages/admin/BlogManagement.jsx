@@ -18,6 +18,7 @@ import {
 	Users,
 	TrendingUp,
 	Clock,
+	ExternalLink,
 } from "lucide-react";
 import { useAdminApi } from "../../hooks/useAdminApi";
 import toast from "react-hot-toast";
@@ -60,6 +61,13 @@ const BlogManagement = () => {
 		}
 		
 		return fallback;
+	};
+
+	// Fonction pour prévisualiser un blog
+	const handlePreview = (blog) => {
+		const localizedSlug = getLocalizedContent(blog.slug, blog.slug);
+		const previewUrl = `/blog/${localizedSlug}?preview=true&admin=true`;
+		window.open(previewUrl, '_blank');
 	};
 
 	// Effet pour charger les blogs au montage
@@ -319,6 +327,14 @@ const BlogManagement = () => {
 												</div>
 
 												<div className="flex items-right space-x-2 ml-4 float-end">
+													<button
+														onClick={() => handlePreview(blog)}
+														className="p-2 text-gray-400 hover:text-blue-600"
+														title="Voir l'article"
+													>
+														<ExternalLink className="h-4 w-4" />
+													</button>
+
 													<button
 														onClick={() => handleEdit(blog)}
 														className="p-2 text-gray-400 hover:text-primary-600"
