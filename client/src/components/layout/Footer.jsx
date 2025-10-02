@@ -10,7 +10,7 @@ import {
 	Youtube
 } from "lucide-react";
 import logoIcon from "/android-icon-96x96.png";
-import { InstallPWAButton } from "../ui";
+import { InstallPWAButton, UserGuideButton } from "../ui";
 import useSmoothScroll from "../../hooks/useSmoothScroll";
 
 const Footer = () => {
@@ -152,6 +152,10 @@ const Footer = () => {
 									)}
 								</li>
 							))}
+							{/* Guide d'utilisation */}
+							<li>
+								<UserGuideButton variant="footer" />
+							</li>
 						</ul>
 					</div>
 

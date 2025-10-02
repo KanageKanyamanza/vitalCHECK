@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
-import { NavbarLanguageSelector } from '../ui'
+import { NavbarLanguageSelector, UserGuideButton } from '../ui'
 import { useAssessment } from '../../context/AssessmentContext'
 import logoIcon from '/android-icon-96x96.png'
 
@@ -134,6 +134,9 @@ const Navbar = () => {
                 {t('navigation.contact')}
               </button>
               
+              {/* Guide d'utilisation */}
+              <UserGuideButton variant="navbar" />
+              
               {location.pathname === '/assessment' && (
                 <button
                   onClick={() => handleDesktopNavigation('/assessment')}
@@ -254,6 +257,11 @@ const Navbar = () => {
                 >
                   {t('navigation.contact')}
                 </button>
+                
+                {/* Guide d'utilisation mobile */}
+                <div className="px-3 py-2">
+                  <UserGuideButton variant="default" className="text-gray-600 hover:text-primary-600 transition-colors duration-200" />
+                </div>
                 
                 {location.pathname === '/assessment' && (
                   <button
