@@ -12,7 +12,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Clock,
-  BookOpen
+  BookOpen,
+  Settings
 } from 'lucide-react';
 import Logo from '../../assets/Logo.png';
 
@@ -76,6 +77,14 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
       color: 'text-success-600',
       bgColor: 'bg-success-50',
       hoverColor: 'hover:bg-success-100'
+    },
+    {
+      name: 'Paramètres',
+      path: '/admin/settings',
+      icon: Settings,
+      color: 'text-gray-600',
+      bgColor: 'bg-gray-50',
+      hoverColor: 'hover:bg-gray-100'
     }
   ];
 

@@ -23,7 +23,9 @@ const AdminLayout = ({ children }) => {
       return;
     }
 
-    setAdminData(JSON.parse(admin));
+    const parsedAdmin = JSON.parse(admin);
+    console.log('🔐 [ADMIN LAYOUT] Admin data loaded:', parsedAdmin);
+    setAdminData(parsedAdmin);
   }, [navigate]);
 
   // Sauvegarder l'état du collapse dans localStorage

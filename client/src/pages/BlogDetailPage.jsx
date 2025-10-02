@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { 
   ArrowLeft, 
@@ -26,38 +26,69 @@ const BlogDetailPage = () => {
   const { slug } = useParams()
   const navigate = useNavigate()
   const { t, i18n } = useTranslation()
+  const [searchParams] = useSearchParams()
   
   const [blog, setBlog] = useState(null)
   const [loading, setLoading] = useState(true)
   const [relatedBlogs, setRelatedBlogs] = useState([])
   const [liked, setLiked] = useState(false)
   const [language, setLanguage] = useState(i18n.language)
+  
+  // Vérifier si on est en mode prévisualisation admin
+  const isPreviewMode = searchParams.get('preview') === 'true' && searchParams.get('admin') === 'true'
 
   // Charger le blog
   const loadBlog = async () => {
     try {
       setLoading(true)
-      const response = await blogApiService.getBlogBySlug(slug)
-      setBlog(response.data.data)
       
-      // Initialiser le tracking si un visitId est fourni
-      if (response.data.visitId) {
-        console.log('📖 [BLOG DETAIL] Initialisation du tracking avec visitId:', response.data.visitId)
-        trackingService.initTracking(response.data.visitId)
+      let response
+      if (isPreviewMode) {
+        // En mode prévisualisation, utiliser l'API admin pour récupérer tous les blogs
+        const { adminApiService } = await import('../services/api')
+        const blogsResponse = await adminApiService.getBlogs({ limit: 100 })
+        const allBlogs = blogsResponse.data.data || []
+        
+        // Trouver le blog par slug (localisé)
+        const foundBlog = allBlogs.find(b => {
+          const localizedSlug = getLocalizedContent(b.slug, b.slug)
+          return localizedSlug === slug
+        })
+        
+        if (!foundBlog) {
+          throw new Error('Blog not found')
+        }
+        
+        response = { data: { data: foundBlog } }
       } else {
-        console.log('⚠️ [BLOG DETAIL] Aucun visitId fourni pour le tracking')
+        // Mode normal, utiliser l'API publique
+        response = await blogApiService.getBlogBySlug(slug)
+        
+        // Initialiser le tracking si un visitId est fourni
+        if (response.data.visitId) {
+          console.log('📖 [BLOG DETAIL] Initialisation du tracking avec visitId:', response.data.visitId)
+          trackingService.initTracking(response.data.visitId)
+        } else {
+          console.log('⚠️ [BLOG DETAIL] Aucun visitId fourni pour le tracking')
+        }
       }
       
-      // Charger des blogs similaires
-      const relatedResponse = await blogApiService.getBlogs({
-        category: response.data.data.category,
-        limit: 3
-      })
-      setRelatedBlogs(relatedResponse.data.data.filter(b => b.slug !== slug))
+      setBlog(response.data.data)
+      
+      // Charger des blogs similaires (seulement en mode normal)
+      if (!isPreviewMode) {
+        const relatedResponse = await blogApiService.getBlogs({
+          category: response.data.data.category,
+          limit: 3
+        })
+        setRelatedBlogs(relatedResponse.data.data.filter(b => b.slug !== slug))
+      }
     } catch (error) {
       console.error('Error loading blog:', error)
       toast.error(t('blog.articleNotFound'))
-      navigate('/blog')
+      if (!isPreviewMode) {
+        navigate('/blog')
+      }
     } finally {
       setLoading(false)
     }
@@ -189,8 +220,18 @@ const BlogDetailPage = () => {
   const translateTag = (tag) => {
     const translation = t(`blog.tags.${tag}`)
     
-    // Si la traduction retourne la clé (pas de traduction trouvée)
-    if (translation === `blog.tags.${tag}`) {
+    // Vérifier si la traduction est un objet au lieu d'une chaîne
+    if (typeof translation === 'object' && translation !== null) {
+      // Si c'est un objet, essayer d'extraire la valeur pour la langue courante
+      const currentLanguage = i18n.language || 'fr'
+      const objectValue = translation[currentLanguage] || translation.fr || translation.en
+      if (typeof objectValue === 'string') {
+        return objectValue
+      }
+    }
+    
+    // Si la traduction retourne la clé (pas de traduction trouvée) ou n'est pas une chaîne
+    if (translation === `blog.tags.${tag}` || typeof translation !== 'string') {
       // Essayer l'auto-traduction
       const currentLanguage = i18n.language || 'fr'
       const autoTranslated = autoTranslateTag(tag, currentLanguage)
@@ -229,15 +270,35 @@ const BlogDetailPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20">
+      {/* Indicateur de prévisualisation */}
+      {isPreviewMode && (
+        <div className="bg-yellow-100 border-b border-yellow-200 px-4 py-2">
+          <div className="max-w-4xl mx-auto flex items-center justify-between">
+            <div className="flex items-center">
+              <Eye className="h-4 w-4 text-yellow-600 mr-2" />
+              <span className="text-sm font-medium text-yellow-800">
+                Mode prévisualisation - Article non publié
+              </span>
+            </div>
+            <button
+              onClick={() => window.close()}
+              className="text-sm text-yellow-600 hover:text-yellow-800"
+            >
+              Fermer
+            </button>
+          </div>
+        </div>
+      )}
+      
       {/* Header */}
       <div className="bg-white shadow-sm">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <button
-            onClick={() => navigate('/blog')}
+            onClick={() => isPreviewMode ? window.close() : navigate('/blog')}
             className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-6"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
-            {t('blog.backToBlog')}
+            {isPreviewMode ? 'Fermer la prévisualisation' : t('blog.backToBlog')}
           </button>
 
           {/* Métadonnées */}
@@ -280,28 +341,30 @@ const BlogDetailPage = () => {
               </div>
             </div>
 
-            <div className="flex items-center space-x-3">
-              <button
-                onClick={handleLike}
-                disabled={liked}
-                className={`flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                  liked 
-                    ? 'text-red-600 bg-red-100' 
-                    : 'text-gray-500 hover:text-red-600 hover:bg-red-50'
-                }`}
-              >
-                <Heart className="h-4 w-4 mr-1" />
-                {blog.likes}
-              </button>
-              
-              <button
-                onClick={handleShare}
-                className="flex items-center px-3 py-1 rounded-full text-sm font-medium text-gray-500 hover:text-primary-600 hover:bg-primary-50 transition-colors"
-              >
-                <Share2 className="h-4 w-4 mr-1" />
-                {t('blog.share')}
-              </button>
-            </div>
+            {!isPreviewMode && (
+              <div className="flex items-center space-x-3">
+                <button
+                  onClick={handleLike}
+                  disabled={liked}
+                  className={`flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors ${
+                    liked 
+                      ? 'text-red-600 bg-red-100' 
+                      : 'text-gray-500 hover:text-red-600 hover:bg-red-50'
+                  }`}
+                >
+                  <Heart className="h-4 w-4 mr-1" />
+                  {blog.likes}
+                </button>
+                
+                <button
+                  onClick={handleShare}
+                  className="flex items-center px-3 py-1 rounded-full text-sm font-medium text-gray-500 hover:text-primary-600 hover:bg-primary-50 transition-colors"
+                >
+                  <Share2 className="h-4 w-4 mr-1" />
+                  {t('blog.share')}
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -378,28 +441,30 @@ const BlogDetailPage = () => {
           {/* Sidebar */}
           <div className="lg:col-span-1">
             <div className="space-y-6">
-              {/* Actions */}
-              <div className="bg-white rounded-lg shadow-sm p-6">
-                <h3 className="text-lg font-medium text-gray-900 mb-4">{t('blog.actions')}</h3>
-                <div className="space-y-3">
-                  <button
-                    onClick={handleLike}
-                    disabled={liked}
-                    className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    <Heart className="h-4 w-4 mr-2" />
-                    {liked ? t('blog.thankYou') : t('blog.likeArticle')}
-                  </button>
-                  
-                  <button
-                    onClick={handleShare}
-                    className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-                  >
-                    <Share2 className="h-4 w-4 mr-2" />
-                    {t('blog.share')}
-                  </button>
+              {/* Actions - seulement en mode normal */}
+              {!isPreviewMode && (
+                <div className="bg-white rounded-lg shadow-sm p-6">
+                  <h3 className="text-lg font-medium text-gray-900 mb-4">{t('blog.actions')}</h3>
+                  <div className="space-y-3">
+                    <button
+                      onClick={handleLike}
+                      disabled={liked}
+                      className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Heart className="h-4 w-4 mr-2" />
+                      {liked ? t('blog.thankYou') : t('blog.likeArticle')}
+                    </button>
+                    
+                    <button
+                      onClick={handleShare}
+                      className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                    >
+                      <Share2 className="h-4 w-4 mr-2" />
+                      {t('blog.share')}
+                    </button>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Articles similaires */}
               {relatedBlogs.length > 0 && (

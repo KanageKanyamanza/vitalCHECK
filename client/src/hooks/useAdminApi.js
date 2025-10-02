@@ -283,6 +283,39 @@ export const useAdminApi = () => {
     return executeRequest(() => adminApiService.getBlogStats(), 0, cacheKey);
   }, [executeRequest]);
 
+  // Fonctions pour la gestion des administrateurs
+  const getAdmins = useCallback(async () => {
+    const cacheKey = 'admins';
+    return executeRequest(() => adminApiService.getAdmins(), 0, cacheKey);
+  }, [executeRequest]);
+
+  const updateAdmin = useCallback(async (data) => {
+    // Invalider le cache des admins
+    requestCache.current.delete('admins');
+    return executeRequest(() => adminApiService.updateAdmin(data));
+  }, [executeRequest]);
+
+  const createAdmin = useCallback(async (data) => {
+    // Invalider le cache des admins
+    requestCache.current.delete('admins');
+    return executeRequest(() => adminApiService.createAdmin(data));
+  }, [executeRequest]);
+
+  const deleteAdmin = useCallback(async (adminId) => {
+    // Invalider le cache des admins
+    requestCache.current.delete('admins');
+    return executeRequest(() => adminApiService.deleteAdmin(adminId));
+  }, [executeRequest]);
+
+  const uploadAvatar = useCallback(async (file) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    
+    // Invalider le cache des admins
+    requestCache.current.delete('admins');
+    return executeRequest(() => adminApiService.uploadAvatar(formData));
+  }, [executeRequest]);
+
   const clearCache = useCallback(() => {
     requestCache.current.clear();
     console.log('Cache API vidé');
@@ -326,6 +359,12 @@ export const useAdminApi = () => {
     updateBlog,
     deleteBlog,
     getBlogStats,
+    // Admins
+    getAdmins,
+    updateAdmin,
+    createAdmin,
+    deleteAdmin,
+    uploadAvatar,
     // Cache
     clearCache,
   };

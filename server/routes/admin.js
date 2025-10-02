@@ -16,6 +16,7 @@ const {
   exportAssessmentsToPDF
 } = require('../utils/exportUtils');
 const { generateReminderEmailHTML } = require('../utils/reminderEmailTemplate');
+const { uploadSingleImage, uploadToCloudinary, deleteImage } = require('../config/cloudinary');
 const router = express.Router();
 
 // Middleware d'authentification admin
@@ -111,7 +112,8 @@ router.post('/login', [
         email: admin.email,
         name: admin.name,
         role: admin.role,
-        permissions: admin.permissions
+        permissions: admin.permissions,
+        avatar: admin.avatar
       }
     });
 
@@ -1014,6 +1016,244 @@ router.get('/draft-assessments', authenticateAdmin, checkPermission('viewAssessm
     res.status(500).json({ 
       success: false, 
       message: 'Server error' 
+    });
+  }
+});
+
+// ===== GESTION DES ADMINISTRATEURS =====
+
+// Upload d'avatar pour l'administrateur
+router.post('/profile/avatar', authenticateAdmin, uploadSingleImage, async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({
+        success: false,
+        message: 'Aucun fichier image fourni'
+      });
+    }
+
+    // Upload vers Cloudinary avec dossier spécifique pour les avatars
+    const result = await uploadToCloudinary(req.file.path, {
+      folder: 'vitalcheck-admin-avatars',
+      width: 300,
+      height: 300,
+      crop: 'fill',
+      gravity: 'face',
+      quality: 'auto',
+      fetch_format: 'auto'
+    });
+
+    // Récupérer l'admin actuel
+    const admin = await Admin.findById(req.admin._id);
+    
+    // Supprimer l'ancien avatar s'il existe
+    if (admin.avatar && admin.avatar.publicId) {
+      try {
+        await deleteImage(admin.avatar.publicId);
+      } catch (error) {
+        console.error('Erreur lors de la suppression de l\'ancien avatar:', error);
+        // Continuer même si la suppression échoue
+      }
+    }
+
+    // Mettre à jour l'avatar de l'admin
+    admin.avatar = {
+      url: result.secure_url,
+      publicId: result.public_id
+    };
+    
+    await admin.save();
+
+    res.json({
+      success: true,
+      message: 'Avatar mis à jour avec succès',
+      avatar: {
+        url: result.secure_url,
+        publicId: result.public_id
+      }
+    });
+  } catch (error) {
+    console.error('Upload avatar error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur lors de l\'upload de l\'avatar' 
+    });
+  }
+});
+
+// Obtenir tous les administrateurs
+router.get('/admins', authenticateAdmin, checkPermission('manageAdmins'), async (req, res) => {
+  try {
+    const admins = await Admin.find({ isActive: true })
+      .select('-password')
+      .sort({ createdAt: -1 });
+
+    res.json({
+      success: true,
+      admins
+    });
+  } catch (error) {
+    console.error('Get admins error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur' 
+    });
+  }
+});
+
+// Mettre à jour le profil de l'admin connecté
+router.put('/profile', authenticateAdmin, [
+  body('name').optional().trim().isLength({ min: 2 }),
+  body('email').optional().isEmail().normalizeEmail(),
+  body('currentPassword').optional().isLength({ min: 6 }),
+  body('newPassword').optional().isLength({ min: 6 })
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Données invalides',
+        errors: errors.array()
+      });
+    }
+
+    const { name, email, currentPassword, newPassword } = req.body;
+    const admin = await Admin.findById(req.admin._id);
+
+    // Vérifier le mot de passe actuel si un nouveau mot de passe est fourni
+    if (newPassword) {
+      if (!currentPassword) {
+        return res.status(400).json({
+          success: false,
+          message: 'Mot de passe actuel requis pour changer le mot de passe'
+        });
+      }
+
+      const isCurrentPasswordValid = await admin.comparePassword(currentPassword);
+      if (!isCurrentPasswordValid) {
+        return res.status(400).json({
+          success: false,
+          message: 'Mot de passe actuel incorrect'
+        });
+      }
+
+      admin.password = newPassword;
+    }
+
+    // Mettre à jour les autres champs
+    if (name) admin.name = name;
+    if (email) admin.email = email;
+
+    await admin.save();
+
+    // Retourner l'admin mis à jour sans le mot de passe
+    const updatedAdmin = await Admin.findById(admin._id).select('-password');
+
+    res.json({
+      success: true,
+      message: 'Profil mis à jour avec succès',
+      admin: updatedAdmin
+    });
+  } catch (error) {
+    console.error('Update admin profile error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur' 
+    });
+  }
+});
+
+// Créer un nouvel administrateur
+router.post('/admins', authenticateAdmin, checkPermission('manageAdmins'), [
+  body('name').trim().isLength({ min: 2 }),
+  body('email').isEmail().normalizeEmail(),
+  body('password').isLength({ min: 6 }),
+  body('role').optional().isIn(['admin', 'super_admin'])
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Données invalides',
+        errors: errors.array()
+      });
+    }
+
+    const { name, email, password, role = 'admin' } = req.body;
+
+    // Vérifier si l'email existe déjà
+    const existingAdmin = await Admin.findOne({ email });
+    if (existingAdmin) {
+      return res.status(400).json({
+        success: false,
+        message: 'Un administrateur avec cet email existe déjà'
+      });
+    }
+
+    // Créer le nouvel admin
+    const newAdmin = new Admin({
+      name,
+      email,
+      password,
+      role,
+      isActive: true
+    });
+
+    await newAdmin.save();
+
+    // Retourner l'admin créé sans le mot de passe
+    const createdAdmin = await Admin.findById(newAdmin._id).select('-password');
+
+    res.status(201).json({
+      success: true,
+      message: 'Administrateur créé avec succès',
+      admin: createdAdmin
+    });
+  } catch (error) {
+    console.error('Create admin error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur' 
+    });
+  }
+});
+
+// Supprimer un administrateur
+router.delete('/admins/:adminId', authenticateAdmin, checkPermission('manageAdmins'), async (req, res) => {
+  try {
+    const { adminId } = req.params;
+
+    // Empêcher la suppression de soi-même
+    if (adminId === req.admin._id.toString()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Vous ne pouvez pas supprimer votre propre compte'
+      });
+    }
+
+    const admin = await Admin.findById(adminId);
+    if (!admin) {
+      return res.status(404).json({
+        success: false,
+        message: 'Administrateur non trouvé'
+      });
+    }
+
+    // Désactiver au lieu de supprimer
+    admin.isActive = false;
+    await admin.save();
+
+    res.json({
+      success: true,
+      message: 'Administrateur supprimé avec succès'
+    });
+  } catch (error) {
+    console.error('Delete admin error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur' 
     });
   }
 });
