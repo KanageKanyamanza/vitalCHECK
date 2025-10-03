@@ -104,13 +104,16 @@ router.get('/sitemap.xml', async (req, res) => {
 
     // Ajouter les articles de blog
     blogs.forEach(blog => {
-      const lastmod = blog.updatedAt || blog.publishedAt
-      xml += '  <url>\n'
-      xml += `    <loc>https://www.checkmyenterprise.com/blog/${blog.slug}</loc>\n`
-      xml += `    <lastmod>${lastmod.toISOString()}</lastmod>\n`
-      xml += '    <changefreq>monthly</changefreq>\n'
-      xml += '    <priority>0.7</priority>\n'
-      xml += '  </url>\n'
+      // S'assurer que le blog a un slug valide
+      if (blog.slug && typeof blog.slug === 'string') {
+        const lastmod = blog.updatedAt || blog.publishedAt
+        xml += '  <url>\n'
+        xml += `    <loc>https://www.checkmyenterprise.com/blog/${blog.slug}</loc>\n`
+        xml += `    <lastmod>${lastmod.toISOString()}</lastmod>\n`
+        xml += '    <changefreq>monthly</changefreq>\n'
+        xml += '    <priority>0.7</priority>\n'
+        xml += '  </url>\n'
+      }
     })
 
     xml += '\n</urlset>'
