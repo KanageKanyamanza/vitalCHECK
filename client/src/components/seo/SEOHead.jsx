@@ -12,9 +12,13 @@ const SEOHead = ({
   noindex = false,
   canonical = null
 }) => {
-  const fullUrl = url.startsWith('http') ? url : `https://www.checkmyenterprise.com${url}`
+  // S'assurer que les valeurs sont des strings
+  const safeUrl = url || '/'
+  const safeImage = image || '/og-image.png'
+  
+  const fullUrl = safeUrl.startsWith('http') ? safeUrl : `https://www.checkmyenterprise.com${safeUrl}`
   const canonicalUrl = canonical || fullUrl
-  const fullImageUrl = image.startsWith('http') ? image : `https://www.checkmyenterprise.com${image}`
+  const fullImageUrl = safeImage.startsWith('http') ? safeImage : `https://www.checkmyenterprise.com${safeImage}`
 
   return (
     <Helmet>
