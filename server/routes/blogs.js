@@ -9,17 +9,17 @@ const axios = require('axios');
 const fetch = require('node-fetch');
 const router = express.Router();
 
-// Middleware de debug pour toutes les requêtes
-router.use((req, res, next) => {
-  console.log('📝 [BLOGS ROUTER] Requête reçue:', {
-    method: req.method,
-    url: req.url,
-    originalUrl: req.originalUrl,
-    path: req.path,
-    baseUrl: req.baseUrl
-  });
-  next();
-});
+// Middleware de debug pour toutes les requêtes (désactivé en production)
+// router.use((req, res, next) => {
+//   console.log('📝 [BLOGS ROUTER] Requête reçue:', {
+//     method: req.method,
+//     url: req.url,
+//     originalUrl: req.originalUrl,
+//     path: req.path,
+//     baseUrl: req.baseUrl
+//   });
+//   next();
+// });
 
 // Fonction utilitaire pour détecter la langue
 function detectLanguage(req) {
@@ -44,7 +44,6 @@ async function getLocationFromIP(ipAddress) {
   try {
     // Vérifier si l'IP est valide
     if (!ipAddress || ipAddress === '::1' || ipAddress === '127.0.0.1') {
-      console.log('🌍 [GEOLOCATION] IP locale détectée:', ipAddress);
       return {
         country: 'Local',
         region: 'Local',
@@ -68,7 +67,6 @@ async function getLocationFromIP(ipAddress) {
     };
 
     if (isPrivateIP(ipAddress)) {
-      console.log('🌍 [GEOLOCATION] IP privée détectée:', ipAddress);
       return {
         country: 'Local',
         region: 'Local',
@@ -76,7 +74,6 @@ async function getLocationFromIP(ipAddress) {
       };
     }
 
-    console.log('🌍 [GEOLOCATION] Recherche de géolocalisation pour IP:', ipAddress);
     
     // Utiliser ipapi.co (gratuit, 1000 requêtes/jour)
     const response = await axios.get(`https://ipapi.co/${ipAddress}/json/`, {
@@ -87,17 +84,9 @@ async function getLocationFromIP(ipAddress) {
     });
 
     const data = response.data;
-    console.log('🌍 [GEOLOCATION] Données reçues:', {
-      ip: data.ip,
-      country: data.country_name,
-      region: data.region,
-      city: data.city,
-      timezone: data.timezone
-    });
 
     // Vérifier si la réponse est valide
     if (data.error) {
-      console.log('🌍 [GEOLOCATION] Erreur dans la réponse API:', data.reason);
       return {
         country: 'Inconnu',
         region: 'Inconnu',
@@ -120,7 +109,6 @@ async function getLocationFromIP(ipAddress) {
     
     // En cas d'erreur, essayer une API de fallback
     try {
-      console.log('🌍 [GEOLOCATION] Tentative avec API de fallback...');
       const fallbackResponse = await axios.get(`http://ip-api.com/json/${ipAddress}`, {
         timeout: 5000
       });
@@ -215,8 +203,7 @@ router.post('/translate', authenticateAdmin, async (req, res) => {
         }
       }
     } catch (myMemoryError) {
-      console.log('⚠️ [TRANSLATE] MyMemory échoué, tentative LibreTranslate');
-    }
+      }
 
     // Fallback vers LibreTranslate
     try {
@@ -247,11 +234,9 @@ router.post('/translate', authenticateAdmin, async (req, res) => {
         }
       }
     } catch (libreError) {
-      console.log('⚠️ [TRANSLATE] LibreTranslate échoué');
-    }
+      }
 
     // Si tout échoue, retourner le texte original
-    console.log('⚠️ [TRANSLATE] Toutes les API ont échoué, retour du texte original');
     return res.json({
       success: true,
       translatedText: text
@@ -373,8 +358,6 @@ router.get('/:slug', async (req, res) => {
 
     // Enregistrer la visite détaillée
     try {
-      console.log('🔍 [TRACKING] Début du tracking pour le blog:', blog.title);
-      
       const userAgent = req.get('User-Agent') || '';
       const referrer = req.get('Referer') || '';
       
@@ -417,40 +400,26 @@ router.get('/:slug', async (req, res) => {
       // Vérifier les cookies de manière plus robuste
       if (req.cookies && typeof req.cookies === 'object') {
         sessionId = req.cookies.sessionId;
-        console.log('🔍 [TRACKING] Cookies détectés:', Object.keys(req.cookies));
-      } else {
-        console.log('🔍 [TRACKING] Aucun cookie détecté, req.cookies:', req.cookies);
       }
       
       if (!sessionId) {
         sessionId = generateSessionId();
-        console.log('🔍 [TRACKING] Nouveau sessionId généré:', sessionId);
         res.cookie('sessionId', sessionId, { 
           maxAge: 30 * 24 * 60 * 60 * 1000, // 30 jours
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
           sameSite: 'lax'
         });
-      } else {
-        console.log('🔍 [TRACKING] SessionId existant:', sessionId);
       }
 
       // Analyser l'appareil
       const deviceInfo = analyzeDevice(userAgent);
-      console.log('🔍 [TRACKING] Informations appareil:', deviceInfo);
-      
       // Extraire les informations du référent
       const referrerDomain = extractReferrerDomain(referrer);
-      console.log('🔍 [TRACKING] Domaine référent:', referrerDomain);
-      
       // Extraire les paramètres UTM
       const utmParams = extractUTMParameters(req.originalUrl);
-      console.log('🔍 [TRACKING] Paramètres UTM:', utmParams);
-      
       // Obtenir la géolocalisation
       const location = await getLocationFromIP(ipAddress);
-      console.log('🔍 [TRACKING] Géolocalisation:', location);
-      
       // Créer l'enregistrement de visite
       const visitData = {
         blog: blog._id,
@@ -869,27 +838,21 @@ router.post('/track', async (req, res) => {
     // Mettre à jour les métriques
     if (timeOnPage !== undefined) {
       visit.timeOnPage = timeOnPage;
-      console.log('🔄 [TRACKING UPDATE] Temps mis à jour:', timeOnPage);
-    }
+      }
     
     if (scrollDepth !== undefined) {
       visit.scrollDepth = scrollDepth;
-      console.log('🔄 [TRACKING UPDATE] Scroll mis à jour:', scrollDepth);
-    }
+      }
 
     // Marquer la visite selon l'action
     if (action === 'leave') {
-      console.log('🔄 [TRACKING UPDATE] Marquer comme terminée');
       await visit.markAsCompleted();
     } else if (action === 'bounce') {
-      console.log('🔄 [TRACKING UPDATE] Marquer comme rebond');
       await visit.markAsBounced();
     } else {
-      console.log('🔄 [TRACKING UPDATE] Sauvegarde simple');
       await visit.save();
     }
 
-    console.log('✅ [TRACKING UPDATE] Mise à jour réussie');
 
     res.json({
       success: true,
@@ -908,13 +871,9 @@ router.post('/track', async (req, res) => {
 // GET /admin/stats - Statistiques des blogs
 router.get('/admin/stats', authenticateAdmin, async (req, res) => {
   try {
-    console.log('📊 [ADMIN STATS] Récupération des statistiques...');
-    
     const totalBlogs = await Blog.countDocuments();
     const publishedBlogs = await Blog.countDocuments({ status: 'published' });
     const draftBlogs = await Blog.countDocuments({ status: 'draft' });
-    
-    console.log('📊 [ADMIN STATS] Blogs:', { totalBlogs, publishedBlogs, draftBlogs });
     
     const blogsByType = await Blog.aggregate([
       { $group: { _id: '$type', count: { $sum: 1 } } }

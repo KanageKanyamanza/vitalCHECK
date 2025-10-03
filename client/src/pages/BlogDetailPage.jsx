@@ -18,6 +18,8 @@ import {
 import { blogApiService } from '../services/api'
 import trackingService from '../services/trackingService'
 import BlogImageGallery from '../components/blog/BlogImageGallery'
+import BlogVisitorModal from '../components/blog/BlogVisitorModal'
+import { useBlogVisitorModal } from '../hooks/useBlogVisitorModal'
 import toast from 'react-hot-toast'
 import { normalizeTags } from '../utils/tagUtils'
 import { autoTranslateTag } from '../utils/autoTranslateTags'
@@ -36,6 +38,38 @@ const BlogDetailPage = () => {
   
   // Vérifier si on est en mode prévisualisation admin
   const isPreviewMode = searchParams.get('preview') === 'true' && searchParams.get('admin') === 'true'
+  
+  // Obtenir le contenu localisé d'un blog
+  const getLocalizedContent = (content, fallback = '') => {
+    if (!content) return fallback
+    
+    // Si c'est déjà une chaîne (ancien format), la retourner
+    if (typeof content === 'string') return content
+    
+    // Si c'est un objet bilingue, retourner selon la langue
+    if (typeof content === 'object' && content !== null) {
+      const currentLanguage = i18n.language || 'fr'
+      return content[currentLanguage] || content.fr || content.en || fallback
+    }
+    
+    return fallback
+  }
+  
+  // Hook pour la modale des visiteurs (seulement en mode normal)
+  const {
+    isModalOpen,
+    isReturningVisitor,
+    visitorData,
+    scrollPercentage,
+    hasShownModal,
+    openModal,
+    closeModal,
+    handleFormSubmit
+  } = useBlogVisitorModal(
+    blog?._id, 
+    blog ? getLocalizedContent(blog.title, 'Titre non disponible') : '', 
+    slug
+  )
 
   // Charger le blog
   const loadBlog = async () => {
@@ -66,10 +100,7 @@ const BlogDetailPage = () => {
         
         // Initialiser le tracking si un visitId est fourni
         if (response.data.visitId) {
-          console.log('📖 [BLOG DETAIL] Initialisation du tracking avec visitId:', response.data.visitId)
           trackingService.initTracking(response.data.visitId)
-        } else {
-          console.log('⚠️ [BLOG DETAIL] Aucun visitId fourni pour le tracking')
         }
       }
       
@@ -200,45 +231,30 @@ const BlogDetailPage = () => {
     return categoryLabels[category] || category
   }
 
-  // Obtenir le contenu localisé d'un blog
-  const getLocalizedContent = (content, fallback = '') => {
-    if (!content) return fallback
-    
-    // Si c'est déjà une chaîne (ancien format), la retourner
-    if (typeof content === 'string') return content
-    
-    // Si c'est un objet bilingue, retourner selon la langue
-    if (typeof content === 'object' && content !== null) {
-      const currentLanguage = i18n.language || 'fr'
-      return content[currentLanguage] || content.fr || content.en || fallback
-    }
-    
-    return fallback
-  }
-
   // Traduire un tag (avec auto-traduction en fallback)
   const translateTag = (tag) => {
-    const translation = t(`blog.tags.${tag}`)
-    
-    // Vérifier si la traduction est un objet au lieu d'une chaîne
-    if (typeof translation === 'object' && translation !== null) {
-      // Si c'est un objet, essayer d'extraire la valeur pour la langue courante
-      const currentLanguage = i18n.language || 'fr'
-      const objectValue = translation[currentLanguage] || translation.fr || translation.en
-      if (typeof objectValue === 'string') {
-        return objectValue
+    try {
+      const translation = t(`blog.tags.${tag}`)
+      
+      // Si la traduction retourne la clé (pas de traduction trouvée)
+      if (translation === `blog.tags.${tag}`) {
+        // Essayer l'auto-traduction
+        const currentLanguage = i18n.language || 'fr'
+        const autoTranslated = autoTranslateTag(tag, currentLanguage)
+        return autoTranslated || tag
       }
+      
+      // Si c'est une chaîne valide, la retourner
+      if (typeof translation === 'string') {
+        return translation
+      }
+      
+      // Si c'est un objet ou autre chose, retourner le tag original
+      return tag
+    } catch (error) {
+      // En cas d'erreur, retourner le tag original
+      return tag
     }
-    
-    // Si la traduction retourne la clé (pas de traduction trouvée) ou n'est pas une chaîne
-    if (translation === `blog.tags.${tag}` || typeof translation !== 'string') {
-      // Essayer l'auto-traduction
-      const currentLanguage = i18n.language || 'fr'
-      const autoTranslated = autoTranslateTag(tag, currentLanguage)
-      return autoTranslated
-    }
-    
-    return translation
   }
 
   if (loading) {
@@ -420,7 +436,7 @@ const BlogDetailPage = () => {
                 const normalizedTags = normalizeTags(blog.tags)
                 return normalizedTags.length > 0 && (
                   <div className="mt-8 pt-6 border-t border-gray-200">
-                    <h3 className="text-sm font-medium text-gray-900 mb-3">{t('blog.tags')}</h3>
+                    <h3 className="text-sm font-medium text-gray-900 mb-3">{t('blog.tagsLabel', 'Tags')}</h3>
                     <div className="flex flex-wrap gap-2">
                       {normalizedTags.map((tag, index) => (
                         <span
@@ -511,6 +527,20 @@ const BlogDetailPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Modale des visiteurs - seulement en mode normal */}
+      {!isPreviewMode && (
+        <BlogVisitorModal
+          isOpen={isModalOpen}
+          onClose={closeModal}
+          blogId={blog?._id}
+          blogTitle={blog ? getLocalizedContent(blog.title, 'Titre non disponible') : ''}
+          blogSlug={slug}
+          isReturningVisitor={isReturningVisitor}
+          visitorData={visitorData}
+          onFormSubmit={handleFormSubmit}
+        />
+      )}
     </div>
   )
 }

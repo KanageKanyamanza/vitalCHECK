@@ -13,6 +13,7 @@ import BlogManagement from './BlogManagement';
 import BlogEditPage from './BlogEditPage';
 import BlogStatsPage from './BlogStatsPage';
 import BlogAnalyticsPage from './BlogAnalyticsPage';
+import BlogVisitorsPageWrapper from './BlogVisitorsPageWrapper';
 import SettingsPage from './SettingsPage';
 
 const AdminApp = () => {
@@ -93,6 +94,12 @@ const AdminApp = () => {
         path="/blog/analytics" 
         element={
           isAuthenticated() ? <BlogAnalyticsPage /> : <Navigate to="/admin/login" replace />
+        } 
+      />
+      <Route 
+        path="/blog-visitors" 
+        element={
+          isAuthenticated() ? <BlogVisitorsPageWrapper /> : <Navigate to="/admin/login" replace />
         } 
       />
       <Route 

@@ -320,7 +320,13 @@ export const blogApiService = {
         lang: currentLanguage
       } 
     });
-  }
+  },
+
+  // Vérifier si un visiteur existe par IP
+  checkVisitorByIP: () => api.get('/blogs/visitors/check'),
+
+  // Soumettre le formulaire de visiteur
+  submitVisitorForm: (data) => api.post('/blogs/visitors/submit', data)
 };
 
 // Services admin pour les blogs
@@ -359,6 +365,25 @@ export const adminBlogApiService = {
     const url = `/blogs/admin/visits?${queryParams}`;
     console.log('🌐 [API] URL construite:', url)
     return adminApi.get(url);
+  },
+
+  // Récupérer tous les visiteurs
+  getVisitors: (params = {}) => {
+    const queryParams = new URLSearchParams(params);
+    return adminApi.get(`/blogs/admin/visitors?${queryParams}`);
+  },
+
+  // Récupérer un visiteur par ID
+  getVisitor: (visitorId) => adminApi.get(`/blogs/admin/visitors/${visitorId}`),
+
+  // Récupérer les statistiques des visiteurs
+  getVisitorStats: () => adminApi.get('/blogs/admin/visitors/stats'),
+
+  // Exporter les données des visiteurs
+  exportVisitors: (format = 'excel') => {
+    return adminApi.get(`/blogs/admin/visitors/export/${format}`, {
+      responseType: 'blob'
+    });
   }
 };
 

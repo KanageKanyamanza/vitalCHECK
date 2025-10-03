@@ -219,9 +219,9 @@ const SettingsPage = () => {
   const tabs = [
     { id: 'profile', name: 'Mon Profil', icon: User },
     { id: 'admins', name: 'Administrateurs', icon: UserPlus },
-    { id: 'notifications', name: 'Notifications', icon: Bell },
-    { id: 'system', name: 'Système', icon: Settings },
-    { id: 'security', name: 'Sécurité', icon: Shield }
+    // { id: 'notifications', name: 'Notifications', icon: Bell },
+    // { id: 'system', name: 'Système', icon: Settings },
+    // { id: 'security', name: 'Sécurité', icon: Shield }
   ];
 
   const renderProfileTab = () => (
@@ -375,7 +375,7 @@ const SettingsPage = () => {
 
   const renderAdminsTab = () => (
     <div className="space-y-6">
-      <div className="flex justify-between items-center">
+      <div className="flex flex-wrap gap-1 justify-between items-center">
         <div>
           <h3 className="text-lg font-medium text-gray-900">Administrateurs</h3>
           <p className="text-sm text-gray-500">Gérez les comptes administrateurs</p>
@@ -601,18 +601,18 @@ const SettingsPage = () => {
           <div className="bg-white rounded-lg shadow-sm border border-gray-200">
             {/* Tabs */}
             <div className="border-b border-gray-200">
-              <nav className="-mb-px flex space-x-8 px-6 overflow-x-auto">
+              <nav className=" flex space-x-8 px-6 overflow-x-auto">
                 {tabs.map((tab) => (
                   <button
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
-                    className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center ${
+                    className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center whitespace-nowrap ${
                       activeTab === tab.id
                         ? 'border-primary-500 text-primary-600'
                         : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
                     }`}
                   >
-                    <tab.icon className="h-4 w-4 mr-2" />
+                    <tab.icon className="h-4 w-4 mr-2 " />
                     {tab.name}
                   </button>
                 ))}

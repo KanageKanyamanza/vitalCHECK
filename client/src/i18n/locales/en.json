@@ -676,6 +676,7 @@
       "operations": "Operations",
       "gouvernance": "Governance"
     },
+    "tagsLabel": "Tags",
     "tags": {
       "diagnostic": "Diagnostic",
       "entreprise": "Business",
