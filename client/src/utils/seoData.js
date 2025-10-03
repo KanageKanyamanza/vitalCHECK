@@ -110,13 +110,19 @@ export const getBlogPageStructuredData = () => ({
   }
 })
 
-export const getBlogPostStructuredData = (blog) => ({
-  "@context": "https://schema.org",
-  "@type": "BlogPosting",
-  "headline": blog.title,
-  "description": blog.excerpt || blog.content?.substring(0, 160) + "...",
-  "image": (blog.featuredImage && typeof blog.featuredImage === 'string') ? `https://www.checkmyenterprise.com${blog.featuredImage}` : "https://www.checkmyenterprise.com/og-image.png",
-  "url": `https://www.checkmyenterprise.com/blog/${blog.slug}`,
+export const getBlogPostStructuredData = (blog) => {
+  // Protection contre les valeurs undefined
+  if (!blog || typeof blog !== 'object') {
+    return null
+  }
+  
+  return {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    "headline": blog.title || "Article de blog",
+    "description": blog.excerpt || (blog.content ? blog.content.substring(0, 160) + "..." : "Article de blog VitalCheck"),
+    "image": (blog.featuredImage && typeof blog.featuredImage === 'string') ? `https://www.checkmyenterprise.com${blog.featuredImage}` : "https://www.checkmyenterprise.com/og-image.png",
+    "url": blog.slug ? `https://www.checkmyenterprise.com/blog/${blog.slug}` : "https://www.checkmyenterprise.com/blog",
   "datePublished": blog.publishedAt,
   "dateModified": blog.updatedAt,
   "author": {
@@ -157,12 +163,13 @@ export const getBlogPostStructuredData = (blog) => ({
       {
         "@type": "ListItem",
         "position": 3,
-        "name": blog.title,
-        "item": `https://www.checkmyenterprise.com/blog/${blog.slug}`
+        "name": blog.title || "Article",
+        "item": blog.slug ? `https://www.checkmyenterprise.com/blog/${blog.slug}` : "https://www.checkmyenterprise.com/blog"
       }
     ]
   }
-})
+  }
+}
 
 export const getAboutPageStructuredData = () => ({
   "@context": "https://schema.org",

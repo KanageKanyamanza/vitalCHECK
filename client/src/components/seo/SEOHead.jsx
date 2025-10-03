@@ -1,23 +1,26 @@
 import { Helmet } from 'react-helmet-async'
 
-const SEOHead = ({
-  title = "VitalCheck Enterprise Health Check - Évaluez la santé de votre entreprise",
-  description = "Évaluez la santé organisationnelle de votre entreprise africaine avec VitalCheck. Évaluation gratuite de 10 minutes avec recommandations personnalisées et rapport détaillé.",
-  keywords = "entreprise, santé organisationnelle, évaluation, VitalCheck, Afrique, business, conseil, croissance, PME, diagnostic, management, finance, opérations, marketing, RH, gouvernance, technologie",
-  image = "https://healthcheck.growthVitalCheck.space/og-image.png",
-  url = "https://healthcheck.growthVitalCheck.space/",
-  type = "website",
-  lang = "fr",
-  structuredData = null,
-  noindex = false,
-  canonical = null
-}) => {
-  // S'assurer que les valeurs sont des strings
-  const safeUrl = url || '/'
-  const safeImage = image || '/og-image.png'
+const SEOHead = (props = {}) => {
+  // Extraction sécurisée des props avec valeurs par défaut
+  const {
+    title = "VitalCheck Enterprise Health Check - Évaluez la santé de votre entreprise",
+    description = "Évaluez la santé organisationnelle de votre entreprise africaine avec VitalCheck. Évaluation gratuite de 10 minutes avec recommandations personnalisées et rapport détaillé.",
+    keywords = "entreprise, santé organisationnelle, évaluation, VitalCheck, Afrique, business, conseil, croissance, PME, diagnostic, management, finance, opérations, marketing, RH, gouvernance, technologie",
+    image = "https://www.checkmyenterprise.com/og-image.png",
+    url = "https://www.checkmyenterprise.com/",
+    type = "website",
+    lang = "fr",
+    structuredData = null,
+    noindex = false,
+    canonical = null
+  } = props
+  // S'assurer que les valeurs sont des strings et non null/undefined
+  const safeUrl = (typeof url === 'string' && url) ? url : '/'
+  const safeImage = (typeof image === 'string' && image) ? image : '/og-image.png'
+  const safeCanonical = (typeof canonical === 'string' && canonical) ? canonical : null
   
   const fullUrl = safeUrl.startsWith('http') ? safeUrl : `https://www.checkmyenterprise.com${safeUrl}`
-  const canonicalUrl = canonical || fullUrl
+  const canonicalUrl = safeCanonical || fullUrl
   const fullImageUrl = safeImage.startsWith('http') ? safeImage : `https://www.checkmyenterprise.com${safeImage}`
 
   return (
