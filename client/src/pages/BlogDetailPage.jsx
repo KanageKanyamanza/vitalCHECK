@@ -293,7 +293,7 @@ const BlogDetailPage = () => {
         description={blog?.excerpt || blog?.content?.substring(0, 160) + "..."}
         keywords={blog?.tags ? blog.tags.join(", ") : "blog business, conseils entreprise, VitalCheck"}
         url={`/blog/${blog?.slug}`}
-        image={blog?.featuredImage}
+        image={blog?.featuredImage || '/og-image.png'}
         type="article"
         structuredData={blog ? getBlogPostStructuredData(blog) : null}
       />

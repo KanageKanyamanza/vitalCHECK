@@ -115,7 +115,7 @@ export const getBlogPostStructuredData = (blog) => ({
   "@type": "BlogPosting",
   "headline": blog.title,
   "description": blog.excerpt || blog.content?.substring(0, 160) + "...",
-  "image": blog.featuredImage ? `https://www.checkmyenterprise.com${blog.featuredImage}` : "https://www.checkmyenterprise.com/og-image.png",
+  "image": (blog.featuredImage && typeof blog.featuredImage === 'string') ? `https://www.checkmyenterprise.com${blog.featuredImage}` : "https://www.checkmyenterprise.com/og-image.png",
   "url": `https://www.checkmyenterprise.com/blog/${blog.slug}`,
   "datePublished": blog.publishedAt,
   "dateModified": blog.updatedAt,

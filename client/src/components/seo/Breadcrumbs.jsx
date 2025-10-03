@@ -18,7 +18,7 @@ const Breadcrumbs = ({ items = [] }) => {
       "@type": "ListItem",
       "position": index + 1,
       "name": item.name,
-      "item": item.url.startsWith('http') ? item.url : `https://www.checkmyenterprise.com${item.url}`
+      "item": (item.url && item.url.startsWith('http')) ? item.url : `https://www.checkmyenterprise.com${item.url || '/'}`
     }))
   }
 
