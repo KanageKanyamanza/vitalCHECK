@@ -27,7 +27,7 @@ const ImageUploader = ({
 
     // Vérifier les types de fichiers
     const validFiles = Array.from(files).filter(file => {
-      if (!file.type.startsWith('image/')) {
+      if (!file.type || !file.type.startsWith('image/')) {
         toast.error(`${file.name} ${t('blog.images.invalidFile')}`)
         return false
       }

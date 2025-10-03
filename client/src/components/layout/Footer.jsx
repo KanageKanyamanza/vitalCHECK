@@ -137,7 +137,7 @@ const Footer = () => {
 						<ul className="space-y-3">
 							{quickLinks.map((link, index) => (
 								<li key={index}>
-									{link.href.startsWith("/") ? (
+									{(link.href && typeof link.href === 'string' && link.href.startsWith("/")) ? (
 										<button
 											onClick={() => handleNavigation(link.href, link.scrollTo)}
 											className="text-white hover:text-gray-800 transition-colors duration-200 text-left"

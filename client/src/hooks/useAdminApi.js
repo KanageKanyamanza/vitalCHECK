@@ -75,7 +75,7 @@ export const useAdminApi = () => {
     // Invalider le cache des utilisateurs
     requestCache.current.delete(`user-${userId}`);
     requestCache.current.forEach((value, key) => {
-      if (key.startsWith('users-')) {
+      if (key && typeof key === 'string' && key.startsWith('users-')) {
         requestCache.current.delete(key);
       }
     });
@@ -97,7 +97,7 @@ export const useAdminApi = () => {
     // Invalider le cache des évaluations
     requestCache.current.delete(`assessment-${assessmentId}`);
     requestCache.current.forEach((value, key) => {
-      if (key.startsWith('assessments-')) {
+      if (key && typeof key === 'string' && key.startsWith('assessments-')) {
         requestCache.current.delete(key);
       }
     });
@@ -249,7 +249,7 @@ export const useAdminApi = () => {
   const createBlog = useCallback(async (data) => {
     // Invalider le cache des blogs
     requestCache.current.forEach((value, key) => {
-      if (key.startsWith('blogs-')) {
+      if (key && typeof key === 'string' && key.startsWith('blogs-')) {
         requestCache.current.delete(key);
       }
     });
@@ -260,7 +260,7 @@ export const useAdminApi = () => {
     // Invalider le cache des blogs
     requestCache.current.delete(`blog-${id}`);
     requestCache.current.forEach((value, key) => {
-      if (key.startsWith('blogs-')) {
+      if (key && typeof key === 'string' && key.startsWith('blogs-')) {
         requestCache.current.delete(key);
       }
     });
@@ -271,7 +271,7 @@ export const useAdminApi = () => {
     // Invalider le cache des blogs
     requestCache.current.delete(`blog-${id}`);
     requestCache.current.forEach((value, key) => {
-      if (key.startsWith('blogs-')) {
+      if (key && typeof key === 'string' && key.startsWith('blogs-')) {
         requestCache.current.delete(key);
       }
     });

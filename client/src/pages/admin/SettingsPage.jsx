@@ -184,7 +184,7 @@ const SettingsPage = () => {
       }
 
       // Vérifier le type de fichier
-      if (!file.type.startsWith('image/')) {
+      if (!file.type || !file.type.startsWith('image/')) {
         toast.error('Seuls les fichiers image sont autorisés');
         return;
       }

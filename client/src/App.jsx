@@ -44,7 +44,7 @@ function AppContent() {
   }
 
   // Vérifier si on est sur une page admin
-  const isAdminPage = location.pathname.startsWith('/admin')
+  const isAdminPage = location?.pathname?.startsWith('/admin') || false
 
   return (
     <div className="min-h-screen bg-gray-50">

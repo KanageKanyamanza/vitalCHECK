@@ -26,8 +26,8 @@ i18n
       checkWhitelist: true,
       convertDetectedLanguage: (lng) => {
         // Convertir les codes de langue détectés vers nos codes supportés
-        if (lng && lng.startsWith('en')) return 'en'
-        if (lng && lng.startsWith('fr')) return 'fr'
+        if (lng && typeof lng === 'string' && lng.startsWith('en')) return 'en'
+        if (lng && typeof lng === 'string' && lng.startsWith('fr')) return 'fr'
         return 'fr' // Fallback par défaut
       }
     },
