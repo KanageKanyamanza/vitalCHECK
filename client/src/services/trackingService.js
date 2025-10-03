@@ -11,18 +11,11 @@ class TrackingService {
 
   // Initialiser le tracking pour une visite
   initTracking(visitId) {
-    console.log('🎯 [CLIENT TRACKING] Initialisation du tracking:', visitId);
-    
     this.visitId = visitId;
     this.startTime = Date.now();
     this.scrollDepth = 0;
     this.maxScrollDepth = 0;
     this.isTracking = true;
-
-    console.log('🎯 [CLIENT TRACKING] Tracking démarré:', {
-      visitId: this.visitId,
-      startTime: this.startTime
-    });
 
     // Démarrer le tracking du scroll
     this.startScrollTracking();
@@ -88,10 +81,6 @@ class TrackingService {
   // Envoyer les données de tracking au serveur
   async sendTrackingUpdate(action = 'update') {
     if (!this.visitId || !this.isTracking) {
-      console.log('🎯 [CLIENT TRACKING] Pas de tracking actif:', {
-        visitId: this.visitId,
-        isTracking: this.isTracking
-      });
       return;
     }
 
@@ -103,12 +92,6 @@ class TrackingService {
     try {
       const timeOnPage = Math.floor((Date.now() - this.startTime) / 1000);
       
-      console.log('🎯 [CLIENT TRACKING] Envoi des données:', {
-        visitId: this.visitId,
-        timeOnPage,
-        scrollDepth: this.maxScrollDepth,
-        action
-      });
       
       await blogApiService.trackVisit(this.visitId, {
         timeOnPage,
@@ -117,9 +100,8 @@ class TrackingService {
       });
       
       this.lastUpdateTime = Date.now();
-      console.log('✅ [CLIENT TRACKING] Données envoyées avec succès');
     } catch (error) {
-      console.error('❌ [CLIENT TRACKING] Erreur lors de l\'envoi du tracking:', error);
+      // Erreur silencieuse pour le tracking
     }
   }
 

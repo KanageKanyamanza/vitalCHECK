@@ -13,7 +13,8 @@ import {
   ChevronRight,
   Clock,
   BookOpen,
-  Settings
+  Settings,
+  UserCheck
 } from 'lucide-react';
 import Logo from '../../assets/Logo.png';
 
@@ -61,6 +62,14 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
       color: 'text-purple-600',
       bgColor: 'bg-purple-50',
       hoverColor: 'hover:bg-purple-100'
+    },
+    {
+      name: 'Visiteurs Blog',
+      path: '/admin/blog-visitors',
+      icon: UserCheck,
+      color: 'text-indigo-600',
+      bgColor: 'bg-indigo-50',
+      hoverColor: 'hover:bg-indigo-100'
     },
     {
       name: 'Emails',

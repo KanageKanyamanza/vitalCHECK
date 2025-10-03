@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
+import { HelmetProvider } from 'react-helmet-async'
+import { PerformanceAnalytics } from './components/seo'
 import LandingPage from './pages/LandingPage'
 import AboutPage from './pages/AboutPage'
 import AssessmentPage from './pages/AssessmentPage'
@@ -21,12 +23,19 @@ import { usePWAUpdate } from './hooks/usePWAUpdate'
 import UpdateNotification from './components/ui/UpdateNotification'
 
 function AppContent() {
-  const [showSplash, setShowSplash] = useState(true)
+  // Vérifier si l'utilisateur a déjà vu la splash screen
+  const [showSplash, setShowSplash] = useState(() => {
+    const hasSeenSplash = localStorage.getItem('hasSeenSplash')
+    return !hasSeenSplash // Afficher la splash screen seulement si l'utilisateur ne l'a jamais vue
+  })
+  
   const { updateAvailable, updateApp, checkForUpdate } = usePWAUpdate()
   const location = useLocation()
 
   const handleSplashComplete = () => {
     setShowSplash(false)
+    // Mémoriser que l'utilisateur a vu la splash screen
+    localStorage.setItem('hasSeenSplash', 'true')
   }
 
   const handleUpdateDismiss = () => {
@@ -39,6 +48,9 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Analytics et Performance Monitoring */}
+      <PerformanceAnalytics />
+      
       {/* Notification de mise à jour PWA */}
       <UpdateNotification
         isVisible={updateAvailable}
@@ -92,11 +104,18 @@ function AppContent() {
 
 function App() {
   return (
-    <AssessmentProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </AssessmentProvider>
+    <HelmetProvider>
+      <AssessmentProvider>
+        <Router
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true
+          }}
+        >
+          <AppContent />
+        </Router>
+      </AssessmentProvider>
+    </HelmetProvider>
   )
 }
 

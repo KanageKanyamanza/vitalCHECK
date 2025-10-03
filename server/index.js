@@ -56,8 +56,13 @@ app.use("/api/reports", require("./routes/reports"));
 app.use("/api/contact", require("./routes/contact"));
 app.use("/api/admin", require("./routes/admin"));
 app.use("/api/blogs", require("./routes/blogs"));
+app.use("/api/blogs/visitors", require("./routes/blogVisitors"));
+app.use("/api/blogs/admin", require("./routes/blogVisitorsAdmin"));
 app.use("/api/upload", require("./routes/upload"));
 app.use("/api", require("./routes/ping"));
+
+// Routes SEO
+app.use("/", require("./routes/sitemap"));
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {

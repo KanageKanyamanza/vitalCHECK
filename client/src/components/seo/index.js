@@ -1,0 +1,5 @@
+export { default as SEOHead } from './SEOHead'
+export { default as OptimizedImage } from './OptimizedImage'
+export { default as FAQStructuredData } from './FAQStructuredData'
+export { default as Breadcrumbs } from './Breadcrumbs'
+export { default as PerformanceAnalytics } from './PerformanceAnalytics'

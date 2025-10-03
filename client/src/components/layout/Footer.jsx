@@ -96,11 +96,13 @@ const Footer = () => {
 					<div className="lg:col-span-2">
 						<div className="flex items-center space-x-3 mb-4">
 							<div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
-								<img
-									src={logoIcon}
-									alt="VitalCheck Logo"
-									className="w-full h-full object-contain"
-								/>
+								<Link to="/admin" className="cursor-default">
+									<img
+										src={logoIcon}
+										alt="VitalCheck Logo"
+										className="w-full h-full object-contain"
+									/>
+								</Link>
 							</div>
 							<div className="flex flex-col">
 								<span className="text-white font-medium">

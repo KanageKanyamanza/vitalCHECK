@@ -24,7 +24,6 @@ const AdminLayout = ({ children }) => {
     }
 
     const parsedAdmin = JSON.parse(admin);
-    console.log('🔐 [ADMIN LAYOUT] Admin data loaded:', parsedAdmin);
     setAdminData(parsedAdmin);
   }, [navigate]);
 

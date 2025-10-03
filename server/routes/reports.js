@@ -20,20 +20,12 @@ router.post('/generate/:assessmentId', async (req, res) => {
     }
 
     // Generate PDF report - try complex version first, fallback to simple
-    console.log('📄 [REPORT] Génération du PDF...', {
-      assessmentId: assessment._id,
-      companyName: assessment.user.companyName,
-      language: assessment.language || 'fr'
-    });
 
     let pdfBuffer;
     try {
       pdfBuffer = await generatePDFReport(assessment);
-      console.log('✅ [REPORT] PDF complexe généré avec succès');
     } catch (error) {
-      console.warn('⚠️ [REPORT] Échec génération PDF complexe, tentative version simple:', error.message);
       pdfBuffer = await generateSimplePDFReport(assessment);
-      console.log('✅ [REPORT] PDF simple généré avec succès');
     }
 
     // Convert Uint8Array to Buffer for Mongoose

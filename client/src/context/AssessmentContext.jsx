@@ -37,18 +37,8 @@ function assessmentReducer(state, action) {
       
       if (existingAnswerIndex >= 0) {
         newAnswers[existingAnswerIndex] = action.payload
-        console.log('🔄 [CONTEXT] Réponse mise à jour:', {
-          questionId: action.payload.questionId,
-          answer: action.payload.answer,
-          totalAnswers: newAnswers.length
-        });
       } else {
         newAnswers.push(action.payload)
-        console.log('➕ [CONTEXT] Nouvelle réponse ajoutée:', {
-          questionId: action.payload.questionId,
-          answer: action.payload.answer,
-          totalAnswers: newAnswers.length
-        });
       }
       
       return { ...state, answers: newAnswers }
@@ -72,11 +62,9 @@ function assessmentReducer(state, action) {
       return { ...state, assessment: action.payload, loading: false }
     
     case 'SET_ASSESSMENT_ID':
-      console.log('🆔 [CONTEXT] Assessment ID défini:', action.payload);
       return { ...state, assessmentId: action.payload }
     
     case 'SET_RESUME_TOKEN':
-      console.log('🔑 [CONTEXT] Resume token défini:', action.payload);
       return { ...state, resumeToken: action.payload }
     
     case 'LOAD_FROM_STORAGE':
@@ -114,13 +102,6 @@ export function AssessmentProvider({ children }) {
     if (savedData) {
       try {
         const parsedData = JSON.parse(savedData)
-        console.log('📱 [CONTEXT] Chargement des données depuis localStorage:', {
-          hasUser: !!parsedData.user,
-          hasAssessmentId: !!parsedData.assessmentId,
-          hasResumeToken: !!parsedData.resumeToken,
-          answersCount: parsedData.answers?.length || 0,
-          currentQuestionIndex: parsedData.currentQuestionIndex || 0
-        });
         dispatch({ type: 'LOAD_FROM_STORAGE', payload: parsedData })
       } catch (error) {
         console.error('❌ [CONTEXT] Erreur lors du chargement depuis localStorage:', error)

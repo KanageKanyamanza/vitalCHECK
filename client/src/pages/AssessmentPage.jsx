@@ -8,6 +8,8 @@ import { assessmentAPI } from '../services/api'
 import toast from 'react-hot-toast'
 import { ProgressBar, QuestionCard, SubmissionProgress } from '../components/assessment'
 import useSmoothScroll from '../hooks/useSmoothScroll'
+import SEOHead from '../components/seo/SEOHead'
+import { getAssessmentPageStructuredData } from '../utils/seoData'
 
 const AssessmentPage = () => {
   const navigate = useNavigate()
@@ -366,6 +368,14 @@ const AssessmentPage = () => {
 
   return (
     <div className="min-h-screen py-[70px] bg-gray-50">
+      <SEOHead
+        title="Évaluation de Santé d'Entreprise - VitalCheck"
+        description="Commencez votre évaluation gratuite de santé d'entreprise avec VitalCheck. Diagnostic complet en 10 minutes avec recommandations personnalisées."
+        keywords="évaluation entreprise, diagnostic business, santé organisationnelle, VitalCheck, PME, startup, conseil"
+        url="/assessment"
+        structuredData={getAssessmentPageStructuredData()}
+      />
+      
       {/* Submission Progress Modal */}
       {submitting && (
         <SubmissionProgress

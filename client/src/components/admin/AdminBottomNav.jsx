@@ -59,6 +59,13 @@ const AdminBottomNav = () => {
       bgColor: 'bg-purple-50'
     },
     {
+      name: 'Blog Visitors',
+      path: '/admin/blog-visitors',
+      icon: Users,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-50'
+    },
+    {
       name: 'Rapports',
       path: '/admin/reports',
       icon: BarChart3,
@@ -80,7 +87,7 @@ const AdminBottomNav = () => {
 
   return (
     <div className="fixed-bottom-nav bg-white border-t border-gray-200 shadow-lg lg:hidden safe-area-pb">
-      <div className="grid grid-cols-8 h-16 pb-safe">
+      <div className="flex justify-between gap-2 h-16 pb-safe overflow-x-auto w-full whitespace-nowrap px-2">
         {menuItems.map((item) => {
           const Icon = item.icon;
           const active = isActive(item.path);
