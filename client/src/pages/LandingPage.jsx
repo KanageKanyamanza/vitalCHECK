@@ -4,6 +4,8 @@ import { Hero } from '../components/layout'
 import { AssessmentForm } from '../components/assessment'
 import { Footer } from '../components/navigation'
 import { useAssessment } from '../context/AssessmentContext'
+import SEOHead from '../components/seo/SEOHead'
+import { getHomePageStructuredData } from '../utils/seoData'
 
 const LandingPage = () => {
   const navigate = useNavigate()
@@ -34,6 +36,14 @@ const LandingPage = () => {
 
   return (
     <div>
+      <SEOHead
+        title="VitalCheck Enterprise Health Check - Évaluez la santé de votre entreprise"
+        description="Évaluez la santé organisationnelle de votre entreprise africaine avec VitalCheck. Évaluation gratuite de 10 minutes avec recommandations personnalisées et rapport détaillé."
+        keywords="entreprise, santé organisationnelle, évaluation, VitalCheck, Afrique, business, conseil, croissance, PME, diagnostic, management, finance, opérations, marketing, RH, gouvernance, technologie"
+        url="/"
+        structuredData={getHomePageStructuredData()}
+      />
+      
       {/* Hero Section */}
       <Hero onStartAssessment={handleStartAssessment} />
       

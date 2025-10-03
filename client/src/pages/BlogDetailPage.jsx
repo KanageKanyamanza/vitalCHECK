@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import SEOHead from '../components/seo/SEOHead'
+import { getBlogPostStructuredData } from '../utils/seoData'
 import { 
   ArrowLeft, 
   Calendar, 
@@ -286,6 +288,16 @@ const BlogDetailPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20">
+      <SEOHead
+        title={`${blog?.title} - Blog VitalCheck`}
+        description={blog?.excerpt || blog?.content?.substring(0, 160) + "..."}
+        keywords={blog?.tags ? blog.tags.join(", ") : "blog business, conseils entreprise, VitalCheck"}
+        url={`/blog/${blog?.slug}`}
+        image={blog?.featuredImage}
+        type="article"
+        structuredData={blog ? getBlogPostStructuredData(blog) : null}
+      />
+      
       {/* Indicateur de prévisualisation */}
       {isPreviewMode && (
         <div className="bg-yellow-100 border-b border-yellow-200 px-4 py-2">

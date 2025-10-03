@@ -1,24 +1,72 @@
+# Robots.txt pour VitalCheck Enterprise Health Check
+# https://www.checkmyenterprise.com
+
 User-agent: *
 Allow: /
 
-# Sitemap
-Sitemap: https://healthcheck.growthVitalCheck.space/sitemap.xml
+# Pages importantes
+Allow: /assessment
+Allow: /blog
+Allow: /about
+Allow: /contact
 
-# Crawl-delay
-Crawl-delay: 1
+# Fichiers statiques
+Allow: /assets/
+Allow: /images/
+Allow: /favicon.ico
+Allow: /manifest.json
+Allow: /sw.js
 
-# Disallow admin areas (if any)
+# Interdire l'accès aux pages admin et API
 Disallow: /admin/
 Disallow: /api/
 Disallow: /_next/
-Disallow: /static/
+Disallow: /node_modules/
 
-# Allow important pages
+# Interdire l'accès aux fichiers de configuration
+Disallow: /.env
+Disallow: /package.json
+Disallow: /package-lock.json
+Disallow: /yarn.lock
+
+# Interdire l'accès aux fichiers de développement
+Disallow: /src/
+Disallow: /public/
+Disallow: /.git/
+Disallow: /.vscode/
+Disallow: /logs/
+
+# Sitemap
+Sitemap: https://www.checkmyenterprise.com/sitemap.xml
+
+# Crawl-delay pour éviter la surcharge
+Crawl-delay: 1
+
+# Directives spécifiques pour les principaux moteurs de recherche
+User-agent: Googlebot
 Allow: /
-Allow: /assessment
-Allow: /results
-Allow: /privacy
-Allow: /terms
+Crawl-delay: 1
 
-# Host
-Host: https://healthcheck.growthVitalCheck.space
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 1
+
+User-agent: Slurp
+Allow: /
+Crawl-delay: 2
+
+# Bloquer les bots malveillants
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /

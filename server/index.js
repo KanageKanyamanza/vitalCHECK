@@ -61,6 +61,9 @@ app.use("/api/blogs/admin", require("./routes/blogVisitorsAdmin"));
 app.use("/api/upload", require("./routes/upload"));
 app.use("/api", require("./routes/ping"));
 
+// Routes SEO
+app.use("/", require("./routes/sitemap"));
+
 // Health check endpoint
 app.get("/api/health", (req, res) => {
 	res.json({ status: "OK", message: "VitalCheck Health Check API is running" });

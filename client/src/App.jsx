@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
+import { HelmetProvider } from 'react-helmet-async'
+import { PerformanceAnalytics } from './components/seo'
 import LandingPage from './pages/LandingPage'
 import AboutPage from './pages/AboutPage'
 import AssessmentPage from './pages/AssessmentPage'
@@ -46,6 +48,9 @@ function AppContent() {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Analytics et Performance Monitoring */}
+      <PerformanceAnalytics />
+      
       {/* Notification de mise à jour PWA */}
       <UpdateNotification
         isVisible={updateAvailable}
@@ -99,16 +104,18 @@ function AppContent() {
 
 function App() {
   return (
-    <AssessmentProvider>
-      <Router
-        future={{
-          v7_startTransition: true,
-          v7_relativeSplatPath: true
-        }}
-      >
-        <AppContent />
-      </Router>
-    </AssessmentProvider>
+    <HelmetProvider>
+      <AssessmentProvider>
+        <Router
+          future={{
+            v7_startTransition: true,
+            v7_relativeSplatPath: true
+          }}
+        >
+          <AppContent />
+        </Router>
+      </AssessmentProvider>
+    </HelmetProvider>
   )
 }
 

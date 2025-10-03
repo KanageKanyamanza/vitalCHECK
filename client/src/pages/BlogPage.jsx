@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
+import SEOHead from '../components/seo/SEOHead'
+import { getBlogPageStructuredData } from '../utils/seoData'
 import { 
   Search, 
   Filter, 
@@ -196,6 +198,14 @@ const BlogPage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50 pt-20">
+      <SEOHead
+        title="Blog VitalCheck - Conseils et Actualités Business"
+        description="Découvrez nos articles sur la santé d'entreprise, le management, la croissance et les bonnes pratiques pour PME et startups africaines."
+        keywords="blog business, conseils entreprise, management, croissance PME, startup, VitalCheck, actualités business"
+        url="/blog"
+        structuredData={getBlogPageStructuredData()}
+      />
+      
       {/* Header */}
       <div className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
