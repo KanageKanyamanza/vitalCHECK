@@ -713,6 +713,35 @@
         "views": "Number of views",
         "likes": "Number of likes",
         "title": "Title"
+      },
+      "modal": {
+        "title": "Want smarter insights like this every week?",
+        "description": "Subscribe for FREE to continue reading",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email",
+        "country": "Country",
+        "firstNamePlaceholder": "Your first name",
+        "lastNamePlaceholder": "Your last name",
+        "emailPlaceholder": "your@email.com",
+        "countryPlaceholder": "Your country",
+        "submit": "Submit",
+        "submitting": "Submitting...",
+        "welcomeBack": "Welcome back!",
+        "welcomeBackMessage": "Thank you for coming back, {firstName} {lastName}!",
+        "welcomeBackDesc": "We're delighted to see you again. Enjoy your reading!",
+        "continueReading": "Continue reading",
+        "successMessage": "Thank you for your information! Enjoy your reading!",
+        "returningSuccessMessage": "Thank you for coming back! Enjoy your reading!",
+        "errorMessage": "An error occurred. Please try again.",
+        "privacyMessage": "Your information is secure and will not be shared.",
+        "validation": {
+          "firstNameRequired": "First name is required",
+          "lastNameRequired": "Last name is required",
+          "emailRequired": "Email is required",
+          "emailInvalid": "Please enter a valid email",
+          "countryRequired": "Country is required"
+        }
       }
     },
     "admin": {

@@ -13,7 +13,7 @@ const BlogVisitorModal = ({
   visitorData = null,
   onFormSubmit 
 }) => {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -22,10 +22,12 @@ const BlogVisitorModal = ({
   })
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState({})
+  const [currentLanguage, setCurrentLanguage] = useState(i18n.language)
 
   // Pré-remplir le formulaire si c'est un visiteur de retour
   useEffect(() => {
     if (isReturningVisitor && visitorData) {
+      console.log('🔍 [BLOG MODAL] Données visiteur reçues:', visitorData)
       setFormData({
         firstName: visitorData.firstName || '',
         lastName: visitorData.lastName || '',
@@ -34,6 +36,20 @@ const BlogVisitorModal = ({
       })
     }
   }, [isReturningVisitor, visitorData])
+
+  // Détecter les changements de langue
+  useEffect(() => {
+    const handleLanguageChange = (lng) => {
+      console.log('🌐 [BLOG MODAL] Changement de langue détecté:', lng)
+      setCurrentLanguage(lng)
+    }
+
+    i18n.on('languageChanged', handleLanguageChange)
+    
+    return () => {
+      i18n.off('languageChanged', handleLanguageChange)
+    }
+  }, [i18n])
 
   // Gérer les changements dans le formulaire
   const handleInputChange = (e) => {
@@ -57,21 +73,21 @@ const BlogVisitorModal = ({
     const newErrors = {}
     
     if (!formData.firstName.trim()) {
-      newErrors.firstName = 'Le prénom est requis'
+      newErrors.firstName = t('blog.modal.validation.firstNameRequired')
     }
     
     if (!formData.lastName.trim()) {
-      newErrors.lastName = 'Le nom de famille est requis'
+      newErrors.lastName = t('blog.modal.validation.lastNameRequired')
     }
     
     if (!formData.email.trim()) {
-      newErrors.email = 'L\'email est requis'
+      newErrors.email = t('blog.modal.validation.emailRequired')
     } else if (!/^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/.test(formData.email)) {
-      newErrors.email = 'Veuillez entrer un email valide'
+      newErrors.email = t('blog.modal.validation.emailInvalid')
     }
     
     if (!formData.country.trim()) {
-      newErrors.country = 'Le pays est requis'
+      newErrors.country = t('blog.modal.validation.countryRequired')
     }
     
     setErrors(newErrors)
@@ -98,14 +114,14 @@ const BlogVisitorModal = ({
       
       toast.success(
         isReturningVisitor 
-          ? 'Merci de votre retour ! Bonne lecture !' 
-          : 'Merci pour vos informations ! Bonne lecture !'
+          ? t('blog.modal.returningSuccessMessage')
+          : t('blog.modal.successMessage')
       )
       
       onClose()
     } catch (error) {
       console.error('Erreur lors de la soumission:', error)
-      toast.error('Une erreur est survenue. Veuillez réessayer.')
+      toast.error(t('blog.modal.errorMessage'))
     } finally {
       setLoading(false)
     }
@@ -125,6 +141,16 @@ const BlogVisitorModal = ({
 
   if (!isOpen) return null
 
+  // Debug pour voir l'état du composant
+  console.log('🔍 [BLOG MODAL] État du composant:', {
+    isOpen,
+    isReturningVisitor,
+    visitorData,
+    hasVisitorData: !!visitorData,
+    currentLanguage,
+    i18nLanguage: i18n.language
+  })
+
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
       {/* Overlay */}
@@ -143,7 +169,7 @@ const BlogVisitorModal = ({
                   <User className="h-6 w-6 text-white mr-3" />
                 )}
                 <h3 className="text-lg font-semibold text-white">
-                  {isReturningVisitor ? 'Bon retour !' : 'Qui êtes-vous ?'}
+                  {isReturningVisitor ? t('blog.modal.welcomeBack') : t('blog.modal.title')}
                 </h3>
               </div>
               <button
@@ -165,10 +191,13 @@ const BlogVisitorModal = ({
                   </div>
                 </div>
                 <h4 className="text-lg font-medium text-gray-900 mb-2">
-                  Merci de votre retour, {visitorData?.firstName} {visitorData?.lastName} !
+                  {visitorData?.firstName && visitorData?.lastName 
+                    ? t('blog.modal.welcomeBackMessage').replace('{firstName}', visitorData.firstName).replace('{lastName}', visitorData.lastName)
+                    : t('blog.modal.welcomeBackMessage')
+                  }
                 </h4>
                 <p className="text-gray-600 text-sm mb-6">
-                  Nous sommes ravis de vous revoir. Profitez bien de votre lecture !
+                  {t('blog.modal.welcomeBackDesc')}
                 </p>
                 
                 {/* Bouton pour continuer */}
@@ -176,14 +205,14 @@ const BlogVisitorModal = ({
                   onClick={handleClose}
                   className="w-full px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                 >
-                  Continuer la lecture
+                  {t('blog.modal.continueReading')}
                 </button>
               </div>
             ) : (
               <>
                 <div className="text-center mb-6">
                   <p className="text-gray-600 text-sm">
-                    Nous aimerions en savoir un peu plus sur vous pour améliorer notre contenu.
+                    {t('blog.modal.description')}
                   </p>
                 </div>
 
@@ -191,7 +220,7 @@ const BlogVisitorModal = ({
               {/* Prénom */}
               <div>
                 <label htmlFor="firstName" className="block text-sm font-medium text-gray-700 mb-1">
-                  Prénom *
+                  {t('blog.modal.firstName')} *
                 </label>
                 <input
                   type="text"
@@ -203,7 +232,7 @@ const BlogVisitorModal = ({
                   className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 ${
                     errors.firstName ? 'border-red-300' : 'border-gray-300'
                   } ${isReturningVisitor ? 'bg-gray-100' : ''}`}
-                  placeholder="Votre prénom"
+                  placeholder={t('blog.modal.firstNamePlaceholder')}
                 />
                 {errors.firstName && (
                   <p className="mt-1 text-sm text-red-600">{errors.firstName}</p>
@@ -213,7 +242,7 @@ const BlogVisitorModal = ({
               {/* Nom de famille */}
               <div>
                 <label htmlFor="lastName" className="block text-sm font-medium text-gray-700 mb-1">
-                  Nom de famille *
+                  {t('blog.modal.lastName')} *
                 </label>
                 <input
                   type="text"
@@ -225,7 +254,7 @@ const BlogVisitorModal = ({
                   className={`w-full px-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 ${
                     errors.lastName ? 'border-red-300' : 'border-gray-300'
                   } ${isReturningVisitor ? 'bg-gray-100' : ''}`}
-                  placeholder="Votre nom de famille"
+                  placeholder={t('blog.modal.lastNamePlaceholder')}
                 />
                 {errors.lastName && (
                   <p className="mt-1 text-sm text-red-600">{errors.lastName}</p>
@@ -235,7 +264,7 @@ const BlogVisitorModal = ({
               {/* Email */}
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                  Email *
+                  {t('blog.modal.email')} *
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -251,7 +280,7 @@ const BlogVisitorModal = ({
                     className={`w-full pl-10 pr-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 ${
                       errors.email ? 'border-red-300' : 'border-gray-300'
                     } ${isReturningVisitor ? 'bg-gray-100' : ''}`}
-                    placeholder="votre@email.com"
+                    placeholder={t('blog.modal.emailPlaceholder')}
                   />
                 </div>
                 {errors.email && (
@@ -262,7 +291,7 @@ const BlogVisitorModal = ({
               {/* Pays */}
               <div>
                 <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-1">
-                  Pays *
+                  {t('blog.modal.country')} *
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -278,7 +307,7 @@ const BlogVisitorModal = ({
                     className={`w-full pl-10 pr-3 py-2 border rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-primary-500 ${
                       errors.country ? 'border-red-300' : 'border-gray-300'
                     } ${isReturningVisitor ? 'bg-gray-100' : ''}`}
-                    placeholder="Votre pays"
+                    placeholder={t('blog.modal.countryPlaceholder')}
                   />
                 </div>
                 {errors.country && (
@@ -286,21 +315,14 @@ const BlogVisitorModal = ({
                 )}
               </div>
 
-                  {/* Boutons */}
-                  <div className="flex space-x-3 pt-4">
-                    <button
-                      type="button"
-                      onClick={handleClose}
-                      className="flex-1 px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-                    >
-                      Plus tard
-                    </button>
+                  {/* Bouton */}
+                  <div className="pt-4">
                     <button
                       type="submit"
                       disabled={loading}
-                      className="flex-1 px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {loading ? 'Envoi...' : 'Envoyer'}
+                      {loading ? t('blog.modal.submitting') : t('blog.modal.submit')}
                     </button>
                   </div>
                 </form>
@@ -308,7 +330,7 @@ const BlogVisitorModal = ({
                 {/* Footer */}
                 <div className="mt-4 text-center">
                   <p className="text-xs text-gray-500">
-                    Vos informations sont sécurisées et ne seront pas partagées.
+                    {t('blog.modal.privacyMessage')}
                   </p>
                 </div>
               </>
