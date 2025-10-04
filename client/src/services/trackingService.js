@@ -158,4 +158,9 @@ class TrackingService {
 // Instance singleton
 const trackingService = new TrackingService();
 
+// Rendre le service accessible globalement pour les hooks
+if (typeof window !== 'undefined') {
+  window.trackingService = trackingService;
+}
+
 export default trackingService;

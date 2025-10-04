@@ -36,7 +36,22 @@ export const useBlogVisitorModal = (blogId, blogTitle, blogSlug) => {
   // Fonction pour soumettre le formulaire
   const handleFormSubmit = useCallback(async (formData) => {
     try {
-      const response = await blogApiService.submitVisitorForm(formData)
+      // Récupérer les métriques actuelles du tracking service
+      const trackingMetrics = window.trackingService?.getMetrics() || null
+      
+      // Ajouter les données de tracking au formulaire
+      const formDataWithTracking = {
+        ...formData,
+        scrollDepth: trackingMetrics?.scrollDepth || 0,
+        timeOnPage: trackingMetrics?.timeOnPage || 0
+      }
+      
+      console.log('📊 [BLOG MODAL] Soumission avec données de tracking:', {
+        formData: formDataWithTracking,
+        trackingMetrics
+      })
+      
+      const response = await blogApiService.submitVisitorForm(formDataWithTracking)
       
       if (response.data.isNewVisitor) {
         setIsReturningVisitor(false)
@@ -65,6 +80,9 @@ export const useBlogVisitorModal = (blogId, blogTitle, blogSlug) => {
     // Si c'est un visiteur de retour, soumettre automatiquement les données
     if (isReturning && visitor) {
       try {
+        // Récupérer les métriques actuelles du tracking service
+        const trackingMetrics = window.trackingService?.getMetrics() || null
+        
         await blogApiService.submitVisitorForm({
           firstName: visitor.firstName,
           lastName: visitor.lastName,
@@ -72,7 +90,9 @@ export const useBlogVisitorModal = (blogId, blogTitle, blogSlug) => {
           country: visitor.country,
           blogId,
           blogTitle,
-          blogSlug
+          blogSlug,
+          scrollDepth: trackingMetrics?.scrollDepth || 0,
+          timeOnPage: trackingMetrics?.timeOnPage || 0
         })
       } catch (error) {
         console.error('Erreur lors de la soumission automatique:', error)
@@ -93,8 +113,8 @@ export const useBlogVisitorModal = (blogId, blogTitle, blogSlug) => {
       const currentScrollPercent = calculateScrollPercentage()
       setScrollPercentage(currentScrollPercent)
       
-      // Ouvrir la modale à 40% de scroll
-      if (currentScrollPercent >= 40 && !hasShownModal) {
+      // Ouvrir la modale à 20% de scroll
+      if (currentScrollPercent >= 20 && !hasShownModal) {
         openModal()
       }
     }

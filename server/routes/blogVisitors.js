@@ -41,7 +41,20 @@ router.get('/check', async (req, res) => {
 // Soumettre le formulaire de visiteur
 router.post('/submit', async (req, res) => {
   try {
-    const { firstName, lastName, email, country, blogId, blogTitle, blogSlug } = req.body;
+    const { firstName, lastName, email, country, blogId, blogTitle, blogSlug, scrollDepth = 0, timeOnPage = 0 } = req.body;
+    
+    console.log('📊 [BLOG VISITORS] Soumission formulaire avec données de tracking:', {
+      firstName,
+      lastName,
+      email,
+      country,
+      blogId,
+      blogTitle,
+      blogSlug,
+      scrollDepth,
+      timeOnPage
+    });
+    
     const ipAddress = getClientIP(req);
     const userAgent = req.get('User-Agent');
     const device = getDeviceInfo(userAgent);
@@ -65,8 +78,8 @@ router.post('/submit', async (req, res) => {
       visitor.isReturningVisitor = true;
       visitor.lastVisitAt = new Date();
       
-      // Ajouter cette visite de blog
-      await visitor.addBlogVisit(blogId, blogTitle, blogSlug);
+      // Ajouter cette visite de blog avec les données de tracking
+      await visitor.addBlogVisit(blogId, blogTitle, blogSlug, scrollDepth, timeOnPage);
       
       // Mettre à jour les informations si elles ont changé
       if (visitor.firstName !== firstName || visitor.lastName !== lastName || 
@@ -94,13 +107,13 @@ router.post('/submit', async (req, res) => {
           blogTitle,
           blogSlug,
           visitedAt: new Date(),
-          scrollDepth: 0,
-          timeOnPage: 0,
+          scrollDepth: scrollDepth,
+          timeOnPage: timeOnPage,
           isFormSubmitted: true
         }],
         totalBlogsVisited: 1,
-        totalTimeSpent: 0,
-        averageScrollDepth: 0,
+        totalTimeSpent: timeOnPage,
+        averageScrollDepth: scrollDepth,
         isReturningVisitor: false,
         lastVisitAt: new Date()
       });
