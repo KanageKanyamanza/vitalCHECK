@@ -7,6 +7,7 @@
     "start": "node index.js",
     "dev": "nodemon index.js",
     "build": "./build.sh",
+    "build:sitemap": "node scripts/generate-sitemap.js",
     "migrate-blog": "node scripts/migrate-blog-to-bilingual.js",
     "migrate-production-blog": "node scripts/migrate-production-blog.js",
     "postinstall": "echo 'Post-install completed'"

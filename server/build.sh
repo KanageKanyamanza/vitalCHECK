@@ -21,4 +21,12 @@ else
     echo "❌ html-pdf-node not found, PDF generation may not work"
 fi
 
+# Générer le sitemap au build
+echo "🗺️  Generating sitemap..."
+if npm run build:sitemap; then
+    echo "✅ Sitemap generated successfully"
+else
+    echo "⚠️  Sitemap generation failed, will fallback to dynamic generation"
+fi
+
 echo "🎉 Build completed successfully!"
