@@ -1,10 +1,35 @@
 const express = require('express')
 const router = express.Router()
-const Blog = require('../models/Blog')
+const fs = require('fs')
+const path = require('path')
 
-// Route pour générer le sitemap XML dynamiquement
-router.get('/sitemap.xml', async (req, res) => {
+// Route pour servir le sitemap XML (statique en priorité, dynamique en fallback)
+router.get('/sitemap.xml', (req, res) => {
   try {
+    // Chemin vers le sitemap statique
+    const sitemapPath = path.join(__dirname, '../public/sitemap.xml')
+    
+    // Vérifier si le fichier statique existe
+    if (fs.existsSync(sitemapPath)) {
+      console.log('📄 [SITEMAP] Servir le sitemap statique')
+      res.set('Content-Type', 'application/xml; charset=utf-8')
+      res.sendFile(sitemapPath)
+    } else {
+      console.log('⚠️  [SITEMAP] Fichier statique non trouvé, fallback vers génération dynamique')
+      // Fallback vers la génération dynamique si le fichier statique n'existe pas
+      generateDynamicSitemap(req, res)
+    }
+  } catch (error) {
+    console.error('❌ [SITEMAP] Erreur lors du service du sitemap:', error)
+    res.status(500).send('Erreur lors du service du sitemap')
+  }
+})
+
+// Fonction de fallback pour générer le sitemap dynamiquement
+async function generateDynamicSitemap(req, res) {
+  try {
+    const Blog = require('../models/Blog')
+    
     // Récupérer tous les blogs publiés
     const blogs = await Blog.find({ 
       status: 'published',
@@ -75,6 +100,11 @@ router.get('/sitemap.xml', async (req, res) => {
       }
     ]
 
+    // Déterminer l'URL de base selon l'environnement
+    const baseUrl = process.env.NODE_ENV === 'production' 
+      ? 'https://www.checkmyenterprise.com' 
+      : 'http://localhost:5173'
+
     // Générer le XML
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n'
     xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n'
@@ -85,7 +115,7 @@ router.get('/sitemap.xml', async (req, res) => {
     // Ajouter les pages statiques
     staticPages.forEach(page => {
       xml += '  <url>\n'
-      xml += `    <loc>https://www.checkmyenterprise.com${page.url}</loc>\n`
+      xml += `    <loc>${baseUrl}${page.url}</loc>\n`
       xml += `    <lastmod>${page.lastmod}</lastmod>\n`
       xml += `    <changefreq>${page.changefreq}</changefreq>\n`
       xml += `    <priority>${page.priority}</priority>\n`
@@ -95,7 +125,7 @@ router.get('/sitemap.xml', async (req, res) => {
     // Ajouter les pages multilingues
     languagePages.forEach(page => {
       xml += '  <url>\n'
-      xml += `    <loc>https://www.checkmyenterprise.com${page.url}</loc>\n`
+      xml += `    <loc>${baseUrl}${page.url}</loc>\n`
       xml += `    <lastmod>${page.lastmod}</lastmod>\n`
       xml += `    <changefreq>${page.changefreq}</changefreq>\n`
       xml += `    <priority>${page.priority}</priority>\n`
@@ -104,11 +134,25 @@ router.get('/sitemap.xml', async (req, res) => {
 
     // Ajouter les articles de blog
     blogs.forEach(blog => {
-      // S'assurer que le blog a un slug valide
-      if (blog.slug && typeof blog.slug === 'string') {
+      // S'assurer que le blog a un slug valide (gérer le format bilingue)
+      let blogSlug = null
+      
+      if (blog.slug) {
+        if (typeof blog.slug === 'string') {
+          // Ancien format (chaîne simple)
+          blogSlug = blog.slug
+        } else if (typeof blog.slug === 'object' && blog.slug !== null) {
+          // Nouveau format bilingue - privilégier le français, sinon l'anglais
+          blogSlug = blog.slug.fr || blog.slug.en
+        }
+      }
+      
+      if (blogSlug) {
         const lastmod = blog.updatedAt || blog.publishedAt
+        // Nettoyer le slug pour éviter les caractères XML invalides
+        const cleanSlug = blogSlug.replace(/[<>"&]/g, '')
         xml += '  <url>\n'
-        xml += `    <loc>https://www.checkmyenterprise.com/blog/${blog.slug}</loc>\n`
+        xml += `    <loc>${baseUrl}/blog/${cleanSlug}</loc>\n`
         xml += `    <lastmod>${lastmod.toISOString()}</lastmod>\n`
         xml += '    <changefreq>monthly</changefreq>\n'
         xml += '    <priority>0.7</priority>\n'
@@ -118,13 +162,19 @@ router.get('/sitemap.xml', async (req, res) => {
 
     xml += '\n</urlset>'
 
-    res.set('Content-Type', 'application/xml')
+    // S'assurer que le XML commence bien par la déclaration
+    if (!xml.startsWith('<?xml')) {
+      console.error('❌ [SITEMAP] Erreur: Le sitemap XML ne commence pas correctement')
+      return res.status(500).send('Erreur lors de la génération du sitemap')
+    }
+
+    res.set('Content-Type', 'application/xml; charset=utf-8')
     res.send(xml)
   } catch (error) {
-    console.error('Erreur lors de la génération du sitemap:', error)
+    console.error('❌ [SITEMAP] Erreur lors de la génération dynamique du sitemap:', error)
     res.status(500).send('Erreur lors de la génération du sitemap')
   }
-})
+}
 
 // Route pour robots.txt
 router.get('/robots.txt', (req, res) => {

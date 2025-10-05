@@ -120,7 +120,7 @@ export const getBlogPostStructuredData = (blog) => {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": blog.title || "Article de blog",
-    "description": blog.excerpt || (blog.content ? blog.content.substring(0, 160) + "..." : "Article de blog VitalCheck"),
+    "description": blog.excerpt || (blog.content ? (typeof blog.content === 'string' ? blog.content.substring(0, 160) + "..." : (blog.content.fr ? blog.content.fr.substring(0, 160) + "..." : blog.content.en ? blog.content.en.substring(0, 160) + "..." : "Article de blog VitalCheck")) : "Article de blog VitalCheck"),
     "image": (blog.featuredImage && typeof blog.featuredImage === 'string') ? `https://www.checkmyenterprise.com${blog.featuredImage}` : "https://www.checkmyenterprise.com/og-image.png",
     "url": blog.slug ? `https://www.checkmyenterprise.com/blog/${blog.slug}` : "https://www.checkmyenterprise.com/blog",
   "datePublished": blog.publishedAt,
@@ -144,7 +144,7 @@ export const getBlogPostStructuredData = (blog) => {
   },
   "keywords": blog.tags ? blog.tags.join(", ") : "entreprise, business, conseil",
   "articleSection": blog.category || "Business",
-  "wordCount": blog.content ? blog.content.split(' ').length : 0,
+  "wordCount": blog.content ? (typeof blog.content === 'string' ? blog.content.split(' ').length : (blog.content.fr ? blog.content.fr.split(' ').length : blog.content.en ? blog.content.en.split(' ').length : 0)) : 0,
   "breadcrumb": {
     "@type": "BreadcrumbList",
     "itemListElement": [
