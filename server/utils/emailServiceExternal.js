@@ -83,9 +83,16 @@ const sendEmailEmailJS = async (emailOptions) => {
       to_email: emailOptions.to,
       subject: emailOptions.subject,
       html_content: emailOptions.html,
-      from_name: 'VitalCheck Enterprise Health Check',
-      from_email: process.env.EMAIL_USER
+      name: 'VitalCheck Enterprise Health Check',
+      email: 'info@checkmyenterprise.com'
     };
+
+    console.log('🔧 [EMAILJS] Configuration:', {
+      serviceId: process.env.EMAILJS_SERVICE_ID,
+      templateId: process.env.EMAILJS_TEMPLATE_ID,
+      publicKey: process.env.EMAILJS_PUBLIC_KEY ? 'Configuré' : 'Manquant',
+      privateKey: process.env.EMAILJS_PRIVATE_KEY ? 'Configuré' : 'Manquant'
+    });
 
     const response = await emailjs.send(
       process.env.EMAILJS_SERVICE_ID,
@@ -114,9 +121,21 @@ const sendEmailEmailJS = async (emailOptions) => {
   } catch (error) {
     console.error('❌ [EMAILJS] Erreur EmailJS:', {
       to: emailOptions.to,
-      error: error.message,
-      status: error.status
+      error: error.message || 'Erreur inconnue',
+      status: error.status,
+      response: error.response,
+      code: error.code
     });
+    
+    // Gestion spécifique des erreurs EmailJS
+    if (error.status === 403) {
+      console.error('🔒 [EMAILJS] Erreur 403 - Vérifiez vos clés API et permissions');
+    } else if (error.status === 400) {
+      console.error('📝 [EMAILJS] Erreur 400 - Vérifiez votre template et variables');
+    } else if (error.status === 401) {
+      console.error('🔑 [EMAILJS] Erreur 401 - Clé API invalide');
+    }
+    
     throw error;
   }
 };

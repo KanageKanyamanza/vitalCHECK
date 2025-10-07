@@ -43,7 +43,7 @@ const createAlternativeTransporter = () => {
 
 // Fonction d'envoi alternative avec retry
 const sendEmailAlternative = async (emailOptions, retryCount = 0) => {
-  const maxRetries = 1; // Réduit à 1 tentative (2 au total)
+  const maxRetries = 0; // Réduit à 0 tentative (1 au total)
   const timeoutMs = process.env.NODE_ENV === 'production' ? 60000 : 30000; // 60s en prod, 30s en dev
   
   try {
