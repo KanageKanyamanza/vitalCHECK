@@ -489,9 +489,9 @@ router.post('/users/:userId/remind', authenticateAdmin, checkPermission('sendEma
       EMAIL_FROM: process.env.EMAIL_FROM
     });
 
-    // Mode synchrone pour diagnostiquer (temporaire)
+    // Essayer d'abord la méthode normale, puis l'alternative
     try {
-      console.log('📧 [EMAIL] Tentative d\'envoi synchrone pour diagnostic...');
+      console.log('📧 [EMAIL] Tentative d\'envoi avec configuration normale...');
       const result = await sendEmail(emailData);
       
       console.log('✅ [EMAIL] Email de relance envoyé avec succès à:', user.email, {
@@ -504,19 +504,41 @@ router.post('/users/:userId/remind', authenticateAdmin, checkPermission('sendEma
         message: 'Email de relance envoyé avec succès !'
       });
     } catch (emailError) {
-      console.error('❌ [EMAIL] Erreur lors de l\'envoi de l\'email de relance:', {
+      console.error('❌ [EMAIL] Erreur avec configuration normale:', {
         userId: user._id,
         email: user.email,
         error: emailError.message,
-        code: emailError.code,
-        responseCode: emailError.responseCode,
-        stack: emailError.stack
+        code: emailError.code
       });
 
-      res.status(500).json({
-        success: false,
-        message: `Erreur lors de l'envoi de l'email: ${emailError.message}`
-      });
+      // Essayer la configuration alternative
+      try {
+        console.log('🔄 [EMAIL] Tentative avec configuration alternative...');
+        const { sendEmailAlternative } = require('../utils/emailServiceAlternative');
+        const result = await sendEmailAlternative(emailData);
+        
+        console.log('✅ [EMAIL] Email de relance envoyé avec succès (alternative) à:', user.email, {
+          messageId: result.messageId,
+          response: result.response
+        });
+
+        res.json({
+          success: true,
+          message: 'Email de relance envoyé avec succès !'
+        });
+      } catch (altError) {
+        console.error('❌ [EMAIL] Erreur avec configuration alternative:', {
+          userId: user._id,
+          email: user.email,
+          error: altError.message,
+          code: altError.code
+        });
+
+        res.status(500).json({
+          success: false,
+          message: `Erreur lors de l'envoi de l'email: ${altError.message}`
+        });
+      }
     }
 
   } catch (error) {
