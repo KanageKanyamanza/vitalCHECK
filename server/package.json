@@ -14,6 +14,7 @@
     "test-all-emails": "node scripts/test-all-emails.js",
     "check-production": "node scripts/check-production-health.js",
     "test-prod-email": "node scripts/test-production-email.js",
+    "test-alt-email": "node scripts/test-alternative-email.js",
     "migrate-blog": "node scripts/migrate-blog-to-bilingual.js",
     "migrate-production-blog": "node scripts/migrate-production-blog.js",
     "postinstall": "echo 'Post-install completed'"

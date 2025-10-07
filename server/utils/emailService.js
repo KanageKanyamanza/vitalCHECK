@@ -2,7 +2,10 @@ const nodemailer = require('nodemailer');
 
 // Create transporter
 const createTransporter = () => {
-  return nodemailer.createTransport({
+  // Configuration spéciale pour Render (problèmes de connexion SMTP)
+  const isRender = process.env.RENDER || process.env.NODE_ENV === 'production';
+  
+  const config = {
     host: process.env.EMAIL_HOST || 'smtp.gmail.com',
     port: process.env.EMAIL_PORT || 587,
     secure: false, // true for 465, false for other ports
@@ -12,21 +15,33 @@ const createTransporter = () => {
     },
     tls: {
       rejectUnauthorized: false,
+      ciphers: 'SSLv3'
     },
     // Configuration des timeouts (augmentés pour la production)
-    connectionTimeout: 60000, // 60 secondes pour la connexion
-    greetingTimeout: 60000,   // 60 secondes pour le greeting
-    socketTimeout: 60000,     // 60 secondes pour les opérations socket
+    connectionTimeout: isRender ? 30000 : 60000, // Réduire sur Render
+    greetingTimeout: isRender ? 30000 : 60000,   // Réduire sur Render
+    socketTimeout: isRender ? 30000 : 60000,     // Réduire sur Render
     // Pool de connexions pour améliorer les performances
-    pool: true,
-    maxConnections: 5,
-    maxMessages: 100,
+    pool: !isRender, // Désactiver le pool sur Render
+    maxConnections: isRender ? 1 : 5,
+    maxMessages: isRender ? 1 : 100,
     // Retry configuration
     retry: {
-      attempts: 3,
-      delay: 2000
+      attempts: isRender ? 1 : 3, // Moins de tentatives sur Render
+      delay: isRender ? 1000 : 2000
     }
+  };
+
+  console.log('🔧 [EMAIL] Configuration SMTP:', {
+    host: config.host,
+    port: config.port,
+    isRender,
+    pool: config.pool,
+    maxConnections: config.maxConnections,
+    connectionTimeout: config.connectionTimeout
   });
+
+  return nodemailer.createTransport(config);
 };
 
 // Send email function with timeout and retry
