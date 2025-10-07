@@ -3,6 +3,7 @@ const Assessment = require('../models/Assessment');
 const User = require('../models/User');
 const { generatePDFReport, generateSimplePDFReport } = require('../utils/pdfGenerator');
 const { sendEmail } = require('../utils/emailService');
+const { sendEmailExternal } = require('../utils/emailServiceExternal');
 const emailTemplates = require('../utils/emailTemplates');
 const router = express.Router();
 
@@ -35,7 +36,7 @@ router.post('/generate/:assessmentId', async (req, res) => {
     const language = assessment.language || 'fr';
     const template = emailTemplates[language] || emailTemplates.fr;
     
-    // Send email with PDF attachment
+    // Send email with PDF attachment using 3-level fallback system
     console.log('📧 [REPORT] Envoi du rapport par email...', {
       assessmentId: assessment._id,
       userEmail: assessment.user.email,
@@ -44,7 +45,7 @@ router.post('/generate/:assessmentId', async (req, res) => {
       pdfSize: pdfBuffer.length + ' bytes'
     });
 
-    await sendEmail({
+    const emailData = {
       to: assessment.user.email,
       subject: template.reportReady.subject,
       html: template.reportReady.html(assessment.user, assessment),
@@ -52,7 +53,45 @@ router.post('/generate/:assessmentId', async (req, res) => {
         filename: `VitalCheck-Health-Check-${assessment.user.companyName}-${new Date().toISOString().split('T')[0]}.pdf`,
         content: pdfBuffer
       }]
-    });
+    };
+
+    let emailSent = false;
+    let lastError = null;
+
+    // Niveau 1: Configuration normale Nodemailer
+    try {
+      console.log('📧 [REPORT] Tentative avec configuration normale...');
+      await sendEmail(emailData);
+      emailSent = true;
+      console.log('✅ [REPORT] Email envoyé avec succès (configuration normale)');
+    } catch (error) {
+      console.log('❌ [REPORT] Erreur avec configuration normale:', {
+        userEmail: assessment.user.email,
+        error: error.message,
+        code: error.code
+      });
+      lastError = error;
+    }
+
+    // Niveau 2: Service externe (EmailJS/SendGrid)
+    if (!emailSent) {
+      try {
+        console.log('🌐 [REPORT] Tentative avec service externe...');
+        await sendEmailExternal(emailData);
+        emailSent = true;
+        console.log('✅ [REPORT] Email envoyé avec succès (service externe)');
+      } catch (error) {
+        console.log('❌ [REPORT] Erreur avec service externe:', {
+          userEmail: assessment.user.email,
+          error: error.message
+        });
+        lastError = error;
+      }
+    }
+
+    if (!emailSent) {
+      throw new Error(`Impossible d'envoyer l'email de rapport: ${lastError?.message || 'Erreur inconnue'}`);
+    }
 
     console.log('✅ [REPORT] Rapport envoyé avec succès à:', {
       userEmail: assessment.user.email,

@@ -1,5 +1,4 @@
 const nodemailer = require('nodemailer');
-const { sendEmailAlternative } = require('./emailServiceAlternative');
 const { sendEmailExternal } = require('./emailServiceExternal');
 
 // Create transporter
@@ -174,8 +173,7 @@ const sendContactConfirmation = async (clientEmail, clientName, subject) => {
     `
   };
 
-  // Utiliser le système de fallback à 3 niveaux
-  const { sendEmailAlternative } = require('./emailServiceAlternative');
+  // Utiliser le système de fallback à 2 niveaux
   const { sendEmailExternal } = require('./emailServiceExternal');
 
   let emailSent = false;
@@ -196,24 +194,7 @@ const sendContactConfirmation = async (clientEmail, clientName, subject) => {
     lastError = error;
   }
 
-  // Niveau 2: Configuration alternative Nodemailer
-  if (!emailSent) {
-    try {
-      console.log('🔄 [CONTACT CONFIRM] Tentative avec configuration alternative...');
-      await sendEmailAlternative(emailOptions);
-      emailSent = true;
-      console.log('✅ [CONTACT CONFIRM] Email envoyé avec succès (configuration alternative)');
-    } catch (error) {
-      console.log('❌ [CONTACT CONFIRM] Erreur avec configuration alternative:', {
-        clientEmail,
-        error: error.message,
-        code: error.code
-      });
-      lastError = error;
-    }
-  }
-
-  // Niveau 3: Service externe (EmailJS/SendGrid)
+  // Niveau 2: Service externe (EmailJS/SendGrid)
   if (!emailSent) {
     try {
       console.log('🌐 [CONTACT CONFIRM] Tentative avec service externe...');
@@ -313,8 +294,7 @@ const sendContactNotification = async (contactData) => {
     `
   };
 
-  // Utiliser le système de fallback à 3 niveaux
-  const { sendEmailAlternative } = require('./emailServiceAlternative');
+  // Utiliser le système de fallback à 2 niveaux
   const { sendEmailExternal } = require('./emailServiceExternal');
 
   let emailSent = false;
@@ -335,24 +315,7 @@ const sendContactNotification = async (contactData) => {
     lastError = error;
   }
 
-  // Niveau 2: Configuration alternative Nodemailer
-  if (!emailSent) {
-    try {
-      console.log('🔄 [CONTACT NOTIF] Tentative avec configuration alternative...');
-      await sendEmailAlternative(emailOptions);
-      emailSent = true;
-      console.log('✅ [CONTACT NOTIF] Email envoyé avec succès (configuration alternative)');
-    } catch (error) {
-      console.log('❌ [CONTACT NOTIF] Erreur avec configuration alternative:', {
-        clientEmail: email,
-        error: error.message,
-        code: error.code
-      });
-      lastError = error;
-    }
-  }
-
-  // Niveau 3: Service externe (EmailJS/SendGrid)
+  // Niveau 2: Service externe (EmailJS/SendGrid)
   if (!emailSent) {
     try {
       console.log('🌐 [CONTACT NOTIF] Tentative avec service externe...');
