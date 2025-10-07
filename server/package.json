@@ -19,11 +19,14 @@
     "test-frontend-emails": "node scripts/test-frontend-emails.js",
     "setup-sendgrid": "node scripts/setup-sendgrid.js",
     "test-sendgrid": "node scripts/test-sendgrid.js",
+    "setup-emailjs": "node scripts/setup-emailjs.js",
+    "test-emailjs": "node scripts/test-emailjs.js",
     "migrate-blog": "node scripts/migrate-blog-to-bilingual.js",
     "migrate-production-blog": "node scripts/migrate-production-blog.js",
     "postinstall": "echo 'Post-install completed'"
   },
   "dependencies": {
+    "@emailjs/nodejs": "^5.0.2",
     "@sendgrid/mail": "^8.1.6",
     "axios": "^1.12.2",
     "bcryptjs": "^2.4.3",
