@@ -1051,7 +1051,7 @@ router.get('/users/:userId/draft-assessment', authenticateAdmin, checkPermission
       await draftAssessment.save();
     }
 
-    const resumeLink = `${process.env.CLIENT_URL || 'http://localhost:3000'}/resume/${draftAssessment.resumeToken}`;
+    const resumeLink = `${process.env.CLIENT_URL || 'https://www.checkmyenterprise.com'}/resume/${draftAssessment.resumeToken}`;
 
     res.json({
       success: true,
@@ -1119,7 +1119,7 @@ router.get('/draft-assessments', authenticateAdmin, checkPermission('viewAssessm
             await assessment.save();
           }
 
-          const resumeLink = `${process.env.CLIENT_URL || 'http://localhost:3000'}/resume/${assessment.resumeToken}`;
+          const resumeLink = `${process.env.CLIENT_URL || 'https://www.checkmyenterprise.com'}/resume/${assessment.resumeToken}`;
           const progressPercentage = assessment.totalQuestions > 0 
             ? Math.round((assessment.answers.length / assessment.totalQuestions) * 100)
             : 0;

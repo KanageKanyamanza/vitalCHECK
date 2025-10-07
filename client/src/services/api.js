@@ -8,7 +8,7 @@ const getApiBaseUrl = () => {
     return 'https://ubb-enterprise-health-check.onrender.com/api';
   }
   // En développement, utiliser l'URL locale ou celle définie dans .env
-  return import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+  return import.meta.env.VITE_API_URL || 'https://ubb-enterprise-health-check.onrender.com/api';
 };
 
 const API_BASE_URL = getApiBaseUrl();
