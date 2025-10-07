@@ -2,43 +2,38 @@ const nodemailer = require('nodemailer');
 
 // Create transporter
 const createTransporter = () => {
-  // Configuration spéciale pour Render (problèmes de connexion SMTP)
-  const isRender = process.env.RENDER || process.env.NODE_ENV === 'production';
-  
+  // Configuration SMTP directe dans le code (plus fiable sur Render)
   const config = {
-    host: process.env.EMAIL_HOST || 'smtp.gmail.com',
-    port: process.env.EMAIL_PORT || 587,
+    host: 'smtp.gmail.com',
+    port: 587,
     secure: false, // true for 465, false for other ports
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS
     },
     tls: {
-      rejectUnauthorized: false,
-      ciphers: 'SSLv3'
+      rejectUnauthorized: false
     },
-    // Configuration des timeouts (augmentés pour la production)
-    connectionTimeout: isRender ? 30000 : 60000, // Réduire sur Render
-    greetingTimeout: isRender ? 30000 : 60000,   // Réduire sur Render
-    socketTimeout: isRender ? 30000 : 60000,     // Réduire sur Render
-    // Pool de connexions pour améliorer les performances
-    pool: !isRender, // Désactiver le pool sur Render
-    maxConnections: isRender ? 1 : 5,
-    maxMessages: isRender ? 1 : 100,
-    // Retry configuration
-    retry: {
-      attempts: isRender ? 1 : 3, // Moins de tentatives sur Render
-      delay: isRender ? 1000 : 2000
-    }
+    // Configuration optimisée pour Render
+    connectionTimeout: 15000, // 15 secondes
+    greetingTimeout: 15000,   // 15 secondes
+    socketTimeout: 15000,     // 15 secondes
+    // Pas de pool sur Render pour éviter les problèmes
+    pool: false,
+    maxConnections: 1,
+    maxMessages: 1,
+    // Configuration simple
+    debug: false,
+    logger: false
   };
 
-  console.log('🔧 [EMAIL] Configuration SMTP:', {
+  console.log('🔧 [EMAIL] Configuration SMTP directe:', {
     host: config.host,
     port: config.port,
-    isRender,
-    pool: config.pool,
-    maxConnections: config.maxConnections,
-    connectionTimeout: config.connectionTimeout
+    user: process.env.EMAIL_USER ? 'Configuré' : 'Manquant',
+    pass: process.env.EMAIL_PASS ? 'Configuré' : 'Manquant',
+    connectionTimeout: config.connectionTimeout,
+    pool: config.pool
   });
 
   return nodemailer.createTransport(config);
@@ -53,7 +48,7 @@ const sendEmail = async (emailOptions, retryCount = 0) => {
     const transporter = createTransporter();
     
     const mailOptions = {
-      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+      from: `"VitalCheck Enterprise Health Check" <${process.env.EMAIL_USER}>`,
       to: emailOptions.to,
       subject: emailOptions.subject,
       html: emailOptions.html,

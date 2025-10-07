@@ -15,6 +15,8 @@
     "check-production": "node scripts/check-production-health.js",
     "test-prod-email": "node scripts/test-production-email.js",
     "test-alt-email": "node scripts/test-alternative-email.js",
+    "setup-external-email": "node scripts/setup-external-email.js",
+    "test-frontend-emails": "node scripts/test-frontend-emails.js",
     "migrate-blog": "node scripts/migrate-blog-to-bilingual.js",
     "migrate-production-blog": "node scripts/migrate-production-blog.js",
     "postinstall": "echo 'Post-install completed'"

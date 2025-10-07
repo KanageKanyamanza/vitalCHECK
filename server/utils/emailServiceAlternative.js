@@ -7,7 +7,7 @@ const nodemailer = require('nodemailer');
 
 // Configuration alternative pour Render
 const createAlternativeTransporter = () => {
-  // Essayer d'abord avec une configuration plus simple
+  // Configuration alternative avec port 465 (SSL)
   const config = {
     host: 'smtp.gmail.com',
     port: 465, // Port SSL au lieu de 587
@@ -24,9 +24,11 @@ const createAlternativeTransporter = () => {
     pool: false,
     // Configuration TLS minimale
     tls: {
-      rejectUnauthorized: false,
-      minVersion: 'TLSv1.2'
-    }
+      rejectUnauthorized: false
+    },
+    // Configuration simple
+    debug: false,
+    logger: false
   };
 
   console.log('🔄 [EMAIL ALT] Configuration alternative SMTP:', {
@@ -45,7 +47,7 @@ const sendEmailAlternative = async (emailOptions) => {
     const transporter = createAlternativeTransporter();
     
     const mailOptions = {
-      from: process.env.EMAIL_FROM || process.env.EMAIL_USER,
+      from: `"VitalCheck Enterprise Health Check" <${process.env.EMAIL_USER}>`,
       to: emailOptions.to,
       subject: emailOptions.subject,
       html: emailOptions.html,

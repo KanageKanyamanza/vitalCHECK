@@ -1,7 +1,12 @@
 const generateReminderEmailHTML = (user, message, subject) => {
   // Extraire le lien du message s'il y en a un
   const linkMatch = message.match(/https?:\/\/[^\s]+/);
-  const link = linkMatch ? linkMatch[0] : '#';
+  let link = linkMatch ? linkMatch[0] : '#';
+  
+  // Corriger les liens localhost pour la production
+  if (link.includes('localhost:3000') || link.includes('localhost:5173')) {
+    link = link.replace(/https?:\/\/localhost:\d+/, 'https://www.checkmyenterprise.com');
+  }
   
   return `
     <!DOCTYPE html>

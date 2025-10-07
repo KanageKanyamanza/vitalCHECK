@@ -534,10 +534,33 @@ router.post('/users/:userId/remind', authenticateAdmin, checkPermission('sendEma
           code: altError.code
         });
 
-        res.status(500).json({
-          success: false,
-          message: `Erreur lors de l'envoi de l'email: ${altError.message}`
-        });
+        // Dernier recours: service externe ou webhook
+        try {
+          console.log('🌐 [EMAIL] Tentative avec service externe...');
+          const { sendEmailExternal } = require('../utils/emailServiceExternal');
+          const result = await sendEmailExternal(emailData);
+          
+          console.log('✅ [EMAIL] Email de relance envoyé avec succès (externe) à:', user.email, {
+            messageId: result.messageId,
+            response: result.response
+          });
+
+          res.json({
+            success: true,
+            message: 'Email de relance envoyé avec succès !'
+          });
+        } catch (extError) {
+          console.error('❌ [EMAIL] Erreur avec service externe:', {
+            userId: user._id,
+            email: user.email,
+            error: extError.message
+          });
+
+          res.status(500).json({
+            success: false,
+            message: `Erreur lors de l'envoi de l'email: ${extError.message}`
+          });
+        }
       }
     }
 
@@ -568,16 +591,38 @@ router.post('/users/remind-bulk', authenticateAdmin, checkPermission('sendEmails
     // Support pour les deux formats : userIds + message commun OU emails personnalisés
     if (emails && emails.length > 0) {
       // Format avec emails personnalisés
-      const emailPromises = emails.map(emailData => {
+      const emailPromises = emails.map(async (emailData) => {
         // Créer un objet user fictif pour le template
         const user = { companyName: emailData.to.split('@')[0] };
         const html = generateReminderEmailHTML(user, emailData.message, emailData.subject);
         
-        return sendEmail({
+        const emailOptions = {
           to: emailData.to,
           subject: emailData.subject,
           html: html
-        });
+        };
+
+        // Essayer d'abord la méthode normale, puis l'alternative, puis l'externe
+        try {
+          return await sendEmail(emailOptions);
+        } catch (error) {
+          console.error('❌ [EMAIL BULK] Erreur configuration normale:', error.message);
+          
+          try {
+            const { sendEmailAlternative } = require('../utils/emailServiceAlternative');
+            return await sendEmailAlternative(emailOptions);
+          } catch (altError) {
+            console.error('❌ [EMAIL BULK] Erreur configuration alternative:', altError.message);
+            
+            try {
+              const { sendEmailExternal } = require('../utils/emailServiceExternal');
+              return await sendEmailExternal(emailOptions);
+            } catch (extError) {
+              console.error('❌ [EMAIL BULK] Erreur service externe:', extError.message);
+              throw extError;
+            }
+          }
+        }
       });
 
       await Promise.all(emailPromises);
@@ -603,24 +648,53 @@ router.post('/users/remind-bulk', authenticateAdmin, checkPermission('sendEmails
         message: `Envoi de ${users.length} emails de relance en cours...`
       });
 
-      // Envoyer les emails de manière asynchrone
-      const emailPromises = users.map(user => {
+      // Envoyer les emails de manière asynchrone avec fallback
+      const emailPromises = users.map(async (user) => {
         const emailData = {
           to: user.email,
           subject: subject,
           html: generateReminderEmailHTML(user, message, subject)
         };
-        return sendEmail(emailData)
-          .then(() => {
-            console.log('✅ [EMAIL] Email de relance envoyé avec succès à:', user.email);
-          })
-          .catch((error) => {
-            console.error('❌ [EMAIL] Erreur lors de l\'envoi de l\'email de relance:', {
+
+        // Essayer d'abord la méthode normale, puis l'alternative, puis l'externe
+        try {
+          const result = await sendEmail(emailData);
+          console.log('✅ [EMAIL BULK] Email de relance envoyé avec succès à:', user.email);
+          return result;
+        } catch (error) {
+          console.error('❌ [EMAIL BULK] Erreur configuration normale:', {
+            userId: user._id,
+            email: user.email,
+            error: error.message
+          });
+          
+          try {
+            const { sendEmailAlternative } = require('../utils/emailServiceAlternative');
+            const result = await sendEmailAlternative(emailData);
+            console.log('✅ [EMAIL BULK] Email de relance envoyé avec succès (alternative) à:', user.email);
+            return result;
+          } catch (altError) {
+            console.error('❌ [EMAIL BULK] Erreur configuration alternative:', {
               userId: user._id,
               email: user.email,
-              error: error.message
+              error: altError.message
             });
-          });
+            
+            try {
+              const { sendEmailExternal } = require('../utils/emailServiceExternal');
+              const result = await sendEmailExternal(emailData);
+              console.log('✅ [EMAIL BULK] Email de relance envoyé avec succès (externe) à:', user.email);
+              return result;
+            } catch (extError) {
+              console.error('❌ [EMAIL BULK] Erreur service externe:', {
+                userId: user._id,
+                email: user.email,
+                error: extError.message
+              });
+              throw extError;
+            }
+          }
+        }
       });
 
       // Traiter les emails en arrière-plan
