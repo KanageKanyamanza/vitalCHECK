@@ -19,7 +19,7 @@ async function generateClientSitemap() {
     console.log('🚀 [SITEMAP CLIENT] Début de la génération du sitemap côté client...');
     
     // URL de l'API pour récupérer les blogs
-    const apiUrl = process.env.VITE_API_URL || 'http://localhost:5000/api';
+    const apiUrl = process.env.VITE_API_URL || 'https://ubb-enterprise-health-check.onrender.com/api';
     
     let blogs = [];
     try {
@@ -113,7 +113,7 @@ async function generateClientSitemap() {
     // Déterminer l'URL de base selon l'environnement
     const baseUrl = process.env.NODE_ENV === 'production' 
       ? 'https://www.checkmyenterprise.com' 
-      : 'http://localhost:5173';
+      : 'https://www.checkmyenterprise.com';
 
     // Générer le XML
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
