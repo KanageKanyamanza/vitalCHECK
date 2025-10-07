@@ -13,10 +13,10 @@ const createTransporter = () => {
     tls: {
       rejectUnauthorized: false,
     },
-    // Configuration des timeouts
-    connectionTimeout: 30000, // 30 secondes pour la connexion
-    greetingTimeout: 30000,   // 30 secondes pour le greeting
-    socketTimeout: 30000,     // 30 secondes pour les opérations socket
+    // Configuration des timeouts (augmentés pour la production)
+    connectionTimeout: 60000, // 60 secondes pour la connexion
+    greetingTimeout: 60000,   // 60 secondes pour le greeting
+    socketTimeout: 60000,     // 60 secondes pour les opérations socket
     // Pool de connexions pour améliorer les performances
     pool: true,
     maxConnections: 5,
@@ -32,7 +32,7 @@ const createTransporter = () => {
 // Send email function with timeout and retry
 const sendEmail = async (emailOptions, retryCount = 0) => {
   const maxRetries = 3;
-  const timeoutMs = 45000; // 45 secondes (moins que le timeout client de 60s)
+  const timeoutMs = process.env.NODE_ENV === 'production' ? 90000 : 45000; // 90s en prod, 45s en dev
   
   try {
     const transporter = createTransporter();
@@ -55,7 +55,7 @@ const sendEmail = async (emailOptions, retryCount = 0) => {
     // Créer une promesse avec timeout
     const emailPromise = transporter.sendMail(mailOptions);
     const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Email timeout after 45 seconds')), timeoutMs);
+      setTimeout(() => reject(new Error(`Email timeout after ${timeoutMs/1000} seconds`)), timeoutMs);
     });
 
     const result = await Promise.race([emailPromise, timeoutPromise]);
