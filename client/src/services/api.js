@@ -16,7 +16,7 @@ const API_BASE_URL = getApiBaseUrl();
 // Instance Axios principale
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 30000, // 30 secondes
+  timeout: 60000, // 60 secondes (1 minute)
   headers: {
     'Content-Type': 'application/json',
   },
@@ -43,7 +43,7 @@ api.interceptors.request.use(
 // Instance Axios pour les requêtes admin
 const adminApi = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 30000,
+  timeout: 60000, // 60 secondes (1 minute)
   headers: {
     'Content-Type': 'application/json',
   },
@@ -409,7 +409,7 @@ export const uploadApiService = {
         'Authorization': `Bearer ${token}`,
         'Content-Type': 'multipart/form-data'
       },
-      timeout: 30000 // 30 secondes pour l'upload
+      timeout: 60000 // 60 secondes (1 minute) pour l'upload
     });
   },
 
