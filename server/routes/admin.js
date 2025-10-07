@@ -539,7 +539,6 @@ router.post('/users/:userId/remind', authenticateAdmin, checkPermission('sendEma
           });
         }
       }
-    }
 
   } catch (error) {
     console.error('Send reminder email error:', error);
