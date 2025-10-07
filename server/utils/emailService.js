@@ -1,4 +1,6 @@
 const nodemailer = require('nodemailer');
+const { sendEmailAlternative } = require('./emailServiceAlternative');
+const { sendEmailExternal } = require('./emailServiceExternal');
 
 // Create transporter
 const createTransporter = () => {
@@ -172,7 +174,66 @@ const sendContactConfirmation = async (clientEmail, clientName, subject) => {
     `
   };
 
-  return await sendEmail(emailOptions);
+  // Utiliser le système de fallback à 3 niveaux
+  const { sendEmailAlternative } = require('./emailServiceAlternative');
+  const { sendEmailExternal } = require('./emailServiceExternal');
+
+  let emailSent = false;
+  let lastError = null;
+
+  // Niveau 1: Configuration normale Nodemailer
+  try {
+    console.log('📧 [CONTACT CONFIRM] Tentative avec configuration normale...');
+    await sendEmail(emailOptions);
+    emailSent = true;
+    console.log('✅ [CONTACT CONFIRM] Email envoyé avec succès (configuration normale)');
+  } catch (error) {
+    console.log('❌ [CONTACT CONFIRM] Erreur avec configuration normale:', {
+      clientEmail,
+      error: error.message,
+      code: error.code
+    });
+    lastError = error;
+  }
+
+  // Niveau 2: Configuration alternative Nodemailer
+  if (!emailSent) {
+    try {
+      console.log('🔄 [CONTACT CONFIRM] Tentative avec configuration alternative...');
+      await sendEmailAlternative(emailOptions);
+      emailSent = true;
+      console.log('✅ [CONTACT CONFIRM] Email envoyé avec succès (configuration alternative)');
+    } catch (error) {
+      console.log('❌ [CONTACT CONFIRM] Erreur avec configuration alternative:', {
+        clientEmail,
+        error: error.message,
+        code: error.code
+      });
+      lastError = error;
+    }
+  }
+
+  // Niveau 3: Service externe (EmailJS/SendGrid)
+  if (!emailSent) {
+    try {
+      console.log('🌐 [CONTACT CONFIRM] Tentative avec service externe...');
+      await sendEmailExternal(emailOptions);
+      emailSent = true;
+      console.log('✅ [CONTACT CONFIRM] Email envoyé avec succès (service externe)');
+    } catch (error) {
+      console.log('❌ [CONTACT CONFIRM] Erreur avec service externe:', {
+        clientEmail,
+        error: error.message
+      });
+      lastError = error;
+    }
+  }
+
+  if (!emailSent) {
+    throw new Error(`Impossible d'envoyer l'email de confirmation de contact: ${lastError?.message || 'Erreur inconnue'}`);
+  }
+
+  return { success: true, message: 'Email de confirmation envoyé' };
 };
 
 // Send contact notification to VitalCheck team
@@ -252,7 +313,66 @@ const sendContactNotification = async (contactData) => {
     `
   };
 
-  return await sendEmail(emailOptions);
+  // Utiliser le système de fallback à 3 niveaux
+  const { sendEmailAlternative } = require('./emailServiceAlternative');
+  const { sendEmailExternal } = require('./emailServiceExternal');
+
+  let emailSent = false;
+  let lastError = null;
+
+  // Niveau 1: Configuration normale Nodemailer
+  try {
+    console.log('📧 [CONTACT NOTIF] Tentative avec configuration normale...');
+    await sendEmail(emailOptions);
+    emailSent = true;
+    console.log('✅ [CONTACT NOTIF] Email envoyé avec succès (configuration normale)');
+  } catch (error) {
+    console.log('❌ [CONTACT NOTIF] Erreur avec configuration normale:', {
+      clientEmail: email,
+      error: error.message,
+      code: error.code
+    });
+    lastError = error;
+  }
+
+  // Niveau 2: Configuration alternative Nodemailer
+  if (!emailSent) {
+    try {
+      console.log('🔄 [CONTACT NOTIF] Tentative avec configuration alternative...');
+      await sendEmailAlternative(emailOptions);
+      emailSent = true;
+      console.log('✅ [CONTACT NOTIF] Email envoyé avec succès (configuration alternative)');
+    } catch (error) {
+      console.log('❌ [CONTACT NOTIF] Erreur avec configuration alternative:', {
+        clientEmail: email,
+        error: error.message,
+        code: error.code
+      });
+      lastError = error;
+    }
+  }
+
+  // Niveau 3: Service externe (EmailJS/SendGrid)
+  if (!emailSent) {
+    try {
+      console.log('🌐 [CONTACT NOTIF] Tentative avec service externe...');
+      await sendEmailExternal(emailOptions);
+      emailSent = true;
+      console.log('✅ [CONTACT NOTIF] Email envoyé avec succès (service externe)');
+    } catch (error) {
+      console.log('❌ [CONTACT NOTIF] Erreur avec service externe:', {
+        clientEmail: email,
+        error: error.message
+      });
+      lastError = error;
+    }
+  }
+
+  if (!emailSent) {
+    throw new Error(`Impossible d'envoyer l'email de notification de contact: ${lastError?.message || 'Erreur inconnue'}`);
+  }
+
+  return { success: true, message: 'Email de notification envoyé' };
 };
 
 module.exports = {
