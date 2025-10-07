@@ -480,12 +480,44 @@ router.post('/users/:userId/remind', authenticateAdmin, checkPermission('sendEma
       html: generateReminderEmailHTML(user, message, subject)
     };
 
-    await sendEmail(emailData);
-
-    res.json({
-      success: true,
-      message: 'Email de relance envoyé avec succès'
+    // Vérifier la configuration email avant d'envoyer
+    console.log('🔍 [EMAIL] Vérification de la configuration email...', {
+      EMAIL_HOST: process.env.EMAIL_HOST,
+      EMAIL_PORT: process.env.EMAIL_PORT,
+      EMAIL_USER: process.env.EMAIL_USER ? 'Configuré' : 'Manquant',
+      EMAIL_PASS: process.env.EMAIL_PASS ? 'Configuré' : 'Manquant',
+      EMAIL_FROM: process.env.EMAIL_FROM
     });
+
+    // Mode synchrone pour diagnostiquer (temporaire)
+    try {
+      console.log('📧 [EMAIL] Tentative d\'envoi synchrone pour diagnostic...');
+      const result = await sendEmail(emailData);
+      
+      console.log('✅ [EMAIL] Email de relance envoyé avec succès à:', user.email, {
+        messageId: result.messageId,
+        response: result.response
+      });
+
+      res.json({
+        success: true,
+        message: 'Email de relance envoyé avec succès !'
+      });
+    } catch (emailError) {
+      console.error('❌ [EMAIL] Erreur lors de l\'envoi de l\'email de relance:', {
+        userId: user._id,
+        email: user.email,
+        error: emailError.message,
+        code: emailError.code,
+        responseCode: emailError.responseCode,
+        stack: emailError.stack
+      });
+
+      res.status(500).json({
+        success: false,
+        message: `Erreur lors de l'envoi de l'email: ${emailError.message}`
+      });
+    }
 
   } catch (error) {
     console.error('Send reminder email error:', error);
@@ -543,21 +575,39 @@ router.post('/users/remind-bulk', authenticateAdmin, checkPermission('sendEmails
         });
       }
 
+      // Répondre immédiatement au client
+      res.json({
+        success: true,
+        message: `Envoi de ${users.length} emails de relance en cours...`
+      });
+
+      // Envoyer les emails de manière asynchrone
       const emailPromises = users.map(user => {
         const emailData = {
           to: user.email,
           subject: subject,
           html: generateReminderEmailHTML(user, message, subject)
         };
-        return sendEmail(emailData);
+        return sendEmail(emailData)
+          .then(() => {
+            console.log('✅ [EMAIL] Email de relance envoyé avec succès à:', user.email);
+          })
+          .catch((error) => {
+            console.error('❌ [EMAIL] Erreur lors de l\'envoi de l\'email de relance:', {
+              userId: user._id,
+              email: user.email,
+              error: error.message
+            });
+          });
       });
 
-      await Promise.all(emailPromises);
-
-      res.json({
-        success: true,
-        message: `${users.length} emails de relance envoyés avec succès`
-      });
+      // Traiter les emails en arrière-plan
+      Promise.allSettled(emailPromises)
+        .then((results) => {
+          const successful = results.filter(r => r.status === 'fulfilled').length;
+          const failed = results.filter(r => r.status === 'rejected').length;
+          console.log(`📊 [EMAIL] Résultats de l'envoi en masse: ${successful} réussis, ${failed} échoués`);
+        });
     } else {
       return res.status(400).json({
         success: false,

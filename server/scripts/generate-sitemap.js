@@ -1,27 +1,26 @@
+#!/usr/bin/env node
+
+/**
+ * Script de génération automatique du sitemap
+ * Usage: node scripts/generate-sitemap.js
+ */
+
 const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
-const Blog = require('../models/Blog');
+require('dotenv').config();
 
-// Configuration des URLs selon l'environnement
-const getBaseUrl = () => {
-  if (process.env.NODE_ENV === 'production') {
-    return 'https://www.checkmyenterprise.com';
-  }
-  return 'http://localhost:5173'; // URL du client en dev
-};
+// Import des modèles
+const Blog = require('../models/Blog');
 
 async function generateSitemap() {
   try {
-    console.log('🗺️  Génération du sitemap...');
+    console.log('🚀 [SITEMAP] Début de la génération du sitemap...');
     
     // Connexion à MongoDB
     await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/VitalCheck-health-check');
-    console.log('✅ Connexion à MongoDB établie');
-
-    const baseUrl = getBaseUrl();
-    console.log(`📍 URL de base utilisée: ${baseUrl}`);
-
+    console.log('✅ [SITEMAP] Connecté à MongoDB');
+    
     // Récupérer tous les blogs publiés
     const blogs = await Blog.find({ 
       status: 'published',
@@ -30,7 +29,7 @@ async function generateSitemap() {
     .select('slug updatedAt publishedAt')
     .sort({ publishedAt: -1 });
 
-    console.log(`📝 ${blogs.length} blogs trouvés`);
+    console.log(`📝 [SITEMAP] ${blogs.length} blogs publiés trouvés`);
 
     // Pages statiques
     const staticPages = [
@@ -94,6 +93,11 @@ async function generateSitemap() {
       }
     ];
 
+    // Déterminer l'URL de base selon l'environnement
+    const baseUrl = process.env.NODE_ENV === 'production' 
+      ? 'https://www.checkmyenterprise.com' 
+      : 'http://localhost:5173';
+
     // Générer le XML
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
     xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"\n';
@@ -153,36 +157,40 @@ async function generateSitemap() {
 
     xml += '\n</urlset>';
 
-    // Créer le dossier public s'il n'existe pas
-    const publicDir = path.join(__dirname, '../public');
-    if (!fs.existsSync(publicDir)) {
-      fs.mkdirSync(publicDir, { recursive: true });
+    // S'assurer que le XML commence bien par la déclaration
+    if (!xml.startsWith('<?xml')) {
+      throw new Error('Le sitemap XML ne commence pas correctement');
     }
 
     // Écrire le fichier sitemap
-    const sitemapPath = path.join(publicDir, 'sitemap.xml');
+    const sitemapPath = path.join(__dirname, '../public/sitemap.xml');
     fs.writeFileSync(sitemapPath, xml, 'utf8');
 
-    console.log(`✅ Sitemap généré avec succès:`);
-    console.log(`   📄 Fichier: ${sitemapPath}`);
-    console.log(`   📊 Pages statiques: ${staticPages.length}`);
-    console.log(`   🌍 Pages multilingues: ${languagePages.length}`);
-    console.log(`   📝 Blogs: ${blogCount}`);
-    console.log(`   🔗 Total: ${staticPages.length + languagePages.length + blogCount} URLs`);
+    console.log(`✅ [SITEMAP] Sitemap généré avec succès !`);
+    console.log(`📊 [SITEMAP] Statistiques:`);
+    console.log(`   - Pages statiques: ${staticPages.length}`);
+    console.log(`   - Pages multilingues: ${languagePages.length}`);
+    console.log(`   - Articles de blog: ${blogCount}`);
+    console.log(`   - Total URLs: ${staticPages.length + languagePages.length + blogCount}`);
+    console.log(`📁 [SITEMAP] Fichier sauvegardé: ${sitemapPath}`);
 
-    // Fermer la connexion MongoDB
-    await mongoose.connection.close();
-    console.log('✅ Connexion MongoDB fermée');
+    // Afficher un aperçu du contenu
+    console.log('\n📄 [SITEMAP] Aperçu du sitemap:');
+    console.log(xml.substring(0, 500) + '...');
 
   } catch (error) {
-    console.error('❌ Erreur lors de la génération du sitemap:', error);
+    console.error('❌ [SITEMAP] Erreur lors de la génération du sitemap:', error);
     process.exit(1);
+  } finally {
+    // Fermer la connexion MongoDB
+    await mongoose.connection.close();
+    console.log('🔌 [SITEMAP] Connexion MongoDB fermée');
   }
 }
 
-// Exécuter si appelé directement
+// Exécuter le script si appelé directement
 if (require.main === module) {
   generateSitemap();
 }
 
-module.exports = generateSitemap;
+module.exports = { generateSitemap };

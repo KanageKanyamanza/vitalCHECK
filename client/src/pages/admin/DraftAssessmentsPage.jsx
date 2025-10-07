@@ -89,10 +89,10 @@ Cette évaluation vous permettra d'obtenir un rapport personnalisé sur la sant�
         message
       });
 
-      toast.success(`Email de relance envoyé à ${assessment.user.companyName}`);
+      // Le toast est déjà géré par le hook
     } catch (error) {
       console.error('Erreur envoi email:', error);
-      toast.error('Erreur lors de l\'envoi de l\'email');
+      // L'erreur est déjà gérée par le hook
     } finally {
       setSendingEmail(null);
     }
