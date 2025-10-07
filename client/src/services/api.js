@@ -16,7 +16,7 @@ const API_BASE_URL = getApiBaseUrl();
 // Instance Axios principale
 const api = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 60000, // 60 secondes (1 minute)
+  timeout: 120000, // 120 secondes (2 minutes) pour la production
   headers: {
     'Content-Type': 'application/json',
   },
@@ -43,7 +43,7 @@ api.interceptors.request.use(
 // Instance Axios pour les requêtes admin
 const adminApi = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 60000, // 60 secondes (1 minute)
+  timeout: 120000, // 120 secondes (2 minutes) pour la production
   headers: {
     'Content-Type': 'application/json',
   },
