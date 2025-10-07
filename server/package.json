@@ -17,11 +17,14 @@
     "test-alt-email": "node scripts/test-alternative-email.js",
     "setup-external-email": "node scripts/setup-external-email.js",
     "test-frontend-emails": "node scripts/test-frontend-emails.js",
+    "setup-sendgrid": "node scripts/setup-sendgrid.js",
+    "test-sendgrid": "node scripts/test-sendgrid.js",
     "migrate-blog": "node scripts/migrate-blog-to-bilingual.js",
     "migrate-production-blog": "node scripts/migrate-production-blog.js",
     "postinstall": "echo 'Post-install completed'"
   },
   "dependencies": {
+    "@sendgrid/mail": "^8.1.6",
     "axios": "^1.12.2",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.7.0",
