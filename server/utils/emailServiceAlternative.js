@@ -41,8 +41,11 @@ const createAlternativeTransporter = () => {
   return nodemailer.createTransport(config);
 };
 
-// Fonction d'envoi alternative
-const sendEmailAlternative = async (emailOptions) => {
+// Fonction d'envoi alternative avec retry
+const sendEmailAlternative = async (emailOptions, retryCount = 0) => {
+  const maxRetries = 1; // Réduit à 1 tentative (2 au total)
+  const timeoutMs = process.env.NODE_ENV === 'production' ? 60000 : 30000; // 60s en prod, 30s en dev
+  
   try {
     const transporter = createAlternativeTransporter();
     
@@ -54,28 +57,50 @@ const sendEmailAlternative = async (emailOptions) => {
       attachments: emailOptions.attachments || []
     };
 
-    console.log('📧 [EMAIL ALT] Envoi d\'email avec configuration alternative...', {
+    console.log(`📧 [EMAIL ALT] Envoi d'email avec configuration alternative... (tentative ${retryCount + 1}/${maxRetries + 1})`, {
       to: mailOptions.to,
       subject: mailOptions.subject,
       from: mailOptions.from
     });
 
-    const result = await transporter.sendMail(mailOptions);
+    // Créer une promesse avec timeout
+    const emailPromise = transporter.sendMail(mailOptions);
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error(`Email timeout after ${timeoutMs/1000} seconds`)), timeoutMs);
+    });
+
+    const result = await Promise.race([emailPromise, timeoutPromise]);
     
     console.log('✅ [EMAIL ALT] Email envoyé avec succès:', {
       messageId: result.messageId,
       to: mailOptions.to,
-      response: result.response
+      response: result.response,
+      attempt: retryCount + 1
     });
     
     return result;
     
   } catch (error) {
-    console.error('❌ [EMAIL ALT] Erreur lors de l\'envoi:', {
+    console.error(`❌ [EMAIL ALT] Erreur lors de l'envoi (tentative ${retryCount + 1}/${maxRetries + 1}):`, {
       to: emailOptions.to,
       error: error.message,
       code: error.code
     });
+
+    // Retry logic
+    if (retryCount < maxRetries && (
+      error.message.includes('timeout') || 
+      error.code === 'ECONNRESET' || 
+      error.code === 'ETIMEDOUT' ||
+      error.code === 'ECONNABORTED'
+    )) {
+      const delay = Math.pow(2, retryCount) * 1000; // Exponential backoff
+      console.log(`🔄 [EMAIL ALT] Nouvelle tentative dans ${delay}ms...`);
+      
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return sendEmailAlternative(emailOptions, retryCount + 1);
+    }
+    
     throw error;
   }
 };

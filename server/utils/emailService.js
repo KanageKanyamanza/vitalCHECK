@@ -41,7 +41,7 @@ const createTransporter = () => {
 
 // Send email function with timeout and retry
 const sendEmail = async (emailOptions, retryCount = 0) => {
-  const maxRetries = 3;
+  const maxRetries = 1; // Réduit à 1 tentative (2 au total)
   const timeoutMs = process.env.NODE_ENV === 'production' ? 90000 : 45000; // 90s en prod, 45s en dev
   
   try {
@@ -81,7 +81,7 @@ const sendEmail = async (emailOptions, retryCount = 0) => {
     return result;
     
   } catch (error) {
-    console.error(`❌ [EMAIL] Erreur lors de l'envoi d'email (tentative ${retryCount + 1}):`, {
+    console.error(`❌ [EMAIL] Erreur lors de l'envoi d'email (tentative ${retryCount + 1}/${maxRetries + 1}):`, {
       to: emailOptions.to,
       subject: emailOptions.subject,
       error: error.message,

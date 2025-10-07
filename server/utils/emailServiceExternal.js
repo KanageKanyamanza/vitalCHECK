@@ -1,8 +1,9 @@
 const sgMail = require('@sendgrid/mail');
+const emailjs = require('@emailjs/nodejs');
 
 /**
  * Service d'email externe pour Render
- * Utilise SendGrid quand SMTP est bloqué
+ * Utilise EmailJS ou SendGrid quand SMTP est bloqué
  */
 
 // Configuration SendGrid
@@ -68,12 +69,69 @@ const sendEmailSendGrid = async (emailOptions) => {
   }
 };
 
+// Envoi d'email via EmailJS
+const sendEmailEmailJS = async (emailOptions) => {
+  try {
+    console.log('📧 [EMAILJS] Tentative d\'envoi via EmailJS...');
+    
+    if (!process.env.EMAILJS_SERVICE_ID || !process.env.EMAILJS_TEMPLATE_ID || !process.env.EMAILJS_PUBLIC_KEY) {
+      throw new Error('Configuration EmailJS incomplète');
+    }
+
+    // Utiliser vos templates existants avec EmailJS
+    const templateParams = {
+      to_email: emailOptions.to,
+      subject: emailOptions.subject,
+      html_content: emailOptions.html,
+      from_name: 'VitalCheck Enterprise Health Check',
+      from_email: process.env.EMAIL_USER
+    };
+
+    const response = await emailjs.send(
+      process.env.EMAILJS_SERVICE_ID,
+      process.env.EMAILJS_TEMPLATE_ID,
+      templateParams,
+      {
+        publicKey: process.env.EMAILJS_PUBLIC_KEY,
+        privateKey: process.env.EMAILJS_PRIVATE_KEY
+      }
+    );
+    
+    console.log('✅ [EMAILJS] Email envoyé avec succès:', {
+      messageId: response.text,
+      to: emailOptions.to,
+      subject: emailOptions.subject,
+      status: response.status
+    });
+
+    return {
+      messageId: `emailjs-${Date.now()}@vitalcheck.com`,
+      response: `EmailJS: ${response.status}`,
+      accepted: [emailOptions.to],
+      rejected: []
+    };
+    
+  } catch (error) {
+    console.error('❌ [EMAILJS] Erreur EmailJS:', {
+      to: emailOptions.to,
+      error: error.message,
+      status: error.status
+    });
+    throw error;
+  }
+};
+
 // Configuration pour un service d'email externe (fallback)
 const sendEmailExternal = async (emailOptions) => {
   try {
     console.log('🌐 [EMAIL EXT] Tentative d\'envoi via service externe...');
     
-    // Essayer d'abord SendGrid si configuré
+    // Essayer d'abord EmailJS si configuré (plus rapide)
+    if (process.env.EMAILJS_SERVICE_ID && process.env.EMAILJS_TEMPLATE_ID && process.env.EMAILJS_PUBLIC_KEY) {
+      return await sendEmailEmailJS(emailOptions);
+    }
+    
+    // Sinon, essayer SendGrid si configuré
     if (process.env.SENDGRID_API_KEY) {
       return await sendEmailSendGrid(emailOptions);
     }
