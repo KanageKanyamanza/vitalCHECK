@@ -41,7 +41,7 @@ const createTransporter = () => {
 
 // Send email function with timeout and retry
 const sendEmail = async (emailOptions, retryCount = 0) => {
-  const maxRetries = 1; // Réduit à 1 tentative (2 au total)
+  const maxRetries = 0; // Réduit à 0 tentative (1 au total)
   const timeoutMs = process.env.NODE_ENV === 'production' ? 90000 : 45000; // 90s en prod, 45s en dev
   
   try {

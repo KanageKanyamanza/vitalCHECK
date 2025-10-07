@@ -34,6 +34,8 @@ async function testEmailJS() {
     const emailData = {
       to: testEmail,
       subject: 'Test EmailJS - VitalCheck Enterprise Health Check',
+      name: 'VitalCheck Enterprise Health Check',
+      email: 'info@checkmyenterprise.com',
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px; text-align: center; margin-bottom: 30px;">
