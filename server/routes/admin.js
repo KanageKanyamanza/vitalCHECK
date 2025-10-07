@@ -489,7 +489,7 @@ router.post('/users/:userId/remind', authenticateAdmin, checkPermission('sendEma
       EMAIL_FROM: process.env.EMAIL_FROM
     });
 
-    // Essayer d'abord la méthode normale, puis l'alternative
+    // Essayer d'abord la méthode normale, puis l'externe
     try {
       console.log('📧 [EMAIL] Tentative d\'envoi avec configuration normale...');
       const result = await sendEmail(emailData);
@@ -511,32 +511,9 @@ router.post('/users/:userId/remind', authenticateAdmin, checkPermission('sendEma
         code: emailError.code
       });
 
-      // Essayer la configuration alternative
+      // Dernier recours: service externe
       try {
-        console.log('🔄 [EMAIL] Tentative avec configuration alternative...');
-        const { sendEmailAlternative } = require('../utils/emailServiceAlternative');
-        const result = await sendEmailAlternative(emailData);
-        
-        console.log('✅ [EMAIL] Email de relance envoyé avec succès (alternative) à:', user.email, {
-          messageId: result.messageId,
-          response: result.response
-        });
-
-        res.json({
-          success: true,
-          message: 'Email de relance envoyé avec succès !'
-        });
-      } catch (altError) {
-        console.error('❌ [EMAIL] Erreur avec configuration alternative:', {
-          userId: user._id,
-          email: user.email,
-          error: altError.message,
-          code: altError.code
-        });
-
-        // Dernier recours: service externe ou webhook
-        try {
-          console.log('🌐 [EMAIL] Tentative avec service externe...');
+        console.log('🌐 [EMAIL] Tentative avec service externe...');
           const { sendEmailExternal } = require('../utils/emailServiceExternal');
           const result = await sendEmailExternal(emailData);
           
@@ -602,25 +579,18 @@ router.post('/users/remind-bulk', authenticateAdmin, checkPermission('sendEmails
           html: html
         };
 
-        // Essayer d'abord la méthode normale, puis l'alternative, puis l'externe
+        // Essayer d'abord la méthode normale, puis l'externe
         try {
           return await sendEmail(emailOptions);
         } catch (error) {
           console.error('❌ [EMAIL BULK] Erreur configuration normale:', error.message);
           
           try {
-            const { sendEmailAlternative } = require('../utils/emailServiceAlternative');
-            return await sendEmailAlternative(emailOptions);
-          } catch (altError) {
-            console.error('❌ [EMAIL BULK] Erreur configuration alternative:', altError.message);
-            
-            try {
-              const { sendEmailExternal } = require('../utils/emailServiceExternal');
-              return await sendEmailExternal(emailOptions);
-            } catch (extError) {
-              console.error('❌ [EMAIL BULK] Erreur service externe:', extError.message);
-              throw extError;
-            }
+            const { sendEmailExternal } = require('../utils/emailServiceExternal');
+            return await sendEmailExternal(emailOptions);
+          } catch (extError) {
+            console.error('❌ [EMAIL BULK] Erreur service externe:', extError.message);
+            throw extError;
           }
         }
       });
@@ -656,7 +626,7 @@ router.post('/users/remind-bulk', authenticateAdmin, checkPermission('sendEmails
           html: generateReminderEmailHTML(user, message, subject)
         };
 
-        // Essayer d'abord la méthode normale, puis l'alternative, puis l'externe
+        // Essayer d'abord la méthode normale, puis l'externe
         try {
           const result = await sendEmail(emailData);
           console.log('✅ [EMAIL BULK] Email de relance envoyé avec succès à:', user.email);
@@ -669,30 +639,17 @@ router.post('/users/remind-bulk', authenticateAdmin, checkPermission('sendEmails
           });
           
           try {
-            const { sendEmailAlternative } = require('../utils/emailServiceAlternative');
-            const result = await sendEmailAlternative(emailData);
-            console.log('✅ [EMAIL BULK] Email de relance envoyé avec succès (alternative) à:', user.email);
+            const { sendEmailExternal } = require('../utils/emailServiceExternal');
+            const result = await sendEmailExternal(emailData);
+            console.log('✅ [EMAIL BULK] Email de relance envoyé avec succès (externe) à:', user.email);
             return result;
-          } catch (altError) {
-            console.error('❌ [EMAIL BULK] Erreur configuration alternative:', {
+          } catch (extError) {
+            console.error('❌ [EMAIL BULK] Erreur service externe:', {
               userId: user._id,
               email: user.email,
-              error: altError.message
+              error: extError.message
             });
-            
-            try {
-              const { sendEmailExternal } = require('../utils/emailServiceExternal');
-              const result = await sendEmailExternal(emailData);
-              console.log('✅ [EMAIL BULK] Email de relance envoyé avec succès (externe) à:', user.email);
-              return result;
-            } catch (extError) {
-              console.error('❌ [EMAIL BULK] Erreur service externe:', {
-                userId: user._id,
-                email: user.email,
-                error: extError.message
-              });
-              throw extError;
-            }
+            throw extError;
           }
         }
       });
