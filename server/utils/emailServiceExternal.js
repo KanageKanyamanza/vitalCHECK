@@ -1,22 +1,89 @@
-const axios = require('axios');
+const sgMail = require('@sendgrid/mail');
 
 /**
  * Service d'email externe pour Render
- * Utilise un service d'email externe quand SMTP est bloqué
+ * Utilise SendGrid quand SMTP est bloqué
  */
 
-// Configuration pour un service d'email externe (ex: EmailJS, SendGrid, etc.)
+// Configuration SendGrid
+const setupSendGrid = () => {
+  if (process.env.SENDGRID_API_KEY) {
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    return true;
+  }
+  return false;
+};
+
+// Envoi d'email via SendGrid
+const sendEmailSendGrid = async (emailOptions) => {
+  try {
+    console.log('📧 [SENDGRID] Tentative d\'envoi via SendGrid...');
+    
+    if (!setupSendGrid()) {
+      throw new Error('SENDGRID_API_KEY non configuré');
+    }
+
+    const msg = {
+      to: emailOptions.to,
+      from: {
+        email: process.env.EMAIL_USER,
+        name: 'VitalCheck Enterprise Health Check'
+      },
+      subject: emailOptions.subject,
+      html: emailOptions.html,
+      // Ajouter les pièces jointes si présentes
+      ...(emailOptions.attachments && emailOptions.attachments.length > 0 && {
+        attachments: emailOptions.attachments.map(att => ({
+          content: att.content.toString('base64'),
+          filename: att.filename,
+          type: att.contentType || 'application/octet-stream',
+          disposition: 'attachment'
+        }))
+      })
+    };
+
+    const response = await sgMail.send(msg);
+    
+    console.log('✅ [SENDGRID] Email envoyé avec succès:', {
+      messageId: response[0].headers['x-message-id'],
+      to: emailOptions.to,
+      subject: emailOptions.subject,
+      statusCode: response[0].statusCode
+    });
+
+    return {
+      messageId: response[0].headers['x-message-id'] || `sendgrid-${Date.now()}@vitalcheck.com`,
+      response: `SendGrid: ${response[0].statusCode}`,
+      accepted: [emailOptions.to],
+      rejected: []
+    };
+    
+  } catch (error) {
+    console.error('❌ [SENDGRID] Erreur SendGrid:', {
+      to: emailOptions.to,
+      error: error.message,
+      code: error.code
+    });
+    throw error;
+  }
+};
+
+// Configuration pour un service d'email externe (fallback)
 const sendEmailExternal = async (emailOptions) => {
   try {
     console.log('🌐 [EMAIL EXT] Tentative d\'envoi via service externe...');
     
-    // Pour l'instant, on va utiliser une approche différente
-    // En attendant, on peut utiliser un service comme EmailJS ou créer un webhook
+    // Essayer d'abord SendGrid si configuré
+    if (process.env.SENDGRID_API_KEY) {
+      return await sendEmailSendGrid(emailOptions);
+    }
     
-    // Simulation d'un envoi réussi pour éviter les erreurs
+    // Sinon, utiliser une simulation pour éviter les erreurs
+    console.log('⚠️  [EMAIL EXT] Aucun service externe configuré, simulation...');
+    
     const mockResult = {
       messageId: `external-${Date.now()}@vitalcheck.com`,
-      response: 'Email envoyé via service externe',
+      response: 'Email simulé (service externe non configuré)',
       accepted: [emailOptions.to],
       rejected: []
     };
@@ -26,13 +93,6 @@ const sendEmailExternal = async (emailOptions) => {
       to: emailOptions.to,
       subject: emailOptions.subject
     });
-
-    // TODO: Implémenter un vrai service d'email externe
-    // Options possibles:
-    // 1. EmailJS (gratuit, 200 emails/mois)
-    // 2. SendGrid (gratuit, 100 emails/jour)
-    // 3. Mailgun (gratuit, 5000 emails/mois)
-    // 4. Webhook vers un service externe
 
     return mockResult;
     
