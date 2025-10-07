@@ -77,7 +77,7 @@ async function getLocationFromIP(ipAddress) {
     
     // Utiliser ipapi.co (gratuit, 1000 requêtes/jour)
     const response = await axios.get(`https://ipapi.co/${ipAddress}/json/`, {
-      timeout: 10000, // Augmenter le timeout
+      timeout: 60000, // 60 secondes (1 minute)
       headers: {
         'User-Agent': 'VitalCheck-Health-Check/1.0'
       }
@@ -110,7 +110,7 @@ async function getLocationFromIP(ipAddress) {
     // En cas d'erreur, essayer une API de fallback
     try {
       const fallbackResponse = await axios.get(`http://ip-api.com/json/${ipAddress}`, {
-        timeout: 5000
+        timeout: 60000 // 60 secondes (1 minute)
       });
       
       const fallbackData = fallbackResponse.data;
