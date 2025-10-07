@@ -13,11 +13,27 @@ const createTransporter = () => {
     tls: {
       rejectUnauthorized: false,
     },
+    // Configuration des timeouts
+    connectionTimeout: 30000, // 30 secondes pour la connexion
+    greetingTimeout: 30000,   // 30 secondes pour le greeting
+    socketTimeout: 30000,     // 30 secondes pour les opérations socket
+    // Pool de connexions pour améliorer les performances
+    pool: true,
+    maxConnections: 5,
+    maxMessages: 100,
+    // Retry configuration
+    retry: {
+      attempts: 3,
+      delay: 2000
+    }
   });
 };
 
-// Send email function
-const sendEmail = async (emailOptions) => {
+// Send email function with timeout and retry
+const sendEmail = async (emailOptions, retryCount = 0) => {
+  const maxRetries = 3;
+  const timeoutMs = 45000; // 45 secondes (moins que le timeout client de 60s)
+  
   try {
     const transporter = createTransporter();
     
@@ -29,32 +45,54 @@ const sendEmail = async (emailOptions) => {
       attachments: emailOptions.attachments || []
     };
 
-    console.log('📧 [EMAIL] Envoi d\'email en cours...', {
+    console.log(`📧 [EMAIL] Envoi d'email en cours... (tentative ${retryCount + 1}/${maxRetries + 1})`, {
       to: mailOptions.to,
       subject: mailOptions.subject,
       from: mailOptions.from,
       attachmentsCount: mailOptions.attachments.length
     });
 
-    const result = await transporter.sendMail(mailOptions);
+    // Créer une promesse avec timeout
+    const emailPromise = transporter.sendMail(mailOptions);
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Email timeout after 45 seconds')), timeoutMs);
+    });
+
+    const result = await Promise.race([emailPromise, timeoutPromise]);
     
     console.log('✅ [EMAIL] Email envoyé avec succès:', {
       messageId: result.messageId,
       to: mailOptions.to,
       subject: mailOptions.subject,
-      response: result.response
+      response: result.response,
+      attempt: retryCount + 1
     });
     
     return result;
     
   } catch (error) {
-    console.error('❌ [EMAIL] Erreur lors de l\'envoi d\'email:', {
+    console.error(`❌ [EMAIL] Erreur lors de l'envoi d'email (tentative ${retryCount + 1}):`, {
       to: emailOptions.to,
       subject: emailOptions.subject,
       error: error.message,
       code: error.code,
       responseCode: error.responseCode
     });
+
+    // Retry logic
+    if (retryCount < maxRetries && (
+      error.message.includes('timeout') || 
+      error.code === 'ECONNRESET' || 
+      error.code === 'ETIMEDOUT' ||
+      error.code === 'ECONNABORTED'
+    )) {
+      const delay = Math.pow(2, retryCount) * 1000; // Exponential backoff
+      console.log(`🔄 [EMAIL] Nouvelle tentative dans ${delay}ms...`);
+      
+      await new Promise(resolve => setTimeout(resolve, delay));
+      return sendEmail(emailOptions, retryCount + 1);
+    }
+    
     throw error;
   }
 };

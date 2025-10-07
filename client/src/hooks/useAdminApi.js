@@ -1,4 +1,5 @@
 import { useState, useCallback, useRef } from 'react';
+import { toast } from 'react-hot-toast';
 import { adminApiService, handleRateLimit } from '../services/api';
 
 export const useAdminApi = () => {
@@ -120,14 +121,74 @@ export const useAdminApi = () => {
     return executeRequest(() => adminApiService.getStats(), 0, cacheKey);
   }, [executeRequest]);
 
-  // Fonctions pour les emails
+  // Fonctions pour les emails avec statuts en temps réel
   const sendReminderEmail = useCallback(async (userId, data) => {
-    return executeRequest(() => adminApiService.sendReminderEmail(userId, data));
-  }, [executeRequest]);
+    try {
+      setLoading(true);
+      setError(null);
+      
+      // Toast de début d'envoi
+      toast.loading('📧 Envoi de l\'email en cours...', {
+        id: `email-${userId}`,
+        duration: 2000
+      });
+      
+      const response = await adminApiService.sendReminderEmail(userId, data);
+      
+      // Toast de succès
+      toast.success('✅ Email envoyé avec succès !', {
+        id: `email-${userId}`,
+        duration: 4000
+      });
+      
+      return response;
+    } catch (error) {
+      // Toast d'erreur
+      toast.error('❌ Erreur lors de l\'envoi de l\'email', {
+        id: `email-${userId}`,
+        duration: 5000
+      });
+      setError(error.message);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }, [setLoading, setError]);
 
   const sendBulkEmails = useCallback(async (data) => {
-    return executeRequest(() => adminApiService.sendBulkEmails(data));
-  }, [executeRequest]);
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const emailCount = data.emails ? data.emails.length : data.userIds.length;
+      
+      // Toast de début d'envoi en masse
+      toast.loading(`📧 Envoi de ${emailCount} emails en cours...`, {
+        id: 'bulk-emails',
+        duration: 2000
+      });
+      
+      const response = await adminApiService.sendBulkEmails(data);
+      
+      // Toast de succès
+      toast.success(`✅ ${emailCount} emails en cours d'envoi !`, {
+        id: 'bulk-emails',
+        duration: 4000
+      });
+      
+      return response;
+    } catch (error) {
+      // Toast d'erreur
+      toast.error('❌ Erreur lors de l\'envoi des emails', {
+        id: 'bulk-emails',
+        duration: 5000
+      });
+      setError(error.message);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  }, [setLoading, setError]);
 
   // Fonction pour l'export CSV
   const exportUsers = useCallback(async () => {

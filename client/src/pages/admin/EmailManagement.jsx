@@ -93,7 +93,7 @@ const EmailManagement = () => {
           emails: emailsWithLinks
         });
         
-        toast.success(data.message);
+        // Le toast est déjà géré par le hook
         navigate('/admin/users');
       } else {
         // Si pas de [LIEN], envoyer normalement
@@ -103,7 +103,7 @@ const EmailManagement = () => {
           message: formData.message
         });
 
-        toast.success(data.message);
+        // Le toast est déjà géré par le hook
         navigate('/admin/users');
       }
     } catch (error) {
@@ -144,7 +144,7 @@ const EmailManagement = () => {
         message: messageToSend
       });
 
-      toast.success('Email envoyé avec succès');
+      // Le toast est déjà géré par le hook
     } catch (error) {
       console.error('Send single email error:', error);
       // L'erreur est déjà gérée par le hook
