@@ -12,6 +12,7 @@
     "sitemap:production": "NODE_ENV=production node scripts/update-sitemap-production.js",
     "test-email": "node scripts/test-email-config.js",
     "test-all-emails": "node scripts/test-all-emails.js",
+    "check-production": "node scripts/check-production-health.js",
     "migrate-blog": "node scripts/migrate-blog-to-bilingual.js",
     "migrate-production-blog": "node scripts/migrate-production-blog.js",
     "postinstall": "echo 'Post-install completed'"

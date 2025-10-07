@@ -36,18 +36,31 @@ app.use(
 				"http://localhost:5173",
 				"http://localhost:5174",
 				"https://www.checkmyenterprise.com",
+				"https://checkmyenterprise.com",
 			];
+			
+			// En production, être plus permissif pour éviter les problèmes CORS
+			if (process.env.NODE_ENV === 'production') {
+				// Autoriser tous les sous-domaines de checkmyenterprise.com
+				if (origin.includes('checkmyenterprise.com')) {
+					return callback(null, true);
+				}
+			}
 			
 			// Vérifier si l'origine est autorisée
 			if (allowedOrigins.includes(origin)) {
 				return callback(null, true);
 			}
 			
+			console.log('🚫 [CORS] Origine non autorisée:', origin);
 			callback(new Error('Non autorisé par CORS'));
 		},
 		credentials: true,
 		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 		allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+		// Ajouter des headers supplémentaires pour éviter les problèmes
+		optionsSuccessStatus: 200, // Pour les navigateurs legacy
+		preflightContinue: false,
 	})
 );
 
