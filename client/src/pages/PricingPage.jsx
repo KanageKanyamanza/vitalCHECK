@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import { Helmet } from 'react-helmet-async'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
-import { Check, X, Star, Users, BarChart3, Phone, Mail, MessageCircle } from 'lucide-react'
+import { Check, X, Star, Phone, Mail, MessageCircle } from 'lucide-react'
 
 const PricingPage = () => {
   const { t } = useTranslation()
@@ -19,26 +19,7 @@ const PricingPage = () => {
       price: '0',
       currency: 'FCFA',
       period: '',
-      description: 'Découverte et préqualification',
-      color: 'gray',
-      features: [
-        { name: 'Accès au questionnaire complet (12 questions – 6 piliers)', included: true },
-        { name: 'Score global + scores par pilier (en couleurs)', included: true },
-        { name: 'Recommandations générales automatiques', included: true },
-        { name: 'Rapport PDF basique (sans benchmark)', included: true },
-        { name: '1 seule évaluation par entreprise (ou tous les 6 mois)', included: true },
-        { name: 'Email de suivi automatisé', included: true },
-        { name: 'Accès au support par email uniquement', included: true },
-        { name: 'Recommandations personnalisées', included: false },
-        { name: 'Évaluations multiples', included: false },
-        { name: 'Historique & suivi', included: false },
-        { name: 'Analyse comparative (benchmark)', included: false },
-        { name: 'Consultation avec expert UBB', included: false },
-        { name: 'Tableau de bord et export avancé', included: false },
-        { name: 'Badge "Entreprise évaluée"', included: false },
-        { name: 'Support WhatsApp / Téléphone', included: false },
-        { name: 'Utilisateurs multiples (équipe)', included: false }
-      ]
+      color: 'gray'
     },
     {
       id: 'standard',
@@ -49,27 +30,8 @@ const PricingPage = () => {
       period: '/mois',
       annualPrice: '100 000',
       annualPeriod: '/an',
-      description: 'Amélioration continue et suivi',
       color: 'blue',
-      popular: true,
-      features: [
-        { name: 'Accès au questionnaire complet (12 questions – 6 piliers)', included: true },
-        { name: 'Score global + scores par pilier (en couleurs)', included: true },
-        { name: 'Recommandations générales automatiques', included: true },
-        { name: 'Rapport PDF basique (sans benchmark)', included: true },
-        { name: 'Nombre d\'évaluations illimité (1 compte)', included: true },
-        { name: 'Rapport détaillé PDF enrichi', included: true },
-        { name: 'Recommandations personnalisées par pilier', included: true },
-        { name: 'Historique des scores & suivi dans le temps', included: true },
-        { name: 'Table de priorisation des actions', included: true },
-        { name: 'Support WhatsApp prioritaire', included: true },
-        { name: 'Tableau de bord consultable en ligne', included: true },
-        { name: 'Relances automatiques d\'amélioration', included: true },
-        { name: 'Analyse comparative (benchmark)', included: false },
-        { name: 'Consultation avec expert UBB', included: false },
-        { name: 'Badge "Entreprise évaluée"', included: false },
-        { name: 'Utilisateurs multiples (équipe)', included: false }
-      ]
+      popular: true
     },
     {
       id: 'premium',
@@ -80,33 +42,7 @@ const PricingPage = () => {
       period: '/mois',
       annualPrice: '250 000 - 350 000',
       annualPeriod: '/an',
-      oneShotPrice: '199 €',
-      oneShotFCFA: '130 000 FCFA',
-      description: 'Consulting et financement',
-      color: 'purple',
-      features: [
-        { name: 'Accès au questionnaire complet (12 questions – 6 piliers)', included: true },
-        { name: 'Score global + scores par pilier (en couleurs)', included: true },
-        { name: 'Recommandations générales automatiques', included: true },
-        { name: 'Rapport PDF basique (sans benchmark)', included: true },
-        { name: 'Nombre d\'évaluations illimité (1 compte)', included: true },
-        { name: 'Rapport détaillé PDF enrichi', included: true },
-        { name: 'Recommandations personnalisées par pilier', included: true },
-        { name: 'Historique des scores & suivi dans le temps', included: true },
-        { name: 'Table de priorisation des actions', included: true },
-        { name: 'Support WhatsApp prioritaire', included: true },
-        { name: 'Tableau de bord consultable en ligne', included: true },
-        { name: 'Relances automatiques d\'amélioration', included: true },
-        { name: 'Analyse comparative (secteur / taille / pays)', included: true },
-        { name: 'Rapport Premium avec plan d\'action structuré', included: true },
-        { name: 'Session de consultation (1h) avec expert UBB', included: true },
-        { name: 'Tableau d\'amélioration priorisée + calendrier', included: true },
-        { name: 'Exportation Excel / PowerPoint', included: true },
-        { name: 'Attestation "Entreprise évaluée VitalCHECK"', included: true },
-        { name: 'Possibilité de partage avec banques / bailleurs', included: true },
-        { name: 'Support téléphonique dédié', included: true },
-        { name: 'Option multi-utilisateurs (3 à 5 comptes équipe)', included: true }
-      ]
+      color: 'purple'
     }
   ]
 
@@ -114,55 +50,39 @@ const PricingPage = () => {
     {
       key: 'tpePmeUnstructured',
       recommended: 'GRATUIT',
-      description: 'Découverte du diagnostic et sensibilisation',
       icon: '🏪'
     },
     {
       key: 'cooperativesIndividual',
       recommended: 'GRATUIT',
-      description: 'Première approche de l\'évaluation',
       icon: '🤝'
     },
     {
       key: 'structuredPme',
       recommended: 'STANDARD',
-      description: 'Suivi régulier et amélioration continue',
       icon: '🏢'
     },
     {
       key: 'accountingCoaches',
       recommended: 'STANDARD',
-      description: 'Outil d\'accompagnement client',
       icon: '💼'
     },
     {
       key: 'growthExportPme',
       recommended: 'PREMIUM',
-      description: 'Stratégie avancée et financement',
       icon: '🚀'
     },
     {
       key: 'financingEntrepreneurs',
       recommended: 'PREMIUM',
-      description: 'Dossier de financement complet',
       icon: '💰'
     },
     {
       key: 'incubationPrograms',
       recommended: 'PREMIUM',
-      description: 'Accompagnement structuré',
       icon: '🌱'
     }
   ]
-
-  const getColorClasses = (color) => {
-    const colors = {
-      gray: 'bg-gray-50 border-gray-200 text-gray-900',
-      blue: 'bg-blue-50 border-blue-200 text-blue-900',
-      purple: 'bg-purple-50 border-purple-200 text-purple-900'
-    }
-    return colors[color] || colors.gray
-  }
 
   const getButtonClasses = (color, isPopular = false, isLoading = false) => {
     const baseClasses = 'w-full py-3 px-6 rounded-lg font-semibold transition-all duration-200 flex items-center justify-center'
@@ -285,7 +205,7 @@ const PricingPage = () => {
                   <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
                     <div className="bg-primary-600 text-white md:px-6 px-3 md:py-2 py-1 rounded-full text-sm font-semibold flex items-center">
                       <Star className="w-4 h-4 mr-1" />
-                      Plus populaire
+                      {t('pricing.plans.standard.popular')}
                     </div>
                   </div>
                 )}
@@ -309,15 +229,6 @@ const PricingPage = () => {
                       <span className="text-green-600 ml-2">{t('pricing.common.twoMonthsFree')}</span>
                     </div>
                   )}
-                  
-                  {plan.oneShotPrice && (
-                    <div className="text-xs md:text-sm text-gray-500 mb-6">
-                      <span className="font-semibold">{t(`pricing.plans.${plan.id}.oneShotPrice`)}</span>
-                      <span className="text-gray-400"> / </span>
-                      <span className="font-semibold">{t(`pricing.plans.${plan.id}.oneShotFCFA`)}</span>
-                      <span className="text-gray-400"> (Pack Diagnostic)</span>
-                    </div>
-                  )}
 
                   <button 
                     className={getButtonClasses(plan.color, plan.popular, isLoading && selectedPlan === plan.id)}
@@ -327,7 +238,7 @@ const PricingPage = () => {
                     {isLoading && selectedPlan === plan.id ? (
                       <>
                         <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Traitement...
+                        {t('common.processing')}
                       </>
                     ) : (
                       t(`pricing.plans.${plan.id}.button`)
@@ -349,10 +260,10 @@ const PricingPage = () => {
               className="text-center mb-12"
             >
               <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                Comparaison des fonctionnalités
+                {t('pricing.featuresComparison.title')}
               </h2>
               <p className="text-lg text-gray-600">
-                Découvrez en détail ce qui est inclus dans chaque plan
+                {t('pricing.featuresComparison.subtitle')}
               </p>
             </motion.div>
 
@@ -362,7 +273,7 @@ const PricingPage = () => {
                   <thead className="bg-gray-50">
                     <tr>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 border-b-2 border-black">
-                      Fonctionnalités
+                      {t('pricing.featuresComparison.featuresLabel')}
                     </th>
                     <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 border-b-2 border-black">
                       {t('pricing.plans.free.name')}
@@ -448,13 +359,13 @@ const PricingPage = () => {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 border-b">
-                        Type d'entreprise
+                        {t('pricing.enterpriseRecommendations.tableHeaders.enterpriseType')}
                       </th>
                       <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 border-b">
-                        Plan recommandé
+                        {t('pricing.enterpriseRecommendations.tableHeaders.recommendedPlan')}
                       </th>
                       <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 border-b">
-                        Description
+                        {t('pricing.enterpriseRecommendations.tableHeaders.description')}
                       </th>
                     </tr>
                   </thead>
@@ -477,7 +388,7 @@ const PricingPage = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-sm text-gray-600">
-                        {enterprise.description}
+                        {t(`pricing.enterpriseDescriptions.${enterprise.key}`)}
                       </td>
                     </tr>
                   ))}
@@ -511,7 +422,7 @@ const PricingPage = () => {
                   <thead className="bg-gray-50">
                     <tr>
                     <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 border-b-2 border-black">
-                      Type de support
+                      {t('pricing.support.tableHeaders.supportType')}
                     </th>
                     <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 border-b-2 border-black">
                       {t('pricing.plans.free.name')}
@@ -531,24 +442,21 @@ const PricingPage = () => {
                       icon: <Mail className="w-5 h-5 text-primary-600" />,
                       free: true, 
                       standard: true, 
-                      premium: true,
-                      description: 'Réponse sous 24h'
+                      premium: true
                     },
                     { 
                       key: 'whatsappSupport', 
                       icon: <MessageCircle className="w-5 h-5 text-blue-600" />,
                       free: false, 
                       standard: true, 
-                      premium: true,
-                      description: 'Réponse prioritaire'
+                      premium: true
                     },
                     { 
                       key: 'phoneSupport', 
                       icon: <Phone className="w-5 h-5 text-purple-600" />,
                       free: false, 
                       standard: false, 
-                      premium: true,
-                      description: 'Support dédié'
+                      premium: true
                     }
                   ].map((support, index) => (
                     <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
@@ -557,7 +465,7 @@ const PricingPage = () => {
                           {support.icon}
                           <div className="ml-3">
                             <div className="text-sm font-medium text-gray-900">{t(`pricing.supportTypes.${support.key}`)}</div>
-                            <div className="text-sm text-gray-500">{support.description}</div>
+                            <div className="text-sm text-gray-500">{t(`pricing.supportDescriptions.${support.key}`)}</div>
                           </div>
                         </div>
                       </td>

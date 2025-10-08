@@ -1,6 +1,7 @@
 {
   "common": {
     "loading": "Loading...",
+    "processing": "Processing...",
     "error": "Error",
     "success": "Success",
     "next": "Next",
@@ -834,10 +835,18 @@
     "enterpriseRecommendations": {
       "title": "Which solution for your business?",
       "subtitle": "Discover our recommendations based on your organization's type and size",
-      "recommended": "Recommended"
+      "recommended": "Recommended",
+      "tableHeaders": {
+        "enterpriseType": "Enterprise type",
+        "recommendedPlan": "Recommended plan",
+        "description": "Description"
+      }
     },
     "support": {
       "title": "Support and assistance",
+      "tableHeaders": {
+        "supportType": "Support type"
+      },
       "subtitle": "Our team is here to support you at every step",
       "email": {
         "title": "Email Support",
@@ -864,6 +873,11 @@
     "common": {
       "twoMonthsFree": "(2 months free)"
     },
+    "featuresComparison": {
+      "title": "Features comparison",
+      "subtitle": "Discover in detail what is included in each plan",
+      "featuresLabel": "Features"
+    },
     "features": {
       "accessEvaluation": "Access to evaluation",
       "globalScorePillars": "Global score + pillars",
@@ -888,10 +902,24 @@
       "financingEntrepreneurs": "Entrepreneurs seeking financing",
       "incubationPrograms": "Incubation programs / NGOs"
     },
+    "enterpriseDescriptions": {
+      "tpePmeUnstructured": "Discovery and awareness of diagnostics",
+      "cooperativesIndividual": "First approach to evaluation",
+      "structuredPme": "Regular monitoring and continuous improvement",
+      "accountingCoaches": "Customer support tool",
+      "growthExportPme": "Advanced strategy and financing",
+      "financingEntrepreneurs": "Complete financing file",
+      "incubationPrograms": "Structured support"
+    },
     "supportTypes": {
       "emailSupport": "Email Support",
       "whatsappSupport": "WhatsApp Support",
       "phoneSupport": "Phone Support"
+    },
+    "supportDescriptions": {
+      "emailSupport": "Response within 24h",
+      "whatsappSupport": "Priority response",
+      "phoneSupport": "Dedicated support"
     }
   }
 }
