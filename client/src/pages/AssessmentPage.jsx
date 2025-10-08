@@ -42,8 +42,6 @@ const AssessmentPage = () => {
 
   const createDraftAssessment = async () => {
     try {
-      console.log('🆕 [FRONTEND] Création du draft assessment pour userId:', user.id);
-      
       const response = await assessmentAPI.createDraft({
         userId: user.id,
         language
@@ -51,18 +49,12 @@ const AssessmentPage = () => {
 
       if (response.data.success) {
         const { assessment } = response.data;
-        console.log('✅ [FRONTEND] Draft créé:', {
-          id: assessment.id,
-          resumeToken: assessment.resumeToken,
-          currentQuestionIndex: assessment.currentQuestionIndex
-        });
         
         dispatch({ type: 'SET_ASSESSMENT_ID', payload: assessment.id });
         dispatch({ type: 'SET_RESUME_TOKEN', payload: assessment.resumeToken });
         
         // Si on a des réponses existantes, les charger
         if (assessment.answers && assessment.answers.length > 0) {
-          console.log('📋 [FRONTEND] Chargement des réponses existantes:', assessment.answers.length);
           assessment.answers.forEach(answer => {
             dispatch({
               type: 'SET_ANSWER',
@@ -73,7 +65,6 @@ const AssessmentPage = () => {
         }
       }
     } catch (error) {
-      console.error('❌ [FRONTEND] Erreur création draft:', error);
       // Ne pas bloquer l'évaluation si la création du draft échoue
     }
   }
@@ -81,24 +72,15 @@ const AssessmentPage = () => {
   const saveProgress = async () => {
     try {
       if (!assessmentId) {
-        console.log('⚠️ [FRONTEND] Pas d\'assessmentId, impossible de sauvegarder');
         return;
       }
-
-      console.log('💾 [FRONTEND] Sauvegarde de la progression:', {
-        assessmentId,
-        answersCount: answers.length,
-        currentQuestionIndex
-      });
 
       await assessmentAPI.saveProgress(assessmentId, {
         answers,
         currentQuestionIndex
       });
 
-      console.log('✅ [FRONTEND] Progression sauvegardée avec succès');
     } catch (error) {
-      console.error('❌ [FRONTEND] Erreur sauvegarde progression:', error);
       // Ne pas bloquer l'évaluation si la sauvegarde échoue
     }
   }

@@ -79,11 +79,7 @@ const uploadToCloudinary = async (filePath, options = {}) => {
 // Fonction pour uploader un PDF vers Cloudinary
 const uploadPDFToCloudinary = async (pdfBuffer, filename, options = {}) => {
   try {
-    console.log('☁️ [CLOUDINARY] Début upload PDF:', {
-      filename,
-      bufferSize: pdfBuffer.length,
-      folder: 'vitalcheck-rapport'
-    });
+    // Upload PDF vers Cloudinary
 
     const defaultOptions = {
       folder: 'vitalcheck-rapport',
@@ -103,18 +99,9 @@ const uploadPDFToCloudinary = async (pdfBuffer, filename, options = {}) => {
     const tempFilePath = path.join(tempDir, filename);
     fs.writeFileSync(tempFilePath, pdfBuffer);
 
-    console.log('☁️ [CLOUDINARY] Fichier temporaire créé:', tempFilePath);
-
     const result = await cloudinary.uploader.upload(tempFilePath, {
       ...defaultOptions,
       ...options
-    });
-
-    console.log('✅ [CLOUDINARY] Upload réussi:', {
-      public_id: result.public_id,
-      secure_url: result.secure_url,
-      resource_type: result.resource_type,
-      format: result.format
     });
 
     // Supprimer le fichier temporaire
@@ -122,12 +109,6 @@ const uploadPDFToCloudinary = async (pdfBuffer, filename, options = {}) => {
 
     return result;
   } catch (error) {
-    console.error('❌ [CLOUDINARY] Erreur upload PDF:', {
-      error: error.message,
-      code: error.http_code,
-      name: error.name
-    });
-
     // Supprimer le fichier temporaire en cas d'erreur
     const tempFilePath = path.join(__dirname, '../uploads/temp', filename);
     if (fs.existsSync(tempFilePath)) {

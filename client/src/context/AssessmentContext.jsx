@@ -104,7 +104,6 @@ export function AssessmentProvider({ children }) {
         const parsedData = JSON.parse(savedData)
         dispatch({ type: 'LOAD_FROM_STORAGE', payload: parsedData })
       } catch (error) {
-        console.error('❌ [CONTEXT] Erreur lors du chargement depuis localStorage:', error)
         localStorage.removeItem('VitalCheck-assessment-data')
       }
     }
@@ -125,13 +124,6 @@ export function AssessmentProvider({ children }) {
     
     // Only save if we have meaningful data
     if (state.user || state.assessment || state.answers.length > 0) {
-      console.log('💾 [CONTEXT] Sauvegarde dans localStorage:', {
-        hasUser: !!state.user,
-        hasAssessmentId: !!state.assessmentId,
-        hasResumeToken: !!state.resumeToken,
-        answersCount: state.answers.length,
-        currentQuestionIndex: state.currentQuestionIndex
-      });
       localStorage.setItem('VitalCheck-assessment-data', JSON.stringify(dataToSave))
     }
   }, [state.user, state.questions, state.currentQuestionIndex, state.answers, state.assessment, state.assessmentId, state.resumeToken, state.language])
