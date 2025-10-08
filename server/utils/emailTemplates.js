@@ -2,7 +2,7 @@ const emailTemplates = {
   en: {
     reportReady: {
       subject: 'Your VitalCheck Enterprise Health Check Report is Ready!',
-      html: (user, assessment) => `
+      html: (user, assessment, pdfDownloadUrl = null) => `
         <!DOCTYPE html>
         <html>
         <head>
@@ -95,6 +95,17 @@ const emailTemplates = {
               
               <!-- Boutons d'action -->
               <div style="text-align: center; margin: 40px 0;">
+                ${pdfDownloadUrl ? `
+                <a href="${pdfDownloadUrl}" 
+                   style="background: linear-gradient(135deg, #fbc350 0%, #f59e0b 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(251, 195, 80, 0.3); margin: 0 10px 10px 0;">
+                  📄 Download PDF Report
+                </a>
+                ` : `
+                <a href="https://www.checkmyenterprise.com/results" 
+                   style="background: linear-gradient(135deg, #fbc350 0%, #f59e0b 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(251, 195, 80, 0.3); margin: 0 10px 10px 0;">
+                  📄 Access Your Report
+                </a>
+                `}
                 <a href="https://www.checkmyenterprise.com/results" 
                    style="background: linear-gradient(135deg, #fbc350 0%, #f59e0b 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(251, 195, 80, 0.3); margin: 0 10px 10px 0;">
                   📊 View Full Report
@@ -142,7 +153,7 @@ const emailTemplates = {
   fr: {
     reportReady: {
       subject: 'Votre rapport VitalCheck Enterprise Health Check est prêt !',
-      html: (user, assessment) => `
+      html: (user, assessment, pdfDownloadUrl = null) => `
         <!DOCTYPE html>
         <html>
         <head>
@@ -235,6 +246,17 @@ const emailTemplates = {
               
               <!-- Boutons d'action -->
               <div style="text-align: center; margin: 40px 0;">
+                ${pdfDownloadUrl ? `
+                <a href="${pdfDownloadUrl}" 
+                   style="background: linear-gradient(135deg, #fbc350 0%, #f59e0b 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(251, 195, 80, 0.3); margin: 0 10px 10px 0;">
+                  📄 Télécharger le Rapport PDF
+                </a>
+                ` : `
+                <a href="https://www.checkmyenterprise.com/results" 
+                   style="background: linear-gradient(135deg, #fbc350 0%, #f59e0b 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(251, 195, 80, 0.3); margin: 0 10px 10px 0;">
+                  📄 Accéder à Votre Rapport
+                </a>
+                `}
                 <a href="https://www.checkmyenterprise.com/results" 
                    style="background: linear-gradient(135deg, #fbc350 0%, #f59e0b 100%); color: white; padding: 16px 32px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: 600; font-size: 16px; box-shadow: 0 4px 12px rgba(251, 195, 80, 0.3); margin: 0 10px 10px 0;">
                   📊 Voir le Rapport Complet

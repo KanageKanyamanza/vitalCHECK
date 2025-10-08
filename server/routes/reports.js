@@ -4,8 +4,44 @@ const User = require('../models/User');
 const { generatePDFReport, generateSimplePDFReport } = require('../utils/pdfGenerator');
 const { sendEmail } = require('../utils/emailService');
 const { sendEmailExternal } = require('../utils/emailServiceExternal');
+const { uploadPDFToCloudinary } = require('../config/cloudinary');
 const emailTemplates = require('../utils/emailTemplates');
 const router = express.Router();
+
+// Download PDF report from database
+router.get('/download/:assessmentId', async (req, res) => {
+  try {
+    const assessment = await Assessment.findById(req.params.assessmentId)
+      .populate('user', 'email companyName sector companySize');
+
+    if (!assessment) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Assessment not found' 
+      });
+    }
+
+    if (!assessment.pdfReport) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'PDF report not found' 
+      });
+    }
+
+    const filename = `VitalCheck-Health-Check-${assessment.user.companyName}-${new Date(assessment.completedAt).toISOString().split('T')[0]}.pdf`;
+    
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.send(assessment.pdfReport);
+
+  } catch (error) {
+    console.error('❌ [DOWNLOAD] Erreur téléchargement PDF:', error.message);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Error downloading PDF report' 
+    });
+  }
+});
 
 // Generate and send report
 router.post('/generate/:assessmentId', async (req, res) => {
@@ -36,21 +72,76 @@ router.post('/generate/:assessmentId', async (req, res) => {
     const language = assessment.language || 'fr';
     const template = emailTemplates[language] || emailTemplates.fr;
     
+    // Upload PDF to Cloudinary for download link
+    const pdfFilename = `VitalCheck-Health-Check-${assessment.user.companyName}-${new Date().toISOString().split('T')[0]}.pdf`;
+    let pdfDownloadUrl = null;
+    
+    // Vérifier si Cloudinary est configuré
+    const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME && 
+                                   process.env.CLOUDINARY_API_KEY && 
+                                   process.env.CLOUDINARY_API_SECRET;
+    
+    if (isCloudinaryConfigured) {
+      try {
+        console.log('☁️ [CLOUDINARY] Upload du PDF vers Cloudinary...');
+        const cloudinaryResult = await uploadPDFToCloudinary(pdfBuffer, pdfFilename);
+        pdfDownloadUrl = cloudinaryResult.secure_url;
+        console.log('✅ [CLOUDINARY] PDF uploadé avec succès:', pdfDownloadUrl);
+      } catch (cloudinaryError) {
+        console.error('❌ [CLOUDINARY] Erreur upload PDF:', {
+          message: cloudinaryError.message,
+          code: cloudinaryError.http_code,
+          name: cloudinaryError.name
+        });
+        // Continuer sans le lien de téléchargement
+      }
+    } else {
+      console.warn('⚠️ [CLOUDINARY] Configuration manquante - PDF ne sera pas uploadé sur Cloudinary');
+      console.log('Configuration requise:', {
+        CLOUDINARY_CLOUD_NAME: process.env.CLOUDINARY_CLOUD_NAME ? 'Configuré' : 'Manquant',
+        CLOUDINARY_API_KEY: process.env.CLOUDINARY_API_KEY ? 'Configuré' : 'Manquant',
+        CLOUDINARY_API_SECRET: process.env.CLOUDINARY_API_SECRET ? 'Configuré' : 'Manquant'
+      });
+      
+      // Alternative: Stocker le PDF en base de données
+      try {
+        console.log('💾 [DATABASE] Stockage du PDF en base de données...');
+        assessment.pdfReport = pdfBufferForDB;
+        await assessment.save();
+        console.log('✅ [DATABASE] PDF stocké en base de données');
+      } catch (dbError) {
+        console.error('❌ [DATABASE] Erreur stockage PDF en base:', dbError.message);
+      }
+    }
+    
     // Send email with PDF attachment using 3-level fallback system
     console.log('📧 [REPORT] Envoi du rapport par email...', {
       assessmentId: assessment._id,
       userEmail: assessment.user.email,
       companyName: assessment.user.companyName,
       language: language,
-      pdfSize: pdfBuffer.length + ' bytes'
+      pdfSize: pdfBuffer.length + ' bytes',
+      pdfDownloadUrl: pdfDownloadUrl ? 'Disponible' : 'Non disponible'
     });
+
+    // Toujours utiliser l'URL de téléchargement depuis le serveur (plus fiable)
+    const downloadUrl = `${process.env.CLIENT_URL || 'https://www.checkmyenterprise.com'}/api/reports/download/${assessment._id}`;
+    
+    // Stocker le PDF en base de données pour le téléchargement
+    try {
+      assessment.pdfReport = pdfBufferForDB;
+      await assessment.save();
+      console.log('✅ [DATABASE] PDF stocké en base pour téléchargement');
+    } catch (dbError) {
+      console.error('❌ [DATABASE] Erreur stockage PDF:', dbError.message);
+    }
 
     const emailData = {
       to: assessment.user.email,
       subject: template.reportReady.subject,
-      html: template.reportReady.html(assessment.user, assessment),
+      html: template.reportReady.html(assessment.user, assessment, downloadUrl),
       attachments: [{
-        filename: `VitalCheck-Health-Check-${assessment.user.companyName}-${new Date().toISOString().split('T')[0]}.pdf`,
+        filename: pdfFilename,
         content: pdfBuffer
       }]
     };

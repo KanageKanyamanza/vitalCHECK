@@ -29,6 +29,7 @@
     "assessment": "Évaluation",
     "results": "Résultats",
     "contact": "Contact",
+    "pricing": "Tarifs",
     "newAssessment": "Nouvelle Évaluation",
     "blog": "Blog",
     "userGuide": "Guide"
@@ -842,6 +843,113 @@
         "published": "Article publié avec succès",
         "unpublished": "Article dépublié avec succès"
       }
+    }
+  },
+  "pricing": {
+    "title": "Tarifs VitalCHECK",
+    "subtitle": "Choisissez le plan qui correspond à vos besoins d'évaluation et d'amélioration continue",
+    "heroFeatures": {
+      "freeEvaluation": "Évaluation gratuite disponible",
+      "noCommitment": "Sans engagement",
+      "supportIncluded": "Support inclus"
+    },
+    "plans": {
+      "free": {
+        "name": "GRATUIT",
+        "subtitle": "Freemium d'Accès",
+        "price": "0",
+        "currency": "FCFA",
+        "period": "",
+        "description": "Découverte et préqualification",
+        "button": "Commencer gratuitement"
+      },
+      "standard": {
+        "name": "STANDARD",
+        "subtitle": "Abonnement PME classique",
+        "price": "10 000",
+        "currency": "FCFA",
+        "period": "/mois",
+        "annualPrice": "100 000",
+        "annualPeriod": "/an",
+        "description": "Amélioration continue et suivi",
+        "button": "Choisir Standard",
+        "popular": "Plus populaire"
+      },
+      "premium": {
+        "name": "PREMIUM",
+        "subtitle": "Accompagnement & Décision",
+        "price": "25 000",
+        "currency": "FCFA",
+        "period": "/mois",
+        "annualPrice": "250 000",
+        "annualPeriod": "/an",
+        "oneShotPrice": "199 €",
+        "oneShotFCFA": "130 000 FCFA",
+        "description": "Consulting et financement",
+        "button": "Choisir Premium"
+      }
+    },
+    "enterpriseRecommendations": {
+      "title": "Quelle solution pour votre entreprise ?",
+      "subtitle": "Découvrez nos recommandations selon le type et la taille de votre organisation",
+      "recommended": "Recommandé"
+    },
+    "support": {
+      "title": "Support et accompagnement",
+      "subtitle": "Notre équipe est là pour vous accompagner à chaque étape",
+      "email": {
+        "title": "Support Email",
+        "description": "Disponible pour tous les plans",
+        "responseTime": "Réponse sous 24h"
+      },
+      "whatsapp": {
+        "title": "Support WhatsApp",
+        "description": "Plans Standard et Premium",
+        "responseTime": "Réponse prioritaire"
+      },
+      "phone": {
+        "title": "Support Téléphonique",
+        "description": "Plan Premium uniquement",
+        "responseTime": "Support dédié"
+      }
+    },
+    "cta": {
+      "title": "Prêt à améliorer votre entreprise ?",
+      "subtitle": "Commencez par une évaluation gratuite et découvrez les points d'amélioration de votre organisation",
+      "startFree": "Commencer l'évaluation gratuite",
+      "contactUs": "Nous contacter"
+    },
+    "common": {
+      "twoMonthsFree": "(2 mois offerts)"
+    },
+    "features": {
+      "accessEvaluation": "Accès évaluation",
+      "globalScorePillars": "Score global + piliers",
+      "basicPdfReport": "Rapport PDF basique",
+      "personalizedRecommendations": "Recommandations personnalisées",
+      "multipleEvaluations": "Évaluations multiples",
+      "historyTracking": "Historique & suivi",
+      "comparativeAnalysis": "Analyse comparative (benchmark)",
+      "expertConsultation": "Consultation avec expert UBB",
+      "dashboardAdvancedExport": "Tableau de bord et export avancé",
+      "evaluatedCompanyBadge": "Badge \"Entreprise évaluée\"",
+      "emailSupport": "Support email",
+      "whatsappPhoneSupport": "Support WhatsApp / Téléphone",
+      "multipleUsers": "Utilisateurs multiples (équipe)"
+    },
+    "enterpriseTypes": {
+      "tpePmeUnstructured": "TPE / PME non structurées",
+      "cooperativesIndividual": "Coopératives / Entrepreneurs individuels",
+      "structuredPme": "PME structurées",
+      "accountingCoaches": "Cabinets comptables / Coachs business",
+      "growthExportPme": "PME de croissance / Export",
+      "financingEntrepreneurs": "Entrepreneurs cherchant financement",
+      "incubationPrograms": "Programmes d'incubation / ONG"
+    },
+    "supportTypes": {
+      "emailSupport": "Support Email",
+      "whatsappSupport": "Support WhatsApp",
+      "phoneSupport": "Support Téléphonique"
     }
   }
 }

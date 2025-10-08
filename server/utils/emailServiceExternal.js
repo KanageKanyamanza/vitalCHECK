@@ -84,7 +84,10 @@ const sendEmailEmailJS = async (emailOptions) => {
       subject: emailOptions.subject,
       html_content: emailOptions.html,
       name: 'VitalCheck Enterprise Health Check',
-      email: 'info@checkmyenterprise.com'
+      email: 'info@checkmyenterprise.com',
+      // Note: EmailJS ne supporte pas les pièces jointes
+      // Le PDF est maintenant disponible via un lien de téléchargement dans le HTML
+      has_attachments: emailOptions.attachments && emailOptions.attachments.length > 0 ? 'Oui' : 'Non'
     };
 
     console.log('🔧 [EMAILJS] Configuration:', {
