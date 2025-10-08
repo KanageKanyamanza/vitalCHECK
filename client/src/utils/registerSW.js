@@ -4,7 +4,6 @@ export const registerSW = () => {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/sw.js')
         .then((registration) => {
-          console.log('SW enregistré avec succès:', registration.scope);
           
           // Vérifier les mises à jour
           registration.addEventListener('updatefound', () => {
@@ -22,7 +21,7 @@ export const registerSW = () => {
           });
         })
         .catch((error) => {
-          console.log('Échec de l\'enregistrement du SW:', error);
+          // Échec silencieux de l'enregistrement du SW
         });
     });
   }
@@ -62,6 +61,6 @@ export const installPWA = () => {
   
   // Détecter si l'app est installée
   window.addEventListener('appinstalled', () => {
-    console.log('PWA installée avec succès');
+    // PWA installée avec succès
   });
 };
