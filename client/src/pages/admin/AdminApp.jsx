@@ -15,6 +15,7 @@ import BlogStatsPage from './BlogStatsPage';
 import BlogAnalyticsPage from './BlogAnalyticsPage';
 import BlogVisitorsPageWrapper from './BlogVisitorsPageWrapper';
 import SettingsPage from './SettingsPage';
+import PDFManagementPage from './PDFManagementPage';
 
 const AdminApp = () => {
   const isAuthenticated = () => {
@@ -112,6 +113,12 @@ const AdminApp = () => {
         path="/reports" 
         element={
           isAuthenticated() ? <ReportsPage /> : <Navigate to="/admin/login" replace />
+        } 
+      />
+      <Route 
+        path="/pdfs" 
+        element={
+          isAuthenticated() ? <PDFManagementPage /> : <Navigate to="/admin/login" replace />
         } 
       />
       <Route 

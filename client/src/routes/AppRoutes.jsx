@@ -11,6 +11,7 @@ import PrivacyPolicy from '../pages/PrivacyPolicy'
 import TermsOfService from '../pages/TermsOfService'
 import BlogPage from '../pages/BlogPage'
 import BlogDetailPage from '../pages/BlogDetailPage'
+import ReportDownloadPage from '../pages/ReportDownloadPage'
 import AdminApp from '../pages/admin/AdminApp'
 import { PingPongTest, LogoTest } from '../components/test'
 
@@ -28,6 +29,7 @@ const AppRoutes = () => {
       <Route path="/terms" element={<TermsOfService />} />
       <Route path="/blog" element={<BlogPage />} />
       <Route path="/blog/:slug" element={<BlogDetailPage />} />
+      <Route path="/report/download/:assessmentId" element={<ReportDownloadPage />} />
       <Route path="/ping-test" element={<PingPongTest />} />
       <Route path="/logo-test" element={<LogoTest />} />
       <Route path="/admin/*" element={<AdminApp />} />

@@ -78,6 +78,14 @@
       "amber": "Amber Zone",
       "green": "Green Zone"
     },
+    "status": {
+      "excellent": "Excellent",
+      "good": "Good",
+      "average": "Average",
+      "amber": "Amber",
+      "poor": "Poor",
+      "critical": "Critical"
+    },
     "scoreMessages": {
       "developing": "Your business is developing but needs strengthening in certain areas.",
       "excellent": "Excellent performance! Your business is in excellent health.",
@@ -785,6 +793,40 @@
         "deleted": "Article deleted successfully",
         "published": "Article published successfully",
         "unpublished": "Article unpublished successfully"
+      }
+    }
+  },
+  "reportDownload": {
+    "title": "Your VitalCheck Report",
+    "subtitle": "Download your complete assessment report",
+    "overallScore": "Overall Score",
+    "assessmentDate": "Assessment Date",
+    "reportGenerated": "Report generated on",
+    "downloadButton": "Download PDF Report",
+    "downloading": "Downloading...",
+    "downloadHint": "The PDF will be downloaded automatically in your browser",
+    "needHelp": "Need help? Contact us",
+    "error": "Error",
+    "notFound": "Report not found or unavailable"
+  },
+  "admin": {
+    "pdfManagement": {
+      "title": "PDF Management",
+      "subtitle": "Manage all generated PDF reports and resend them to users",
+      "searchPlaceholder": "Search by company or email...",
+      "totalPDFs": "Total PDFs",
+      "noPDFs": "No PDFs found",
+      "download": "Download",
+      "resend": "Resend",
+      "showing": "Showing",
+      "of": "of",
+      "table": {
+        "company": "Company",
+        "email": "Email",
+        "score": "Score",
+        "status": "Status",
+        "date": "Date",
+        "actions": "Actions"
       }
     }
   },
