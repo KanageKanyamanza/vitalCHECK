@@ -1360,4 +1360,119 @@ router.delete('/admins/:adminId', authenticateAdmin, checkPermission('manageAdmi
   }
 });
 
+// Get all PDFs reports
+router.get('/reports/pdfs', authenticateAdmin, async (req, res) => {
+  try {
+    const { page = 1, limit = 20, search = '' } = req.query;
+    const skip = (page - 1) * limit;
+
+    // Build search query
+    let searchQuery = { pdfGeneratedAt: { $exists: true, $ne: null } };
+    
+    if (search) {
+      const users = await User.find({
+        $or: [
+          { email: { $regex: search, $options: 'i' } },
+          { companyName: { $regex: search, $options: 'i' } }
+        ]
+      }).select('_id');
+      
+      const userIds = users.map(u => u._id);
+      searchQuery.user = { $in: userIds };
+    }
+
+    // Get assessments with PDF
+    const assessments = await Assessment.find(searchQuery)
+      .populate('user', 'email companyName sector companySize')
+      .select('_id user overallScore overallStatus completedAt pdfGeneratedAt language')
+      .sort({ pdfGeneratedAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    const total = await Assessment.countDocuments(searchQuery);
+
+    const pdfs = assessments.map(assessment => ({
+      _id: assessment._id,
+      user: assessment.user,
+      overallScore: assessment.overallScore,
+      overallStatus: assessment.overallStatus,
+      completedAt: assessment.completedAt,
+      pdfGeneratedAt: assessment.pdfGeneratedAt,
+      language: assessment.language || 'fr',
+      downloadUrl: `/api/reports/download/${assessment._id}`
+    }));
+
+    res.json({
+      success: true,
+      pdfs,
+      pagination: {
+        total,
+        page: parseInt(page),
+        pages: Math.ceil(total / limit),
+        limit: parseInt(limit)
+      }
+    });
+  } catch (error) {
+    console.error('Get PDFs error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur' 
+    });
+  }
+});
+
+// Resend PDF report by email
+router.post('/reports/resend/:assessmentId', authenticateAdmin, async (req, res) => {
+  try {
+    const assessment = await Assessment.findById(req.params.assessmentId)
+      .populate('user', 'email companyName sector companySize');
+
+    if (!assessment) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Assessment not found' 
+      });
+    }
+
+    if (!assessment.pdfBuffer) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'PDF not found for this assessment' 
+      });
+    }
+
+    const { sendEmail } = require('../utils/emailService');
+    const emailTemplates = require('../utils/emailTemplates');
+    
+    const template = assessment.language === 'en' ? emailTemplates.en : emailTemplates.fr;
+    const clientUrl = process.env.CLIENT_URL || 'https://www.checkmyenterprise.com';
+    const downloadUrl = `${clientUrl}/report/download/${assessment._id}`;
+    
+    const pdfFilename = `VitalCheck-Health-Check-${assessment.user.companyName}-${new Date(assessment.completedAt).toISOString().split('T')[0]}.pdf`;
+
+    const emailData = {
+      to: assessment.user.email,
+      subject: template.reportReady.subject,
+      html: template.reportReady.html(assessment.user, assessment, downloadUrl),
+      attachments: [{
+        filename: pdfFilename,
+        content: assessment.pdfBuffer
+      }]
+    };
+
+    await sendEmail(emailData);
+
+    res.json({
+      success: true,
+      message: `Rapport renvoyé à ${assessment.user.email}`
+    });
+  } catch (error) {
+    console.error('Resend PDF error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur lors de l\'envoi du rapport' 
+    });
+  }
+});
+
 module.exports = router;

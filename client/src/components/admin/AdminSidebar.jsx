@@ -14,7 +14,8 @@ import {
   Clock,
   BookOpen,
   Settings,
-  UserCheck
+  UserCheck,
+  Download
 } from 'lucide-react';
 import Logo from '../../assets/Logo.png';
 
@@ -86,6 +87,14 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
       color: 'text-success-600',
       bgColor: 'bg-success-50',
       hoverColor: 'hover:bg-success-100'
+    },
+    {
+      name: 'PDFs',
+      path: '/admin/pdfs',
+      icon: Download,
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-50',
+      hoverColor: 'hover:bg-blue-100'
     },
     {
       name: 'Paramètres',

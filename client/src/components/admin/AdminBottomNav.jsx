@@ -8,7 +8,8 @@ import {
   BarChart3, 
   Clock,
   BookOpen,
-  Settings
+  Settings,
+  Download
 } from 'lucide-react';
 
 const AdminBottomNav = () => {
@@ -71,6 +72,13 @@ const AdminBottomNav = () => {
       icon: BarChart3,
       color: 'text-success-600',
       bgColor: 'bg-success-50'
+    },
+    {
+      name: 'PDFs',
+      path: '/admin/pdfs',
+      icon: Download,
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-50'
     },
     {
       name: 'Paramètres',

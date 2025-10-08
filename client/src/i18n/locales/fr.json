@@ -78,6 +78,14 @@
       "amber": "Zone Ambre", 
       "green": "Zone Verte"
     },
+    "status": {
+      "excellent": "Excellent",
+      "good": "Bon",
+      "average": "Moyen",
+      "amber": "Ambre",
+      "poor": "Faible",
+      "critical": "Critique"
+    },
     "scoreMessages": {
       "developing": "Votre entreprise se développe mais a besoin de renforcement dans certains domaines.",
       "excellent": "Excellente performance ! Votre entreprise est en excellente santé.",
@@ -843,6 +851,40 @@
         "deleted": "Article supprimé avec succès",
         "published": "Article publié avec succès",
         "unpublished": "Article dépublié avec succès"
+      }
+    }
+  },
+  "reportDownload": {
+    "title": "Votre Rapport VitalCheck",
+    "subtitle": "Téléchargez votre rapport d'évaluation complet",
+    "overallScore": "Score Global",
+    "assessmentDate": "Date d'évaluation",
+    "reportGenerated": "Rapport généré le",
+    "downloadButton": "Télécharger le Rapport PDF",
+    "downloading": "Téléchargement en cours...",
+    "downloadHint": "Le PDF sera téléchargé automatiquement dans votre navigateur",
+    "needHelp": "Besoin d'aide ? Contactez-nous",
+    "error": "Erreur",
+    "notFound": "Rapport introuvable ou indisponible"
+  },
+  "admin": {
+    "pdfManagement": {
+      "title": "Gestion des PDFs",
+      "subtitle": "Gérez tous les rapports PDF générés et renvoyez-les aux utilisateurs",
+      "searchPlaceholder": "Rechercher par entreprise ou email...",
+      "totalPDFs": "Total PDFs",
+      "noPDFs": "Aucun PDF trouvé",
+      "download": "Télécharger",
+      "resend": "Renvoyer",
+      "showing": "Affichage de",
+      "of": "sur",
+      "table": {
+        "company": "Entreprise",
+        "email": "Email",
+        "score": "Score",
+        "status": "Statut",
+        "date": "Date",
+        "actions": "Actions"
       }
     }
   },

@@ -100,8 +100,9 @@ router.post('/generate/:assessmentId', async (req, res) => {
     
     // Send email with PDF attachment using 3-level fallback system
 
-    // Toujours utiliser l'URL de téléchargement depuis le serveur (plus fiable)
-    const downloadUrl = `${process.env.CLIENT_URL || 'https://www.checkmyenterprise.com'}/api/reports/download/${assessment._id}`;
+    // URL vers la page frontend de téléchargement du rapport
+    const clientUrl = process.env.CLIENT_URL || 'https://www.checkmyenterprise.com';
+    const downloadUrl = `${clientUrl}/report/download/${assessment._id}`;
 
     const emailData = {
       to: assessment.user.email,
