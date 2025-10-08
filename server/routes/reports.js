@@ -21,7 +21,7 @@ router.get('/download/:assessmentId', async (req, res) => {
       });
     }
 
-    if (!assessment.pdfReport) {
+    if (!assessment.pdfBuffer) {
       return res.status(404).json({ 
         success: false, 
         message: 'PDF report not found' 
@@ -32,7 +32,7 @@ router.get('/download/:assessmentId', async (req, res) => {
     
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
-    res.send(assessment.pdfReport);
+    res.send(assessment.pdfBuffer);
 
   } catch (error) {
     res.status(500).json({ 
@@ -91,7 +91,8 @@ router.post('/generate/:assessmentId', async (req, res) => {
     
     // Toujours stocker le PDF en base de données pour le téléchargement
     try {
-      assessment.pdfReport = pdfBufferForDB;
+      assessment.pdfBuffer = pdfBufferForDB;
+      assessment.pdfGeneratedAt = new Date();
       await assessment.save();
     } catch (dbError) {
       // Erreur silencieuse de stockage
