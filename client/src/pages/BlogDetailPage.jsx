@@ -287,7 +287,7 @@ const BlogDetailPage = () => {
   const TypeIcon = getTypeIcon(blog.type)
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-20">
+    <div className="min-h-screen bg-gray-50 pt-[50px]">
       <SEOHead
         title={blog?.title ? `${blog.title} - Blog VitalCheck` : "Blog VitalCheck"}
         description={blog?.excerpt || (blog?.content ? (typeof blog.content === 'string' ? blog.content.substring(0, 160) + "..." : (blog.content.fr ? blog.content.fr.substring(0, 160) + "..." : blog.content.en ? blog.content.en.substring(0, 160) + "..." : "Article de blog VitalCheck")) : "Article de blog VitalCheck")}

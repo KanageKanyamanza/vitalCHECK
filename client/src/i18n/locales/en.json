@@ -29,6 +29,7 @@
     "assessment": "Assessment",
     "results": "Results",
     "contact": "Contact",
+    "pricing": "Pricing",
     "newAssessment": "New Assessment",
     "blog": "Blog",
     "userGuide": "Guide"
@@ -784,6 +785,113 @@
         "published": "Article published successfully",
         "unpublished": "Article unpublished successfully"
       }
+    }
+  },
+  "pricing": {
+    "title": "VitalCHECK Pricing",
+    "subtitle": "Choose the plan that matches your assessment and continuous improvement needs",
+    "heroFeatures": {
+      "freeEvaluation": "Free evaluation available",
+      "noCommitment": "No commitment",
+      "supportIncluded": "Support included"
+    },
+    "plans": {
+      "free": {
+        "name": "FREE",
+        "subtitle": "Freemium Access",
+        "price": "0",
+        "currency": "FCFA",
+        "period": "",
+        "description": "Discovery and pre-qualification",
+        "button": "Start for free"
+      },
+      "standard": {
+        "name": "STANDARD",
+        "subtitle": "Classic SME Subscription",
+        "price": "10,000",
+        "currency": "FCFA",
+        "period": "/month",
+        "annualPrice": "100,000",
+        "annualPeriod": "/year",
+        "description": "Continuous improvement and tracking",
+        "button": "Choose Standard",
+        "popular": "Most popular"
+      },
+      "premium": {
+        "name": "PREMIUM",
+        "subtitle": "Support & Decision Making",
+        "price": "25,000",
+        "currency": "FCFA",
+        "period": "/month",
+        "annualPrice": "250,000",
+        "annualPeriod": "/year",
+        "oneShotPrice": "199 €",
+        "oneShotFCFA": "130,000 FCFA",
+        "description": "Consulting and financing",
+        "button": "Choose Premium"
+      }
+    },
+    "enterpriseRecommendations": {
+      "title": "Which solution for your business?",
+      "subtitle": "Discover our recommendations based on your organization's type and size",
+      "recommended": "Recommended"
+    },
+    "support": {
+      "title": "Support and assistance",
+      "subtitle": "Our team is here to support you at every step",
+      "email": {
+        "title": "Email Support",
+        "description": "Available for all plans",
+        "responseTime": "Response within 24h"
+      },
+      "whatsapp": {
+        "title": "WhatsApp Support",
+        "description": "Standard and Premium plans",
+        "responseTime": "Priority response"
+      },
+      "phone": {
+        "title": "Phone Support",
+        "description": "Premium plan only",
+        "responseTime": "Dedicated support"
+      }
+    },
+    "cta": {
+      "title": "Ready to improve your business?",
+      "subtitle": "Start with a free evaluation and discover your organization's improvement points",
+      "startFree": "Start free evaluation",
+      "contactUs": "Contact us"
+    },
+    "common": {
+      "twoMonthsFree": "(2 months free)"
+    },
+    "features": {
+      "accessEvaluation": "Access to evaluation",
+      "globalScorePillars": "Global score + pillars",
+      "basicPdfReport": "Basic PDF report",
+      "personalizedRecommendations": "Personalized recommendations",
+      "multipleEvaluations": "Multiple evaluations",
+      "historyTracking": "History & tracking",
+      "comparativeAnalysis": "Comparative analysis (benchmark)",
+      "expertConsultation": "Consultation with UBB expert",
+      "dashboardAdvancedExport": "Dashboard and advanced export",
+      "evaluatedCompanyBadge": "Badge \"Evaluated company\"",
+      "emailSupport": "Email support",
+      "whatsappPhoneSupport": "WhatsApp / Phone support",
+      "multipleUsers": "Multiple users (team)"
+    },
+    "enterpriseTypes": {
+      "tpePmeUnstructured": "TPE / Unstructured SME",
+      "cooperativesIndividual": "Cooperatives / Individual entrepreneurs",
+      "structuredPme": "Structured SME",
+      "accountingCoaches": "Accounting firms / Business coaches",
+      "growthExportPme": "Growth / Export SME",
+      "financingEntrepreneurs": "Entrepreneurs seeking financing",
+      "incubationPrograms": "Incubation programs / NGOs"
+    },
+    "supportTypes": {
+      "emailSupport": "Email Support",
+      "whatsappSupport": "WhatsApp Support",
+      "phoneSupport": "Phone Support"
     }
   }
 }

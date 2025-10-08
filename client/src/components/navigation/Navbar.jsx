@@ -37,8 +37,6 @@ const Navbar = () => {
 
   const handleDesktopNavigation = (path) => {
     navigate(path)
-    // Ramener au top de la page
-    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   const toggleMobileMenu = () => {
@@ -52,8 +50,6 @@ const Navbar = () => {
   const handleNavigation = (path) => {
     navigate(path)
     closeMobileMenu()
-    // Ramener au top de la page
-    window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
   // Plus de transparence - background solide
@@ -121,6 +117,17 @@ const Navbar = () => {
                 }`}
               >
                 Blog
+              </button>
+              
+              <button
+                onClick={() => handleDesktopNavigation('/pricing')}
+                className={`text-sm font-medium transition-colors duration-200 ${
+                  isActive('/pricing') 
+                    ? 'text-primary-600 border-b-2 border-primary-600 pb-1' 
+                    : 'text-gray-600 hover:text-primary-600'
+                }`}
+              >
+                {t('navigation.pricing')}
               </button>
               
               <button
@@ -245,6 +252,17 @@ const Navbar = () => {
                   }`}
                 >
                   Blog
+                </button>
+                
+                <button
+                  onClick={() => handleNavigation('/pricing')}
+                  className={`w-full text-left px-3 py-2 rounded-lg font-medium transition-colors duration-200 ${
+                    isActive('/pricing') 
+                      ? 'text-primary-600 bg-primary-50' 
+                      : 'text-gray-600 hover:text-primary-600 hover:bg-gray-50'
+                  }`}
+                >
+                  {t('navigation.pricing')}
                 </button>
                 
                 <button
