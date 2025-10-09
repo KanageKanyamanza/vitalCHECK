@@ -5,7 +5,7 @@ import Logo from '../../assets/Logo.png';
 import NotificationDropdown from './NotificationDropdown';
 import LanguageSelector from './LanguageSelector';
 
-const AdminHeader = ({ onMenuClick, adminData, onLogout }) => {
+const AdminHeader = ({ onMenuClick, sidebarOpen, adminData, onLogout }) => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const navigate = useNavigate();
   const menuRef = useRef(null);
@@ -34,6 +34,17 @@ const AdminHeader = ({ onMenuClick, adminData, onLogout }) => {
       <div className="flex items-center justify-between px-4 py-3 lg:px-6">
         {/* Left side - Admin icon on mobile, menu button on desktop */}
         <div className="flex items-center space-x-4">
+          {/* Menu button for mobile */}
+          {!sidebarOpen && (
+            <button
+              onClick={onMenuClick}
+              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              aria-label="Open menu"
+            >
+              <Menu className="w-6 h-6 text-gray-700" />
+            </button>
+          )}
+
           {/* VitalCheck Logo for mobile */}
           <div className="lg:hidden flex items-center space-x-3">
             <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center">
@@ -44,7 +55,7 @@ const AdminHeader = ({ onMenuClick, adminData, onLogout }) => {
               />
             </div>
             <div>
-              <h1 className="text-lg font-display font-semibold text-gray-900">
+              <h1 className="md:text-lg sm:text-md text-xs font-display font-semibold text-gray-900">
                  VitalCheck Admin
               </h1>
             </div>

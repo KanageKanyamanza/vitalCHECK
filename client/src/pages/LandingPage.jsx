@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Hero } from '../components/layout'
 import { AssessmentForm } from '../components/assessment'
 import { Footer } from '../components/navigation'
+import { SocialShare } from '../components/ui'
 import { useAssessment } from '../context/AssessmentContext'
 import SEOHead from '../components/seo/SEOHead'
 import { getHomePageStructuredData } from '../utils/seoData'
@@ -53,6 +54,12 @@ const LandingPage = () => {
           <AssessmentForm onFormSubmit={handleFormSubmit} />
         </div>
       )}
+
+      {/* Social Share */}
+      <SocialShare 
+        title="VitalCheck Enterprise Health Check - Évaluez la santé de votre entreprise"
+        description="Évaluation gratuite de 10 minutes avec recommandations personnalisées et rapport détaillé."
+      />
 
       {/* Footer */}
       <Footer />

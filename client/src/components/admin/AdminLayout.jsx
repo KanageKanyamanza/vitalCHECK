@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
-import AdminBottomNav from './AdminBottomNav';
 import AdminHeader from './AdminHeader';
 
 const AdminLayout = ({ children }) => {
@@ -84,6 +83,7 @@ const AdminLayout = ({ children }) => {
         {/* Header */}
         <AdminHeader 
           onMenuClick={() => setSidebarOpen(!sidebarOpen)}
+          sidebarOpen={sidebarOpen}
           adminData={adminData}
           onLogout={handleLogout}
         />
@@ -92,9 +92,6 @@ const AdminLayout = ({ children }) => {
         <main className="min-h-screen">
           {children}
         </main>
-
-        {/* Bottom navigation for mobile/tablet */}
-        <AdminBottomNav />
       </div>
     </div>
   );

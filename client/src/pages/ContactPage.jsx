@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import { toast } from 'react-hot-toast'
 import { useNavigate } from 'react-router-dom'
 import { useAssessment } from '../context/AssessmentContext'
+import { SocialShare } from '../components/ui'
 
 const ContactPage = () => {
   const { t } = useTranslation()
@@ -376,6 +377,12 @@ const ContactPage = () => {
           </motion.div>
         </div>
       </div>
+
+      {/* Social Share */}
+      <SocialShare 
+        title="Contactez VitalCheck - Enterprise Health Check"
+        description="Nous sommes là pour vous aider à améliorer la santé de votre entreprise."
+      />
     </div>
   )
 }

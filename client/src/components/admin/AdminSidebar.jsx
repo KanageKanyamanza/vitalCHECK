@@ -15,7 +15,8 @@ import {
   BookOpen,
   Settings,
   UserCheck,
-  Download
+  Download,
+  DollarSign
 } from 'lucide-react';
 import Logo from '../../assets/Logo.png';
 
@@ -97,6 +98,14 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
       hoverColor: 'hover:bg-blue-100'
     },
     {
+      name: 'Paiements',
+      path: '/admin/payments',
+      icon: DollarSign,
+      color: 'text-green-600',
+      bgColor: 'bg-green-50',
+      hoverColor: 'hover:bg-green-100'
+    },
+    {
       name: 'Paramètres',
       path: '/admin/settings',
       icon: Settings,
@@ -128,13 +137,13 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
 
       {/* Sidebar */}
       <div className={`
-        fixed top-0 left-0 h-full bg-white shadow-lg z-50 transition-all duration-300 ease-in-out
+        fixed top-0 left-0 h-full bg-white shadow-lg z-50 transition-all duration-300 ease-in-out flex flex-col
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:translate-x-0
         ${isCollapsed ? 'w-[80px]' : 'w-64'}
       `}>
         {/* Header */}
-        <div className="flex items-center justify-between p-[14px] border-b border-gray-200">
+        <div className="flex items-center justify-between p-[14px] border-b border-gray-200 flex-shrink-0">
           {!isCollapsed ? (
             <div className="flex items-center space-x-3">
               <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-white border border-gray-200">
@@ -183,7 +192,7 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
@@ -217,7 +226,7 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
         </nav>
 
         {/* Footer */}
-        <div className="p-4 border-t border-gray-200">
+        <div className="p-4 border-t border-gray-200 flex-shrink-0">
           <button
             onClick={handleLogout}
             className={`

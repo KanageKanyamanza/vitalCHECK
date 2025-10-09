@@ -112,7 +112,7 @@ const ResultsPage = () => {
 	};
 
 	const handlePremiumUpgrade = () => {
-		navigate('/contact');
+		navigate('/checkout?plan=premium');
 		window.scrollTo({ top: 0, behavior: 'smooth' });
 	};
 
@@ -544,16 +544,16 @@ const ResultsPage = () => {
 									>
 										{t("results.consultationModal.close")}
 									</button>
-									<button
-										onClick={() => {
-											navigate('/contact');
-											window.scrollTo({ top: 0, behavior: 'smooth' });
-											setShowConsultationModal(false);
-										}}
-										className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
-									>
-										{t("results.consultationModal.contactUs")}
-									</button>
+								<button
+									onClick={() => {
+										navigate('/checkout?plan=premium');
+										window.scrollTo({ top: 0, behavior: 'smooth' });
+										setShowConsultationModal(false);
+									}}
+									className="flex-1 px-4 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+								>
+									{t("results.consultationModal.contactUs")}
+								</button>
 								</div>
 							</div>
 						</div>

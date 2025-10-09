@@ -18,6 +18,7 @@
     "close": "Fermer",
     "yes": "Oui",
     "no": "Non",
+    "optional": "(optionnel)",
     "goHome": "Retour à l'accueil",
     "userGuide": "Guide d'utilisation",
     "downloadGuide": "Télécharger le guide",
@@ -33,7 +34,9 @@
     "pricing": "Tarifs",
     "newAssessment": "Nouvelle Évaluation",
     "blog": "Blog",
-    "userGuide": "Guide"
+    "userGuide": "Guide",
+    "login": "Connexion",
+    "dashboard": "Dashboard"
   },
   "results": {
     "title": "VitalCheck Enterprise Health Check – Résultats",
@@ -104,9 +107,9 @@
         "actionPlan": "Plan d'action personnalisé",
         "expertConsultation": "Consultation avec nos experts"
       },
-      "contactText": "Contactez-nous pour plus d'informations sur nos services premium.",
+      "contactText": "Choisissez le plan Premium pour accéder à toutes ces fonctionnalités.",
       "close": "Fermer",
-      "contactUs": "Nous contacter"
+      "contactUs": "Choisir Premium"
     },
     "reportProgress": {
       "title": "Génération de votre rapport",
@@ -888,6 +891,177 @@
       }
     }
   },
+  "clientAuth": {
+    "login": {
+      "title": "Connexion Client",
+      "subtitle": "Accédez à votre tableau de bord VitalCheck",
+      "email": "Adresse email",
+      "emailPlaceholder": "votre@email.com",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "Votre mot de passe",
+      "submit": "Se connecter",
+      "noAccount": "Pas encore de compte ?",
+      "createAccount": "Créer un compte",
+      "backToHome": "Retour à l'accueil",
+      "hint": "Vous avez reçu vos identifiants par email après votre paiement"
+    },
+    "register": {
+      "title": "Créer un Compte",
+      "subtitle": "Créez votre compte VitalCheck pour accéder à tous vos services",
+      "firstName": "Prénom",
+      "firstNamePlaceholder": "Votre prénom",
+      "lastName": "Nom",
+      "lastNamePlaceholder": "Votre nom",
+      "email": "Email",
+      "emailPlaceholder": "votre@email.com",
+      "password": "Mot de passe",
+      "passwordPlaceholder": "Minimum 6 caractères",
+      "confirmPassword": "Confirmer le mot de passe",
+      "confirmPasswordPlaceholder": "Retapez votre mot de passe",
+      "companyName": "Nom de l'entreprise",
+      "companyNamePlaceholder": "Ex: Mon Entreprise SARL",
+      "sector": "Secteur",
+      "sectorPlaceholder": "Sélectionnez votre secteur",
+      "companySize": "Taille de l'entreprise",
+      "companySizePlaceholder": "Sélectionnez la taille",
+      "phone": "Téléphone",
+      "phonePlaceholder": "+221 XXX XXX XXX",
+      "submit": "Créer mon compte",
+      "hasAccount": "Vous avez déjà un compte ?",
+      "login": "Se connecter",
+      "backToHome": "Retour à l'accueil",
+      "errors": {
+        "firstNameRequired": "Le prénom est requis",
+        "lastNameRequired": "Le nom est requis",
+        "emailRequired": "L'email est requis",
+        "passwordRequired": "Le mot de passe est requis",
+        "passwordTooShort": "Le mot de passe doit contenir au moins 6 caractères",
+        "passwordMismatch": "Les mots de passe ne correspondent pas",
+        "companyNameRequired": "Le nom de l'entreprise est requis",
+        "sectorRequired": "Le secteur est requis",
+        "companySizeRequired": "La taille de l'entreprise est requise"
+      }
+    }
+  },
+  "clientDashboard": {
+    "welcome": "Bienvenue",
+    "settings": "Paramètres",
+    "logout": "Déconnexion",
+    "subscription": {
+      "title": "Abonnement",
+      "active": "Actif",
+      "inactive": "Inactif",
+      "manage": "Gérer mon abonnement"
+    },
+    "assessments": {
+      "title": "Évaluations",
+      "total": "Évaluations réalisées",
+      "new": "Nouvelle évaluation"
+    },
+    "payments": {
+      "title": "Paiements",
+      "total": "Paiements effectués"
+    },
+    "history": {
+      "title": "Historique des Évaluations",
+      "noAssessments": "Vous n'avez pas encore d'évaluation",
+      "startFirst": "Commencer ma première évaluation",
+      "evaluation": "Évaluation",
+      "score": "Score",
+      "viewReport": "Voir le rapport"
+    },
+    "paymentsHistory": {
+      "title": "Historique des Paiements",
+      "date": "Date",
+      "plan": "Plan",
+      "amount": "Montant",
+      "status": "Statut",
+      "completed": "Complété"
+    }
+  },
+  "clientProfile": {
+    "title": "Mon Profil",
+    "tabs": {
+      "profile": "Profil",
+      "subscription": "Abonnement",
+      "security": "Sécurité"
+    },
+    "firstName": "Prénom",
+    "lastName": "Nom",
+    "email": "Email",
+    "emailNote": "L'email ne peut pas être modifié",
+    "companyName": "Nom de l'entreprise",
+    "sector": "Secteur",
+    "companySize": "Taille",
+    "phone": "Téléphone",
+    "saveChanges": "Enregistrer les modifications",
+    "currentPlan": "Plan Actuel",
+    "statusActive": "Actif",
+    "statusInactive": "Inactif",
+    "upgradePlan": "Changer de plan",
+    "subscriptionDetails": "Détails de l'abonnement",
+    "startDate": "Date de début",
+    "endDate": "Date de fin",
+    "currentPassword": "Mot de passe actuel",
+    "newPassword": "Nouveau mot de passe",
+    "confirmNewPassword": "Confirmer le nouveau mot de passe",
+    "passwordHint": "Minimum 6 caractères",
+    "changePassword": "Changer le mot de passe",
+    "errors": {
+      "passwordMismatch": "Les mots de passe ne correspondent pas",
+      "passwordTooShort": "Le mot de passe doit contenir au moins 6 caractères"
+    }
+  },
+  "socialShare": {
+    "title": "Partager cette page :",
+    "shareOn": "Partager sur",
+    "copyLink": "Copier le lien",
+    "copied": "Lien copié !",
+    "linkCopied": "Lien copié dans le presse-papiers"
+  },
+  "payment": {
+    "success": "Paiement réussi ! Merci pour votre achat.",
+    "error": "Erreur de paiement. Veuillez réessayer.",
+    "processing": "Traitement du paiement...",
+    "payWith": "Payer avec PayPal",
+    "or": "ou"
+  },
+  "checkout": {
+    "title": "Paiement",
+    "backToPricing": "Retour aux tarifs",
+    "orderSummary": "Récapitulatif de la commande",
+    "price": "Prix",
+    "or": "ou",
+    "monthly": "par mois",
+    "annual": "par an",
+    "oneTime": "Paiement unique",
+    "annualPrice": "Prix annuel",
+    "selectPaymentMethod": "Sélectionnez le mode de paiement",
+    "paypal": "PayPal",
+    "paypalDescription": "Payez en toute sécurité avec PayPal ou carte bancaire",
+    "bankTransfer": "Virement bancaire / Nous contacter",
+    "bankTransferDescription": "Payez par virement bancaire ou contactez-nous pour d'autres options",
+    "contactUsForPayment": "Contactez-nous pour organiser un paiement par virement bancaire ou discuter d'autres options de paiement.",
+    "contactUs": "Nous contacter",
+    "securePayment": "🔒 Paiement sécurisé protégé par cryptage SSL",
+    "invalidPlan": "Plan invalide sélectionné. Redirection..."
+  },
+  "paymentSuccess": {
+    "title": "Paiement Réussi !",
+    "subtitle": "Merci pour votre achat. Votre paiement a été traité avec succès.",
+    "orderDetails": "Détails de la commande",
+    "orderId": "ID de commande",
+    "plan": "Plan",
+    "status": "Statut",
+    "completed": "Terminé",
+    "nextSteps": "Et Maintenant ?",
+    "confirmationEmail": "Vous recevrez sous peu un email de confirmation avec le récapitulatif de votre paiement.",
+    "accessInfo": "Nos experts vous contacteront sous 24h pour organiser vos services.",
+    "support": "Tous vos livrables vous seront envoyés directement par email.",
+    "backToHome": "Retour à l'accueil",
+    "contactSupport": "Contacter le Support",
+    "needHelp": "Besoin d'aide ?"
+  },
   "pricing": {
     "title": "Tarifs VitalCHECK",
     "subtitle": "Choisissez le plan qui correspond à vos besoins d'évaluation et d'amélioration continue",
@@ -915,7 +1089,7 @@
         "annualPrice": "100 000",
         "annualPeriod": "/an",
         "description": "Amélioration continue et suivi",
-        "button": "Choisir Standard",
+        "button": "Sélectionner",
         "popular": "Plus populaire"
       },
       "premium": {
@@ -929,7 +1103,18 @@
         "oneShotPrice": "199 €",
         "oneShotFCFA": "130 000 FCFA",
         "description": "Consulting et financement",
-        "button": "Choisir Premium"
+        "button": "Sélectionner"
+      },
+      "diagnostic": {
+        "name": "SERVICE DE DIAGNOSTIC",
+        "subtitle": "Revitalisation Complète d'Entreprise",
+        "price": "1 000 $",
+        "alternativePrice": "550 000 FCFA",
+        "description": "Le Service de Diagnostic est un cadre complet de revitalisation d'entreprise. Il comprend une évaluation commerciale complète, un rapport écrit et présenté, et un ensemble de recommandations de croissance pratiques et transformatrices.",
+        "includes": "Chaque engagement se termine par un plan d'action stratégique suivi de trois mois de mise en œuvre guidée.",
+        "retainer": "À la fin de l'intervention, les clients paient une commission de performance égale à 1,5% de l'augmentation des ventes générée par le programme, payable sur une période de 12 mois.",
+        "button": "Demander le Service de Diagnostic",
+        "special": "Pack Spécial"
       }
     },
     "enterpriseRecommendations": {
@@ -971,7 +1156,8 @@
       "contactUs": "Nous contacter"
     },
     "common": {
-      "twoMonthsFree": "(2 mois offerts)"
+      "twoMonthsFree": "(2 mois offerts)",
+      "or": "ou"
     },
     "featuresComparison": {
       "title": "Comparaison des fonctionnalités",

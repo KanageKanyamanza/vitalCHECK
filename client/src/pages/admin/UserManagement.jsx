@@ -156,7 +156,7 @@ const UserManagement = () => {
 
   return (
     <AdminLayout>
-      <div className="p-4 lg:p-8 pb-20 lg:pb-8">
+      <div className="p-4 lg:p-8">
         {/* Filters */}
         <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6 mb-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">

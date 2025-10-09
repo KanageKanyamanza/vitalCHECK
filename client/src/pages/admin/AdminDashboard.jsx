@@ -76,7 +76,7 @@ const AdminDashboard = () => {
 
   return (
     <AdminLayout>
-      <div className="p-4 lg:p-8 pb-20 lg:pb-8">
+      <div className="p-4 lg:p-8">
         {/* Debug Tools */}
         {/* <div className="mb-6 flex flex-wrap gap-2">
           <button

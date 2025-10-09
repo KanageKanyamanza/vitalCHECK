@@ -167,6 +167,11 @@ export const authAPI = publicApi;
 export const assessmentAPI = publicApi;
 export const reportsAPI = publicApi;
 
+// Payments API (public)
+export const paymentsAPI = {
+  recordPayment: (data) => api.post('/payments/record', data)
+};
+
 // Fonctions API admin
 export const adminApiService = {
   // Auth Admin
@@ -239,6 +244,12 @@ export const adminApiService = {
       'Content-Type': 'multipart/form-data'
     }
   }),
+
+  // Payments
+  getPayments: () => adminApi.get('/admin/payments'),
+  sendPaymentEmail: (paymentId, data) => adminApi.post(`/admin/payments/${paymentId}/send-email`, data),
+  updatePaymentStatus: (paymentId, status) => adminApi.patch(`/admin/payments/${paymentId}/status`, { status }),
+  exportPayments: () => adminApi.get('/admin/payments/export', { responseType: 'blob' }),
 };
 
 // Fonction utilitaire pour gérer les erreurs de rate limiting

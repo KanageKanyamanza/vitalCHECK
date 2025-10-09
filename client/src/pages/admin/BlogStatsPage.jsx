@@ -177,7 +177,7 @@ const BlogStatsPage = () => {
 
 	return (
 		<AdminLayout>
-			<div className="max-w-7xl mx-auto pb-20 px-5 pt-5">
+			<div className="max-w-7xl mx-auto pb-8 px-5 pt-5">
 				<button
 					onClick={() => navigate("/admin/blog")}
 					className="p-2 flex text-gray-400 hover:text-gray-600 rounded-lg hover:bg-gray-100"
