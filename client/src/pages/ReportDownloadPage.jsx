@@ -99,7 +99,7 @@ const ReportDownloadPage = () => {
 
   if (error || !assessment) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-primary-50 to-white flex items-center justify-center p-4">
+      <div className="min-h-screen py-[50px] bg-gradient-to-br from-primary-50 to-white flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 text-center">
           <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-4">
@@ -120,7 +120,7 @@ const ReportDownloadPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 py-12 px-4">
+    <div className="min-h-screen py-[50px] bg-gradient-to-br from-primary-50 via-white to-secondary-50 px-4">
       <div className="max-w-4xl mx-auto">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -129,7 +129,7 @@ const ReportDownloadPage = () => {
           className="bg-white rounded-2xl shadow-2xl overflow-hidden"
         >
           {/* Header */}
-          <div className="bg-gradient-to-r from-primary-600 to-secondary-600 p-8 text-white">
+          <div className="bg-primary-600 p-3 md:p-8 text-white">
             <div className="flex items-center justify-center mb-4">
               <FileText className="w-16 h-16" />
             </div>

@@ -2,6 +2,7 @@ import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
+import { SocialShare } from '../components/ui'
 
 const AboutPage = () => {
   const { t } = useTranslation()
@@ -316,6 +317,12 @@ const AboutPage = () => {
           </div>
         </motion.div>
       </div>
+
+      {/* Social Share */}
+      <SocialShare 
+        title="À Propos de VitalCheck - Enterprise Health Check"
+        description="Découvrez notre mission d'aider les PME à diagnostiquer, grandir et se digitaliser."
+      />
     </div>
   )
 }

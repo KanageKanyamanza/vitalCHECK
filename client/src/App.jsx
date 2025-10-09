@@ -6,6 +6,7 @@ import { PerformanceAnalytics } from './components/seo'
 import { SplashScreen, Layout } from './components/layout'
 import { AppRoutes } from './routes'
 import { AssessmentProvider } from './context/AssessmentContext'
+import { ClientAuthProvider } from './context/ClientAuthContext'
 import { toastColors } from './utils/colors'
 import { usePWAUpdate } from './hooks/usePWAUpdate'
 import UpdateNotification from './components/ui/UpdateNotification'
@@ -75,16 +76,18 @@ function AppContent() {
 function App() {
   return (
     <HelmetProvider>
-      <AssessmentProvider>
-        <Router
-          future={{
-            v7_startTransition: true,
-            v7_relativeSplatPath: true
-          }}
-        >
-          <AppContent />
-        </Router>
-      </AssessmentProvider>
+      <ClientAuthProvider>
+        <AssessmentProvider>
+          <Router
+            future={{
+              v7_startTransition: true,
+              v7_relativeSplatPath: true
+            }}
+          >
+            <AppContent />
+          </Router>
+        </AssessmentProvider>
+      </ClientAuthProvider>
     </HelmetProvider>
   )
 }

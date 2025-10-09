@@ -8,6 +8,7 @@ const questionsData = require('../data/questions');
 const questionsDataFR = require('../data/questions-fr');
 const { calculateScores, generateRecommendations } = require('../utils/scoring');
 const { generateResumeToken, isValidResumeToken } = require('../utils/resumeToken');
+const { sendAccountCreatedAfterAssessment, sendAssessmentCompletedExistingUser } = require('../utils/emailService');
 const router = express.Router();
 
 // Get supported languages
@@ -419,6 +420,46 @@ router.post('/submit', [
     // Update user with assessment reference
     user.assessments.push(assessment._id);
     await user.save();
+
+    // Créer un compte automatiquement après l'évaluation (si pas déjà de compte)
+    let tempPassword = null;
+    let accountCreated = false;
+
+    if (!user.hasAccount) {
+      // Générer un mot de passe temporaire
+      tempPassword = user.generateTempPassword();
+      user.password = tempPassword;
+      user.hasAccount = true;
+      await user.save();
+      accountCreated = true;
+
+      // Envoyer l'email avec les identifiants (NOUVEAU COMPTE)
+      try {
+        await sendAccountCreatedAfterAssessment(
+          user.email,
+          user.firstName || user.companyName,
+          tempPassword,
+          overallScore
+        );
+        console.log('✅ Email de création de compte envoyé après évaluation à:', user.email);
+      } catch (emailError) {
+        console.error('❌ Erreur envoi email création compte:', emailError);
+        // Continue même si l'email échoue
+      }
+    } else {
+      // L'utilisateur a déjà un compte, envoyer email de notification d'évaluation
+      try {
+        await sendAssessmentCompletedExistingUser(
+          user.email,
+          user.firstName || user.companyName,
+          overallScore
+        );
+        console.log('✅ Email de nouvelle évaluation envoyé à:', user.email);
+      } catch (emailError) {
+        console.error('❌ Erreur envoi email évaluation:', emailError);
+        // Continue même si l'email échoue
+      }
+    }
 
     // Create notification for admin
     try {

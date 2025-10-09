@@ -13,6 +13,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@paypal/react-paypal-js": "^8.9.2",
     "@tinymce/tinymce-react": "^6.3.0",
     "@tiptap/extension-color": "^3.6.2",
     "@tiptap/extension-font-family": "^3.6.2",

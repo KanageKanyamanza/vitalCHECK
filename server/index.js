@@ -76,9 +76,12 @@ app.use(cookieParser());
 
 // Routes - Aucune limitation de rate-limiting appliquée
 app.use("/api/auth", require("./routes/auth"));
+app.use("/api/client-auth", require("./routes/clientAuth").router); // Routes auth client
 app.use("/api/assessments", require("./routes/assessments"));
 app.use("/api/reports", require("./routes/reports"));
 app.use("/api/contact", require("./routes/contact"));
+app.use("/api/payments", require("./routes/payments")); // Route publique: /api/payments/record
+app.use("/api/admin", require("./routes/payments")); // Routes admin: /api/admin/payments
 app.use("/api/admin", require("./routes/admin"));
 app.use("/api/blogs", require("./routes/blogs"));
 app.use("/api/blogs/visitors", require("./routes/blogVisitors"));

@@ -2,8 +2,10 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
+import { LogIn, User, LayoutDashboard } from 'lucide-react'
 import { NavbarLanguageSelector, UserGuideButton } from '../ui'
 import { useAssessment } from '../../context/AssessmentContext'
+import { useClientAuth } from '../../context/ClientAuthContext'
 import logoIcon from '/android-icon-96x96.png'
 
 const Navbar = () => {
@@ -12,7 +14,7 @@ const Navbar = () => {
   const location = useLocation()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   
-  // Vérification sécurisée du contexte
+  // Vérification sécurisée du contexte Assessment
   let state, dispatch
   try {
     const context = useAssessment()
@@ -23,6 +25,9 @@ const Navbar = () => {
     state = { language: 'fr' }
     dispatch = () => {}
   }
+
+  // Client Auth Context
+  const { user: clientUser, isAuthenticated } = useClientAuth()
 
   const handleLanguageChange = (language) => {
     // Mettre à jour la langue dans le contexte global
@@ -177,6 +182,27 @@ const Navbar = () => {
               isScrolled={true}
             />
 
+            {/* Login/Dashboard Button - Desktop */}
+            <div className="hidden md:flex">
+              {isAuthenticated ? (
+                <button
+                  onClick={() => handleDesktopNavigation('/client/dashboard')}
+                  className="flex items-center space-x-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors duration-200 font-medium"
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  <span className="text-sm">Dashboard</span>
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleDesktopNavigation('/client/login')}
+                  className="flex items-center space-x-2 px-4 py-2 border-2 border-primary-600 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors duration-200 font-medium"
+                >
+                  <LogIn className="w-4 h-4" />
+                  <span className="text-sm">{t('navigation.login')}</span>
+                </button>
+              )}
+            </div>
+
             {/* Bouton hamburger mobile */}
             <button
               onClick={toggleMobileMenu}
@@ -280,6 +306,25 @@ const Navbar = () => {
                 <div className="px-3 py-2">
                   <UserGuideButton variant="default" className="text-gray-600 hover:text-primary-600 transition-colors duration-200" />
                 </div>
+
+                {/* Login/Dashboard Button - Mobile */}
+                {isAuthenticated ? (
+                  <button
+                    onClick={() => handleNavigation('/client/dashboard')}
+                    className="w-full text-left px-3 py-2 rounded-lg font-medium bg-primary-600 text-white hover:bg-primary-700 transition-colors duration-200 flex items-center"
+                  >
+                    <LayoutDashboard className="w-4 h-4 mr-2" />
+                    Dashboard
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => handleNavigation('/client/login')}
+                    className="w-full text-left px-3 py-2 rounded-lg font-medium border-2 border-primary-600 text-primary-600 hover:bg-primary-50 transition-colors duration-200 flex items-center"
+                  >
+                    <LogIn className="w-4 h-4 mr-2" />
+                    {t('navigation.login')}
+                  </button>
+                )}
                 
                 {location.pathname === '/assessment' && (
                   <button

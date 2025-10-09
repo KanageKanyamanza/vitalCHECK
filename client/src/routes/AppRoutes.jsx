@@ -7,6 +7,12 @@ import ResumeAssessmentPage from '../pages/ResumeAssessmentPage'
 import ResultsPage from '../pages/ResultsPage'
 import ContactPage from '../pages/ContactPage'
 import PricingPage from '../pages/PricingPage'
+import CheckoutPage from '../pages/CheckoutPage'
+import PaymentSuccessPage from '../pages/PaymentSuccessPage'
+import ClientLoginPage from '../pages/client/ClientLoginPage'
+import ClientRegisterPage from '../pages/client/ClientRegisterPage'
+import ClientDashboardPage from '../pages/client/ClientDashboardPage'
+import ClientProfilePage from '../pages/client/ClientProfilePage'
 import PrivacyPolicy from '../pages/PrivacyPolicy'
 import TermsOfService from '../pages/TermsOfService'
 import BlogPage from '../pages/BlogPage'
@@ -25,6 +31,12 @@ const AppRoutes = () => {
       <Route path="/results" element={<ResultsPage />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/pricing" element={<PricingPage />} />
+      <Route path="/checkout" element={<CheckoutPage />} />
+      <Route path="/payment-success" element={<PaymentSuccessPage />} />
+      <Route path="/client/login" element={<ClientLoginPage />} />
+      <Route path="/client/register" element={<ClientRegisterPage />} />
+      <Route path="/client/dashboard" element={<ClientDashboardPage />} />
+      <Route path="/client/profile" element={<ClientProfilePage />} />
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/terms" element={<TermsOfService />} />
       <Route path="/blog" element={<BlogPage />} />

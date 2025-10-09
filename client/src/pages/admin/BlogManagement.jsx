@@ -192,7 +192,7 @@ const BlogManagement = () => {
 
 	return (
 		<AdminLayout>
-			<div className="space-y-6 pt-5 px-7 pb-20">
+			<div className="space-y-6 pt-5 px-7 pb-8">
 				{/* Header */}
 				<div className="flex max-w-7xl mx-auto flex-col sm:flex-row sm:items-center sm:justify-between">
 					<div>

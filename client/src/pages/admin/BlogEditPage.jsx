@@ -427,7 +427,7 @@ const BlogEditPage = () => {
 
   return (
     <AdminLayout>
-      <div className="max-w-6xl mx-auto px-5 pb-20 pt-5">
+      <div className="max-w-6xl mx-auto px-5 pb-8 pt-5">
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center space-x-4">

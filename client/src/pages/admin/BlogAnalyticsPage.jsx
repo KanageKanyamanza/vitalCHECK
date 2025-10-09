@@ -216,7 +216,7 @@ const BlogAnalyticsPage = () => {
   }
 
   return (
-    <div className="space-y-6 px-4 pb-20 pt-5">
+    <div className="space-y-6 px-4 pb-8 pt-5">
       <button onClick={() => navigate('/admin/blog/stats')} className="text-primary-600 hover:text-primary-700"><span className="flex items-center"><ArrowLeft className="h-4 w-4 mr-2" /> Retour</span></button>
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between">

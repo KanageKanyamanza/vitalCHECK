@@ -18,6 +18,7 @@
     "close": "Close",
     "yes": "Yes",
     "no": "No",
+    "optional": "(optional)",
     "goHome": "Go Home",
     "userGuide": "User Guide",
     "downloadGuide": "Download Guide",
@@ -33,7 +34,9 @@
     "pricing": "Pricing",
     "newAssessment": "New Assessment",
     "blog": "Blog",
-    "userGuide": "Guide"
+    "userGuide": "Guide",
+    "login": "Login",
+    "dashboard": "Dashboard"
   },
   "results": {
     "title": "VitalCheck Enterprise Health Check – Results",
@@ -104,9 +107,9 @@
         "actionPlan": "Personalized action plan",
         "expertConsultation": "Consultation with our experts"
       },
-      "contactText": "Contact us for more information about our premium services.",
+      "contactText": "Choose the Premium plan to access all these features.",
       "close": "Close",
-      "contactUs": "Contact Us"
+      "contactUs": "Choose Premium"
     },
     "reportProgress": {
       "title": "Generating your report",
@@ -830,6 +833,177 @@
       }
     }
   },
+  "clientAuth": {
+    "login": {
+      "title": "Client Login",
+      "subtitle": "Access your VitalCheck dashboard",
+      "email": "Email Address",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "Your password",
+      "submit": "Sign In",
+      "noAccount": "Don't have an account yet?",
+      "createAccount": "Create an account",
+      "backToHome": "Back to home",
+      "hint": "You received your credentials by email after your payment"
+    },
+    "register": {
+      "title": "Create an Account",
+      "subtitle": "Create your VitalCheck account to access all your services",
+      "firstName": "First Name",
+      "firstNamePlaceholder": "Your first name",
+      "lastName": "Last Name",
+      "lastNamePlaceholder": "Your last name",
+      "email": "Email",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "Minimum 6 characters",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Retype your password",
+      "companyName": "Company Name",
+      "companyNamePlaceholder": "e.g., My Company LLC",
+      "sector": "Sector",
+      "sectorPlaceholder": "Select your sector",
+      "companySize": "Company Size",
+      "companySizePlaceholder": "Select size",
+      "phone": "Phone",
+      "phonePlaceholder": "+221 XXX XXX XXX",
+      "submit": "Create my account",
+      "hasAccount": "Already have an account?",
+      "login": "Sign in",
+      "backToHome": "Back to home",
+      "errors": {
+        "firstNameRequired": "First name is required",
+        "lastNameRequired": "Last name is required",
+        "emailRequired": "Email is required",
+        "passwordRequired": "Password is required",
+        "passwordTooShort": "Password must be at least 6 characters",
+        "passwordMismatch": "Passwords do not match",
+        "companyNameRequired": "Company name is required",
+        "sectorRequired": "Sector is required",
+        "companySizeRequired": "Company size is required"
+      }
+    }
+  },
+  "clientDashboard": {
+    "welcome": "Welcome",
+    "settings": "Settings",
+    "logout": "Logout",
+    "subscription": {
+      "title": "Subscription",
+      "active": "Active",
+      "inactive": "Inactive",
+      "manage": "Manage my subscription"
+    },
+    "assessments": {
+      "title": "Assessments",
+      "total": "Assessments completed",
+      "new": "New assessment"
+    },
+    "payments": {
+      "title": "Payments",
+      "total": "Payments made"
+    },
+    "history": {
+      "title": "Assessment History",
+      "noAssessments": "You don't have any assessments yet",
+      "startFirst": "Start my first assessment",
+      "evaluation": "Assessment",
+      "score": "Score",
+      "viewReport": "View report"
+    },
+    "paymentsHistory": {
+      "title": "Payment History",
+      "date": "Date",
+      "plan": "Plan",
+      "amount": "Amount",
+      "status": "Status",
+      "completed": "Completed"
+    }
+  },
+  "clientProfile": {
+    "title": "My Profile",
+    "tabs": {
+      "profile": "Profile",
+      "subscription": "Subscription",
+      "security": "Security"
+    },
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email",
+    "emailNote": "Email cannot be changed",
+    "companyName": "Company Name",
+    "sector": "Sector",
+    "companySize": "Size",
+    "phone": "Phone",
+    "saveChanges": "Save changes",
+    "currentPlan": "Current Plan",
+    "statusActive": "Active",
+    "statusInactive": "Inactive",
+    "upgradePlan": "Change plan",
+    "subscriptionDetails": "Subscription Details",
+    "startDate": "Start date",
+    "endDate": "End date",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmNewPassword": "Confirm new password",
+    "passwordHint": "Minimum 6 characters",
+    "changePassword": "Change password",
+    "errors": {
+      "passwordMismatch": "Passwords do not match",
+      "passwordTooShort": "Password must be at least 6 characters"
+    }
+  },
+  "socialShare": {
+    "title": "Share this page:",
+    "shareOn": "Share on",
+    "copyLink": "Copy link",
+    "copied": "Link copied!",
+    "linkCopied": "Link copied to clipboard"
+  },
+  "payment": {
+    "success": "Payment successful! Thank you for your purchase.",
+    "error": "Payment error. Please try again.",
+    "processing": "Processing payment...",
+    "payWith": "Pay with PayPal",
+    "or": "or"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "backToPricing": "Back to pricing",
+    "orderSummary": "Order Summary",
+    "price": "Price",
+    "or": "or",
+    "monthly": "per month",
+    "annual": "per year",
+    "oneTime": "One-time payment",
+    "annualPrice": "Annual price",
+    "selectPaymentMethod": "Select payment method",
+    "paypal": "PayPal",
+    "paypalDescription": "Pay securely with PayPal or credit card",
+    "bankTransfer": "Bank Transfer / Contact Us",
+    "bankTransferDescription": "Pay by bank transfer or contact us for other options",
+    "contactUsForPayment": "Contact us to arrange payment by bank transfer or discuss other payment options.",
+    "contactUs": "Contact Us",
+    "securePayment": "🔒 Secure payment protected by SSL encryption",
+    "invalidPlan": "Invalid plan selected. Redirecting..."
+  },
+  "paymentSuccess": {
+    "title": "Payment Successful!",
+    "subtitle": "Thank you for your purchase. Your payment has been processed successfully.",
+    "orderDetails": "Order Details",
+    "orderId": "Order ID",
+    "plan": "Plan",
+    "status": "Status",
+    "completed": "Completed",
+    "nextSteps": "What's Next?",
+    "confirmationEmail": "You will receive a confirmation email shortly with your payment summary.",
+    "accessInfo": "Our experts will contact you within 24 hours to arrange your services.",
+    "support": "All your deliverables will be sent directly to your email.",
+    "backToHome": "Back to Home",
+    "contactSupport": "Contact Support",
+    "needHelp": "Need help?"
+  },
   "pricing": {
     "title": "VitalCHECK Pricing",
     "subtitle": "Choose the plan that matches your assessment and continuous improvement needs",
@@ -857,7 +1031,7 @@
         "annualPrice": "100,000",
         "annualPeriod": "/year",
         "description": "Continuous improvement and tracking",
-        "button": "Choose Standard",
+        "button": "Select",
         "popular": "Most popular"
       },
       "premium": {
@@ -871,7 +1045,18 @@
         "oneShotPrice": "199 €",
         "oneShotFCFA": "130,000 FCFA",
         "description": "Consulting and financing",
-        "button": "Choose Premium"
+        "button": "Select"
+      },
+      "diagnostic": {
+        "name": "DIAGNOSTIC SERVICE",
+        "subtitle": "Complete Enterprise Revitalization",
+        "price": "$1,000",
+        "alternativePrice": "550,000 FCFA",
+        "description": "The Diagnostic Service is a complete enterprise revitalization framework. It includes a comprehensive business evaluation, a written and presented report, and a set of practical, transformative growth recommendations.",
+        "includes": "Each engagement concludes with a strategic action plan followed by three months of guided implementation.",
+        "retainer": "At the end of the intervention, clients pay a performance-based retainer equal to 1.5% of the sales increase generated through the program, payable over a 12-month period.",
+        "button": "Request Diagnostic Service",
+        "special": "Special Pack"
       }
     },
     "enterpriseRecommendations": {
@@ -913,7 +1098,8 @@
       "contactUs": "Contact us"
     },
     "common": {
-      "twoMonthsFree": "(2 months free)"
+      "twoMonthsFree": "(2 months free)",
+      "or": "or"
     },
     "featuresComparison": {
       "title": "Features comparison",
