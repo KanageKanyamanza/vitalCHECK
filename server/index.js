@@ -85,8 +85,8 @@ app.use("/api/payments", require("./routes/payments")); // Route publique: /api/
 app.use("/api/admin", require("./routes/payments")); // Routes admin: /api/admin/payments
 app.use("/api/admin", require("./routes/admin"));
 app.use("/api/blogs", require("./routes/blogs"));
-app.use("/api/blogs/visitors", require("./routes/blogVisitors"));
-app.use("/api/blogs/admin", require("./routes/blogVisitorsAdmin"));
+app.use("/api/blog-visitors/admin", require("./routes/blogVisitorsAdmin"));
+app.use("/api/blog-visitors", require("./routes/blogVisitors"));
 app.use("/api/upload", require("./routes/upload"));
 app.use("/api", require("./routes/ping"));
 

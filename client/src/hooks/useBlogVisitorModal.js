@@ -72,16 +72,31 @@ export const useBlogVisitorModal = (blogId, blogTitle, blogSlug) => {
   const openModal = useCallback(async () => {
     if (hasShownModal) return
     
+    // Validation : Ne pas continuer si les données du blog sont manquantes
+    if (!blogId || !blogTitle || !blogSlug) {
+      console.warn('⚠️ [BLOG MODAL] Données du blog manquantes, annulation', {
+        blogId,
+        blogTitle,
+        blogSlug
+      })
+      return
+    }
+    
     setHasShownModal(true)
     
     // Vérifier si c'est un visiteur de retour
     const { isReturning, visitor } = await checkExistingVisitor()
     
-    // Si c'est un visiteur de retour, soumettre automatiquement les données
+    // Si c'est un visiteur de retour, soumettre automatiquement SANS afficher le modal
     if (isReturning && visitor) {
       try {
         // Récupérer les métriques actuelles du tracking service
         const trackingMetrics = window.trackingService?.getMetrics() || null
+        
+        console.log('👋 [BLOG MODAL] Visiteur de retour détecté - Soumission automatique', {
+          email: visitor.email,
+          blogTitle
+        })
         
         await blogApiService.submitVisitorForm({
           firstName: visitor.firstName,
@@ -94,11 +109,17 @@ export const useBlogVisitorModal = (blogId, blogTitle, blogSlug) => {
           scrollDepth: trackingMetrics?.scrollDepth || 0,
           timeOnPage: trackingMetrics?.timeOnPage || 0
         })
+        
+        console.log('✅ [BLOG MODAL] Vue comptabilisée pour visiteur de retour')
+        
+        // NE PAS ouvrir le modal pour les visiteurs de retour
+        return
       } catch (error) {
-        console.error('Erreur lors de la soumission automatique:', error)
+        console.error('❌ [BLOG MODAL] Erreur lors de la soumission automatique:', error)
       }
     }
     
+    // Ouvrir le modal UNIQUEMENT pour les nouveaux visiteurs
     setIsModalOpen(true)
   }, [hasShownModal, checkExistingVisitor, blogId, blogTitle, blogSlug])
 
@@ -113,8 +134,8 @@ export const useBlogVisitorModal = (blogId, blogTitle, blogSlug) => {
       const currentScrollPercent = calculateScrollPercentage()
       setScrollPercentage(currentScrollPercent)
       
-      // Ouvrir la modale à 20% de scroll
-      if (currentScrollPercent >= 20 && !hasShownModal) {
+      // Ouvrir la modale à 10% de scroll pour s'assurer qu'elle soit vue
+      if (currentScrollPercent >= 10 && !hasShownModal) {
         openModal()
       }
     }
@@ -136,6 +157,17 @@ export const useBlogVisitorModal = (blogId, blogTitle, blogSlug) => {
     
     checkVisitor()
   }, [checkExistingVisitor])
+
+  // Effet pour ouvrir automatiquement le modal après 30 secondes si pas encore ouvert
+  useEffect(() => {
+    if (!hasShownModal) {
+      const timer = setTimeout(() => {
+        openModal()
+      }, 30000) // 30 secondes
+
+      return () => clearTimeout(timer)
+    }
+  }, [hasShownModal, openModal])
 
   return {
     isModalOpen,
