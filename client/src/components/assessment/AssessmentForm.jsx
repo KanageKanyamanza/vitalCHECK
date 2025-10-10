@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { useAssessment } from '../../context/AssessmentContext'
+import { useClientAuth } from '../../context/ClientAuthContext'
 import { authAPI } from '../../services/api'
 import toast from 'react-hot-toast'
 import { LanguageSelector } from '../ui'
@@ -9,25 +10,50 @@ import { LanguageSelector } from '../ui'
 const AssessmentForm = ({ onFormSubmit }) => {
   const { t, i18n } = useTranslation()
   const { dispatch, language, user } = useAssessment()
+  const { user: clientUser } = useClientAuth() // Récupérer l'utilisateur connecté
   const [formData, setFormData] = useState({
-    companyName: user?.companyName || '',
-    sector: user?.sector || '',
-    companySize: user?.companySize || '',
-    email: user?.email || ''
+    companyName: '',
+    sector: '',
+    companySize: '',
+    email: ''
   })
   const [loading, setLoading] = useState(false)
+  const initializedRef = useRef(false)
 
-  // Synchroniser avec les données du contexte
+  // Synchroniser avec les données du contexte (priorité au client connecté)
   useEffect(() => {
-    if (user) {
+    // Éviter les mises à jour infinies - initialiser une seule fois
+    if (initializedRef.current) return
+
+    // Si un utilisateur client est connecté, utiliser ses données
+    if (clientUser?.email) {
+      setFormData({
+        companyName: clientUser.companyName || '',
+        sector: clientUser.sector || '',
+        companySize: clientUser.companySize || '',
+        email: clientUser.email || ''
+      })
+      // Mettre à jour le contexte d'évaluation avec les données du client
+      dispatch({ type: 'SET_USER', payload: {
+        id: clientUser.id,
+        companyName: clientUser.companyName,
+        sector: clientUser.sector,
+        companySize: clientUser.companySize,
+        email: clientUser.email
+      }})
+      initializedRef.current = true
+    } 
+    // Sinon, utiliser les données du contexte d'évaluation (si déjà sauvegardées)
+    else if (user?.email) {
       setFormData({
         companyName: user.companyName || '',
         sector: user.sector || '',
         companySize: user.companySize || '',
         email: user.email || ''
       })
+      initializedRef.current = true
     }
-  }, [user])
+  }, [clientUser, user])
 
   // Sauvegarder automatiquement les changements dans le contexte avec debounce
   useEffect(() => {

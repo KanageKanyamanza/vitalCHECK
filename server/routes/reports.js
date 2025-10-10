@@ -2,10 +2,9 @@ const express = require('express');
 const Assessment = require('../models/Assessment');
 const User = require('../models/User');
 const { generatePDFReport, generateSimplePDFReport } = require('../utils/pdfGenerator');
-const { sendEmail } = require('../utils/emailService');
+const { sendEmail, sendAccountCreatedAfterAssessment } = require('../utils/emailService');
 const { sendEmailExternal } = require('../utils/emailServiceExternal');
-const { uploadPDFToCloudinary } = require('../config/cloudinary');
-const emailTemplates = require('../utils/emailTemplates');
+const { emailTemplates } = require('../utils/emailTemplates');
 const router = express.Router();
 
 // Download PDF report from database
@@ -46,7 +45,7 @@ router.get('/download/:assessmentId', async (req, res) => {
 router.post('/generate/:assessmentId', async (req, res) => {
   try {
     const assessment = await Assessment.findById(req.params.assessmentId)
-      .populate('user', 'email companyName sector companySize');
+      .populate('user', 'email companyName sector companySize hasAccount accountCreatedAt tempPassword');
 
     if (!assessment) {
       return res.status(404).json({ 
@@ -55,6 +54,9 @@ router.post('/generate/:assessmentId', async (req, res) => {
       });
     }
 
+    // Note: Le compte est déjà créé lors de la soumission de l'évaluation (voir assessments.js)
+    // Pas besoin de recréer le compte ici pour éviter d'envoyer 2 emails avec 2 mots de passe différents
+    
     // Generate PDF report - try complex version first, fallback to simple
 
     let pdfBuffer;
@@ -71,23 +73,7 @@ router.post('/generate/:assessmentId', async (req, res) => {
     const language = assessment.language || 'fr';
     const template = emailTemplates[language] || emailTemplates.fr;
     
-    // Upload PDF to Cloudinary for download link
     const pdfFilename = `VitalCheck-Health-Check-${assessment.user.companyName}-${new Date().toISOString().split('T')[0]}.pdf`;
-    let pdfDownloadUrl = null;
-    
-    // Vérifier si Cloudinary est configuré
-    const isCloudinaryConfigured = process.env.CLOUDINARY_CLOUD_NAME && 
-                                   process.env.CLOUDINARY_API_KEY && 
-                                   process.env.CLOUDINARY_API_SECRET;
-    
-    if (isCloudinaryConfigured) {
-      try {
-        const cloudinaryResult = await uploadPDFToCloudinary(pdfBuffer, pdfFilename);
-        pdfDownloadUrl = cloudinaryResult.secure_url;
-      } catch (cloudinaryError) {
-        // Continuer sans le lien de téléchargement
-      }
-    }
     
     // Toujours stocker le PDF en base de données pour le téléchargement
     try {
@@ -98,31 +84,50 @@ router.post('/generate/:assessmentId', async (req, res) => {
       // Erreur silencieuse de stockage
     }
     
-    // Send email with PDF attachment using 3-level fallback system
+    // Send email with PDF attachment (le compte et les identifiants ont déjà été envoyés lors de la soumission)
+    let emailSent = false;
+    let lastError = null;
 
-    // URL vers la page frontend de téléchargement du rapport
     const clientUrl = process.env.CLIENT_URL || 'https://www.checkmyenterprise.com';
     const downloadUrl = `${clientUrl}/report/download/${assessment._id}`;
+    
 
+    // Vérifier si c'est un nouveau compte pour inclure les identifiants
+    // Un nouveau compte est détecté si accountCreatedAt existe et est récent (dans les 5 dernières minutes)
+    const isNewAccount = assessment.user.accountCreatedAt && (Date.now() - new Date(assessment.user.accountCreatedAt).getTime()) < 300000; // Compte créé dans les 5 dernières minutes
+    
+    console.log('🔍 [REPORT] Vérification nouveau compte:', {
+      email: assessment.user.email,
+      hasAccount: assessment.user.hasAccount,
+      accountCreatedAt: assessment.user.accountCreatedAt,
+      isNewAccount: isNewAccount,
+      timeDiff: assessment.user.accountCreatedAt ? (Date.now() - new Date(assessment.user.accountCreatedAt).getTime()) : null
+    });
+    
+    // Pour les nouveaux comptes, récupérer le mot de passe temporaire depuis la base de données
+    let tempPassword = null;
+    if (isNewAccount) {
+      // Le mot de passe temporaire en clair est stocké dans le champ tempPassword
+      tempPassword = assessment.user.tempPassword;
+      console.log('✅ [REPORT] Nouveau compte détecté, mot de passe temporaire inclus:', tempPassword ? 'OUI' : 'NON');
+    } else {
+      console.log('ℹ️ [REPORT] Compte existant, pas d\'identifiants à inclure');
+    }
+    
     const emailData = {
       to: assessment.user.email,
       subject: template.reportReady.subject,
-      html: template.reportReady.html(assessment.user, assessment, downloadUrl),
+      html: template.reportReady.html(assessment.user, assessment, downloadUrl, tempPassword),
       attachments: [{
         filename: pdfFilename,
         content: pdfBuffer
       }]
     };
 
-    let emailSent = false;
-    let lastError = null;
-
     // Niveau 1: Configuration normale Nodemailer
     try {
-      console.log('📧 [REPORT] Tentative avec configuration normale...');
       await sendEmail(emailData);
       emailSent = true;
-      console.log('✅ [REPORT] Email envoyé avec succès (configuration normale)');
     } catch (error) {
       console.log('❌ [REPORT] Erreur avec configuration normale:', {
         userEmail: assessment.user.email,
@@ -138,7 +143,6 @@ router.post('/generate/:assessmentId', async (req, res) => {
         console.log('🌐 [REPORT] Tentative avec service externe...');
         await sendEmailExternal(emailData);
         emailSent = true;
-        console.log('✅ [REPORT] Email envoyé avec succès (service externe)');
       } catch (error) {
         console.log('❌ [REPORT] Erreur avec service externe:', {
           userEmail: assessment.user.email,
@@ -152,10 +156,6 @@ router.post('/generate/:assessmentId', async (req, res) => {
       throw new Error(`Impossible d'envoyer l'email de rapport: ${lastError?.message || 'Erreur inconnue'}`);
     }
 
-    console.log('✅ [REPORT] Rapport envoyé avec succès à:', {
-      userEmail: assessment.user.email,
-      companyName: assessment.user.companyName
-    });
 
     // Update assessment with report status and save PDF buffer
     assessment.reportGenerated = true;
@@ -163,6 +163,29 @@ router.post('/generate/:assessmentId', async (req, res) => {
     assessment.pdfGeneratedAt = new Date();
     assessment.reportType = 'freemium';
     await assessment.save();
+
+    // Nettoyer le mot de passe temporaire après l'envoi de l'email (sécurité)
+    if (isNewAccount && assessment.user.tempPassword) {
+      assessment.user.tempPassword = null;
+      await assessment.user.save();
+      console.log('🧹 [REPORT] Mot de passe temporaire nettoyé pour:', assessment.user.email);
+    }
+
+    // Nettoyer les brouillons d'évaluations pour cet utilisateur après génération du rapport
+    try {
+      const deletedDrafts = await Assessment.deleteMany({
+        user: assessment.user._id,
+        status: 'draft',
+        _id: { $ne: assessment._id } // Ne pas supprimer l'évaluation qui vient d'avoir son rapport généré
+      });
+      
+      if (deletedDrafts.deletedCount > 0) {
+        console.log(`🧹 [REPORT-CLEANUP] ${deletedDrafts.deletedCount} brouillon(s) supprimé(s) pour ${assessment.user.companyName}`);
+      }
+    } catch (cleanupError) {
+      console.error('❌ Erreur lors du nettoyage des brouillons après génération de rapport:', cleanupError);
+      // Ne pas faire échouer la génération de rapport pour une erreur de nettoyage
+    }
 
     res.json({
       success: true,

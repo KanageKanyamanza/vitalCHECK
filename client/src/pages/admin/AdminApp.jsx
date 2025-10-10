@@ -1,6 +1,5 @@
 import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
-import AdminLogin from './AdminLogin';
 import AdminDashboard from './AdminDashboard';
 import UserManagement from './UserManagement';
 import AssessmentManagement from './AssessmentManagement';
@@ -26,112 +25,111 @@ const AdminApp = () => {
 
   return (
     <Routes>
+      {/* Redirection vers la page de login unifiée */}
       <Route 
         path="/login" 
-        element={
-          isAuthenticated() ? <Navigate to="/admin/dashboard" replace /> : <AdminLogin />
-        } 
+        element={<Navigate to="/login" replace />}
       />
       <Route 
         path="/dashboard" 
         element={
-          isAuthenticated() ? <AdminDashboard /> : <Navigate to="/admin/login" replace />
+          isAuthenticated() ? <AdminDashboard /> : <Navigate to="/login" replace />
         } 
       />
       <Route 
         path="/users" 
         element={
-          isAuthenticated() ? <UserManagement /> : <Navigate to="/admin/login" replace />
+          isAuthenticated() ? <UserManagement /> : <Navigate to="/login" replace />
         } 
       />
       <Route 
         path="/users/:userId" 
         element={
-          isAuthenticated() ? <UserDetail /> : <Navigate to="/admin/login" replace />
+          isAuthenticated() ? <UserDetail /> : <Navigate to="/login" replace />
         } 
       />
       <Route 
         path="/assessments" 
         element={
-          isAuthenticated() ? <AssessmentManagement /> : <Navigate to="/admin/login" replace />
+          isAuthenticated() ? <AssessmentManagement /> : <Navigate to="/login" replace />
         } 
       />
       <Route 
         path="/assessments/:assessmentId" 
         element={
-          isAuthenticated() ? <AssessmentDetail /> : <Navigate to="/admin/login" replace />
+          isAuthenticated() ? <AssessmentDetail /> : <Navigate to="/login" replace />
         } 
       />
       <Route 
         path="/draft-assessments" 
         element={
-          isAuthenticated() ? <DraftAssessmentsPage /> : <Navigate to="/admin/login" replace />
+          isAuthenticated() ? <DraftAssessmentsPage /> : <Navigate to="/login" replace />
         } 
       />
       <Route 
         path="/blog" 
         element={
-          isAuthenticated() ? <BlogManagement /> : <Navigate to="/admin/login" replace />
+          isAuthenticated() ? <BlogManagement /> : <Navigate to="/login" replace />
         } 
       />
       <Route 
         path="/blog/create" 
         element={
-          isAuthenticated() ? <BlogEditPage /> : <Navigate to="/admin/login" replace />
+          isAuthenticated() ? <BlogEditPage /> : <Navigate to="/login" replace />
         } 
       />
       <Route 
         path="/blog/edit/:id" 
         element={
-          isAuthenticated() ? <BlogEditPage /> : <Navigate to="/admin/login" replace />
+          isAuthenticated() ? <BlogEditPage /> : <Navigate to="/login" replace />
         } 
       />
       <Route 
         path="/blog/stats" 
         element={
-          isAuthenticated() ? <BlogStatsPage /> : <Navigate to="/admin/login" replace />
+          isAuthenticated() ? <BlogStatsPage /> : <Navigate to="/login" replace />
         } 
       />
       <Route 
         path="/blog/analytics" 
         element={
-          isAuthenticated() ? <BlogAnalyticsPage /> : <Navigate to="/admin/login" replace />
+          isAuthenticated() ? <BlogAnalyticsPage /> : <Navigate to="/login" replace />
         } 
       />
       <Route 
         path="/blog-visitors" 
         element={
-          isAuthenticated() ? <BlogVisitorsPageWrapper /> : <Navigate to="/admin/login" replace />
+          isAuthenticated() ? <BlogVisitorsPageWrapper /> : <Navigate to="/login" replace />
         } 
       />
       <Route 
         path="/emails" 
         element={
-          isAuthenticated() ? <EmailManagement /> : <Navigate to="/admin/login" replace />
+          isAuthenticated() ? <EmailManagement /> : <Navigate to="/login" replace />
         } 
       />
       <Route 
         path="/reports" 
         element={
-          isAuthenticated() ? <ReportsPage /> : <Navigate to="/admin/login" replace />
+          isAuthenticated() ? <ReportsPage /> : <Navigate to="/login" replace />
         } 
       />
       <Route 
         path="/pdfs" 
         element={
-          isAuthenticated() ? <PDFManagementPage /> : <Navigate to="/admin/login" replace />
+          isAuthenticated() ? <PDFManagementPage /> : <Navigate to="/login" replace />
         } 
       />
       <Route 
         path="/payments" 
         element={
-          isAuthenticated() ? <PaymentManagement /> : <Navigate to="/admin/login" replace />
+          isAuthenticated() ? <PaymentManagement /> : <Navigate to="/login" replace />
         } 
       />
       <Route 
         path="/settings" 
         element={
-          isAuthenticated() ? <SettingsPage /> : <Navigate to="/admin/login" replace />
+          isAuthenticated() ? <SettingsPage /> : <Navigate to="/login" replace />
         } 
       />
       <Route 

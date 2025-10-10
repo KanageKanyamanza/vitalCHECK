@@ -8,12 +8,21 @@ import { PayPalButton } from '../components/payment'
 import { PAYPAL_CONFIG, PLAN_PRICES } from '../config/paypal'
 import toast from 'react-hot-toast'
 import { paymentsAPI } from '../services/api'
+import { useAssessment } from '../context/AssessmentContext'
+import { useClientAuth } from '../context/ClientAuthContext'
 
 const CheckoutPage = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const planId = searchParams.get('plan')
+  
+  // Récupérer les données utilisateur
+  const { user: assessmentUser } = useAssessment()
+  const { user: clientUser } = useClientAuth()
+  
+  // Priorité au client connecté, sinon utilisateur d'évaluation
+  const user = clientUser || assessmentUser
   
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null)
 
@@ -57,6 +66,11 @@ const CheckoutPage = () => {
   const handlePaymentSuccess = async (order) => {
     console.log('Payment successful:', order)
     
+    // Utiliser l'email de l'utilisateur, pas l'email PayPal
+    const userEmail = user?.email || order.payer?.email_address || 'N/A'
+    const companyName = user?.companyName || 'Entreprise'
+    
+    
     // Enregistrer le paiement dans la base de données
     try {
       await paymentsAPI.recordPayment({
@@ -65,10 +79,14 @@ const CheckoutPage = () => {
         planName: planDetails.name,
         amount: planDetails.price,
         currency: 'USD',
-        customerEmail: order.payer?.email_address || 'N/A',
+        customerEmail: userEmail, // Utiliser l'email de l'utilisateur
         paypalOrderId: order.id,
         status: 'completed',
-        paymentDetails: order
+        paymentDetails: {
+          ...order,
+          userCompanyName: companyName, // Ajouter le nom de l'entreprise
+          userEmail: userEmail // Ajouter l'email utilisateur
+        }
       })
       
       console.log('Payment recorded successfully')

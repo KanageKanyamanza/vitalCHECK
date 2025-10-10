@@ -69,6 +69,15 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  accountCreatedAt: {
+    type: Date,
+    default: null
+  },
+  tempPassword: {
+    type: String,
+    default: null,
+    select: false // Ne pas inclure par défaut dans les queries
+  },
   emailVerified: {
     type: Boolean,
     default: false

@@ -167,7 +167,21 @@ router.get('/me', authenticateClient, async (req, res) => {
       .populate('assessments')
       .select('-password');
 
-    res.json({ user });
+    res.json({ 
+      user: {
+        id: user._id,
+        email: user.email,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        companyName: user.companyName,
+        sector: user.sector,
+        companySize: user.companySize,
+        phone: user.phone,
+        subscription: user.subscription,
+        isPremium: user.isPremium,
+        assessments: user.assessments
+      }
+    });
   } catch (error) {
     console.error('Get profile error:', error);
     res.status(500).json({ 

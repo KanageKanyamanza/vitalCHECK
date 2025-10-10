@@ -1,5 +1,6 @@
 const nodemailer = require('nodemailer');
 const { sendEmailExternal } = require('./emailServiceExternal');
+const { createUnifiedEmailTemplate } = require('./emailTemplates');
 
 // Create transporter
 const createTransporter = () => {
@@ -126,51 +127,48 @@ const sendContactConfirmation = async (clientEmail, clientName, subject) => {
   const emailOptions = {
     to: clientEmail,
     subject: 'Confirmation de réception - VitalCheck Enterprise Health Check',
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px; border-radius: 10px; text-align: center; margin-bottom: 30px;">
-          <h1 style="color: white; margin: 0; font-size: 24px;">VitalCheck Enterprise Health Check</h1>
-          <p style="color: white; margin: 10px 0 0 0; opacity: 0.9;">Confirmation de réception</p>
-        </div>
-        
-        <div style="background: #f8f9fa; padding: 30px; border-radius: 10px;">
-          <h2 style="color: #333; margin-top: 0;">Bonjour ${clientName},</h2>
-          
-          <p style="color: #666; line-height: 1.6;">
+    html: createUnifiedEmailTemplate({
+      language: 'fr',
+      title: 'Message reçu avec succès !',
+      subtitle: `Bonjour <strong>${clientName}</strong>, nous avons bien reçu votre demande.`,
+      content: `
+        <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.5; color: #4a5568;">
             Nous avons bien reçu votre message concernant : <strong>${subject}</strong>
           </p>
           
-          <p style="color: #666; line-height: 1.6;">
+        <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.5; color: #4a5568;">
             Notre équipe examinera votre demande et vous répondra dans les plus brefs délais, généralement sous 24-48 heures.
           </p>
           
-          <div style="background: #e3f2fd; padding: 20px; border-radius: 8px; margin: 20px 0;">
-            <h3 style="color: #1976d2; margin-top: 0;">En attendant notre réponse :</h3>
-            <ul style="color: #666; line-height: 1.6;">
-              <li>Découvrez notre <a href="https://www.checkmyenterprise.com" style="color: #1976d2;">évaluation gratuite</a></li>
-              <li>Consultez nos <a href="https://www.checkmyenterprise.com/contact" style="color: #1976d2;">informations de contact</a></li>
+        <div style="background: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h4 style="margin: 0 0 10px 0; color: #14532d; font-size: 16px;">En attendant notre réponse :</h4>
+          <ul style="margin: 0; padding-left: 20px; color: #4a5568; line-height: 1.6;">
+            <li>Découvrez notre <a href="https://www.checkmyenterprise.com" style="color: #3b82f6; text-decoration: none;">évaluation gratuite</a></li>
+            <li>Consultez nos <a href="https://www.checkmyenterprise.com/contact" style="color: #3b82f6; text-decoration: none;">informations de contact</a></li>
               <li>Suivez-nous sur nos réseaux sociaux</li>
             </ul>
           </div>
           
-          <p style="color: #666; line-height: 1.6;">
+        <p style="margin: 0; font-size: 16px; line-height: 1.5; color: #4a5568;">
             Merci pour votre confiance et à bientôt !
           </p>
-          
-          <p style="color: #666; line-height: 1.6;">
-            Cordialement,<br>
-            <strong>L'équipe VitalCheck</strong>
-          </p>
-        </div>
-        
-        <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #eee;">
-          <p style="color: #999; font-size: 12px;">
-            VitalCheck Enterprise Health Check - Douala, Cameroun<br>
-            Cet email a été envoyé automatiquement, merci de ne pas y répondre directement.
-          </p>
-        </div>
-      </div>
-    `
+      `,
+      buttons: [
+        {
+          text: '🏠 Visiter notre site',
+          url: 'https://www.checkmyenterprise.com',
+          primary: true,
+          icon: '🏠'
+        },
+        {
+          text: '📞 Nous contacter',
+          url: 'https://www.checkmyenterprise.com/contact',
+          primary: false,
+          icon: '📞'
+        }
+      ],
+      note: 'Cet email a été envoyé automatiquement, merci de ne pas y répondre directement.'
+    })
   };
 
   // Utiliser le système de fallback à 2 niveaux
@@ -233,65 +231,43 @@ const sendContactNotification = async (contactData) => {
   const emailOptions = {
     to: process.env.ADMIN_EMAIL || process.env.EMAIL_USER,
     subject: `Nouveau message de contact - ${inquiryTypeLabels[inquiryType]} - ${subject}`,
-    html: `
-      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 5px;">
-        <div style="background: linear-gradient(135deg, #4CAF50 0%, #16a34a 100%); padding: 20px; border-radius: 8px; text-align: center; margin-bottom: 15px;">
-          <h1 style="color: white; margin: 0; font-size: 22px; font-weight: 600;">VitalCheck Enterprise Health Check</h1>
-          <p style="color: white; margin: 5px 0 0 0; opacity: 0.9; font-size: 14px;">Nouveau message de contact</p>
-        </div>
-        
-        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px;">
-          <div style="background: #fef9e7; padding: 10px; border-radius: 6px; margin-bottom: 15px; border-left: 4px solid #F4C542;">
-            <strong style="color: #92400e;">Type de demande :</strong> <span style="color: #92400e;">${inquiryTypeLabels[inquiryType]}</span>
-          </div>
-          
-          <h3 style="color: #333; margin: 0 0 10px 0; font-size: 16px; font-weight: 600;">Informations du contact :</h3>
-          <table style="width: 100%; border-collapse: collapse; margin-bottom: 15px;">
-            <tr>
-              <td style="padding: 4px 0; font-weight: 600; color: #666; width: 30%; font-size: 14px;">Nom :</td>
-              <td style="padding: 4px 0; color: #333; font-size: 14px;">${name}</td>
-            </tr>
-            <tr>
-              <td style="padding: 4px 0; font-weight: 600; color: #666; font-size: 14px;">Email :</td>
-              <td style="padding: 4px 0; color: #333; font-size: 14px;"><a href="mailto:${email}" style="color: #4CAF50; text-decoration: none;">${email}</a></td>
-            </tr>
-            ${company ? `
-            <tr>
-              <td style="padding: 4px 0; font-weight: 600; color: #666; font-size: 14px;">Entreprise :</td>
-              <td style="padding: 4px 0; color: #333; font-size: 14px;">${company}</td>
-            </tr>
-            ` : ''}
-            ${phone ? `
-            <tr>
-              <td style="padding: 4px 0; font-weight: 600; color: #666; font-size: 14px;">Téléphone :</td>
-              <td style="padding: 4px 0; color: #333; font-size: 14px;">${phone}</td>
-            </tr>
-            ` : ''}
-            <tr>
-              <td style="padding: 4px 0; font-weight: 600; color: #666; font-size: 14px;">Sujet :</td>
-              <td style="padding: 4px 0; color: #333; font-size: 14px;">${subject}</td>
-            </tr>
-          </table>
-          
-          <h3 style="color: #333; margin: 15px 0 8px 0; font-size: 16px; font-weight: 600;">Message :</h3>
-          <div style="background: white; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0; margin-bottom: 15px;">
-            <p style="color: #333; line-height: 1.5; margin: 0; font-size: 14px;">${message.replace(/\n/g, '<br>')}</p>
-          </div>
-          
-          <div style="background: #dcfce7; padding: 12px; border-radius: 6px; text-align: center; border: 1px solid #bbf7d0;">
-            <p style="color: #15803d; margin: 0; font-size: 14px; font-weight: 600;">
-              ⏰ Action requise : Répondre au client dans les 24-48 heures
-            </p>
+    html: createUnifiedEmailTemplate({
+      language: 'fr',
+      title: 'Nouveau message de contact',
+      subtitle: `Type de demande : <strong>${inquiryTypeLabels[inquiryType]}</strong>`,
+      content: `
+        <div style="background: #fefdf3; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+          <h4 style="margin: 0 0 10px 0; color: #14532d; font-size: 16px;">📋 Informations du contact</h4>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
+            <div><strong>Nom :</strong> ${name}</div>
+            <div><strong>Email :</strong> <a href="mailto:${email}" style="color: #00751B; text-decoration: none;">${email}</a></div>
+            ${company ? `<div><strong>Entreprise :</strong> ${company}</div>` : ''}
+            ${phone ? `<div><strong>Téléphone :</strong> ${phone}</div>` : ''}
+            <div style="grid-column: 1 / -1;"><strong>Sujet :</strong> ${subject}</div>
           </div>
         </div>
         
-        <div style="text-align: center; margin-top: 15px; padding-top: 10px; border-top: 1px solid #e2e8f0;">
-          <p style="color: #999; font-size: 11px; margin: 0;">
-            VitalCheck Enterprise Health Check - Dakar, Sénégal | Système de notification automatique
+        <div style="background: #f8fafc; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px;">
+          <h4 style="margin: 0 0 10px 0; color: #2d3748; font-size: 16px;">Message</h4>
+          <p style="margin: 0; color: #4a5568; line-height: 1.5; font-size: 14px;">${message.replace(/\n/g, '<br>')}</p>
+        </div>
+        
+        <div style="background: #dcfce7; padding: 15px; border-radius: 8px; text-align: center; border: 1px solid #bbf7d0;">
+          <p style="margin: 0; color: #15803d; font-size: 14px; font-weight: 600;">
+            ⏰ Action requise : Répondre au client dans les 24-48 heures
           </p>
         </div>
-      </div>
-    `
+      `,
+      buttons: [
+        {
+          text: '📧 Répondre par email',
+          url: `mailto:${email}?subject=Re: ${subject}`,
+          primary: true,
+          icon: '📧'
+        }
+      ],
+      note: 'Système de notification automatique - VitalCheck Enterprise Health Check'
+    })
   };
 
   // Utiliser le système de fallback à 2 niveaux
@@ -344,43 +320,37 @@ const sendPaymentEmail = async (to, subject, message) => {
     from: `"VitalCheck" <${process.env.EMAIL_USER}>`,
     to,
     subject,
-    html: `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <style>
-          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
-          .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
-          .message { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; white-space: pre-wrap; }
-          .footer { text-align: center; padding: 20px; color: #666; font-size: 14px; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <h1 style="margin: 0;">VitalCheck</h1>
-            <p style="margin: 10px 0 0 0; opacity: 0.9;">Enterprise Health Check</p>
-          </div>
-          <div class="content">
-            <div class="message">
+    html: createUnifiedEmailTemplate({
+      language: 'fr',
+      title: 'Confirmation de paiement',
+      subtitle: 'Votre transaction a été traitée avec succès',
+      content: `
+        <div style="background: #f0fdf4; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+          <p style="margin: 0; color: #15803d; font-size: 16px; line-height: 1.5;">
               ${message.replace(/\n/g, '<br>')}
-            </div>
-            <p style="color: #666;">
-              Pour toute question, n'hésitez pas à nous contacter à 
-              <a href="mailto:info@checkmyenterprise.com">info@checkmyenterprise.com</a>
             </p>
-          </div>
-          <div class="footer">
-            <p>© ${new Date().getFullYear()} VitalCheck. Tous droits réservés.</p>
-            <p>Dakar, Sénégal</p>
-          </div>
         </div>
-      </body>
-      </html>
-    `
+        
+        <p style="margin: 0; font-size: 16px; line-height: 1.5; color: #4a5568;">
+          Pour toute question concernant votre paiement, n'hésitez pas à nous contacter.
+        </p>
+      `,
+      buttons: [
+        {
+          text: '📧 Nous contacter',
+          url: 'mailto:info@checkmyenterprise.com',
+          primary: true,
+          icon: '📧'
+        },
+        {
+          text: '🏠 Visiter notre site',
+          url: 'https://www.checkmyenterprise.com',
+          primary: false,
+          icon: '🏠'
+        }
+      ],
+      note: 'Cet email confirme le traitement de votre paiement. Conservez-le pour vos archives.'
+    })
   };
 
   return sendEmail(mailOptions);
@@ -392,63 +362,44 @@ const sendWelcomeEmail = async (to, name, tempPassword = null) => {
     from: `"VitalCheck" <${process.env.EMAIL_USER}>`,
     to,
     subject: 'Bienvenue sur VitalCheck - Vos identifiants de connexion',
-    html: `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <style>
-          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
-          .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
-          .credentials { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10b981; }
-          .button { display: inline-block; background: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 20px; }
-          .footer { text-align: center; padding: 20px; color: #666; font-size: 14px; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <h1 style="margin: 0;">Bienvenue sur VitalCheck!</h1>
-            <p style="margin: 10px 0 0 0; opacity: 0.9;">Enterprise Health Check</p>
-          </div>
-          <div class="content">
-            <h2 style="color: #059669;">Bonjour ${name},</h2>
-            <p>Votre compte VitalCheck a été créé avec succès !</p>
-            
-            <div class="credentials">
-              <h3 style="margin-top: 0; color: #059669;">Vos identifiants de connexion :</h3>
-              <p><strong>Email :</strong> ${to}</p>
-              ${tempPassword ? `<p><strong>Mot de passe temporaire :</strong> ${tempPassword}</p>
-              <p style="color: #dc2626; font-size: 14px;">⚠️ Veuillez changer ce mot de passe lors de votre première connexion.</p>` : ''}
-            </div>
-
-            <p>Avec votre compte, vous pouvez maintenant :</p>
-            <ul>
+    html: createUnifiedEmailTemplate({
+      language: 'fr',
+      title: 'Bienvenue sur VitalCheck !',
+      subtitle: `Bonjour <strong>${name}</strong>, votre compte a été créé avec succès !`,
+      credentials: tempPassword ? {
+        title: 'Vos identifiants de connexion',
+        email: to,
+        password: tempPassword,
+        warning: 'Veuillez changer ce mot de passe lors de votre première connexion.'
+      } : null,
+      content: `
+        <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.5; color: #4a5568;">
+          Avec votre compte VitalCheck, vous pouvez maintenant :
+        </p>
+        
+        <ul style="margin: 0; padding-left: 20px; color: #4a5568; line-height: 1.8;">
               <li>Suivre l'historique de vos évaluations</li>
               <li>Accéder à votre tableau de bord personnalisé</li>
               <li>Télécharger vos rapports à tout moment</li>
-              <li>Gérer votre abonnement</li>
+          <li>Gérer votre abonnement et informations</li>
             </ul>
-
-            <div style="text-align: center;">
-              <a href="https://checkmyenterprise.com/client/login" class="button">
-                Se connecter maintenant
-              </a>
-            </div>
-          </div>
-          <div class="footer">
-            <p>© ${new Date().getFullYear()} VitalCheck. Tous droits réservés.</p>
-            <p>Dakar, Sénégal</p>
-            <p style="margin-top: 10px;">
-              <a href="mailto:info@checkmyenterprise.com" style="color: #10b981;">info@checkmyenterprise.com</a>
-            </p>
-          </div>
-        </div>
-      </body>
-      </html>
-    `
+      `,
+      buttons: [
+        {
+          text: 'Se connecter maintenant',
+          url: 'https://checkmyenterprise.com/login',
+          primary: true,
+          icon: ''
+        },
+        {
+          text: '🏠 Visiter notre site',
+          url: 'https://www.checkmyenterprise.com',
+          primary: false,
+          icon: '🏠'
+        }
+      ],
+      note: 'Votre compte VitalCheck est maintenant actif. Conservez vos identifiants en sécurité.'
+    })
   };
 
   return sendEmail(mailOptions);
@@ -460,73 +411,51 @@ const sendAccountCreatedEmail = async (to, name, tempPassword, planName) => {
     from: `"VitalCheck" <${process.env.EMAIL_USER}>`,
     to,
     subject: `Votre compte VitalCheck ${planName} est prêt !`,
-    html: `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <style>
-          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
-          .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
-          .credentials { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10b981; }
-          .button { display: inline-block; background: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 20px; }
-          .footer { text-align: center; padding: 20px; color: #666; font-size: 14px; }
-          .badge { background: #10b981; color: white; padding: 4px 12px; border-radius: 20px; font-size: 14px; display: inline-block; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <h1 style="margin: 0;">Paiement Confirmé ✓</h1>
-            <p style="margin: 10px 0 0 0; opacity: 0.9;">Votre compte est prêt !</p>
-          </div>
-          <div class="content">
-            <h2 style="color: #059669;">Bonjour ${name},</h2>
-            <p>Merci pour votre abonnement au plan <span class="badge">${planName}</span> !</p>
-            
-            <p>Nous avons créé votre compte VitalCheck. Voici vos identifiants de connexion :</p>
-            
-            <div class="credentials">
-              <h3 style="margin-top: 0; color: #059669;">🔐 Identifiants de connexion</h3>
-              <p><strong>Email :</strong> ${to}</p>
-              <p><strong>Mot de passe temporaire :</strong> <code style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px;">${tempPassword}</code></p>
-              <p style="color: #dc2626; font-size: 14px; margin-top: 15px;">
-                ⚠️ <strong>Important :</strong> Veuillez changer ce mot de passe lors de votre première connexion pour sécuriser votre compte.
-              </p>
-            </div>
-
-            <h3 style="color: #059669;">📊 Avec votre compte, vous pouvez :</h3>
-            <ul style="line-height: 1.8;">
-              <li>✓ Accéder à votre tableau de bord personnalisé</li>
-              <li>✓ Consulter l'historique de toutes vos évaluations</li>
-              <li>✓ Télécharger vos rapports à tout moment</li>
-              <li>✓ Suivre votre progression dans le temps</li>
-              <li>✓ Gérer votre abonnement et informations</li>
+    html: createUnifiedEmailTemplate({
+      language: 'fr',
+      title: 'Paiement Confirmé ✓',
+      subtitle: `Bonjour <strong>${name}</strong>, merci pour votre abonnement au plan <strong>${planName}</strong> !`,
+      credentials: {
+        title: 'Identifiants de connexion',
+        email: to,
+        password: tempPassword,
+        warning: 'Veuillez changer ce mot de passe lors de votre première connexion pour sécuriser votre compte.'
+      },
+      content: `
+        <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.5; color: #4a5568;">
+          Nous avons créé votre compte VitalCheck. Avec votre compte, vous pouvez :
+        </p>
+        
+        <ul style="margin: 0; padding-left: 20px; color: #4a5568; line-height: 1.8;">
+          <li>Accéder à votre tableau de bord personnalisé</li>
+          <li>Consulter l'historique de toutes vos évaluations</li>
+          <li>Télécharger vos rapports à tout moment</li>
+          <li>Suivre votre progression dans le temps</li>
+          <li>Gérer votre abonnement et informations</li>
             </ul>
 
-            <div style="text-align: center;">
-              <a href="https://checkmyenterprise.com/client/login" class="button">
-                Se connecter maintenant
-              </a>
-            </div>
-
-            <p style="margin-top: 30px; color: #666; font-size: 14px;">
+        <div style="background: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <p style="margin: 0; color: #14532d; font-size: 14px;">
               <strong>Besoin d'aide ?</strong> Notre équipe vous contactera sous 24h pour vous accompagner dans vos premiers pas.
             </p>
-          </div>
-          <div class="footer">
-            <p>© ${new Date().getFullYear()} VitalCheck. Tous droits réservés.</p>
-            <p>Dakar, Sénégal</p>
-            <p style="margin-top: 10px;">
-              <a href="mailto:info@checkmyenterprise.com" style="color: #10b981;">info@checkmyenterprise.com</a>
-            </p>
-          </div>
         </div>
-      </body>
-      </html>
-    `
+      `,
+      buttons: [
+        {
+          text: 'Se connecter maintenant',
+          url: 'https://checkmyenterprise.com/login',
+          primary: true,
+          icon: ''
+        },
+        {
+          text: 'Voir mon dashboard',
+          url: 'https://checkmyenterprise.com/client/dashboard',
+          primary: false,
+          icon: ''
+        }
+      ],
+      note: 'Votre compte VitalCheck est maintenant actif avec votre abonnement. Conservez vos identifiants en sécurité.'
+    })
   };
 
   return sendEmail(mailOptions);
@@ -537,84 +466,63 @@ const sendAccountCreatedAfterAssessment = async (to, name, tempPassword, score) 
   const mailOptions = {
     from: `"VitalCheck" <${process.env.EMAIL_USER}>`,
     to,
-    subject: 'Votre rapport VitalCheck est prêt - Accédez à votre compte !',
-    html: `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <style>
-          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
-          .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
-          .score-box { background: white; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0; border: 3px solid #10b981; }
-          .credentials { background: white; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10b981; }
-          .button { display: inline-block; background: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 20px; }
-          .footer { text-align: center; padding: 20px; color: #666; font-size: 14px; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <h1 style="margin: 0;">🎉 Évaluation Complétée !</h1>
-            <p style="margin: 10px 0 0 0; opacity: 0.9;">Votre compte VitalCheck est créé</p>
-          </div>
-          <div class="content">
-            <h2 style="color: #059669;">Bravo ${name} !</h2>
-            <p>Vous avez complété votre évaluation VitalCheck avec succès.</p>
-            
-            <div class="score-box">
-              <h3 style="margin: 0; color: #059669;">Votre Score Global</h3>
-              <div style="font-size: 48px; font-weight: bold; color: #10b981; margin: 10px 0;">${Math.round(score)}/100</div>
-            </div>
-
-            <p>Nous avons créé votre compte VitalCheck <strong>GRATUIT</strong> pour que vous puissiez :</p>
-            <ul style="line-height: 1.8;">
-              <li>✓ Accéder à votre rapport détaillé en ligne</li>
-              <li>✓ Consulter l'historique de vos évaluations</li>
-              <li>✓ Suivre votre progression dans le temps</li>
-              <li>✓ Télécharger vos rapports PDF à tout moment</li>
+    subject: 'VitalCheck - Votre compte est créé ! Accédez à vos identifiants',
+    html: createUnifiedEmailTemplate({
+      language: 'fr',
+        title: 'Votre Compte VitalCheck est Créé !',
+      subtitle: `Bravo <strong>${name}</strong>, vous avez complété votre évaluation VitalCheck avec succès !`,
+      score: {
+        value: `${Math.round(score)}/100`,
+        label: 'Votre Score Global',
+        status: score >= 70 ? 'green' : score >= 50 ? 'amber' : 'red',
+        message: score >= 70 ? '🟢 Excellent résultat !' : score >= 50 ? '🟡 Bon potentiel d\'amélioration' : '🔴 Besoin d\'attention'
+      },
+      credentials: {
+        title: 'Vos Identifiants de Connexion',
+        email: to,
+        password: tempPassword,
+        warning: 'Changez ce mot de passe lors de votre première connexion.'
+      },
+      content: `
+        <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.5; color: #4a5568;">
+          Nous avons créé votre compte VitalCheck <strong>GRATUIT</strong> pour que vous puissiez :
+        </p>
+        
+        <ul style="margin: 0; padding-left: 20px; color: #4a5568; line-height: 1.8;">
+          <li>Accéder à votre rapport détaillé en ligne</li>
+          <li>Consulter l'historique de vos évaluations</li>
+          <li>Suivre votre progression dans le temps</li>
+          <li>Télécharger vos rapports PDF à tout moment</li>
             </ul>
             
-            <div class="credentials">
-              <h3 style="margin-top: 0; color: #059669;">🔐 Vos Identifiants de Connexion</h3>
-              <p><strong>Email :</strong> ${to}</p>
-              <p><strong>Mot de passe temporaire :</strong> <code style="background: #f3f4f6; padding: 4px 8px; border-radius: 4px; font-size: 16px;">${tempPassword}</code></p>
-              <p style="color: #dc2626; font-size: 14px; margin-top: 15px;">
-                ⚠️ <strong>Important :</strong> Changez ce mot de passe lors de votre première connexion.
-              </p>
-            </div>
-
-            <div style="text-align: center;">
-              <a href="https://checkmyenterprise.com/client/login" class="button">
-                Accéder à Mon Dashboard
-              </a>
-            </div>
-
-            <div style="margin-top: 30px; padding: 20px; background: #eff6ff; border-radius: 8px; border-left: 4px solid #3b82f6;">
-              <h4 style="margin-top: 0; color: #1e40af;">💡 Envie d'aller plus loin ?</h4>
-              <p style="margin-bottom: 10px;">Découvrez nos plans STANDARD et PREMIUM pour :</p>
-              <ul style="margin: 0;">
+        <div style="background: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <h4 style="margin: 0 0 10px 0; color: #1e40af; font-size: 16px;">Envie d'aller plus loin ?</h4>
+          <p style="margin: 0 0 10px 0; color: #4a5568; font-size: 14px;">Découvrez nos plans STANDARD et PREMIUM pour :</p>
+          <ul style="margin: 0; padding-left: 20px; color: #4a5568; font-size: 14px; line-height: 1.6;">
                 <li>Recommandations personnalisées avancées</li>
                 <li>Consultation avec nos experts</li>
                 <li>Analyse comparative sectorielle</li>
                 <li>Suivi continu de votre performance</li>
               </ul>
-              <a href="https://checkmyenterprise.com/pricing" style="color: #2563eb; font-weight: bold;">Voir nos offres →</a>
-            </div>
-          </div>
-          <div class="footer">
-            <p>© ${new Date().getFullYear()} VitalCheck. Tous droits réservés.</p>
-            <p>Dakar, Sénégal</p>
-            <p style="margin-top: 10px;">
-              <a href="mailto:info@checkmyenterprise.com" style="color: #10b981;">info@checkmyenterprise.com</a>
-            </p>
-          </div>
+          <a href="https://checkmyenterprise.com/pricing" style="color: #2563eb; font-weight: bold; text-decoration: none;">Voir nos offres →</a>
         </div>
-      </body>
-      </html>
-    `
+      `,
+      buttons: [
+        {
+          text: 'Accéder à Mon Dashboard',
+          url: 'https://checkmyenterprise.com/login',
+          primary: true,
+          icon: ''
+        },
+        {
+          text: 'Voir nos offres',
+          url: 'https://checkmyenterprise.com/pricing',
+          primary: false,
+          icon: ''
+        }
+      ],
+      note: 'Votre compte VitalCheck gratuit est maintenant actif. Conservez vos identifiants en sécurité.'
+    })
   };
 
   return sendEmail(mailOptions);
@@ -626,61 +534,44 @@ const sendAssessmentCompletedExistingUser = async (to, name, score) => {
     from: `"VitalCheck" <${process.env.EMAIL_USER}>`,
     to,
     subject: 'Nouvelle évaluation complétée - VitalCheck',
-    html: `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <style>
-          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
-          .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
-          .score-box { background: white; padding: 20px; border-radius: 8px; text-align: center; margin: 20px 0; border: 3px solid #10b981; }
-          .button { display: inline-block; background: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 20px; }
-          .footer { text-align: center; padding: 20px; color: #666; font-size: 14px; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <h1 style="margin: 0;">✅ Nouvelle Évaluation !</h1>
-            <p style="margin: 10px 0 0 0; opacity: 0.9;">Consultez vos résultats</p>
-          </div>
-          <div class="content">
-            <h2 style="color: #059669;">Bonjour ${name},</h2>
-            <p>Vous avez complété une nouvelle évaluation VitalCheck !</p>
-            
-            <div class="score-box">
-              <h3 style="margin: 0; color: #059669;">Votre Nouveau Score</h3>
-              <div style="font-size: 48px; font-weight: bold; color: #10b981; margin: 10px 0;">${Math.round(score)}/100</div>
-            </div>
-
-            <p>Connectez-vous à votre dashboard pour :</p>
-            <ul style="line-height: 1.8;">
-              <li>✓ Consulter votre rapport détaillé</li>
-              <li>✓ Comparer avec vos évaluations précédentes</li>
-              <li>✓ Suivre votre progression</li>
-              <li>✓ Télécharger le PDF</li>
+    html: createUnifiedEmailTemplate({
+      language: 'fr',
+      title: 'Nouvelle Évaluation !',
+      subtitle: `Bonjour <strong>${name}</strong>, vous avez complété une nouvelle évaluation VitalCheck !`,
+      score: {
+        value: `${Math.round(score)}/100`,
+        label: 'Votre Nouveau Score',
+        status: score >= 70 ? 'green' : score >= 50 ? 'amber' : 'red',
+        message: score >= 70 ? '🟢 Excellent progrès !' : score >= 50 ? '🟡 Continuez vos efforts' : '🔴 Focus sur l\'amélioration'
+      },
+      content: `
+        <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.5; color: #4a5568;">
+          Connectez-vous à votre dashboard pour :
+        </p>
+        
+        <ul style="margin: 0; padding-left: 20px; color: #4a5568; line-height: 1.8;">
+          <li>Consulter votre rapport détaillé</li>
+          <li>Comparer avec vos évaluations précédentes</li>
+          <li>Suivre votre progression dans le temps</li>
+          <li>Télécharger le PDF de votre rapport</li>
             </ul>
-
-            <div style="text-align: center;">
-              <a href="https://checkmyenterprise.com/client/dashboard" class="button">
-                Voir Mon Dashboard
-              </a>
-            </div>
-          </div>
-          <div class="footer">
-            <p>© ${new Date().getFullYear()} VitalCheck. Tous droits réservés.</p>
-            <p>Dakar, Sénégal</p>
-            <p style="margin-top: 10px;">
-              <a href="mailto:info@checkmyenterprise.com" style="color: #10b981;">info@checkmyenterprise.com</a>
-            </p>
-          </div>
-        </div>
-      </body>
-      </html>
-    `
+      `,
+      buttons: [
+        {
+          text: 'Voir Mon Dashboard',
+          url: 'https://checkmyenterprise.com/client/dashboard',
+          primary: true,
+          icon: ''
+        },
+        {
+          text: 'Télécharger le rapport',
+          url: 'https://checkmyenterprise.com/results',
+          primary: false,
+          icon: ''
+        }
+      ],
+      note: 'Votre nouvelle évaluation a été ajoutée à votre historique. Consultez votre dashboard pour voir tous vos résultats.'
+    })
   };
 
   return sendEmail(mailOptions);
@@ -691,76 +582,59 @@ const sendSubscriptionUpgradeEmail = async (to, name, planName, planId) => {
   const mailOptions = {
     from: `"VitalCheck" <${process.env.EMAIL_USER}>`,
     to,
-    subject: `Votre abonnement ${planName} est activé ! 🎉`,
-    html: `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8">
-        <style>
-          body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: white; padding: 30px; text-align: center; border-radius: 8px 8px 0 0; }
-          .content { background: #f9fafb; padding: 30px; border-radius: 0 0 8px 8px; }
-          .button { display: inline-block; background: #10b981; color: white; padding: 12px 24px; text-decoration: none; border-radius: 8px; margin-top: 20px; }
-          .footer { text-align: center; padding: 20px; color: #666; font-size: 14px; }
-          .badge { background: #10b981; color: white; padding: 6px 16px; border-radius: 20px; font-size: 18px; display: inline-block; font-weight: bold; }
-        </style>
-      </head>
-      <body>
-        <div class="container">
-          <div class="header">
-            <h1 style="margin: 0;">✅ Paiement Confirmé !</h1>
-            <p style="margin: 10px 0 0 0; opacity: 0.9;">Votre abonnement a été mis à jour</p>
+    subject: `Votre abonnement ${planName} est activé !`,
+    html: createUnifiedEmailTemplate({
+      language: 'fr',
+      title: 'Paiement Confirmé !',
+      subtitle: `Bonjour <strong>${name}</strong>, excellent choix ! Votre abonnement a été mis à jour.`,
+      content: `
+        <div style="text-align: center; margin: 20px 0; padding: 20px; background: #f0fdf4; border-radius: 8px; border: 2px solid #10b981;">
+          <p style="margin: 0 0 10px 0; color: #666; font-size: 16px;">Votre nouveau plan :</p>
+          <div style="background: #10b981; color: white; padding: 8px 20px; border-radius: 20px; font-size: 18px; font-weight: bold; display: inline-block;">
+            ${planName}
           </div>
-          <div class="content">
-            <h2 style="color: #059669;">Bonjour ${name},</h2>
-            <p>Excellent choix ! Votre paiement a été confirmé et votre abonnement a été mis à jour.</p>
-            
-            <div style="text-align: center; margin: 30px 0;">
-              <p style="margin-bottom: 10px; color: #666;">Votre nouveau plan :</p>
-              <span class="badge">${planName}</span>
-              <p style="margin-top: 10px; color: #059669; font-weight: bold;">Actif maintenant !</p>
+          <p style="margin: 10px 0 0 0; color: #10b981; font-weight: bold; font-size: 16px;">Actif maintenant !</p>
             </div>
 
-            <h3 style="color: #059669;">🎯 Vos nouveaux avantages :</h3>
-            <ul style="line-height: 1.8;">
+        <h3 style="color: #00751B; margin: 20px 0 15px 0; font-size: 18px;">🎯 Vos nouveaux avantages :</h3>
+        <ul style="margin: 0; padding-left: 20px; color: #4a5568; line-height: 1.8;">
               ${planId === 'premium' || planId === 'diagnostic' ? `
-              <li>✓ Consultation avec nos experts</li>
-              <li>✓ Analyse comparative sectorielle</li>
-              <li>✓ Plan d'action personnalisé</li>
-              <li>✓ Support prioritaire</li>
-              ` : `
-              <li>✓ Recommandations personnalisées</li>
-              <li>✓ Évaluations multiples</li>
-              <li>✓ Historique et suivi</li>
-              <li>✓ Support WhatsApp</li>
-              `}
-              <li>✓ Accès illimité à votre dashboard</li>
-              <li>✓ Rapports PDF avancés</li>
+          <li>Consultation avec nos experts</li>
+          <li>Analyse comparative sectorielle</li>
+          <li>Plan d'action personnalisé</li>
+          <li>Support prioritaire</li>
+          ` : `
+          <li>Recommandations personnalisées</li>
+          <li>Évaluations multiples</li>
+          <li>Historique et suivi</li>
+          <li>Support WhatsApp</li>
+          `}
+          <li>Accès illimité à votre dashboard</li>
+          <li>Rapports PDF avancés</li>
             </ul>
 
-            <div style="text-align: center;">
-              <a href="https://checkmyenterprise.com/client/dashboard" class="button">
-                Accéder à Mon Dashboard
-              </a>
-            </div>
-
-            <p style="margin-top: 30px; color: #666; font-size: 14px;">
+        <div style="background: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <p style="margin: 0; color: #14532d; font-size: 14px;">
               <strong>Besoin d'aide ?</strong> Notre équipe vous contactera sous 24h pour vous accompagner.
             </p>
-          </div>
-          <div class="footer">
-            <p>© ${new Date().getFullYear()} VitalCheck. Tous droits réservés.</p>
-            <p>Dakar, Sénégal</p>
-            <p style="margin-top: 10px;">
-              <a href="mailto:info@checkmyenterprise.com" style="color: #10b981;">info@checkmyenterprise.com</a>
-            </p>
-          </div>
         </div>
-      </body>
-      </html>
-    `
+      `,
+      buttons: [
+        {
+          text: 'Accéder à Mon Dashboard',
+          url: 'https://checkmyenterprise.com/client/dashboard',
+          primary: true,
+          icon: ''
+        },
+        {
+          text: 'Nous contacter',
+          url: 'mailto:info@checkmyenterprise.com',
+          primary: false,
+          icon: ''
+        }
+      ],
+      note: 'Votre abonnement est maintenant actif. Profitez de tous vos nouveaux avantages !'
+    })
   };
 
   return sendEmail(mailOptions);

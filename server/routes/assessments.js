@@ -167,13 +167,6 @@ router.get('/resume/:token', async (req, res) => {
       });
     }
 
-    console.log('✅ [RESUME] Évaluation trouvée:', {
-      assessmentId: assessment._id,
-      companyName: assessment.user.companyName,
-      currentQuestionIndex: assessment.currentQuestionIndex,
-      answersCount: assessment.answers.length,
-      progressPercentage: Math.round((assessment.answers.length / assessment.totalQuestions) * 100)
-    });
 
     res.json({
       success: true,
@@ -330,7 +323,8 @@ router.post('/submit', [
   body('userId').isMongoId(),
   body('answers').isArray({ min: 1 }),
   body('language').optional().isString(),
-  body('assessmentId').optional().isMongoId()
+  body('assessmentId').optional().isMongoId(),
+  body('submissionId').optional().isString()
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -338,7 +332,12 @@ router.post('/submit', [
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { userId, answers, language = 'en', assessmentId } = req.body;
+    const { userId, answers, language = 'en', assessmentId, submissionId } = req.body;
+
+    // Protection contre les soumissions multiples
+    if (submissionId) {
+      // TODO: Implémenter un cache Redis pour vérifier les soumissions récentes
+    }
 
     // Verify user exists
     const user = await User.findById(userId);
@@ -346,6 +345,26 @@ router.post('/submit', [
       return res.status(404).json({ 
         success: false, 
         message: 'User not found' 
+      });
+    }
+
+    // Protection contre les soumissions multiples récentes (dans les 5 dernières minutes)
+    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const recentSubmission = await Assessment.findOne({
+      user: userId,
+      completedAt: { $gte: fiveMinutesAgo },
+      status: 'completed'
+    });
+
+    if (recentSubmission) {
+      return res.status(429).json({
+        success: false,
+        message: 'Une soumission récente a déjà été effectuée. Veuillez patienter quelques minutes.',
+        existingAssessment: {
+          id: recentSubmission._id,
+          completedAt: recentSubmission.completedAt,
+          score: recentSubmission.overallScore
+        }
       });
     }
 
@@ -428,37 +447,17 @@ router.post('/submit', [
     if (!user.hasAccount) {
       // Générer un mot de passe temporaire
       tempPassword = user.generateTempPassword();
-      user.password = tempPassword;
+      user.password = tempPassword; // Hash automatique par le middleware
+      user.tempPassword = tempPassword; // Stocker le mot de passe en clair pour l'email
       user.hasAccount = true;
+      user.accountCreatedAt = new Date(); // Enregistrer la date de création du compte
       await user.save();
       accountCreated = true;
-
-      // Envoyer l'email avec les identifiants (NOUVEAU COMPTE)
-      try {
-        await sendAccountCreatedAfterAssessment(
-          user.email,
-          user.firstName || user.companyName,
-          tempPassword,
-          overallScore
-        );
-        console.log('✅ Email de création de compte envoyé après évaluation à:', user.email);
-      } catch (emailError) {
-        console.error('❌ Erreur envoi email création compte:', emailError);
-        // Continue même si l'email échoue
-      }
+      
+      // Note: L'email avec les identifiants sera envoyé lors de la génération du rapport
+      // pour éviter d'envoyer deux emails séparés
     } else {
-      // L'utilisateur a déjà un compte, envoyer email de notification d'évaluation
-      try {
-        await sendAssessmentCompletedExistingUser(
-          user.email,
-          user.firstName || user.companyName,
-          overallScore
-        );
-        console.log('✅ Email de nouvelle évaluation envoyé à:', user.email);
-      } catch (emailError) {
-        console.error('❌ Erreur envoi email évaluation:', emailError);
-        // Continue même si l'email échoue
-      }
+      // Note: L'email de notification sera envoyé lors de la génération du rapport
     }
 
     // Create notification for admin
@@ -487,6 +486,22 @@ router.post('/submit', [
     } catch (notificationError) {
       console.error('Erreur lors de la création de la notification:', notificationError);
       // Ne pas faire échouer la soumission pour une erreur de notification
+    }
+
+    // Nettoyer les brouillons d'évaluations pour cet utilisateur
+    try {
+      const deletedDrafts = await Assessment.deleteMany({
+        user: userId,
+        status: 'draft',
+        _id: { $ne: assessment._id } // Ne pas supprimer l'évaluation qui vient d'être complétée
+      });
+      
+      if (deletedDrafts.deletedCount > 0) {
+        console.log(`🧹 [CLEANUP] ${deletedDrafts.deletedCount} brouillon(s) supprimé(s) pour ${user.companyName}`);
+      }
+    } catch (cleanupError) {
+      console.error('❌ Erreur lors du nettoyage des brouillons:', cleanupError);
+      // Ne pas faire échouer la soumission pour une erreur de nettoyage
     }
 
     res.status(201).json({

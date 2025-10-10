@@ -99,7 +99,6 @@ const BlogAnalyticsPage = () => {
   // Charger les visites
   const loadVisits = async () => {
     try {
-      console.log('🔍 [BLOG ANALYTICS] Chargement des visites avec filtres:', filters)
       
       // Préparer les filtres avec format de date correct
       const processedFilters = { ...filters }
@@ -108,9 +107,7 @@ const BlogAnalyticsPage = () => {
         processedFilters.dateTo = processedFilters.dateTo + 'T23:59:59.999Z'
       }
       
-      console.log('🔍 [BLOG ANALYTICS] Filtres traités:', processedFilters)
       const response = await adminBlogApiService.getAllVisits(processedFilters)
-      console.log('✅ [BLOG ANALYTICS] Réponse reçue:', response.data)
       setVisits(response.data.data)
       setPagination(response.data.pagination)
     } catch (error) {

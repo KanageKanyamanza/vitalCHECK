@@ -203,14 +203,14 @@ const SubmissionProgress = ({ currentStep, error, onRetry }) => {
               className="bg-gradient-to-r from-primary-500 to-secondary-500 h-2 rounded-full"
               initial={{ width: 0 }}
               animate={{ 
-                width: `${((steps.findIndex(s => s.id === currentStep) + 1) / steps.length) * 100}%` 
+                width: `${Math.max(0, ((steps.findIndex(s => s.id === currentStep) + 1) / steps.length) * 100)}%` 
               }}
               transition={{ duration: 0.5 }}
             />
           </div>
           <p className="text-xs text-gray-500 mt-1">
             {t('results.submissionProgress.stepCounter', { 
-              current: steps.findIndex(s => s.id === currentStep) + 1, 
+              current: Math.max(1, steps.findIndex(s => s.id === currentStep) + 1), 
               total: steps.length 
             })}
           </p>

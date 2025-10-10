@@ -25,14 +25,6 @@ const api = axios.create({
 // Intercepteur de requête pour l'API publique
 api.interceptors.request.use(
   (config) => {
-    // Log des requêtes importantes
-    if (config.url && config.url.includes('/reports/generate/')) {
-      console.log('📡 [API REQUEST] Génération de rapport:', {
-        method: config.method,
-        url: config.url,
-        baseURL: config.baseURL
-      });
-    }
     return config;
   },
   (error) => {
@@ -67,13 +59,6 @@ adminApi.interceptors.request.use(
 const setupResponseInterceptor = (instance, isAdmin = false) => {
   instance.interceptors.response.use(
     (response) => {
-      // Log des réponses importantes
-      if (response.config.url && response.config.url.includes('/reports/generate/')) {
-        console.log('✅ [API RESPONSE] Génération de rapport réussie:', {
-          status: response.status,
-          data: response.data
-        });
-      }
       return response;
     },
     (error) => {
@@ -284,8 +269,8 @@ export const resetConnection = () => {
   localStorage.removeItem('adminToken');
   localStorage.removeItem('adminData');
   
-  // Rediriger vers la page de connexion
-  window.location.href = '/admin/login';
+  // Rediriger vers la page de connexion unifiée
+  window.location.href = '/login';
 };
 
 // ===== SERVICES BLOG =====

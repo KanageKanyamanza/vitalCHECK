@@ -29,6 +29,7 @@ const AssessmentPage = () => {
   const [submitting, setSubmitting] = useState(false)
   const [submissionStep, setSubmissionStep] = useState(null)
   const [submissionError, setSubmissionError] = useState(null)
+  const [submissionId] = useState(() => `submission_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`)
 
   useEffect(() => {
     if (!user) {
@@ -238,6 +239,11 @@ const AssessmentPage = () => {
   }
 
   const handleSubmit = async () => {
+    // Protection contre les soumissions multiples
+    if (submitting) {
+      return
+    }
+
     if (answers.length !== getTotalQuestions()) {
       toast.error('Veuillez répondre à toutes les questions')
       return
@@ -264,7 +270,8 @@ const AssessmentPage = () => {
       const response = await assessmentAPI.submitAssessment({
         userId: user.id,
         answers,
-        language
+        language,
+        submissionId // Ajouter l'ID de soumission pour éviter les doublons
       })
 
       if (response.data.success) {
@@ -286,6 +293,24 @@ const AssessmentPage = () => {
       }
     } catch (error) {
       console.error('Submission error:', error)
+      
+      // Gestion spéciale pour les soumissions multiples
+      if (error.response?.status === 429) {
+        const existingAssessment = error.response.data.existingAssessment;
+        if (existingAssessment) {
+          setSubmissionError({
+            message: 'Une évaluation a déjà été soumise récemment. Redirection vers vos résultats...',
+            existingAssessment
+          })
+          toast.error('Évaluation déjà soumise - Redirection en cours...')
+          
+          // Redirection immédiate vers les résultats
+          dispatch({ type: 'SET_ASSESSMENT', payload: { id: existingAssessment.id } })
+          navigate('/results')
+          return
+        }
+      }
+      
       setSubmissionError({
         message: error.response?.data?.message || 'Une erreur est survenue lors de la soumission'
       })
@@ -425,6 +450,7 @@ const AssessmentPage = () => {
             onClick={handleNext}
             disabled={!canProceed || submitting}
             className="btn-primary flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            title={submitting ? "Soumission en cours..." : ""}
           >
             {submitting ? (
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />

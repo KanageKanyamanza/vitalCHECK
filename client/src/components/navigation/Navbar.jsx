@@ -28,6 +28,11 @@ const Navbar = () => {
 
   // Client Auth Context
   const { user: clientUser, isAuthenticated } = useClientAuth()
+  
+  // Admin Auth Context (depuis localStorage)
+  const adminToken = localStorage.getItem('adminToken')
+  const adminData = localStorage.getItem('adminData')
+  const isAdminAuthenticated = !!adminToken
 
   const handleLanguageChange = (language) => {
     // Mettre à jour la langue dans le contexte global
@@ -51,6 +56,41 @@ const Navbar = () => {
   const closeMobileMenu = () => {
     setIsMobileMenuOpen(false)
   }
+
+  const handleSmartLogin = () => {
+    // Vérifier si l'utilisateur a déjà un token admin
+    const adminToken = localStorage.getItem('adminToken')
+    const clientToken = localStorage.getItem('clientToken')
+    
+    if (adminToken) {
+      // Si admin token existe, rediriger vers admin dashboard
+      handleDesktopNavigation('/admin/dashboard')
+    } else if (clientToken) {
+      // Si client token existe, rediriger vers client dashboard
+      handleDesktopNavigation('/client/dashboard')
+    } else {
+      // Aucun token, rediriger vers la page de connexion unifiée
+      handleDesktopNavigation('/login')
+    }
+  }
+
+  const handleSmartLoginMobile = () => {
+    // Vérifier si l'utilisateur a déjà un token admin
+    const adminToken = localStorage.getItem('adminToken')
+    const clientToken = localStorage.getItem('clientToken')
+    
+    if (adminToken) {
+      // Si admin token existe, rediriger vers admin dashboard
+      handleNavigation('/admin/dashboard')
+    } else if (clientToken) {
+      // Si client token existe, rediriger vers client dashboard
+      handleNavigation('/client/dashboard')
+    } else {
+      // Aucun token, rediriger vers la page de connexion unifiée
+      handleNavigation('/login')
+    }
+  }
+
 
   const handleNavigation = (path) => {
     navigate(path)
@@ -182,25 +222,29 @@ const Navbar = () => {
               isScrolled={true}
             />
 
-            {/* Login/Dashboard Button - Desktop */}
+            {/* Smart Login/Dashboard Button - Desktop */}
             <div className="hidden md:flex">
-              {isAuthenticated ? (
-                <button
-                  onClick={() => handleDesktopNavigation('/client/dashboard')}
-                  className="flex items-center space-x-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg transition-colors duration-200 font-medium"
-                >
-                  <LayoutDashboard className="w-4 h-4" />
-                  <span className="text-sm">Dashboard</span>
-                </button>
-              ) : (
-                <button
-                  onClick={() => handleDesktopNavigation('/client/login')}
-                  className="flex items-center space-x-2 px-4 py-2 border-2 border-primary-600 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors duration-200 font-medium"
-                >
-                  <LogIn className="w-4 h-4" />
-                  <span className="text-sm">{t('navigation.login')}</span>
-                </button>
-              )}
+              <button
+                onClick={handleSmartLogin}
+                className="flex items-center space-x-2 px-4 py-2 border-2 border-primary-600 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors duration-200 font-medium"
+              >
+                {isAdminAuthenticated ? (
+                  <>
+                    <LayoutDashboard className="w-4 h-4" />
+                    <span className="text-sm">Admin Dashboard</span>
+                  </>
+                ) : isAuthenticated && clientUser ? (
+                  <>
+                    <User className="w-4 h-4" />
+                    <span className="text-sm">{clientUser.firstName || clientUser.companyName || 'Mon Compte'}</span>
+                  </>
+                ) : (
+                  <>
+                    <LogIn className="w-4 h-4" />
+                    <span className="text-sm">{t('navigation.login')}</span>
+                  </>
+                )}
+              </button>
             </div>
 
             {/* Bouton hamburger mobile */}
@@ -307,24 +351,28 @@ const Navbar = () => {
                   <UserGuideButton variant="default" className="text-gray-600 hover:text-primary-600 transition-colors duration-200" />
                 </div>
 
-                {/* Login/Dashboard Button - Mobile */}
-                {isAuthenticated ? (
-                  <button
-                    onClick={() => handleNavigation('/client/dashboard')}
-                    className="w-full text-left px-3 py-2 rounded-lg font-medium bg-primary-600 text-white hover:bg-primary-700 transition-colors duration-200 flex items-center"
-                  >
-                    <LayoutDashboard className="w-4 h-4 mr-2" />
-                    Dashboard
-                  </button>
-                ) : (
-                  <button
-                    onClick={() => handleNavigation('/client/login')}
-                    className="w-full text-left px-3 py-2 rounded-lg font-medium border-2 border-primary-600 text-primary-600 hover:bg-primary-50 transition-colors duration-200 flex items-center"
-                  >
-                    <LogIn className="w-4 h-4 mr-2" />
-                    {t('navigation.login')}
-                  </button>
-                )}
+                {/* Smart Login Button - Mobile */}
+                <button
+                  onClick={handleSmartLoginMobile}
+                  className="w-full text-left px-3 py-2 rounded-lg font-medium border-2 border-primary-600 text-primary-600 hover:bg-primary-50 transition-colors duration-200 flex items-center"
+                >
+                  {isAdminAuthenticated ? (
+                    <>
+                      <LayoutDashboard className="w-4 h-4 mr-2" />
+                      Admin Dashboard
+                    </>
+                  ) : isAuthenticated && clientUser ? (
+                    <>
+                      <User className="w-4 h-4 mr-2" />
+                      {clientUser.firstName || clientUser.companyName || 'Mon Compte'}
+                    </>
+                  ) : (
+                    <>
+                      <LogIn className="w-4 h-4 mr-2" />
+                      {t('navigation.login')}
+                    </>
+                  )}
+                </button>
                 
                 {location.pathname === '/assessment' && (
                   <button

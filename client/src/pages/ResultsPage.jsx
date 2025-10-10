@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import {
 	Download,
 	Mail,
 	ArrowLeft,
-	TrendingUp,
 	AlertTriangle,
 	CheckCircle,
 	Star,
-	Users,
 	Target,
 } from "lucide-react";
 import { useAssessment } from "../context/AssessmentContext";
-import { reportsAPI } from "../services/api";
+import { reportsAPI, assessmentAPI } from "../services/api";
 import toast from "react-hot-toast";
 import { ScoreGauge, PillarChart, RecommendationsList } from "../components/ui";
 import {
@@ -30,6 +28,7 @@ import {
 
 const ResultsPage = () => {
 	const navigate = useNavigate();
+	const [searchParams] = useSearchParams();
 	const { t } = useTranslation();
 	const { user, assessment, dispatch } = useAssessment();
 	const { scrollToTop, scrollToElement } = useSmoothScroll();
@@ -38,19 +37,45 @@ const ResultsPage = () => {
 	const [reportError, setReportError] = useState(null);
 	const [showConsultationModal, setShowConsultationModal] = useState(false);
 	const [downloadingReport, setDownloadingReport] = useState(false);
+	const [loadingAssessment, setLoadingAssessment] = useState(false);
 	const [showSuccessModal, setShowSuccessModal] = useState(false);
 
 	useEffect(() => {
-		if (!assessment) {
-			navigate("/");
-			return;
-		}
+		const loadAssessmentById = async () => {
+			const assessmentId = searchParams.get('id');
+			if (assessmentId && !assessment) {
+				setLoadingAssessment(true);
+				try {
+					const response = await assessmentAPI.getAssessment(assessmentId);
+					if (response.data.success) {
+						dispatch({ type: 'SET_ASSESSMENT', payload: response.data.assessment });
+					} else {
+						console.error('❌ [RESULTS] Failed to load assessment:', response.data.message);
+						toast.error('Évaluation non trouvée');
+						navigate('/client/dashboard');
+					}
+				} catch (error) {
+					console.error('❌ [RESULTS] Error loading assessment:', error);
+					toast.error('Erreur lors du chargement de l\'évaluation');
+					navigate('/client/dashboard');
+				} finally {
+					setLoadingAssessment(false);
+				}
+			} else if (!assessment && !assessmentId) {
+				navigate("/");
+				return;
+			}
 
-		// Scroll smooth vers le haut quand la page se charge
-		setTimeout(() => {
-			scrollToTop(600);
-		}, 100);
-	}, [assessment, navigate, scrollToTop]);
+			// Scroll smooth vers le haut quand la page se charge
+			if (assessment) {
+				setTimeout(() => {
+					scrollToTop(600);
+				}, 100);
+			}
+		};
+
+		loadAssessmentById();
+	}, [assessment, searchParams, navigate, dispatch, scrollToTop]);
 
 	const handleGenerateReport = async () => {
 		setGeneratingReport(true);
@@ -215,21 +240,30 @@ const ResultsPage = () => {
 		}
 	};
 
-	if (!assessment) {
+	if (loadingAssessment) {
 		return (
 			<div className="min-h-screen flex items-center justify-center">
 				<div className="text-center">
-					<p className="text-red-600 mb-4">Aucune évaluation trouvée</p>
-					<button onClick={() => navigate("/")} className="btn-primary">
-						Retour à l'accueil
-					</button>
+					<div className="w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+					<p className="text-gray-600">Chargement de l'évaluation...</p>
+				</div>
+			</div>
+		);
+	}
+
+	if (!assessment || !assessment.pillarScores) {
+		return (
+			<div className="min-h-screen flex items-center justify-center">
+				<div className="text-center">
+					<div className="w-8 h-8 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+					<p className="text-gray-600 mb-4">Chargement des résultats...</p>
 				</div>
 			</div>
 		);
 	}
 
 	return (
-		<div className="min-h-screen py-[50px] bg-gray-50">
+		<div className="min-h-screen py-[60px] bg-gray-50">
 			{/* Report Generation Progress Modal */}
 			<ReportGenerationProgress
 				isGenerating={generatingReport}
@@ -247,7 +281,7 @@ const ResultsPage = () => {
 							</span>
 						</div>
 						<button
-							onClick={() => navigate("/")}
+							onClick={handleGoHome}
 							className="btn-outline flex items-center space-x-2 mx-auto sm:mx-0"
 						>
 							<ArrowLeft className="w-4 h-4" />
@@ -337,7 +371,7 @@ const ResultsPage = () => {
 							{t("results.pillarDetails")}
 						</h3>
 						<div className="sm:space-y-4 space-y-2">
-							{assessment.pillarScores.map((pillar, index) => (
+							{assessment.pillarScores?.map((pillar, index) => (
 								<div
 									key={index}
 									className="flex flex-col sm:flex-row sm:items-center justify-between p-4 bg-gray-50 rounded-lg"

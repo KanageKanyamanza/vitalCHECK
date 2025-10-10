@@ -1,5 +1,5 @@
 import React from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, Navigate } from 'react-router-dom'
 import LandingPage from '../pages/LandingPage'
 import AboutPage from '../pages/AboutPage'
 import AssessmentPage from '../pages/AssessmentPage'
@@ -9,8 +9,8 @@ import ContactPage from '../pages/ContactPage'
 import PricingPage from '../pages/PricingPage'
 import CheckoutPage from '../pages/CheckoutPage'
 import PaymentSuccessPage from '../pages/PaymentSuccessPage'
-import ClientLoginPage from '../pages/client/ClientLoginPage'
 import ClientRegisterPage from '../pages/client/ClientRegisterPage'
+import UnifiedLoginPage from '../pages/UnifiedLoginPage'
 import ClientDashboardPage from '../pages/client/ClientDashboardPage'
 import ClientProfilePage from '../pages/client/ClientProfilePage'
 import PrivacyPolicy from '../pages/PrivacyPolicy'
@@ -33,7 +33,9 @@ const AppRoutes = () => {
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/checkout" element={<CheckoutPage />} />
       <Route path="/payment-success" element={<PaymentSuccessPage />} />
-      <Route path="/client/login" element={<ClientLoginPage />} />
+      <Route path="/login" element={<UnifiedLoginPage />} />
+      {/* Redirection de l'ancienne route client/login vers la page unifiée */}
+      <Route path="/client/login" element={<Navigate to="/login" replace />} />
       <Route path="/client/register" element={<ClientRegisterPage />} />
       <Route path="/client/dashboard" element={<ClientDashboardPage />} />
       <Route path="/client/profile" element={<ClientProfilePage />} />

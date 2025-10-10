@@ -18,7 +18,7 @@ const AdminLayout = ({ children }) => {
     const admin = localStorage.getItem('adminData');
     
     if (!token || !admin) {
-      navigate('/admin/login');
+      navigate('/login');
       return;
     }
 
