@@ -126,8 +126,22 @@ const BlogVisitorModal = ({
     }
   }
 
-  // Fermer la modale
+  // Fermer la modale (seulement si le formulaire est soumis)
   const handleClose = () => {
+    // Ne pas permettre la fermeture si le formulaire n'est pas rempli
+    if (!isReturningVisitor) {
+      const isFormFilled = formData.firstName.trim() && 
+                          formData.lastName.trim() && 
+                          formData.email.trim() && 
+                          formData.country.trim()
+      
+      if (!isFormFilled) {
+        // Afficher un message d'erreur
+        toast.error('Veuillez remplir le formulaire pour continuer')
+        return
+      }
+    }
+    
     setFormData({
       firstName: '',
       lastName: '',
@@ -142,8 +156,8 @@ const BlogVisitorModal = ({
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">
-      {/* Overlay */}
-      <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" onClick={handleClose} />
+      {/* Overlay - désactivé pour empêcher la fermeture */}
+      <div className="fixed inset-0 bg-black bg-opacity-50 transition-opacity" />
       
       {/* Modal */}
       <div className="flex min-h-full items-center justify-center p-4">
@@ -157,16 +171,10 @@ const BlogVisitorModal = ({
                 ) : (
                   <User className="h-6 w-6 text-white mr-3" />
                 )}
-                <h3 className="text-lg font-semibold text-white">
+                <h3 className="text-md font-semibold text-white">
                   {isReturningVisitor ? t('blog.modal.welcomeBack') : t('blog.modal.title')}
                 </h3>
               </div>
-              <button
-                onClick={handleClose}
-                className="text-white hover:text-gray-200 transition-colors"
-              >
-                <X className="h-5 w-5" />
-              </button>
             </div>
           </div>
 
@@ -304,14 +312,26 @@ const BlogVisitorModal = ({
                 )}
               </div>
 
-                  {/* Bouton */}
+                  {/* Bouton obligatoire */}
                   <div className="pt-4">
                     <button
                       type="submit"
                       disabled={loading}
-                      className="w-full px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="w-full px-4 py-3 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-gradient-to-r from-primary-600 to-primary-700 hover:from-primary-700 hover:to-primary-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                     >
-                      {loading ? t('blog.modal.submitting') : t('blog.modal.submit')}
+                      {loading ? (
+                        <div className="flex items-center justify-center">
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                          {t('blog.modal.submitting')}
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center">
+                          <svg className="h-5 w-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          Continuer la lecture
+                        </div>
+                      )}
                     </button>
                   </div>
                 </form>

@@ -8,7 +8,7 @@ const getApiBaseUrl = () => {
     return 'https://ubb-enterprise-health-check.onrender.com/api';
   }
   // En développement, utiliser l'URL locale ou celle définie dans .env
-  return import.meta.env.VITE_API_URL || 'https://ubb-enterprise-health-check.onrender.com/api';
+  return import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 };
 
 const API_BASE_URL = getApiBaseUrl();
@@ -319,10 +319,10 @@ export const blogApiService = {
   },
 
   // Vérifier si un visiteur existe par IP
-  checkVisitorByIP: () => api.get('/blogs/visitors/check'),
+  checkVisitorByIP: () => api.get('/blog-visitors/check'),
 
   // Soumettre le formulaire de visiteur
-  submitVisitorForm: (data) => api.post('/blogs/visitors/submit', data)
+  submitVisitorForm: (data) => api.post('/blog-visitors/submit', data)
 };
 
 // Services admin pour les blogs
@@ -366,18 +366,18 @@ export const adminBlogApiService = {
   // Récupérer tous les visiteurs
   getVisitors: (params = {}) => {
     const queryParams = new URLSearchParams(params);
-    return adminApi.get(`/blogs/admin/visitors?${queryParams}`);
+    return adminApi.get(`/blog-visitors/admin/visitors?${queryParams}`);
   },
 
   // Récupérer un visiteur par ID
-  getVisitor: (visitorId) => adminApi.get(`/blogs/admin/visitors/${visitorId}`),
+  getVisitor: (visitorId) => adminApi.get(`/blog-visitors/admin/visitors/${visitorId}`),
 
   // Récupérer les statistiques des visiteurs
-  getVisitorStats: () => adminApi.get('/blogs/admin/visitors/stats'),
+  getVisitorStats: () => adminApi.get('/blog-visitors/admin/visitors/stats'),
 
   // Exporter les données des visiteurs
   exportVisitors: (format = 'excel') => {
-    return adminApi.get(`/blogs/admin/visitors/export/${format}`, {
+    return adminApi.get(`/blog-visitors/admin/visitors/export/${format}`, {
       responseType: 'blob'
     });
   }

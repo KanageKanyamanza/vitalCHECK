@@ -69,6 +69,10 @@ router.post('/submit', async (req, res) => {
       });
     }
     
+    // Incrémenter les vues du blog uniquement lors de la soumission du formulaire
+    await blog.incrementViews();
+    console.log(`📈 [BLOG VIEWS] Vue incrémentée pour le blog: ${blogTitle} (Total: ${blog.views + 1})`);
+    
     // Vérifier si un visiteur existe déjà avec cette IP
     let visitor = await BlogVisitor.findByIP(ipAddress);
     let isNewVisitor = false;

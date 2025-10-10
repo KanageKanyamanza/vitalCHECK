@@ -353,8 +353,8 @@ router.get('/:slug', async (req, res) => {
       });
     }
 
-    // Incrémenter les vues
-    await blog.incrementViews();
+    // Les vues ne sont plus incrémentées automatiquement
+    // Elles le seront uniquement lors de la soumission du formulaire de visiteur
 
     // Enregistrer la visite détaillée
     try {

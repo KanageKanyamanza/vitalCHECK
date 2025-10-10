@@ -6,67 +6,7 @@ const { authenticateAdmin } = require('../utils/auth');
 
 // ===== ROUTES ADMIN POUR LES VISITEURS =====
 
-// Récupérer tous les visiteurs (admin)
-router.get('/visitors', authenticateAdmin, async (req, res) => {
-  try {
-    const { 
-      page = 1, 
-      limit = 20, 
-      search = '', 
-      country = '', 
-      sortBy = 'lastVisitAt', 
-      sortOrder = 'desc' 
-    } = req.query;
-    
-    const skip = (page - 1) * limit;
-    const query = {};
-    
-    // Filtres
-    if (search) {
-      query.$or = [
-        { firstName: { $regex: search, $options: 'i' } },
-        { lastName: { $regex: search, $options: 'i' } },
-        { email: { $regex: search, $options: 'i' } }
-      ];
-    }
-    
-    if (country) {
-      query.country = { $regex: country, $options: 'i' };
-    }
-    
-    // Tri
-    const sort = {};
-    sort[sortBy] = sortOrder === 'desc' ? -1 : 1;
-    
-    const visitors = await BlogVisitor.find(query)
-      .populate('blogsVisited.blog', 'title slug')
-      .sort(sort)
-      .skip(skip)
-      .limit(parseInt(limit));
-    
-    const total = await BlogVisitor.countDocuments(query);
-    
-    res.json({
-      success: true,
-      data: visitors,
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total,
-        pages: Math.ceil(total / limit)
-      }
-    });
-    
-  } catch (error) {
-    console.error('Erreur lors de la récupération des visiteurs:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de la récupération des visiteurs'
-    });
-  }
-});
-
-// Récupérer les statistiques des visiteurs (admin) - DOIT être avant /visitors/:id
+// Récupérer les statistiques des visiteurs (admin) - DOIT être AVANT /visitors/:id
 router.get('/visitors/stats', authenticateAdmin, async (req, res) => {
   try {
     const stats = await BlogVisitor.getGlobalStats();
@@ -122,34 +62,7 @@ router.get('/visitors/stats', authenticateAdmin, async (req, res) => {
   }
 });
 
-// Récupérer un visiteur par ID (admin) - DOIT être après /visitors/stats
-router.get('/visitors/:id', authenticateAdmin, async (req, res) => {
-  try {
-    const visitor = await BlogVisitor.findById(req.params.id)
-      .populate('blogsVisited.blog', 'title slug category type publishedAt');
-    
-    if (!visitor) {
-      return res.status(404).json({
-        success: false,
-        message: 'Visiteur non trouvé'
-      });
-    }
-    
-    res.json({
-      success: true,
-      data: visitor
-    });
-    
-  } catch (error) {
-    console.error('Erreur lors de la récupération du visiteur:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de la récupération du visiteur'
-    });
-  }
-});
-
-// Exporter les données des visiteurs (admin)
+// Exporter les données des visiteurs (admin) - DOIT être AVANT /visitors/:id
 router.get('/visitors/export/:format', authenticateAdmin, async (req, res) => {
   try {
     const { format } = req.params;
@@ -273,6 +186,93 @@ router.get('/visitors/export/:format', authenticateAdmin, async (req, res) => {
     res.status(500).json({
       success: false,
       message: 'Erreur lors de l\'export des visiteurs'
+    });
+  }
+});
+
+// Récupérer tous les visiteurs (admin)
+router.get('/visitors', authenticateAdmin, async (req, res) => {
+  try {
+    const { 
+      page = 1, 
+      limit = 20, 
+      search = '', 
+      country = '', 
+      sortBy = 'lastVisitAt', 
+      sortOrder = 'desc' 
+    } = req.query;
+    
+    const skip = (page - 1) * limit;
+    const query = {};
+    
+    // Filtres
+    if (search) {
+      query.$or = [
+        { firstName: { $regex: search, $options: 'i' } },
+        { lastName: { $regex: search, $options: 'i' } },
+        { email: { $regex: search, $options: 'i' } }
+      ];
+    }
+    
+    if (country) {
+      query.country = { $regex: country, $options: 'i' };
+    }
+    
+    // Tri
+    const sort = {};
+    sort[sortBy] = sortOrder === 'desc' ? -1 : 1;
+    
+    const visitors = await BlogVisitor.find(query)
+      .populate('blogsVisited.blog', 'title slug')
+      .sort(sort)
+      .skip(skip)
+      .limit(parseInt(limit));
+    
+    const total = await BlogVisitor.countDocuments(query);
+    
+    res.json({
+      success: true,
+      data: visitors,
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        pages: Math.ceil(total / limit)
+      }
+    });
+    
+  } catch (error) {
+    console.error('Erreur lors de la récupération des visiteurs:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des visiteurs'
+    });
+  }
+});
+
+// Récupérer un visiteur par ID (admin) - DOIT être à la FIN (après toutes les routes spécifiques)
+router.get('/visitors/:id', authenticateAdmin, async (req, res) => {
+  try {
+    const visitor = await BlogVisitor.findById(req.params.id)
+      .populate('blogsVisited.blog', 'title slug category type publishedAt');
+    
+    if (!visitor) {
+      return res.status(404).json({
+        success: false,
+        message: 'Visiteur non trouvé'
+      });
+    }
+    
+    res.json({
+      success: true,
+      data: visitor
+    });
+    
+  } catch (error) {
+    console.error('Erreur lors de la récupération du visiteur:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération du visiteur'
     });
   }
 });
