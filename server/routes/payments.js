@@ -45,8 +45,19 @@ router.post('/record', async (req, res) => {
 
     await payment.save();
 
+    // Récupérer les données utilisateur depuis paymentDetails si disponibles
+    const userCompanyName = paymentDetails?.userCompanyName || planName;
+    const userEmail = paymentDetails?.userEmail || customerEmail;
+    
+    console.log('🔍 [PAYMENT] User data from payment:', { 
+      userEmail, 
+      userCompanyName, 
+      customerEmail, 
+      planName 
+    });
+
     // Créer ou mettre à jour le compte utilisateur
-    let user = await User.findOne({ email: customerEmail });
+    let user = await User.findOne({ email: userEmail }); // Utiliser l'email utilisateur
     let tempPassword = null;
     let accountCreated = false;
 
@@ -56,16 +67,16 @@ router.post('/record', async (req, res) => {
       tempPassword = userModel.generateTempPassword();
       
       user = new User({
-        email: customerEmail,
+        email: userEmail, // Utiliser l'email utilisateur
         password: tempPassword,
-        companyName: planName, // Temporaire
+        companyName: userCompanyName, // Utiliser le nom de l'entreprise
         sector: 'other',
         companySize: 'sme',
         subscription: {
           plan: planId,
           status: 'active',
           startDate: new Date(),
-          endDate: planId === 'diagnostic' ? null : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 an pour standard/premium
+          endDate: planId === 'diagnostic' ? null : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 1 mois pour standard/premium
           paymentId: payment._id
         },
         isPremium: ['premium', 'diagnostic'].includes(planId),
@@ -79,11 +90,15 @@ router.post('/record', async (req, res) => {
       tempPassword = userModel.generateTempPassword();
       
       user.password = tempPassword;
+      // Mettre à jour le nom de l'entreprise si fourni
+      if (userCompanyName && userCompanyName !== planName) {
+        user.companyName = userCompanyName;
+      }
       user.subscription = {
         plan: planId,
         status: 'active',
         startDate: new Date(),
-        endDate: planId === 'diagnostic' ? null : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+        endDate: planId === 'diagnostic' ? null : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 1 mois pour standard/premium
         paymentId: payment._id
       };
       user.isPremium = ['premium', 'diagnostic'].includes(planId);
@@ -92,11 +107,15 @@ router.post('/record', async (req, res) => {
       accountCreated = true;
     } else {
       // L'utilisateur a déjà un compte, mettre à jour l'abonnement
+      // Mettre à jour le nom de l'entreprise si fourni
+      if (userCompanyName && userCompanyName !== planName) {
+        user.companyName = userCompanyName;
+      }
       user.subscription = {
         plan: planId,
         status: 'active',
         startDate: new Date(),
-        endDate: planId === 'diagnostic' ? null : new Date(Date.now() + 365 * 24 * 60 * 60 * 1000),
+        endDate: planId === 'diagnostic' ? null : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 1 mois pour standard/premium
         paymentId: payment._id
       };
       user.isPremium = ['premium', 'diagnostic'].includes(planId);
@@ -108,21 +127,21 @@ router.post('/record', async (req, res) => {
       if (accountCreated && tempPassword) {
         // NOUVEAU COMPTE - Email avec identifiants
         await sendAccountCreatedEmail(
-          customerEmail,
-          user.firstName || user.companyName,
+          userEmail, // Utiliser l'email utilisateur
+          user.firstName || user.companyName, // Utiliser le nom de l'entreprise
           tempPassword,
           planName
         );
-        console.log('✅ Email création compte envoyé après paiement à:', customerEmail);
+        console.log('✅ Email création compte envoyé après paiement à:', userEmail);
       } else {
         // COMPTE EXISTANT - Email de mise à jour d'abonnement
         await sendSubscriptionUpgradeEmail(
-          customerEmail,
-          user.firstName || user.companyName,
+          userEmail, // Utiliser l'email utilisateur
+          user.firstName || user.companyName, // Utiliser le nom de l'entreprise
           planName,
           planId
         );
-        console.log('✅ Email mise à jour abonnement envoyé à:', customerEmail);
+        console.log('✅ Email mise à jour abonnement envoyé à:', userEmail);
       }
     } catch (emailError) {
       console.error('❌ Erreur envoi email paiement:', emailError);

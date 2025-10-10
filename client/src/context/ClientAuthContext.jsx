@@ -5,7 +5,7 @@ import toast from 'react-hot-toast'
 
 const ClientAuthContext = createContext()
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000'
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
 
 export const useClientAuth = () => {
   const context = useContext(ClientAuthContext)
@@ -40,7 +40,7 @@ export const ClientAuthProvider = ({ children }) => {
 
   const loadUser = async () => {
     try {
-      const response = await axios.get(`${API_URL}/api/client-auth/me`, {
+      const response = await axios.get(`${API_URL}/unified-auth/me`, {
         headers: { Authorization: `Bearer ${token}` }
       })
       setUser(response.data.user)
@@ -57,7 +57,7 @@ export const ClientAuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      const response = await axios.post(`${API_URL}/api/client-auth/register`, userData)
+      const response = await axios.post(`${API_URL}/client-auth/register`, userData)
       
       const { token: newToken, user: newUser } = response.data
       
@@ -76,7 +76,7 @@ export const ClientAuthProvider = ({ children }) => {
 
   const login = async (email, password) => {
     try {
-      const response = await axios.post(`${API_URL}/api/client-auth/login`, {
+      const response = await axios.post(`${API_URL}/client-auth/login`, {
         email,
         password
       })
@@ -105,7 +105,7 @@ export const ClientAuthProvider = ({ children }) => {
 
   const updateProfile = async (profileData) => {
     try {
-      const response = await axios.put(`${API_URL}/api/client-auth/profile`, profileData, {
+      const response = await axios.put(`${API_URL}/client-auth/profile`, profileData, {
         headers: { Authorization: `Bearer ${token}` }
       })
       
@@ -121,7 +121,7 @@ export const ClientAuthProvider = ({ children }) => {
 
   const changePassword = async (currentPassword, newPassword) => {
     try {
-      await axios.put(`${API_URL}/api/client-auth/change-password`, {
+      await axios.put(`${API_URL}/client-auth/change-password`, {
         currentPassword,
         newPassword
       }, {
@@ -146,7 +146,9 @@ export const ClientAuthProvider = ({ children }) => {
     logout,
     updateProfile,
     changePassword,
-    refreshUser: loadUser
+    refreshUser: loadUser,
+    setToken,
+    setUser
   }
 
   return (

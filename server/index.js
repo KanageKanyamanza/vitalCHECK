@@ -77,6 +77,7 @@ app.use(cookieParser());
 // Routes - Aucune limitation de rate-limiting appliquée
 app.use("/api/auth", require("./routes/auth"));
 app.use("/api/client-auth", require("./routes/clientAuth").router); // Routes auth client
+app.use("/api/unified-auth", require("./routes/unifiedAuth")); // Connexion unifiée
 app.use("/api/assessments", require("./routes/assessments"));
 app.use("/api/reports", require("./routes/reports"));
 app.use("/api/contact", require("./routes/contact"));

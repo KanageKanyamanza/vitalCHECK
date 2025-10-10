@@ -968,7 +968,9 @@
       "startFirst": "Commencer ma première évaluation",
       "evaluation": "Évaluation",
       "score": "Score",
-      "viewReport": "Voir le rapport"
+      "viewReport": "Voir le rapport",
+      "downloadPDF": "Télécharger PDF",
+      "downloading": "Téléchargement..."
     },
     "paymentsHistory": {
       "title": "Historique des Paiements",
@@ -976,7 +978,21 @@
       "plan": "Plan",
       "amount": "Montant",
       "status": "Statut",
-      "completed": "Complété"
+      "completed": "Complété",
+      "pending": "En attente",
+      "failed": "Échoué",
+      "all": "Tous",
+      "active": "En attente",
+      "filterAll": "Tous les paiements",
+      "filterActive": "Paiements en attente",
+      "filterCompleted": "Paiements terminés",
+      "noPayments": "Aucun paiement trouvé pour ce filtre",
+      "stats": {
+        "total": "Total Paiements",
+        "active": "En Attente",
+        "completed": "Terminés",
+        "totalAmount": "Montant Total"
+      }
     }
   },
   "clientProfile": {

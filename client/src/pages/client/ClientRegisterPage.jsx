@@ -100,7 +100,7 @@ const ClientRegisterPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex items-center justify-center px-4 py-12">
+    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex items-center justify-center px-4 py-24">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -362,7 +362,7 @@ const ClientRegisterPage = () => {
           <div className="mt-6 text-center space-y-3">
             <p className="text-sm text-gray-600">
               {t('clientAuth.register.hasAccount')}{' '}
-              <Link to="/client/login" className="text-primary-600 hover:text-primary-700 font-semibold">
+              <Link to="/login" className="text-primary-600 hover:text-primary-700 font-semibold">
                 {t('clientAuth.register.login')}
               </Link>
             </p>

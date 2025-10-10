@@ -118,7 +118,7 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
   const handleLogout = () => {
     localStorage.removeItem('adminToken');
     localStorage.removeItem('adminData');
-    navigate('/admin/login');
+    navigate('/login');
   };
 
   const isActive = (path) => {

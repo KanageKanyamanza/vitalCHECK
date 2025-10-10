@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
@@ -14,6 +14,7 @@ import {
   Shield
 } from 'lucide-react'
 import { useClientAuth } from '../../context/ClientAuthContext'
+import toast from 'react-hot-toast'
 
 const ClientProfilePage = () => {
   const { t } = useTranslation()
@@ -22,12 +23,12 @@ const ClientProfilePage = () => {
   
   const [activeTab, setActiveTab] = useState('profile')
   const [profileData, setProfileData] = useState({
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
-    companyName: user?.companyName || '',
-    sector: user?.sector || '',
-    companySize: user?.companySize || '',
-    phone: user?.phone || ''
+    firstName: '',
+    lastName: '',
+    companyName: '',
+    sector: '',
+    companySize: '',
+    phone: ''
   })
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
@@ -35,6 +36,20 @@ const ClientProfilePage = () => {
     confirmPassword: ''
   })
   const [loading, setLoading] = useState(false)
+
+  // Mettre à jour profileData quand user est chargé
+  useEffect(() => {
+    if (user) {
+      setProfileData({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        companyName: user.companyName || '',
+        sector: user.sector || '',
+        companySize: user.companySize || '',
+        phone: user.phone || ''
+      })
+    }
+  }, [user])
 
   const handleProfileSubmit = async (e) => {
     e.preventDefault()
@@ -84,7 +99,7 @@ const ClientProfilePage = () => {
   const badge = getSubscriptionBadge()
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 py-[60px]">
       {/* Header */}
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
@@ -107,10 +122,10 @@ const ClientProfilePage = () => {
         {/* Tabs */}
         <div className="bg-white rounded-lg shadow mb-6">
           <div className="border-b border-gray-200">
-            <nav className="flex">
+            <nav className="flex overflow-x-auto">
               <button
                 onClick={() => setActiveTab('profile')}
-                className={`flex-1 py-4 px-6 text-center font-medium transition-colors ${
+                className={`flex-1 whitespace-nowrap py-4 px-6 text-center font-medium transition-colors ${
                   activeTab === 'profile'
                     ? 'border-b-2 border-primary-600 text-primary-600'
                     : 'text-gray-500 hover:text-gray-700'
@@ -121,7 +136,7 @@ const ClientProfilePage = () => {
               </button>
               <button
                 onClick={() => setActiveTab('subscription')}
-                className={`flex-1 py-4 px-6 text-center font-medium transition-colors ${
+                className={`flex-1 py-4 whitespace-nowrap px-6 text-center font-medium transition-colors ${
                   activeTab === 'subscription'
                     ? 'border-b-2 border-primary-600 text-primary-600'
                     : 'text-gray-500 hover:text-gray-700'
@@ -132,7 +147,7 @@ const ClientProfilePage = () => {
               </button>
               <button
                 onClick={() => setActiveTab('security')}
-                className={`flex-1 py-4 px-6 text-center font-medium transition-colors ${
+                className={`flex-1 whitespace-nowrap py-4 px-6 text-center font-medium transition-colors ${
                   activeTab === 'security'
                     ? 'border-b-2 border-primary-600 text-primary-600'
                     : 'text-gray-500 hover:text-gray-700'
@@ -263,7 +278,7 @@ const ClientProfilePage = () => {
               <div className="space-y-6">
                 <div className="bg-gradient-to-r from-primary-50 to-secondary-50 rounded-lg p-6">
                   <h3 className="font-bold text-gray-900 mb-4">{t('clientProfile.currentPlan')}</h3>
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-wrap gap-2 items-center justify-between">
                     <div>
                       <span className={`inline-flex px-4 py-2 rounded-full text-lg font-bold ${badge.bg} ${badge.text}`}>
                         {badge.label}

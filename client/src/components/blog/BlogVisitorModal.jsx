@@ -27,7 +27,6 @@ const BlogVisitorModal = ({
   // Pré-remplir le formulaire si c'est un visiteur de retour
   useEffect(() => {
     if (isReturningVisitor && visitorData) {
-      console.log('🔍 [BLOG MODAL] Données visiteur reçues:', visitorData)
       setFormData({
         firstName: visitorData.firstName || '',
         lastName: visitorData.lastName || '',
@@ -140,16 +139,6 @@ const BlogVisitorModal = ({
   }
 
   if (!isOpen) return null
-
-  // Debug pour voir l'état du composant
-  console.log('🔍 [BLOG MODAL] État du composant:', {
-    isOpen,
-    isReturningVisitor,
-    visitorData,
-    hasVisitorData: !!visitorData,
-    currentLanguage,
-    i18nLanguage: i18n.language
-  })
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto">

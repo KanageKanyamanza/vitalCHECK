@@ -53,13 +53,6 @@ const ResumeAssessmentPage = () => {
       
       if (response.data.success) {
         const { assessment } = response.data
-        console.log('✅ [RESUME] Données reçues:', {
-          id: assessment.id,
-          resumeToken: assessment.resumeToken,
-          currentQuestionIndex: assessment.currentQuestionIndex,
-          answersCount: assessment.answers.length,
-          user: assessment.user?.companyName
-        });
         
         // Set user data
         dispatch({ type: 'SET_USER', payload: assessment.user })
@@ -96,7 +89,6 @@ const ResumeAssessmentPage = () => {
         // Load questions
         await loadQuestions(assessment.language)
         
-        console.log('✅ [RESUME] Évaluation reprise avec succès');
         toast.success(t('resume.success'))
         setHasResumed(true)
       }
@@ -111,12 +103,10 @@ const ResumeAssessmentPage = () => {
 
   const loadQuestions = async (lang = 'fr') => {
     try {
-      console.log('📚 [RESUME] Chargement des questions pour langue:', lang);
       dispatch({ type: 'SET_LOADING', payload: true })
       const response = await assessmentAPI.getQuestions(lang)
       
       if (response.data.success) {
-        console.log('✅ [RESUME] Questions chargées:', response.data.data?.pillars?.length || 0, 'piliers');
         dispatch({ type: 'SET_QUESTIONS', payload: response.data.data })
       }
     } catch (error) {
@@ -137,7 +127,6 @@ const ResumeAssessmentPage = () => {
       });
 
       if (!assessmentId) {
-        console.log('⚠️ [RESUME] Pas d\'assessmentId, impossible de sauvegarder');
         return;
       }
 
@@ -152,7 +141,6 @@ const ResumeAssessmentPage = () => {
         currentQuestionIndex
       });
 
-      console.log('✅ [RESUME] Progression sauvegardée avec succès:', response.data);
     } catch (error) {
       console.error('❌ [RESUME] Erreur sauvegarde progression:', error);
       console.error('❌ [RESUME] Détails de l\'erreur:', {
@@ -178,7 +166,6 @@ const ResumeAssessmentPage = () => {
       });
 
       if (!assessmentId) {
-        console.log('⚠️ [RESUME] Pas d\'assessmentId, impossible de sauvegarder');
         return;
       }
 
@@ -187,7 +174,6 @@ const ResumeAssessmentPage = () => {
         currentQuestionIndex: currentIndex
       });
 
-      console.log('✅ [RESUME] Progression sauvegardée avec succès:', response.data);
     } catch (error) {
       console.error('❌ [RESUME] Erreur sauvegarde progression:', error);
       console.error('❌ [RESUME] Détails de l\'erreur:', {
@@ -209,7 +195,6 @@ const ResumeAssessmentPage = () => {
       });
 
       if (!assessmentId) {
-        console.log('⚠️ [RESUME] Pas d\'assessmentId, impossible de sauvegarder');
         return;
       }
 
@@ -218,7 +203,6 @@ const ResumeAssessmentPage = () => {
         currentQuestionIndex: questionIndex
       });
 
-      console.log('✅ [RESUME] Progression sauvegardée avec succès:', response.data);
     } catch (error) {
       console.error('❌ [RESUME] Erreur sauvegarde progression:', error);
       console.error('❌ [RESUME] Détails de l\'erreur:', {
@@ -272,6 +256,11 @@ const ResumeAssessmentPage = () => {
   }
 
   const handleSubmit = async () => {
+    // Protection contre les soumissions multiples
+    if (submitting) {
+      return
+    }
+
     if (answers.length !== getTotalQuestions()) {
       toast.error(t('assessment.pleaseAnswerAll'))
       return

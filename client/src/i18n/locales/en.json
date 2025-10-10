@@ -910,7 +910,9 @@
       "startFirst": "Start my first assessment",
       "evaluation": "Assessment",
       "score": "Score",
-      "viewReport": "View report"
+      "viewReport": "View report",
+      "downloadPDF": "Download PDF",
+      "downloading": "Downloading..."
     },
     "paymentsHistory": {
       "title": "Payment History",
@@ -918,7 +920,21 @@
       "plan": "Plan",
       "amount": "Amount",
       "status": "Status",
-      "completed": "Completed"
+      "completed": "Completed",
+      "pending": "Pending",
+      "failed": "Failed",
+      "all": "All",
+      "active": "Pending",
+      "filterAll": "All payments",
+      "filterActive": "Pending payments",
+      "filterCompleted": "Completed payments",
+      "noPayments": "No payments found for this filter",
+      "stats": {
+        "total": "Total Payments",
+        "active": "Pending",
+        "completed": "Completed",
+        "totalAmount": "Total Amount"
+      }
     }
   },
   "clientProfile": {
