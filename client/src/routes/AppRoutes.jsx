@@ -19,7 +19,7 @@ import BlogPage from '../pages/BlogPage'
 import BlogDetailPage from '../pages/BlogDetailPage'
 import ReportDownloadPage from '../pages/ReportDownloadPage'
 import AdminApp from '../pages/admin/AdminApp'
-import { PingPongTest, LogoTest } from '../components/test'
+import { PingPongTest } from '../components/test'
 
 const AppRoutes = () => {
   return (
@@ -45,7 +45,6 @@ const AppRoutes = () => {
       <Route path="/blog/:slug" element={<BlogDetailPage />} />
       <Route path="/report/download/:assessmentId" element={<ReportDownloadPage />} />
       <Route path="/ping-test" element={<PingPongTest />} />
-      <Route path="/logo-test" element={<LogoTest />} />
       <Route path="/admin/*" element={<AdminApp />} />
     </Routes>
   )
