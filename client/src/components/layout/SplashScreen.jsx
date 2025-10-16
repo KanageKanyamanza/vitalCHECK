@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import Logo from '../../assets/logo.png'
 
 
 const SplashScreen = ({ onLoadingComplete }) => {
@@ -78,7 +77,7 @@ const SplashScreen = ({ onLoadingComplete }) => {
             className="flex items-center justify-center"
           >
             <img 
-              src={Logo} 
+              src="/ms-icon-310x310.png" 
               alt="VitalCHECK Logo" 
               className="w-24 h-24 rounded-lg"
             />
