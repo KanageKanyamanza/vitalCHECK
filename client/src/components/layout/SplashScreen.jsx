@@ -3,23 +3,16 @@ import { motion } from 'framer-motion'
 
 const SplashScreen = ({ onLoadingComplete }) => {
   const [loading, setLoading] = useState(true)
-  const [loadingProgress, setLoadingProgress] = useState(0)
 
   // Simulation du chargement simple
   useEffect(() => {
     const simulateLoading = async () => {
       try {
-        // Simulation du chargement progressif
-        for (let i = 0; i <= 100; i += 2) {
-          setLoadingProgress(i)
-          await new Promise(resolve => setTimeout(resolve, 50))
-        }
+        // Délai simple de 2 secondes
+        await new Promise(resolve => setTimeout(resolve, 3000))
 
-        // Délai avant de fermer le splash
-        setTimeout(() => {
-          setLoading(false)
-          onLoadingComplete?.()
-        }, 500)
+        setLoading(false)
+        onLoadingComplete?.()
 
       } catch (error) {
         console.error('Loading error:', error)
@@ -55,31 +48,6 @@ const SplashScreen = ({ onLoadingComplete }) => {
             <h1 className="text-2xl font-semibold text-gray-800">
               VitalCHECK
             </h1>
-          </motion.div>
-
-          {/* Barre de progression simple */}
-          <motion.div
-            initial={{ width: 0, opacity: 0 }}
-            animate={{ width: "200px", opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="mt-8 w-52 bg-gray-200 rounded-full h-1 overflow-hidden"
-          >
-            <motion.div
-              className="h-full bg-blue-500 rounded-full"
-              initial={{ width: "0%" }}
-              animate={{ width: `${loadingProgress}%` }}
-              transition={{ duration: 0.3 }}
-            />
-          </motion.div>
-
-          {/* Pourcentage */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            className="mt-4 text-sm text-gray-600"
-          >
-            {loadingProgress}%
           </motion.div>
         </motion.div>
       )}
