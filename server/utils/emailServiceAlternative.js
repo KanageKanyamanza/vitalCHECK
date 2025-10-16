@@ -50,7 +50,7 @@ const sendEmailAlternative = async (emailOptions, retryCount = 0) => {
     const transporter = createAlternativeTransporter();
     
     const mailOptions = {
-      from: `"VitalCheck Enterprise Health Check" <${process.env.EMAIL_USER}>`,
+      from: `"VitalCHECK Enterprise Health Check" <${process.env.EMAIL_USER}>`,
       to: emailOptions.to,
       subject: emailOptions.subject,
       html: emailOptions.html,

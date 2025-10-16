@@ -1,4 +1,4 @@
-# Guide du Blog Bilingue - VitalCheck Enterprise Health Check
+# Guide du Blog Bilingue - VitalCHECK Enterprise Health Check
 
 ## 🌍 Vue d'Ensemble
 
@@ -45,8 +45,8 @@ Votre système de blog est maintenant **entièrement bilingue** ! Vous pouvez é
     "en": "The complete content in English..."
   },
   "metaTitle": {
-    "fr": "Santé Entreprise - Conseils VitalCheck",
-    "en": "Business Health - VitalCheck Tips"
+    "fr": "Santé Entreprise - Conseils VitalCHECK",
+    "en": "Business Health - VitalCHECK Tips"
   },
   "metaDescription": {
     "fr": "Conseils pour améliorer la santé de votre entreprise",

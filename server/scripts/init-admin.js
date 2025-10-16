@@ -4,7 +4,7 @@ const Admin = require('../models/Admin');
 async function initAdmin() {
   try {
     // Vérifier si un admin existe déjà
-    const existingAdmin = await Admin.findOne({ email: 'admin@VitalCheck.com' });
+    const existingAdmin = await Admin.findOne({ email: 'admin@VitalCHECK.com' });
     if (existingAdmin) {
       console.log('✅ Admin existe déjà');
       return;
@@ -12,9 +12,9 @@ async function initAdmin() {
 
     // Créer le premier admin (le mot de passe sera hashé automatiquement par le middleware pre('save'))
     const admin = new Admin({
-      email: 'admin@VitalCheck.com',
+      email: 'admin@VitalCHECK.com',
       password: 'admin123', // Sera hashé automatiquement par le middleware
-      name: 'Administrateur VitalCheck',
+      name: 'Administrateur VitalCHECK',
       role: 'super-admin',
       permissions: {
         viewUsers: true,
@@ -29,7 +29,7 @@ async function initAdmin() {
 
     await admin.save();
     console.log('✅ Admin créé avec succès:');
-    console.log('📧 Email: admin@VitalCheck.com');
+    console.log('📧 Email: admin@VitalCHECK.com');
     console.log('🔑 Mot de passe: admin123');
     console.log('⚠️  IMPORTANT: Changez le mot de passe en production !');
   } catch (error) {

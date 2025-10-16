@@ -609,7 +609,7 @@ const PricingPage = () => {
 
         {/* Social Share */}
         <SocialShare 
-          title="Tarifs VitalCheck - Plans d'abonnement"
+          title="Tarifs VitalCHECK - Plans d'abonnement"
           description="Choisissez le plan adapté à votre entreprise : GRATUIT, STANDARD, PREMIUM ou SERVICE DE DIAGNOSTIC."
         />
       </div>

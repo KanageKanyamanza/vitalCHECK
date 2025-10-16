@@ -1,7 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 
-const VitalCheckLogo = ({ 
+const VitalCHECKLogo = ({ 
   size = 'large', 
   showText = true, 
   animated = true,
@@ -68,7 +68,7 @@ const VitalCheckLogo = ({
       >
         <img 
           src={logoPaths[logoType]} 
-          alt="VitalCheck Logo" 
+          alt="VitalCHECK Logo" 
           className={`${sizeClasses[size]} drop-shadow-2xl rounded-xl`}
         />
       </motion.div>
@@ -86,7 +86,7 @@ const VitalCheckLogo = ({
           className="  vitalcheck-gradient-text px-8 py-4 rounded-2xl"
         >
           {/* <h1 className={`${textSizes[size]} font-bold tracking-wider`}>
-            VitalCheck
+            VitalCHECK
           </h1> */}
           <p className="text-2xl  vitalcheck-gradient-text font-medium text-center mt-1 opacity-90">
             Enterprise Health Check
@@ -97,4 +97,4 @@ const VitalCheckLogo = ({
   )
 }
 
-export default VitalCheckLogo
+export default VitalCHECKLogo

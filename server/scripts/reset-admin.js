@@ -5,18 +5,18 @@ require('dotenv').config();
 async function resetAdmin() {
   try {
     // Connexion à MongoDB
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/VitalCheck-health-check');
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/VitalCHECK-health-check');
     console.log('Connecté à MongoDB');
 
     // Supprimer l'admin existant
-    await Admin.deleteOne({ email: 'admin@VitalCheck.com' });
+    await Admin.deleteOne({ email: 'admin@VitalCHECK.com' });
     console.log('✅ Admin existant supprimé');
 
     // Créer le nouvel admin
     const admin = new Admin({
-      email: 'admin@VitalCheck.com',
+      email: 'admin@VitalCHECK.com',
       password: 'admin123', // Sera hashé automatiquement par le middleware
-      name: 'Administrateur VitalCheck',
+      name: 'Administrateur VitalCHECK',
       role: 'super-admin',
       permissions: {
         viewUsers: true,
@@ -31,7 +31,7 @@ async function resetAdmin() {
 
     await admin.save();
     console.log('✅ Nouvel admin créé avec succès:');
-    console.log('📧 Email: admin@VitalCheck.com');
+    console.log('📧 Email: admin@VitalCHECK.com');
     console.log('🔑 Mot de passe: admin123');
     console.log('⚠️  IMPORTANT: Changez le mot de passe en production !');
 

@@ -1448,7 +1448,7 @@ router.post('/reports/resend/:assessmentId', authenticateAdmin, async (req, res)
     const clientUrl = process.env.CLIENT_URL || 'https://www.checkmyenterprise.com';
     const downloadUrl = `${clientUrl}/report/download/${assessment._id}`;
     
-    const pdfFilename = `VitalCheck-Health-Check-${assessment.user.companyName}-${new Date(assessment.completedAt).toISOString().split('T')[0]}.pdf`;
+    const pdfFilename = `VitalCHECK-Health-Check-${assessment.user.companyName}-${new Date(assessment.completedAt).toISOString().split('T')[0]}.pdf`;
 
     const emailData = {
       to: assessment.user.email,

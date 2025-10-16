@@ -6,7 +6,7 @@ require('dotenv').config();
 async function testBlogViewsSystem() {
   try {
     console.log('🚀 Connexion à MongoDB...');
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/VitalCheck-health-check');
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/VitalCHECK-health-check');
     console.log('✅ Connecté à MongoDB');
 
     // Récupérer tous les blogs

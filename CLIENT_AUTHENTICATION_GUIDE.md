@@ -1,8 +1,8 @@
-# 🔐 Système d'Authentification Client - VitalCheck
+# 🔐 Système d'Authentification Client - VitalCHECK
 
 ## 🎯 Vue d'Ensemble
 
-VitalCheck dispose maintenant d'un système complet d'authentification client permettant aux utilisateurs de :
+VitalCHECK dispose maintenant d'un système complet d'authentification client permettant aux utilisateurs de :
 - ✅ Créer un compte et se connecter
 - ✅ Accéder à un tableau de bord personnalisé
 - ✅ Consulter l'historique de toutes leurs évaluations
@@ -162,7 +162,7 @@ Si non connecté → Redirection vers `/client/login`
    - Email: client@example.com
    - Mot de passe temporaire: Xyz@1234Abc$
    ↓
-6. Client reçoit l'email "Votre compte VitalCheck [PLAN] est prêt !"
+6. Client reçoit l'email "Votre compte VitalCHECK [PLAN] est prêt !"
    ↓
 7. Client clique sur "Se connecter maintenant"
    ↓
@@ -243,7 +243,7 @@ Si non connecté → Redirection vers `/client/login`
 
 ### Email après Paiement (Nouveau Compte)
 
-**Sujet** : `Votre compte VitalCheck [STANDARD/PREMIUM/DIAGNOSTIC] est prêt !`
+**Sujet** : `Votre compte VitalCHECK [STANDARD/PREMIUM/DIAGNOSTIC] est prêt !`
 
 **Contenu** :
 - ✅ Badge du plan acheté
@@ -255,7 +255,7 @@ Si non connecté → Redirection vers `/client/login`
 
 ### Email Inscription Manuelle
 
-**Sujet** : `Bienvenue sur VitalCheck - Vos identifiants de connexion`
+**Sujet** : `Bienvenue sur VitalCHECK - Vos identifiants de connexion`
 
 **Contenu** :
 - ✅ Message de bienvenue
@@ -391,7 +391,7 @@ npm run dev
 
 2. **Vérifier l'email** :
    - Consultez votre inbox
-   - Email : "Votre compte VitalCheck STANDARD est prêt !"
+   - Email : "Votre compte VitalCHECK STANDARD est prêt !"
    - Notez le mot de passe temporaire
 
 3. **Se connecter** :
@@ -508,7 +508,7 @@ Mettre à jour `paymentSuccess.*` :
 ### Dans le Dashboard
 
 Messages à afficher :
-- "Bienvenue dans votre espace VitalCheck !"
+- "Bienvenue dans votre espace VitalCHECK !"
 - "Votre abonnement [PLAN] est actif"
 - "Vous avez X évaluations"
 

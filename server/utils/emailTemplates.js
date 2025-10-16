@@ -18,13 +18,13 @@ const createUnifiedEmailTemplate = (config) => {
   const translations = {
     fr: {
       generatedOn: 'Généré le',
-      version: 'VitalCheck Enterprise Health Check v1.0',
+      version: 'VitalCHECK Enterprise Health Check v1.0',
       contact: '📧 info@checkmyenterprise.com | 📞 +221 771970713 (SEN) / +44 7546756325 (GB)',
       tagline: 'Évaluation Professionnelle d\'Entreprise & Conseil en Croissance'
     },
     en: {
       generatedOn: 'Generated on',
-      version: 'VitalCheck Enterprise Health Check v1.0',
+      version: 'VitalCHECK Enterprise Health Check v1.0',
       contact: '📧 info@checkmyenterprise.com | 📞 +221 771970713 (SEN) / +44 7546756325 (GB)',
       tagline: 'Professional Business Assessment & Growth Consulting'
     }
@@ -38,18 +38,18 @@ const createUnifiedEmailTemplate = (config) => {
         <head>
           <meta charset="UTF-8">
           <meta name="viewport" content="width=device-width, initial-scale=1.0">
-      <title>${title} - VitalCheck Enterprise Health Check</title>
+      <title>${title} - VitalCHECK Enterprise Health Check</title>
         </head>
         <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
           <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
             
-            <!-- Header avec logo VitalCheck -->
+            <!-- Header avec logo VitalCHECK -->
         <div style="background: linear-gradient(135deg, #F4C542 0%, #00751B 100%); padding: 20px 15px; text-align: center; position: relative; overflow: hidden;">
               <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSIyMCIgY3k9IjIwIiByPSIyIiBmaWxsPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMSkiLz48Y2lyY2xlIGN4PSI4MCIgY3k9IjQwIiByPSIxLjUiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPjxjaXJjbGUgY3g9IjQwIiBjeT0iODAiIHI9IjEiIGZpbGw9InJnYmEoMjU1LDI1NSwyNTUsMC4xKSIvPjwvc3ZnPg==') repeat; opacity: 0.3;"></div>
               
-              <!-- Logo VitalCheck -->
+              <!-- Logo VitalCHECK -->
               <div style="position: relative; z-index: 2;">
-                <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="VitalCheck Logo" style="width: 80px; height: 80px; border-radius: 8px; object-fit: contain; margin-bottom: 10px;" />
+                <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="VitalCHECK Logo" style="width: 80px; height: 80px; border-radius: 8px; object-fit: contain; margin-bottom: 10px;" />
                 <h1 style="color: white; margin: 0; font-size: 28px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
                   Enterprise Health Check
                 </h1>
@@ -152,7 +152,7 @@ const createUnifiedEmailTemplate = (config) => {
             <!-- Footer professionnel -->
         <div style="background: #2d3748; padding: 15px; text-align: center; color: #a0aec0;">
               <div style="margin-bottom: 10px;">
-                <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="VitalCheck Logo" style="width: 50px; height: 50px; border-radius: 8px; object-fit: contain; margin: 0 auto 10px auto;" />
+                <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="VitalCHECK Logo" style="width: 50px; height: 50px; border-radius: 8px; object-fit: contain; margin: 0 auto 10px auto;" />
                 <div style="color: #e2e8f0; font-weight: 600; font-size: 14px; margin-top: 5px;">
                   Enterprise Health Check
                 </div>
@@ -178,7 +178,7 @@ const createUnifiedEmailTemplate = (config) => {
 const emailTemplates = {
   en: {
     reportReady: {
-      subject: 'Your VitalCheck Enterprise Health Check Report is Ready!',
+      subject: 'Your VitalCHECK Enterprise Health Check Report is Ready!',
       html: (user, assessment, pdfDownloadUrl = null, tempPassword = null) => createUnifiedEmailTemplate({
         language: 'en',
         title: 'Your Report is Ready!',
@@ -238,7 +238,7 @@ const emailTemplates = {
   },
   fr: {
     reportReady: {
-      subject: 'Votre rapport VitalCheck Enterprise Health Check est prêt !',
+      subject: 'Votre rapport VitalCHECK Enterprise Health Check est prêt !',
       html: (user, assessment, pdfDownloadUrl = null, tempPassword = null) => createUnifiedEmailTemplate({
         language: 'fr',
         title: 'Votre rapport est prêt !',

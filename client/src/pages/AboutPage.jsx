@@ -320,7 +320,7 @@ const AboutPage = () => {
 
       {/* Social Share */}
       <SocialShare 
-        title="À Propos de VitalCheck - Enterprise Health Check"
+        title="À Propos de VitalCHECK - Enterprise Health Check"
         description="Découvrez notre mission d'aider les PME à diagnostiquer, grandir et se digitaliser."
       />
     </div>

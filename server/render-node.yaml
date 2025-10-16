@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: VitalCheck-health-check-api-node
+    name: VitalCHECK-health-check-api-node
     env: node
     plan: starter
     buildCommand: |

@@ -1,5 +1,5 @@
 // Service Worker avec gestion des mises à jour
-const CACHE_NAME = 'VitalCheck-health-check-v1.0.1'; // Incrémenter à chaque déploiement
+const CACHE_NAME = 'VitalCHECK-health-check-v1.0.1'; // Incrémenter à chaque déploiement
 const urlsToCache = [
   '/',
   '/assessment',
@@ -117,7 +117,7 @@ self.addEventListener('push', (event) => {
   };
 
   event.waitUntil(
-    self.registration.showNotification('VitalCheck Enterprise Health Check', options)
+    self.registration.showNotification('VitalCHECK Enterprise Health Check', options)
   );
 });
 

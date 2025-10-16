@@ -77,7 +77,7 @@ const handleDownloadReport = async (assessmentId) => {
     
     // Générer un nom de fichier avec la date
     const date = new Date().toISOString().split('T')[0];
-    link.download = `VitalCheck-Report-${date}.pdf`;
+    link.download = `VitalCHECK-Report-${date}.pdf`;
     
     document.body.appendChild(link);
     link.click();
@@ -201,7 +201,7 @@ const url = window.URL.createObjectURL(blob);
 ```javascript
 // Nom de fichier avec date automatique
 const date = new Date().toISOString().split('T')[0];
-link.download = `VitalCheck-Report-${date}.pdf`;
+link.download = `VitalCHECK-Report-${date}.pdf`;
 ```
 
 ### **3. Gestion d'Erreur**

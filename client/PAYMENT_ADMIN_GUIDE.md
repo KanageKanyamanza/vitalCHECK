@@ -36,7 +36,7 @@ Pour chaque paiement, vous pouvez :
 
 **Template par défaut** :
 ```
-Sujet: VitalCheck - Confirmation de votre abonnement [NOM DU PLAN]
+Sujet: VitalCHECK - Confirmation de votre abonnement [NOM DU PLAN]
 
 Message:
 Bonjour,
@@ -46,7 +46,7 @@ Nous avons bien reçu votre paiement pour le plan [NOM DU PLAN].
 Nos experts vont vous contacter sous peu pour organiser vos services.
 
 Cordialement,
-L'équipe VitalCheck
+L'équipe VitalCHECK
 ```
 
 ##### ✅ Marquer comme Traité
@@ -153,7 +153,7 @@ Quand un client paie via PayPal :
 
 #### Pour STANDARD ou PREMIUM (mensuel) :
 ```
-Sujet: Bienvenue dans VitalCheck [STANDARD/PREMIUM] 🎉
+Sujet: Bienvenue dans VitalCHECK [STANDARD/PREMIUM] 🎉
 
 Bonjour,
 
@@ -165,14 +165,14 @@ Votre abonnement est maintenant actif. Voici les prochaines étapes :
 2. Nos experts vous contacteront sous 24h
 3. Vous pouvez nous joindre à tout moment à info@checkmyenterprise.com
 
-Bienvenue dans la famille VitalCheck !
+Bienvenue dans la famille VitalCHECK !
 
-L'équipe VitalCheck
+L'équipe VitalCHECK
 ```
 
 #### Pour DIAGNOSTIC SERVICE :
 ```
-Sujet: Diagnostic Service VitalCheck - Planification 📊
+Sujet: Diagnostic Service VitalCHECK - Planification 📊
 
 Bonjour,
 
@@ -191,7 +191,7 @@ L'intervention comprend :
 ✓ 3 mois d'implémentation guidée
 
 À très bientôt,
-L'équipe VitalCheck
+L'équipe VitalCHECK
 ```
 
 ## 🆘 Dépannage

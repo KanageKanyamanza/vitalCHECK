@@ -178,7 +178,7 @@ async function generateDynamicSitemap(req, res) {
 
 // Route pour robots.txt
 router.get('/robots.txt', (req, res) => {
-  const robotsTxt = `# Robots.txt pour VitalCheck Enterprise Health Check
+  const robotsTxt = `# Robots.txt pour VitalCHECK Enterprise Health Check
 # https://www.checkmyenterprise.com
 
 User-agent: *

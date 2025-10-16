@@ -21,7 +21,7 @@ Composants d'interface utilisateur réutilisables
 - `ScoreGauge.jsx` - Jauge de score circulaire
 - `PillarChart.jsx` - Graphique en barres des piliers
 - `RecommendationsList.jsx` - Liste des recommandations
-- `VitalCheckLogo.jsx` - Logo VitalCheck réutilisable
+- `VitalCHECKLogo.jsx` - Logo VitalCHECK réutilisable
 - `InstallPWAButton.jsx` - Bouton d'installation PWA
 - `LanguageSelector.jsx` - Sélecteur de langue
 - `NavbarLanguageSelector.jsx` - Sélecteur de langue pour navbar
@@ -46,7 +46,7 @@ Composants de test et développement
 ```javascript
 import { Navbar, BackToTop } from '../components/navigation';
 import { Hero, SplashScreen } from '../components/layout';
-import { ScoreGauge, VitalCheckLogo } from '../components/ui';
+import { ScoreGauge, VitalCHECKLogo } from '../components/ui';
 import { AssessmentForm, QuestionCard } from '../components/assessment';
 ```
 

@@ -1,5 +1,5 @@
 import React from 'react'
-import { VitalCheckLogo } from '../ui'
+import { VitalCHECKLogo } from '../ui'
 
 const LogoTest = () => {
   const logoTypes = [
@@ -13,7 +13,7 @@ const LogoTest = () => {
   return (
     <div className="max-w-6xl mx-auto p-6">
       <h1 className="text-3xl font-bold text-center mb-8 text-gray-900">
-        🎨 Test des Logos VitalCheck
+        🎨 Test des Logos VitalCHECK
       </h1>
 
       {/* Test des différents types de logos */}
@@ -33,7 +33,7 @@ const LogoTest = () => {
               </p>
               
               <div className="flex justify-center">
-                <VitalCheckLogo 
+                <VitalCHECKLogo 
                   size="medium" 
                   showText={false} 
                   animated={false}
@@ -63,7 +63,7 @@ const LogoTest = () => {
               </h3>
               
               <div className="flex justify-center mb-2">
-                <VitalCheckLogo 
+                <VitalCHECKLogo 
                   size={size} 
                   showText={false} 
                   animated={false}
@@ -93,7 +93,7 @@ const LogoTest = () => {
             <h3 className="text-lg font-semibold mb-4 text-gray-800">
               Logo Principal (MS Icon)
             </h3>
-            <VitalCheckLogo 
+            <VitalCHECKLogo 
               size="large" 
               showText={true} 
               animated={false}
@@ -105,7 +105,7 @@ const LogoTest = () => {
             <h3 className="text-lg font-semibold mb-4 text-gray-800">
               Logo Compact (Favicon)
             </h3>
-            <VitalCheckLogo 
+            <VitalCHECKLogo 
               size="medium" 
               showText={true} 
               animated={false}
@@ -127,7 +127,7 @@ const LogoTest = () => {
           </h3>
           
           <div className="flex justify-center">
-            <VitalCheckLogo 
+            <VitalCHECKLogo 
               size="large" 
               showText={true} 
               animated={true}
@@ -151,7 +151,7 @@ const LogoTest = () => {
           <p><strong>Props disponibles :</strong></p>
           <ul className="list-disc list-inside ml-4 space-y-1">
             <li><code>size</code>: 'small', 'medium', 'large', 'xlarge'</li>
-            <li><code>showText</code>: true/false (afficher le texte VitalCheck)</li>
+            <li><code>showText</code>: true/false (afficher le texte VitalCHECK)</li>
             <li><code>animated</code>: true/false (animations d'entrée)</li>
             <li><code>logoType</code>: 'ms-icon', 'favicon', 'apple-icon'</li>
             <li><code>className</code>: classes CSS personnalisées</li>
@@ -159,7 +159,7 @@ const LogoTest = () => {
           
           <p className="mt-4"><strong>Exemple d'utilisation :</strong></p>
           <pre className="bg-blue-100 p-2 rounded text-xs overflow-x-auto">
-{`<VitalCheckLogo 
+{`<VitalCHECKLogo 
   size="large" 
   showText={true} 
   animated={true}

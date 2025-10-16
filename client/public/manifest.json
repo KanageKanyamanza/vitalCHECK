@@ -1,7 +1,7 @@
 {
-  "name": "VitalCheck Enterprise Health Check",
-  "short_name": "VitalCheck Health Check",
-  "description": "Évaluez la santé organisationnelle de votre entreprise africaine avec VitalCheck",
+  "name": "VitalCHECK Enterprise Health Check",
+  "short_name": "VitalCHECK Health Check",
+  "description": "Évaluez la santé organisationnelle de votre entreprise africaine avec VitalCHECK",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

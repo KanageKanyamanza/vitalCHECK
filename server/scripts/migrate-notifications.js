@@ -6,7 +6,7 @@ require('dotenv').config();
 async function migrateNotifications() {
   try {
     // Connexion à MongoDB
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/VitalCheck-health-check');
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/VitalCHECK-health-check');
     console.log('Connecté à MongoDB');
 
     // Récupérer les évaluations des dernières 7 jours

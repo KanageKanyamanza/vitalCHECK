@@ -79,7 +79,7 @@ async function getLocationFromIP(ipAddress) {
     const response = await axios.get(`https://ipapi.co/${ipAddress}/json/`, {
       timeout: 60000, // 60 secondes (1 minute)
       headers: {
-        'User-Agent': 'VitalCheck-Health-Check/1.0'
+        'User-Agent': 'VitalCHECK-Health-Check/1.0'
       }
     });
 

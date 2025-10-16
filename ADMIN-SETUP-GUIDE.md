@@ -1,8 +1,8 @@
-# Guide de Configuration du Système d'Administration VitalCheck
+# Guide de Configuration du Système d'Administration VitalCHECK
 
 ## Vue d'ensemble
 
-Le système d'administration VitalCheck permet aux administrateurs de gérer les utilisateurs, consulter les évaluations et envoyer des emails de relance.
+Le système d'administration VitalCHECK permet aux administrateurs de gérer les utilisateurs, consulter les évaluations et envoyer des emails de relance.
 
 ## Configuration du Serveur
 
@@ -42,7 +42,7 @@ node scripts/create-admin.js
 
 **Identifiants par défaut :**
 
-- Email: <admin@VitalCheck.com>
+- Email: <admin@VitalCHECK.com>
 - Mot de passe: admin123
 
 ⚠️ **IMPORTANT** : Changez le mot de passe en production !

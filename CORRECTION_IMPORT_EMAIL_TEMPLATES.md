@@ -87,12 +87,12 @@ const { emailTemplates } = require('../utils/emailTemplates');
 [EMAIL] Envoi d'email en cours... (tentative 1/1)
 [EMAIL] Email envoyé avec succès:
   - to: user@example.com
-  - subject: Votre rapport VitalCheck est prêt - Accédez à votre compte !
+  - subject: Votre rapport VitalCHECK est prêt - Accédez à votre compte !
   - attachmentsCount: 1  # ✅ PDF joint
 ```
 
 ### **2. Structure de l'Email Final**
-- ✅ **Sujet** : "Votre rapport VitalCheck est prêt - Accédez à votre compte !"
+- ✅ **Sujet** : "Votre rapport VitalCHECK est prêt - Accédez à votre compte !"
 - ✅ **Contenu** : Score, détails entreprise, recommandations
 - ✅ **Boutons** : 
   - "📄 Télécharger le Rapport PDF" (primary)

@@ -1,8 +1,8 @@
-# 📧 Scénarios d'Emails Contextuels - VitalCheck
+# 📧 Scénarios d'Emails Contextuels - VitalCHECK
 
 ## 🎯 Vue d'Ensemble
 
-Le système VitalCheck envoie automatiquement des emails **différents selon le contexte** de l'utilisateur.
+Le système VitalCHECK envoie automatiquement des emails **différents selon le contexte** de l'utilisateur.
 
 ## 📋 Matrice des Scénarios
 
@@ -26,13 +26,13 @@ Le système VitalCheck envoie automatiquement des emails **différents selon le 
 
 **Sujet** : 
 ```
-Votre rapport VitalCheck est prêt - Accédez à votre compte !
+Votre rapport VitalCHECK est prêt - Accédez à votre compte !
 ```
 
 **Contenu** :
 ```
 🎉 Évaluation Complétée !
-Votre compte VitalCheck est créé
+Votre compte VitalCHECK est créé
 
 - Score global : [XX]/100 (encadré vert)
 - Compte GRATUIT créé automatiquement
@@ -60,7 +60,7 @@ user.save()
 
 **Sujet** :
 ```
-Nouvelle évaluation complétée - VitalCheck
+Nouvelle évaluation complétée - VitalCHECK
 ```
 
 **Contenu** :
@@ -96,7 +96,7 @@ Consultez vos résultats
 
 **Sujet** :
 ```
-Votre compte VitalCheck [STANDARD/PREMIUM/DIAGNOSTIC] est prêt !
+Votre compte VitalCHECK [STANDARD/PREMIUM/DIAGNOSTIC] est prêt !
 ```
 
 **Contenu** :
@@ -247,7 +247,7 @@ user.isPremium = true (si premium/diagnostic)
    - subscription.status = 'active'
    - hasAccount = true
    ↓
-4. Email "Votre compte VitalCheck [PLAN] est prêt !"
+4. Email "Votre compte VitalCHECK [PLAN] est prêt !"
    - Badge du plan
    - Credentials fournis
    - Fonctionnalités du plan
@@ -271,7 +271,7 @@ user.isPremium = true (si premium/diagnostic)
    - Active abonnement
    - hasAccount = true
    ↓
-4. Email "Votre compte VitalCheck [PLAN] est prêt !"
+4. Email "Votre compte VitalCHECK [PLAN] est prêt !"
    - Badge du plan
    - Credentials fournis
    ↓
@@ -356,7 +356,7 @@ if (!user) {
 - ✅ **Suivi facile** : Métadonnée `accountCreated` dans notification
 - ✅ **Pas d'intervention** : Tout est automatique
 
-### Pour VitalCheck
+### Pour VitalCHECK
 - ✅ **Conversion maximale** : Tous les utilisateurs ont un compte
 - ✅ **Rétention** : Historique garde les clients engagés
 - ✅ **Upsell** : Promo des plans payants dans emails gratuits
@@ -367,7 +367,7 @@ if (!user) {
 ## 🔧 Structure des Emails
 
 ### Tous les Emails Incluent :
-- ✅ Header VitalCheck (gradient vert)
+- ✅ Header VitalCHECK (gradient vert)
 - ✅ Design professionnel et responsive
 - ✅ Call-to-Action clair (bouton)
 - ✅ Footer avec contact
@@ -412,7 +412,7 @@ if (!user) {
 1. Allez sur /pricing (pas connecté, jamais d'évaluation)
 2. Sélectionnez Standard
 3. Payez avec PayPal Sandbox
-4. ✅ Vérifiez email : "Votre compte VitalCheck STANDARD..."
+4. ✅ Vérifiez email : "Votre compte VitalCHECK STANDARD..."
 5. ✅ Credentials inclus
 6. Connectez-vous
 7. ✅ Dashboard avec plan actif
@@ -424,7 +424,7 @@ if (!user) {
 2. NE vous connectez PAS encore
 3. Allez sur /pricing
 4. Payez pour Standard
-5. ✅ Vérifiez email : "Votre compte VitalCheck STANDARD..."
+5. ✅ Vérifiez email : "Votre compte VitalCHECK STANDARD..."
 6. ✅ Credentials inclus (nouveau password)
 7. Connectez-vous
 8. ✅ Dashboard avec anciennes évaluations + plan actif
@@ -511,9 +511,9 @@ if (!user || !user.hasAccount) {
 ## 📧 Contenu des Emails
 
 ### Éléments Communs à Tous
-- 🎨 Header VitalCheck (gradient vert)
-- 📧 From: "VitalCheck <email>"
-- 🏢 Footer : © VitalCheck, Dakar, Contact
+- 🎨 Header VitalCHECK (gradient vert)
+- 📧 From: "VitalCHECK <email>"
+- 🏢 Footer : © VitalCHECK, Dakar, Contact
 - 🔗 Liens cliquables
 - 📱 Responsive design
 

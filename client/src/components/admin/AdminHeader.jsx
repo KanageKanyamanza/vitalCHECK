@@ -45,18 +45,18 @@ const AdminHeader = ({ onMenuClick, sidebarOpen, adminData, onLogout }) => {
             </button>
           )}
 
-          {/* VitalCheck Logo for mobile */}
+          {/* VitalCHECK Logo for mobile */}
           <div className="lg:hidden flex items-center space-x-3">
             <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center">
               <img 
                 src={Logo} 
-                alt="VitalCheck Logo" 
+                alt="VitalCHECK Logo" 
                 className="w-full h-full object-contain"
               />
             </div>
             <div>
               <h1 className="md:text-lg sm:text-md text-xs font-display font-semibold text-gray-900">
-                 VitalCheck Admin
+                 VitalCHECK Admin
               </h1>
             </div>
           </div>
@@ -65,7 +65,7 @@ const AdminHeader = ({ onMenuClick, sidebarOpen, adminData, onLogout }) => {
           {/* Title - hidden on mobile */}
           <div className="hidden lg:block">
             <h1 className="text-xl font-display font-semibold text-gray-900">
-              VitalCheck Admin
+              VitalCHECK Admin
             </h1>
             <p className="text-sm text-gray-500">Gestion des utilisateurs et évaluations</p>
           </div>
