@@ -89,10 +89,11 @@ const SplashScreen = ({ onLoadingComplete }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="absolute bottom-8 w-full flex justify-center"
+            className="absolute bottom-8 w-full flex items-center content-center justify-center"
           >
-            <h1 className="text-2xl text-primary-500 font-semibold">
+            <h1 className="text-2xl text-center text-primary-500 font-semibold">
               VitalCHECK
+              <br />
               <span className="text-sm text-gray-500">Enterprise Health Check</span>
             </h1>
           </motion.div>
