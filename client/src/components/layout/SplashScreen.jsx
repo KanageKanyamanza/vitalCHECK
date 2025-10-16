@@ -1,15 +1,52 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
+import Logo from '../../assets/logo.png'
+
 
 const SplashScreen = ({ onLoadingComplete }) => {
   const [loading, setLoading] = useState(true)
 
-  // Simulation du chargement simple
+  // Simulation du chargement avec ping-pong
   useEffect(() => {
     const simulateLoading = async () => {
       try {
-        // Délai simple de 2 secondes
-        await new Promise(resolve => setTimeout(resolve, 3000))
+        // Ping-pong avec le backend avec timeout
+        const pingBackend = async (timeoutMs = 3000) => {
+          try {
+            const controller = new AbortController()
+            const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
+            
+            const response = await fetch(`${import.meta.env.VITE_API_URL}/ping`, {
+              signal: controller.signal
+            })
+            
+            clearTimeout(timeoutId)
+            return response.ok
+          } catch (error) {
+            if (error.name === 'AbortError') {
+              console.log('Backend ping timeout, continuing...')
+            } else {
+              console.log('Backend not ready, continuing...')
+            }
+            return false
+          }
+        }
+
+        // Délai minimum de 1 seconde
+        await new Promise(resolve => setTimeout(resolve, 1000))
+
+        // Tentative de ping du backend
+        console.log('Tentative de connexion au backend...')
+        const backendReady = await pingBackend(3000)
+        
+        if (backendReady) {
+          console.log('Backend connecté avec succès')
+        } else {
+          console.log('Backend non disponible, démarrage sans connexion')
+        }
+
+        // Délai supplémentaire pour que l'utilisateur voie le splash
+        await new Promise(resolve => setTimeout(resolve, 2000))
 
         setLoading(false)
         onLoadingComplete?.()
@@ -41,7 +78,7 @@ const SplashScreen = ({ onLoadingComplete }) => {
             className="flex items-center justify-center"
           >
             <img 
-              src="/ms-icon-310x310.png" 
+              src={Logo} 
               alt="VitalCHECK Logo" 
               className="w-24 h-24 rounded-lg"
             />
@@ -52,10 +89,11 @@ const SplashScreen = ({ onLoadingComplete }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
-            className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
+            className="absolute bottom-8 w-full flex justify-center"
           >
-            <h1 className="text-2xl font-semibold text-gray-800">
+            <h1 className="text-2xl text-primary-500 font-semibold">
               VitalCHECK
+              <span className="text-sm text-gray-500">Enterprise Health Check</span>
             </h1>
           </motion.div>
         </motion.div>
