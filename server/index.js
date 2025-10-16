@@ -35,6 +35,7 @@ app.use(
 			const allowedOrigins = [
 				"http://localhost:5173",
 				"http://localhost:5174",
+				"https://ubb-enterprise-health-check.vercel.app",
 				"https://www.checkmyenterprise.com",
 				"https://checkmyenterprise.com",
 			];
