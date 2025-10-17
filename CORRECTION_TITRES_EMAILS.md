@@ -6,8 +6,8 @@
 
 **Symptôme :** 
 - Deux emails envoyés après évaluation avec des titres similaires
-- **Email 1 (identifiants)** : "Votre rapport VitalCheck est prêt - Accédez à votre compte !"
-- **Email 2 (rapport)** : "Votre rapport VitalCheck Enterprise Health Check est prêt !"
+- **Email 1 (identifiants)** : "Votre rapport VitalCHECK est prêt - Accédez à votre compte !"
+- **Email 2 (rapport)** : "Votre rapport VitalCHECK Enterprise Health Check est prêt !"
 - Confusion pour l'utilisateur car les deux parlent de "rapport prêt"
 
 **Cause Identifiée :**
@@ -22,14 +22,14 @@
 
 **Avant (Problématique) :**
 ```javascript
-subject: 'Votre rapport VitalCheck est prêt - Accédez à votre compte !'
+subject: 'Votre rapport VitalCHECK est prêt - Accédez à votre compte !'
 title: 'Évaluation Complétée !'
 ```
 
 **Maintenant (Corrigé) :**
 ```javascript
-subject: 'VitalCheck - Votre compte est créé ! Accédez à vos identifiants'
-title: 'Votre Compte VitalCheck est Créé !'
+subject: 'VitalCHECK - Votre compte est créé ! Accédez à vos identifiants'
+title: 'Votre Compte VitalCHECK est Créé !'
 ```
 
 ---
@@ -39,13 +39,13 @@ title: 'Votre Compte VitalCheck est Créé !'
 ### **Séquence des Emails Maintenant :**
 
 #### **Email 1 : Création de Compte (Identifiants)**
-- **Sujet** : `"VitalCheck - Votre compte est créé ! Accédez à vos identifiants"`
-- **Titre** : `"Votre Compte VitalCheck est Créé !"`
+- **Sujet** : `"VitalCHECK - Votre compte est créé ! Accédez à vos identifiants"`
+- **Titre** : `"Votre Compte VitalCHECK est Créé !"`
 - **Contenu** : Identifiants de connexion + score de l'évaluation
 - **Action** : Se connecter avec les identifiants fournis
 
 #### **Email 2 : Rapport PDF (Plus tard)**
-- **Sujet** : `"Votre rapport VitalCheck Enterprise Health Check est prêt !"`
+- **Sujet** : `"Votre rapport VitalCHECK Enterprise Health Check est prêt !"`
 - **Titre** : `"Votre rapport est prêt !"`
 - **Contenu** : Rapport PDF détaillé + recommandations
 - **Action** : Télécharger le rapport PDF
@@ -82,9 +82,9 @@ title: 'Votre Compte VitalCheck est Créé !'
 
 ### **Test de la Séquence :**
 1. ✅ **Évaluation complétée**
-2. ✅ **Email 1 reçu** : "VitalCheck - Votre compte est créé ! Accédez à vos identifiants"
+2. ✅ **Email 1 reçu** : "VitalCHECK - Votre compte est créé ! Accédez à vos identifiants"
 3. ✅ **Connexion avec identifiants** fournis
-4. ✅ **Email 2 reçu** : "Votre rapport VitalCheck Enterprise Health Check est prêt !"
+4. ✅ **Email 2 reçu** : "Votre rapport VitalCHECK Enterprise Health Check est prêt !"
 5. ✅ **Téléchargement du rapport** PDF
 
 ---

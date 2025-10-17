@@ -1,4 +1,4 @@
-# VitalCheck Enterprise Health Check
+# VitalCHECK Enterprise Health Check
 
 Une application web complète pour évaluer la santé d'entreprise avec la stack MERN + Vite + Tailwind CSS.
 
@@ -62,7 +62,7 @@ Une application web complète pour évaluer la santé d'entreprise avec la stack
 ```bash
 # Cloner le projet
 git clone <repository-url>
-cd VitalCheck_Enterprise_Health_Check
+cd VitalCHECK_Enterprise_Health_Check
 
 # Installer toutes les dépendances
 npm run install-all
@@ -128,7 +128,7 @@ npm start
 ## 📁 Structure du Projet
 
 ```
-VitalCheck_Enterprise_Health_Check/
+VitalCHECK_Enterprise_Health_Check/
 ├── server/                 # Backend Node.js
 │   ├── models/            # Modèles MongoDB
 │   ├── routes/            # Routes API
@@ -282,8 +282,8 @@ MIT License - Voir le fichier LICENSE pour plus de détails.
 Pour toute question ou problème :
 
 - Créer une issue sur GitHub
-- Contacter l'équipe VitalCheck
+- Contacter l'équipe VitalCHECK
 
 ---
 
-**VitalCheck Enterprise Health Check** - Évaluez la santé de votre entreprise en 10 minutes ! 🚀
+**VitalCHECK Enterprise Health Check** - Évaluez la santé de votre entreprise en 10 minutes ! 🚀

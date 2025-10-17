@@ -161,7 +161,7 @@ const ResultsPage = () => {
 			const url = window.URL.createObjectURL(blob);
 			const link = document.createElement("a");
 			link.href = url;
-			link.download = `VitalCheck-Health-Check-${user?.companyName}-${
+			link.download = `VitalCHECK-Health-Check-${user?.companyName}-${
 				new Date().toISOString().split("T")[0]
 			}.pdf`;
 			document.body.appendChild(link);

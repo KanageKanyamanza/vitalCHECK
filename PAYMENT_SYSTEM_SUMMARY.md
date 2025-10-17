@@ -1,4 +1,4 @@
-# 🎉 Système de Paiement Complet - VitalCheck
+# 🎉 Système de Paiement Complet - VitalCHECK
 
 ## ✅ Ce qui a été créé
 
@@ -97,7 +97,7 @@
 
 #### 11. Service Email
 - ✅ `sendPaymentEmail()` : Template HTML professionnel
-- ✅ Design VitalCheck avec logo
+- ✅ Design VitalCHECK avec logo
 - ✅ Support des sauts de ligne
 - ✅ Footer avec infos de contact
 

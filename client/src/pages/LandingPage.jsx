@@ -38,9 +38,9 @@ const LandingPage = () => {
   return (
     <div>
       <SEOHead
-        title="VitalCheck Enterprise Health Check - Évaluez la santé de votre entreprise"
-        description="Évaluez la santé organisationnelle de votre entreprise africaine avec VitalCheck. Évaluation gratuite de 10 minutes avec recommandations personnalisées et rapport détaillé."
-        keywords="entreprise, santé organisationnelle, évaluation, VitalCheck, Afrique, business, conseil, croissance, PME, diagnostic, management, finance, opérations, marketing, RH, gouvernance, technologie"
+        title="VitalCHECK Enterprise Health Check - Évaluez la santé de votre entreprise"
+        description="Évaluez la santé organisationnelle de votre entreprise africaine avec VitalCHECK. Évaluation gratuite de 10 minutes avec recommandations personnalisées et rapport détaillé."
+        keywords="entreprise, santé organisationnelle, évaluation, VitalCHECK, Afrique, business, conseil, croissance, PME, diagnostic, management, finance, opérations, marketing, RH, gouvernance, technologie"
         url="/"
         structuredData={getHomePageStructuredData()}
       />
@@ -57,7 +57,7 @@ const LandingPage = () => {
 
       {/* Social Share */}
       <SocialShare 
-        title="VitalCheck Enterprise Health Check - Évaluez la santé de votre entreprise"
+        title="VitalCHECK Enterprise Health Check - Évaluez la santé de votre entreprise"
         description="Évaluation gratuite de 10 minutes avec recommandations personnalisées et rapport détaillé."
       />
 

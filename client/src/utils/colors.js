@@ -1,8 +1,8 @@
-// Configuration centralisée des couleurs VitalCheck
+// Configuration centralisée des couleurs VitalCHECK
 // Basée sur tailwind.config.js
 
 export const colors = {
-  // VitalCheck Ubuntu Blue - Trust, knowledge, interconnectedness
+  // VitalCHECK Ubuntu Blue - Trust, knowledge, interconnectedness
   primary: {
     50: '#eff6ff',
     100: '#dbeafe',
@@ -37,7 +37,7 @@ export const colors = {
     200: '#fef2c7',
     300: '#fde68a',
     400: '#fcd34d',
-    500: '#fbc350', // VitalCheck Orange
+    500: '#fbc350', // VitalCHECK Orange
     600: '#f59e0b',
     700: '#d97706',
     800: '#b45309',

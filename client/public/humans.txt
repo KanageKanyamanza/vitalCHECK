@@ -1,9 +1,9 @@
-# VitalCheck Enterprise Health Check - humans.txt
+# VitalCHECK Enterprise Health Check - humans.txt
 
 # Équipe
-    Développeur: VitalCheck Development Team
+    Développeur: VitalCHECK Development Team
     Contact: info@checkmyenterprise.com
-    Site: https://growthVitalCheck.space
+    Site: https://growthVitalCHECK.space
 
 # Technologies
     Frontend: React, Vite, Tailwind CSS

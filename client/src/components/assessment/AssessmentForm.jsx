@@ -146,9 +146,9 @@ const AssessmentForm = ({ onFormSubmit }) => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="VitalCheck-card relative z-10"
+            className="VitalCHECK-card relative z-10"
           >
-            <h2 className="text-2xl font-display font-bold VitalCheck-gradient-text mb-6">
+            <h2 className="text-2xl font-display font-bold VitalCHECK-gradient-text mb-6">
               {t('landing.form.title')}
             </h2>
             

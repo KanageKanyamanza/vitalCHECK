@@ -1,8 +1,8 @@
-# Guide SEO Complet - VitalCheck Enterprise Health Check
+# Guide SEO Complet - VitalCHECK Enterprise Health Check
 
 ## 🎯 Vue d'ensemble
 
-Ce guide documente l'implémentation SEO complète de l'application VitalCheck, incluant les optimisations techniques, les données structurées, et les bonnes pratiques.
+Ce guide documente l'implémentation SEO complète de l'application VitalCHECK, incluant les optimisations techniques, les données structurées, et les bonnes pratiques.
 
 ## 📋 Fonctionnalités SEO Implémentées
 
@@ -132,7 +132,7 @@ import { getBlogPostStructuredData } from '../utils/seoData'
 
 ### Google Search Console
 1. Ajouter le code de vérification dans `PerformanceAnalytics.jsx`
-2. Soumettre le sitemap : `https://healthcheck.growthVitalCheck.space/sitemap.xml`
+2. Soumettre le sitemap : `https://healthcheck.growthVitalCHECK.space/sitemap.xml`
 3. Configurer les alertes de performance
 
 ## 📈 Optimisations Techniques
@@ -158,18 +158,18 @@ import { getBlogPostStructuredData } from '../utils/seoData'
 ## 🚀 URLs Importantes
 
 ### Sitemap
-- **Dynamique** : `https://healthcheck.growthVitalCheck.space/sitemap.xml`
-- **Statique** : `https://healthcheck.growthVitalCheck.space/sitemap.xml`
+- **Dynamique** : `https://healthcheck.growthVitalCHECK.space/sitemap.xml`
+- **Statique** : `https://healthcheck.growthVitalCHECK.space/sitemap.xml`
 
 ### Robots.txt
-- **URL** : `https://healthcheck.growthVitalCheck.space/robots.txt`
+- **URL** : `https://healthcheck.growthVitalCHECK.space/robots.txt`
 
 ### Pages Principales
-- **Accueil** : `https://healthcheck.growthVitalCheck.space/`
-- **Évaluation** : `https://healthcheck.growthVitalCheck.space/assessment`
-- **Blog** : `https://healthcheck.growthVitalCheck.space/blog`
-- **À propos** : `https://healthcheck.growthVitalCheck.space/about`
-- **Contact** : `https://healthcheck.growthVitalCheck.space/contact`
+- **Accueil** : `https://healthcheck.growthVitalCHECK.space/`
+- **Évaluation** : `https://healthcheck.growthVitalCHECK.space/assessment`
+- **Blog** : `https://healthcheck.growthVitalCHECK.space/blog`
+- **À propos** : `https://healthcheck.growthVitalCHECK.space/about`
+- **Contact** : `https://healthcheck.growthVitalCHECK.space/contact`
 
 ## 🔍 Mots-Clés Ciblés
 
@@ -177,7 +177,7 @@ import { getBlogPostStructuredData } from '../utils/seoData'
 - santé d'entreprise
 - évaluation organisationnelle
 - diagnostic business
-- VitalCheck
+- VitalCHECK
 - PME africaines
 
 ### Secondaires

@@ -76,8 +76,8 @@ const DraftAssessmentsPage = () => {
     try {
       setSendingEmail(assessment.id);
       
-      const subject = 'Relance - Évaluation VitalCheck Enterprise Health Check';
-      const message = `Nous avons remarqué que votre évaluation VitalCheck Enterprise Health Check n'est pas encore terminée.
+      const subject = 'Relance - Évaluation VitalCHECK Enterprise Health Check';
+      const message = `Nous avons remarqué que votre évaluation VitalCHECK Enterprise Health Check n'est pas encore terminée.
 
 Vous pouvez reprendre votre évaluation à tout moment en cliquant sur le lien suivant :
 ${assessment.resumeLink}

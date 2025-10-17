@@ -376,9 +376,9 @@ const AssessmentPage = () => {
   return (
     <div className="min-h-screen py-[70px] bg-gray-50">
       <SEOHead
-        title="Évaluation de Santé d'Entreprise - VitalCheck"
-        description="Commencez votre évaluation gratuite de santé d'entreprise avec VitalCheck. Diagnostic complet en 10 minutes avec recommandations personnalisées."
-        keywords="évaluation entreprise, diagnostic business, santé organisationnelle, VitalCheck, PME, startup, conseil"
+        title="Évaluation de Santé d'Entreprise - VitalCHECK"
+        description="Commencez votre évaluation gratuite de santé d'entreprise avec VitalCHECK. Diagnostic complet en 10 minutes avec recommandations personnalisées."
+        keywords="évaluation entreprise, diagnostic business, santé organisationnelle, VitalCHECK, PME, startup, conseil"
         url="/assessment"
         structuredData={getAssessmentPageStructuredData()}
       />

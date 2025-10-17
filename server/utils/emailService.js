@@ -50,7 +50,7 @@ const sendEmail = async (emailOptions, retryCount = 0) => {
     const transporter = createTransporter();
     
     const mailOptions = {
-      from: `"VitalCheck Enterprise Health Check" <${process.env.EMAIL_USER}>`,
+      from: `"VitalCHECK Enterprise Health Check" <${process.env.EMAIL_USER}>`,
       to: emailOptions.to,
       subject: emailOptions.subject,
       html: emailOptions.html,
@@ -126,7 +126,7 @@ const testEmailConfig = async () => {
 const sendContactConfirmation = async (clientEmail, clientName, subject) => {
   const emailOptions = {
     to: clientEmail,
-    subject: 'Confirmation de réception - VitalCheck Enterprise Health Check',
+    subject: 'Confirmation de réception - VitalCHECK Enterprise Health Check',
     html: createUnifiedEmailTemplate({
       language: 'fr',
       title: 'Message reçu avec succès !',
@@ -215,7 +215,7 @@ const sendContactConfirmation = async (clientEmail, clientName, subject) => {
   return { success: true, message: 'Email de confirmation envoyé' };
 };
 
-// Send contact notification to VitalCheck team
+// Send contact notification to VitalCHECK team
 const sendContactNotification = async (contactData) => {
   const { name, email, company, phone, subject, message, inquiryType } = contactData;
   
@@ -266,7 +266,7 @@ const sendContactNotification = async (contactData) => {
           icon: '📧'
         }
       ],
-      note: 'Système de notification automatique - VitalCheck Enterprise Health Check'
+      note: 'Système de notification automatique - VitalCHECK Enterprise Health Check'
     })
   };
 
@@ -317,7 +317,7 @@ const sendContactNotification = async (contactData) => {
 // Send payment confirmation email
 const sendPaymentEmail = async (to, subject, message) => {
   const mailOptions = {
-    from: `"VitalCheck" <${process.env.EMAIL_USER}>`,
+    from: `"VitalCHECK" <${process.env.EMAIL_USER}>`,
     to,
     subject,
     html: createUnifiedEmailTemplate({
@@ -359,12 +359,12 @@ const sendPaymentEmail = async (to, subject, message) => {
 // Send welcome email with credentials
 const sendWelcomeEmail = async (to, name, tempPassword = null) => {
   const mailOptions = {
-    from: `"VitalCheck" <${process.env.EMAIL_USER}>`,
+    from: `"VitalCHECK" <${process.env.EMAIL_USER}>`,
     to,
-    subject: 'Bienvenue sur VitalCheck - Vos identifiants de connexion',
+    subject: 'Bienvenue sur VitalCHECK - Vos identifiants de connexion',
     html: createUnifiedEmailTemplate({
       language: 'fr',
-      title: 'Bienvenue sur VitalCheck !',
+      title: 'Bienvenue sur VitalCHECK !',
       subtitle: `Bonjour <strong>${name}</strong>, votre compte a été créé avec succès !`,
       credentials: tempPassword ? {
         title: 'Vos identifiants de connexion',
@@ -374,7 +374,7 @@ const sendWelcomeEmail = async (to, name, tempPassword = null) => {
       } : null,
       content: `
         <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.5; color: #4a5568;">
-          Avec votre compte VitalCheck, vous pouvez maintenant :
+          Avec votre compte VitalCHECK, vous pouvez maintenant :
         </p>
         
         <ul style="margin: 0; padding-left: 20px; color: #4a5568; line-height: 1.8;">
@@ -398,7 +398,7 @@ const sendWelcomeEmail = async (to, name, tempPassword = null) => {
           icon: '🏠'
         }
       ],
-      note: 'Votre compte VitalCheck est maintenant actif. Conservez vos identifiants en sécurité.'
+      note: 'Votre compte VitalCHECK est maintenant actif. Conservez vos identifiants en sécurité.'
     })
   };
 
@@ -408,9 +408,9 @@ const sendWelcomeEmail = async (to, name, tempPassword = null) => {
 // Send account creation email with credentials after payment
 const sendAccountCreatedEmail = async (to, name, tempPassword, planName) => {
   const mailOptions = {
-    from: `"VitalCheck" <${process.env.EMAIL_USER}>`,
+    from: `"VitalCHECK" <${process.env.EMAIL_USER}>`,
     to,
-    subject: `Votre compte VitalCheck ${planName} est prêt !`,
+    subject: `Votre compte VitalCHECK ${planName} est prêt !`,
     html: createUnifiedEmailTemplate({
       language: 'fr',
       title: 'Paiement Confirmé ✓',
@@ -423,7 +423,7 @@ const sendAccountCreatedEmail = async (to, name, tempPassword, planName) => {
       },
       content: `
         <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.5; color: #4a5568;">
-          Nous avons créé votre compte VitalCheck. Avec votre compte, vous pouvez :
+          Nous avons créé votre compte VitalCHECK. Avec votre compte, vous pouvez :
         </p>
         
         <ul style="margin: 0; padding-left: 20px; color: #4a5568; line-height: 1.8;">
@@ -454,7 +454,7 @@ const sendAccountCreatedEmail = async (to, name, tempPassword, planName) => {
           icon: ''
         }
       ],
-      note: 'Votre compte VitalCheck est maintenant actif avec votre abonnement. Conservez vos identifiants en sécurité.'
+      note: 'Votre compte VitalCHECK est maintenant actif avec votre abonnement. Conservez vos identifiants en sécurité.'
     })
   };
 
@@ -464,13 +464,13 @@ const sendAccountCreatedEmail = async (to, name, tempPassword, planName) => {
 // Send account created email after assessment (free evaluation)
 const sendAccountCreatedAfterAssessment = async (to, name, tempPassword, score) => {
   const mailOptions = {
-    from: `"VitalCheck" <${process.env.EMAIL_USER}>`,
+    from: `"VitalCHECK" <${process.env.EMAIL_USER}>`,
     to,
-    subject: 'VitalCheck - Votre compte est créé ! Accédez à vos identifiants',
+    subject: 'VitalCHECK - Votre compte est créé ! Accédez à vos identifiants',
     html: createUnifiedEmailTemplate({
       language: 'fr',
-        title: 'Votre Compte VitalCheck est Créé !',
-      subtitle: `Bravo <strong>${name}</strong>, vous avez complété votre évaluation VitalCheck avec succès !`,
+        title: 'Votre Compte VitalCHECK est Créé !',
+      subtitle: `Bravo <strong>${name}</strong>, vous avez complété votre évaluation VitalCHECK avec succès !`,
       score: {
         value: `${Math.round(score)}/100`,
         label: 'Votre Score Global',
@@ -485,7 +485,7 @@ const sendAccountCreatedAfterAssessment = async (to, name, tempPassword, score) 
       },
       content: `
         <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.5; color: #4a5568;">
-          Nous avons créé votre compte VitalCheck <strong>GRATUIT</strong> pour que vous puissiez :
+          Nous avons créé votre compte VitalCHECK <strong>GRATUIT</strong> pour que vous puissiez :
         </p>
         
         <ul style="margin: 0; padding-left: 20px; color: #4a5568; line-height: 1.8;">
@@ -521,7 +521,7 @@ const sendAccountCreatedAfterAssessment = async (to, name, tempPassword, score) 
           icon: ''
         }
       ],
-      note: 'Votre compte VitalCheck gratuit est maintenant actif. Conservez vos identifiants en sécurité.'
+      note: 'Votre compte VitalCHECK gratuit est maintenant actif. Conservez vos identifiants en sécurité.'
     })
   };
 
@@ -531,13 +531,13 @@ const sendAccountCreatedAfterAssessment = async (to, name, tempPassword, score) 
 // Send email to existing account holder after assessment
 const sendAssessmentCompletedExistingUser = async (to, name, score) => {
   const mailOptions = {
-    from: `"VitalCheck" <${process.env.EMAIL_USER}>`,
+    from: `"VitalCHECK" <${process.env.EMAIL_USER}>`,
     to,
-    subject: 'Nouvelle évaluation complétée - VitalCheck',
+    subject: 'Nouvelle évaluation complétée - VitalCHECK',
     html: createUnifiedEmailTemplate({
       language: 'fr',
       title: 'Nouvelle Évaluation !',
-      subtitle: `Bonjour <strong>${name}</strong>, vous avez complété une nouvelle évaluation VitalCheck !`,
+      subtitle: `Bonjour <strong>${name}</strong>, vous avez complété une nouvelle évaluation VitalCHECK !`,
       score: {
         value: `${Math.round(score)}/100`,
         label: 'Votre Nouveau Score',
@@ -580,7 +580,7 @@ const sendAssessmentCompletedExistingUser = async (to, name, score) => {
 // Send subscription upgrade email (for existing account holders who pay)
 const sendSubscriptionUpgradeEmail = async (to, name, planName, planId) => {
   const mailOptions = {
-    from: `"VitalCheck" <${process.env.EMAIL_USER}>`,
+    from: `"VitalCHECK" <${process.env.EMAIL_USER}>`,
     to,
     subject: `Votre abonnement ${planName} est activé !`,
     html: createUnifiedEmailTemplate({

@@ -26,7 +26,7 @@ const PrivacyPolicy = () => {
           <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Shield className="w-8 h-8 text-primary-600" />
           </div>
-          <h1 className="text-4xl font-display font-bold VitalCheck-gradient-text mb-4">
+          <h1 className="text-4xl font-display font-bold VitalCHECK-gradient-text mb-4">
             {t('privacy.title')}
           </h1>
           <p className="text-lg text-gray-600">

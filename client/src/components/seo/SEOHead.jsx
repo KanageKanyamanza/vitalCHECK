@@ -3,9 +3,9 @@ import { Helmet } from 'react-helmet-async'
 const SEOHead = (props = {}) => {
   // Extraction sécurisée des props avec valeurs par défaut
   const {
-    title = "VitalCheck Enterprise Health Check - Évaluez la santé de votre entreprise",
-    description = "Évaluez la santé organisationnelle de votre entreprise africaine avec VitalCheck. Évaluation gratuite de 10 minutes avec recommandations personnalisées et rapport détaillé.",
-    keywords = "entreprise, santé organisationnelle, évaluation, VitalCheck, Afrique, business, conseil, croissance, PME, diagnostic, management, finance, opérations, marketing, RH, gouvernance, technologie",
+    title = "VitalCHECK Enterprise Health Check - Évaluez la santé de votre entreprise",
+    description = "Évaluez la santé organisationnelle de votre entreprise africaine avec VitalCHECK. Évaluation gratuite de 10 minutes avec recommandations personnalisées et rapport détaillé.",
+    keywords = "entreprise, santé organisationnelle, évaluation, VitalCHECK, Afrique, business, conseil, croissance, PME, diagnostic, management, finance, opérations, marketing, RH, gouvernance, technologie",
     image = "https://www.checkmyenterprise.com/og-image.png",
     url = "https://www.checkmyenterprise.com/",
     type = "website",
@@ -48,14 +48,14 @@ const SEOHead = (props = {}) => {
       <meta property="og:image:width" content="1200" />
       <meta property="og:image:height" content="630" />
       <meta property="og:image:alt" content={title} />
-      <meta property="og:site_name" content="VitalCheck Enterprise Health Check" />
+      <meta property="og:site_name" content="VitalCHECK Enterprise Health Check" />
       <meta property="og:locale" content={lang === 'fr' ? 'fr_FR' : 'en_US'} />
       <meta property="og:locale:alternate" content={lang === 'fr' ? 'en_US' : 'fr_FR'} />
       
       {/* Twitter Card */}
       <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:site" content="@VitalCheck" />
-      <meta name="twitter:creator" content="@VitalCheck" />
+      <meta name="twitter:site" content="@VitalCHECK" />
+      <meta name="twitter:creator" content="@VitalCHECK" />
       <meta name="twitter:url" content={fullUrl} />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />

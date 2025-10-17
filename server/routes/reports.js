@@ -27,7 +27,7 @@ router.get('/download/:assessmentId', async (req, res) => {
       });
     }
 
-    const filename = `VitalCheck-Health-Check-${assessment.user.companyName}-${new Date(assessment.completedAt).toISOString().split('T')[0]}.pdf`;
+    const filename = `VitalCHECK-Health-Check-${assessment.user.companyName}-${new Date(assessment.completedAt).toISOString().split('T')[0]}.pdf`;
     
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
@@ -73,7 +73,7 @@ router.post('/generate/:assessmentId', async (req, res) => {
     const language = assessment.language || 'fr';
     const template = emailTemplates[language] || emailTemplates.fr;
     
-    const pdfFilename = `VitalCheck-Health-Check-${assessment.user.companyName}-${new Date().toISOString().split('T')[0]}.pdf`;
+    const pdfFilename = `VitalCHECK-Health-Check-${assessment.user.companyName}-${new Date().toISOString().split('T')[0]}.pdf`;
     
     // Toujours stocker le PDF en base de données pour le téléchargement
     try {
@@ -321,7 +321,7 @@ router.get('/download/:assessmentId', async (req, res) => {
     }
 
     // Set headers for PDF download
-    const filename = `VitalCheck-Health-Check-${assessment.user.companyName}-${assessment.pdfGeneratedAt.toISOString().split('T')[0]}.pdf`;
+    const filename = `VitalCHECK-Health-Check-${assessment.user.companyName}-${assessment.pdfGeneratedAt.toISOString().split('T')[0]}.pdf`;
     
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
