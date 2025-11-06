@@ -28,7 +28,7 @@ const sendEmailSendGrid = async (emailOptions) => {
       to: emailOptions.to,
       from: {
         email: process.env.EMAIL_USER,
-        name: 'VitalCHECK Enterprise Health Check'
+        name: 'vitalCHECK Enterprise Health Check'
       },
       subject: emailOptions.subject,
       html: emailOptions.html,
@@ -53,7 +53,7 @@ const sendEmailSendGrid = async (emailOptions) => {
     });
 
     return {
-      messageId: response[0].headers['x-message-id'] || `sendgrid-${Date.now()}@vitalcheck.com`,
+      messageId: response[0].headers['x-message-id'] || `sendgrid-${Date.now()}@vitalCHECK.com`,
       response: `SendGrid: ${response[0].statusCode}`,
       accepted: [emailOptions.to],
       rejected: []
@@ -83,7 +83,7 @@ const sendEmailEmailJS = async (emailOptions) => {
       to_email: emailOptions.to,
       subject: emailOptions.subject,
       html_content: emailOptions.html,
-      name: 'VitalCHECK Enterprise Health Check',
+      name: 'vitalCHECK Enterprise Health Check',
       email: 'info@checkmyenterprise.com',
       // Note: EmailJS ne supporte pas les pièces jointes
       // Le PDF est maintenant disponible via un lien de téléchargement dans le HTML
@@ -115,7 +115,7 @@ const sendEmailEmailJS = async (emailOptions) => {
     });
 
     return {
-      messageId: `emailjs-${Date.now()}@vitalcheck.com`,
+      messageId: `emailjs-${Date.now()}@vitalCHECK.com`,
       response: `EmailJS: ${response.status}`,
       accepted: [emailOptions.to],
       rejected: []
@@ -162,7 +162,7 @@ const sendEmailExternal = async (emailOptions) => {
     console.log('⚠️  [EMAIL EXT] Aucun service externe configuré, simulation...');
     
     const mockResult = {
-      messageId: `external-${Date.now()}@vitalcheck.com`,
+      messageId: `external-${Date.now()}@vitalCHECK.com`,
       response: 'Email simulé (service externe non configuré)',
       accepted: [emailOptions.to],
       rejected: []
@@ -211,7 +211,7 @@ const createEmailWebhook = async (emailOptions) => {
     // Exemple avec un service comme Zapier, Make.com, ou un webhook personnalisé
 
     return {
-      messageId: `webhook-${Date.now()}@vitalcheck.com`,
+      messageId: `webhook-${Date.now()}@vitalCHECK.com`,
       response: 'Webhook créé avec succès',
       accepted: [emailOptions.to],
       rejected: []

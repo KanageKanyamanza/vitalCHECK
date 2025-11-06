@@ -96,7 +96,7 @@ app.use("/", require("./routes/sitemap"));
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
-	res.json({ status: "OK", message: "VitalCHECK Health Check API is running" });
+	res.json({ status: "OK", message: "vitalCHECK Health Check API is running" });
 });
 
 // Test endpoint pour vérifier les routes
@@ -129,7 +129,7 @@ app.use("*", (req, res) => {
 // Database connection
 mongoose
 	.connect(
-		process.env.MONGODB_URI || "mongodb://localhost:27017/VitalCHECK-health-check"
+		process.env.MONGODB_URI || "mongodb://localhost:27017/vitalCHECK-health-check"
 	)
 	.then(async () => {
 		console.log("Connected to MongoDB");

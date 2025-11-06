@@ -5,11 +5,11 @@ require('dotenv').config();
 async function createAdmin() {
   try {
     // Connexion à MongoDB
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/VitalCHECK-health-check');
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/vitalCHECK-health-check');
     console.log('Connecté à MongoDB');
 
     // Vérifier si un admin existe déjà
-    const existingAdmin = await Admin.findOne({ email: 'admin@VitalCHECK.com' });
+    const existingAdmin = await Admin.findOne({ email: 'admin@vitalCHECK.com' });
     if (existingAdmin) {
       console.log('Un admin avec cet email existe déjà');
       process.exit(0);
@@ -17,9 +17,9 @@ async function createAdmin() {
 
     // Créer le premier admin
     const admin = new Admin({
-      email: 'admin@VitalCHECK.com',
+      email: 'admin@vitalCHECK.com',
       password: 'admin123', // À changer en production
-      name: 'Administrateur VitalCHECK',
+      name: 'Administrateur vitalCHECK',
       role: 'super-admin',
       permissions: {
         viewUsers: true,
@@ -34,7 +34,7 @@ async function createAdmin() {
 
     await admin.save();
     console.log('Admin créé avec succès:');
-    console.log('Email: admin@VitalCHECK.com');
+    console.log('Email: admin@vitalCHECK.com');
     console.log('Mot de passe: admin123');
     console.log('⚠️  IMPORTANT: Changez le mot de passe en production !');
 

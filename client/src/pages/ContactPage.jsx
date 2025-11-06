@@ -45,7 +45,7 @@ const ContactPage = () => {
           ? `Demande de services premium - ${user.companyName}`
           : '',
         message: assessment 
-          ? `Bonjour,\n\nJ'ai récemment terminé l'évaluation VitalCHECK Enterprise Health Check pour ${user.companyName} et je souhaiterais en savoir plus sur vos services premium.\n\nMerci de me contacter pour discuter des options disponibles.\n\nCordialement`
+          ? `Bonjour,\n\nJ'ai récemment terminé l'évaluation vitalCHECK Enterprise Health Check pour ${user.companyName} et je souhaiterais en savoir plus sur vos services premium.\n\nMerci de me contacter pour discuter des options disponibles.\n\nCordialement`
           : ''
       }))
     }
@@ -380,7 +380,7 @@ const ContactPage = () => {
 
       {/* Social Share */}
       <SocialShare 
-        title="Contactez VitalCHECK - Enterprise Health Check"
+        title="Contactez vitalCHECK - Enterprise Health Check"
         description="Nous sommes là pour vous aider à améliorer la santé de votre entreprise."
       />
     </div>

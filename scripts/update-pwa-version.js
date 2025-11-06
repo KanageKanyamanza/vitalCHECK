@@ -19,8 +19,8 @@ function updateServiceWorker(newVersion) {
     
     // Remplacer la version dans le cache name
     content = content.replace(
-      /const CACHE_NAME = 'VitalCHECK-health-check-v[\d.]+';/,
-      `const CACHE_NAME = 'VitalCHECK-health-check-v${newVersion}';`
+      /const CACHE_NAME = 'vitalCHECK-health-check-v[\d.]+';/,
+      `const CACHE_NAME = 'vitalCHECK-health-check-v${newVersion}';`
     );
     
     fs.writeFileSync(swPath, content);

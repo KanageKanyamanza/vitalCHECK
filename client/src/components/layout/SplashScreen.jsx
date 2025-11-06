@@ -78,7 +78,7 @@ const SplashScreen = ({ onLoadingComplete }) => {
           >
             <img 
               src="/ms-icon-310x310.png" 
-              alt="VitalCHECK Logo" 
+              alt="vitalCHECK Logo" 
               className="w-24 h-24 rounded-lg"
             />
           </motion.div>
@@ -91,7 +91,7 @@ const SplashScreen = ({ onLoadingComplete }) => {
             className="absolute bottom-8 w-full flex items-center content-center justify-center"
           >
             <h1 className="text-2xl text-center text-primary-500 font-semibold">
-              VitalCHECK
+              vitalCHECK
               <br />
               <span className="text-sm text-gray-500">Enterprise Health Check</span>
             </h1>

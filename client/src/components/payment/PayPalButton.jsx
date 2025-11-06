@@ -10,7 +10,7 @@ const PayPalButton = ({ planId, planName, amount, currency = 'USD', onSuccess, o
     return actions.order.create({
       purchase_units: [
         {
-          description: `VitalCHECK - ${planName}`,
+          description: `vitalCHECK - ${planName}`,
           amount: {
             currency_code: currency,
             value: amount.toString()

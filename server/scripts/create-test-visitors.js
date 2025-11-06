@@ -138,7 +138,7 @@ const testVisitors = [
 async function createTestVisitors() {
   try {
     console.log('🚀 Connexion à MongoDB...');
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/VitalCHECK-health-check');
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/vitalCHECK-health-check');
     console.log('✅ Connecté à MongoDB');
 
     // Récupérer les blogs existants

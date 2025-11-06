@@ -85,7 +85,7 @@ function assessmentReducer(state, action) {
       }
     
     case 'CLEAR_STORAGE':
-      localStorage.removeItem('VitalCHECK-assessment-data')
+      localStorage.removeItem('vitalCHECK-assessment-data')
       return initialState
     
     default:
@@ -98,13 +98,13 @@ export function AssessmentProvider({ children }) {
 
   // Load from localStorage on mount
   useEffect(() => {
-    const savedData = localStorage.getItem('VitalCHECK-assessment-data')
+    const savedData = localStorage.getItem('vitalCHECK-assessment-data')
     if (savedData) {
       try {
         const parsedData = JSON.parse(savedData)
         dispatch({ type: 'LOAD_FROM_STORAGE', payload: parsedData })
       } catch (error) {
-        localStorage.removeItem('VitalCHECK-assessment-data')
+        localStorage.removeItem('vitalCHECK-assessment-data')
       }
     }
   }, [])
@@ -124,7 +124,7 @@ export function AssessmentProvider({ children }) {
     
     // Only save if we have meaningful data
     if (state.user || state.assessment || state.answers.length > 0) {
-      localStorage.setItem('VitalCHECK-assessment-data', JSON.stringify(dataToSave))
+      localStorage.setItem('vitalCHECK-assessment-data', JSON.stringify(dataToSave))
     }
   }, [state.user, state.questions, state.currentQuestionIndex, state.answers, state.assessment, state.assessmentId, state.resumeToken, state.language])
 

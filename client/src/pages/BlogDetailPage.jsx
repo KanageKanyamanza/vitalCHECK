@@ -289,9 +289,9 @@ const BlogDetailPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 pt-[50px]">
       <SEOHead
-        title={blog?.title ? `${blog.title} - Blog VitalCHECK` : "Blog VitalCHECK"}
-        description={blog?.excerpt || (blog?.content ? (typeof blog.content === 'string' ? blog.content.substring(0, 160) + "..." : (blog.content.fr ? blog.content.fr.substring(0, 160) + "..." : blog.content.en ? blog.content.en.substring(0, 160) + "..." : "Article de blog VitalCHECK")) : "Article de blog VitalCHECK")}
-        keywords={blog?.tags ? blog.tags.join(", ") : "blog business, conseils entreprise, VitalCHECK"}
+        title={blog?.title ? `${blog.title} - Blog vitalCHECK` : "Blog vitalCHECK"}
+        description={blog?.excerpt || (blog?.content ? (typeof blog.content === 'string' ? blog.content.substring(0, 160) + "..." : (blog.content.fr ? blog.content.fr.substring(0, 160) + "..." : blog.content.en ? blog.content.en.substring(0, 160) + "..." : "Article de blog vitalCHECK")) : "Article de blog vitalCHECK")}
+        keywords={blog?.tags ? blog.tags.join(", ") : "blog business, conseils entreprise, vitalCHECK"}
         url={blog?.slug ? `/blog/${blog.slug}` : "/blog"}
         image={blog?.featuredImage || '/og-image.png'}
         type="article"

@@ -18,9 +18,9 @@ const createBlog = async () => {
 
     // Données du blog
     const blogData = {
-      title: "Étude de cas : Free vs Premium – Comment VitalCHECK Enterprise Health Check a sauvé une PME d'un échec coûteux",
-      slug: "etude-cas-free-vs-premium-VitalCHECK-sauve-pme-echec-couteux",
-      excerpt: "Découvrez comment une PME de distribution agroalimentaire à Douala a évité des pertes de 25 millions FCFA grâce à l'Option Premium d'VitalCHECK Enterprise Health Check, comparé aux limitations de l'option gratuite.",
+      title: "Étude de cas : Free vs Premium – Comment vitalCHECK Enterprise Health Check a sauvé une PME d'un échec coûteux",
+      slug: "etude-cas-free-vs-premium-vitalCHECK-sauve-pme-echec-couteux",
+      excerpt: "Découvrez comment une PME de distribution agroalimentaire à Douala a évité des pertes de 25 millions FCFA grâce à l'Option Premium d'vitalCHECK Enterprise Health Check, comparé aux limitations de l'option gratuite.",
       content: `
         <h2>Contexte</h2>
         <p>Une PME de distribution agroalimentaire à Douala connaissait une forte croissance mais souffrait de retards de livraison, d'inefficacités internes et d'un logiciel de facturation vieillissant. Le risque : une défaillance pouvant bloquer la trésorerie et provoquer des pertes évaluées à 25 millions FCFA.</p>
@@ -55,8 +55,8 @@ const createBlog = async () => {
       status: 'published',
       publishedAt: new Date(),
       author: admin._id,
-      metaTitle: "Étude de cas VitalCHECK : Free vs Premium - Éviter 25M FCFA",
-      metaDescription: "Découvrez comment une PME a évité 25 millions FCFA de pertes grâce à l'Option Premium d'VitalCHECK Enterprise Health Check vs les limitations de l'option gratuite.",
+      metaTitle: "Étude de cas vitalCHECK : Free vs Premium - Éviter 25M FCFA",
+      metaDescription: "Découvrez comment une PME a évité 25 millions FCFA de pertes grâce à l'Option Premium d'vitalCHECK Enterprise Health Check vs les limitations de l'option gratuite.",
       views: 0,
       likes: 0,
       caseStudy: {

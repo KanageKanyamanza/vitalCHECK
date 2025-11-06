@@ -1,4 +1,4 @@
-# Configuration PayPal pour VitalCHECK
+# Configuration PayPal pour vitalCHECK
 
 ## Étapes pour configurer PayPal
 
@@ -12,7 +12,7 @@
 
 1. Allez dans **Dashboard** > **My Apps & Credentials**
 2. Dans l'onglet **Sandbox**, cliquez sur **Create App**
-3. Donnez un nom à votre application (ex: "VitalCHECK Payments")
+3. Donnez un nom à votre application (ex: "vitalCHECK Payments")
 4. Copiez le **Client ID** généré
 
 ### 3. Configurer les variables d'environnement

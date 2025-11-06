@@ -1,4 +1,4 @@
-# Configuration Apache pour VitalCheck Enterprise Health Check
+# Configuration Apache pour vitalCHECK Enterprise Health Check
 
 # Redirection HTTPS
 RewriteEngine On
@@ -88,7 +88,6 @@ RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 Options -Indexes
 
 # Protection des fichiers sensibles
-<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|inc|bak)$">
-    Order Allow,Deny
-    Deny from all
+<FilesMatch "\.(htaccess|htpasswd|ini|log|sh|inc|bak)$"
+    Require all denied
 </FilesMatch>

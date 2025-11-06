@@ -1,7 +1,7 @@
 {
-  "name": "vitalcheck-health-check-server",
+  "name": "vitalCHECK-health-check-server",
   "version": "1.0.0",
-  "description": "Backend server for VitalCHECK Enterprise Health Check",
+  "description": "Backend server for vitalCHECK Enterprise Health Check",
   "main": "index.js",
   "scripts": {
     "start": "node index.js",

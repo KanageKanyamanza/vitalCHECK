@@ -46,7 +46,7 @@ router.post('/', async (req, res) => {
       // Ne pas faire échouer la requête si l'email échoue
     }
 
-    // Envoyer une notification à l'équipe VitalCHECK
+    // Envoyer une notification à l'équipe vitalCHECK
     try {
       await emailService.sendContactNotification({
         name,

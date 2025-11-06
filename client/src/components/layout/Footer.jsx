@@ -30,7 +30,7 @@ const Footer = () => {
 	const socialLinks = [
 		{
 			icon: Instagram,
-			href: "https://www.instagram.com/VitalCHECK1957_?igsh=MW8xdDlsMGRzM2Jidg==",
+			href: "https://www.instagram.com/vitalCHECK1957_?igsh=MW8xdDlsMGRzM2Jidg==",
 			label: "Instagram",
 		},
 		{
@@ -40,7 +40,7 @@ const Footer = () => {
 		},
 		{
 			icon: TikTokIcon,
-			href: "https://www.tiktok.com/@VitalCHECK545?_t=ZN-8vKxXkXQe4g&_r=1",
+			href: "https://www.tiktok.com/@vitalCHECK545?_t=ZN-8vKxXkXQe4g&_r=1",
 			label: "TikTok",
 		},
 		{
@@ -99,7 +99,7 @@ const Footer = () => {
 								<Link to="/admin" className="cursor-default">
 									<img
 										src={logoIcon}
-										alt="VitalCHECK Logo"
+										alt="vitalCHECK Logo"
 										className="w-full h-full object-contain"
 									/>
 								</Link>
@@ -192,7 +192,7 @@ const Footer = () => {
 				<div className="border-t border-gray-300 mt-4 pt-8">
 					<div className="flex flex-col md:flex-row justify-between items-center">
 						<p className="text-white text-sm">
-							&copy; {currentYear} VitalCHECK Enterprise Health Check.{" "}
+							&copy; {currentYear} vitalCHECK Enterprise Health Check.{" "}
 							{t("footer.allRightsReserved")}
 						</p>
 						<div className="flex items-center space-x-6 mt-4 md:mt-0">

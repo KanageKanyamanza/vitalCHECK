@@ -1,8 +1,8 @@
-# 🎉 Système VitalCHECK - Implémentation Complète
+# 🎉 Système vitalCHECK - Implémentation Complète
 
 ## 📊 Résumé Exécutif
 
-**VitalCHECK dispose maintenant d'une plateforme complète** avec :
+**vitalCHECK dispose maintenant d'une plateforme complète** avec :
 - ✅ Paiements automatisés (PayPal)
 - ✅ Création de comptes automatique
 - ✅ Authentification client complète
@@ -53,7 +53,7 @@ Backend :
   ✅ Génère mot de passe temporaire
   ✅ Sauvegarde
   ↓
-📧 Email "Votre rapport VitalCHECK est prêt"
+📧 Email "Votre rapport vitalCHECK est prêt"
   - Score : 75/100
   - Credentials : email + temp_pass_123
   - Bouton "Accéder à Mon Dashboard"
@@ -86,7 +86,7 @@ Backend :
   ✅ subscription.plan = 'standard'
   ✅ subscription.status = 'active'
   ↓
-📧 Email "Votre compte VitalCHECK STANDARD est prêt !"
+📧 Email "Votre compte vitalCHECK STANDARD est prêt !"
   - Badge STANDARD (bleu)
   - Credentials : email + temp_pass_xyz
   - Avantages du plan
@@ -313,7 +313,7 @@ Si SMTP non configuré :
 ## 📁 Architecture Finale
 
 ```
-VitalCHECK/
+vitalCHECK/
 ├── Backend
 │   ├── Models
 │   │   ├── User (password, subscription, hasAccount)
@@ -431,7 +431,7 @@ VitalCHECK/
 **Backend** (`server/.env`) :
 ```env
 # MongoDB
-MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/vitalcheck
+MONGODB_URI=mongodb+srv://user:pass@cluster.mongodb.net/vitalCHECK
 
 # JWT
 JWT_SECRET=votre_secret_64_caracteres_minimum_genere_avec_crypto
@@ -536,7 +536,7 @@ VITE_API_URL=https://votre-domaine.com/api
 ✅ Historique **toujours accessible**  
 ✅ Abonnements **faciles à gérer**  
 
-### Pour VitalCHECK
+### Pour vitalCHECK
 ✅ **100% des utilisateurs** ont un compte  
 ✅ **Rétention maximale** via dashboard  
 ✅ **Tracking complet** paiements + évaluations  
@@ -560,6 +560,6 @@ VITE_API_URL=https://votre-domaine.com/api
 
 ---
 
-*Développé avec ❤️ pour VitalCHECK Enterprise Health Check*  
+*Développé avec ❤️ pour vitalCHECK Enterprise Health Check*  
 *Session complète - Tous les systèmes GO ! ✅*
 

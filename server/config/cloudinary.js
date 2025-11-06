@@ -52,7 +52,7 @@ const uploadSingleImage = upload.single('image');
 const uploadToCloudinary = async (filePath, options = {}) => {
   try {
     const defaultOptions = {
-      folder: 'vitalcheck-blog',
+      folder: 'vitalCHECK-blog',
       resource_type: 'auto',
       quality: 'auto',
       fetch_format: 'auto'
@@ -82,7 +82,7 @@ const uploadPDFToCloudinary = async (pdfBuffer, filename, options = {}) => {
     // Upload PDF vers Cloudinary
 
     const defaultOptions = {
-      folder: 'vitalcheck-rapport',
+      folder: 'vitalCHECK-rapport',
       resource_type: 'raw',
       use_filename: true,
       unique_filename: true,

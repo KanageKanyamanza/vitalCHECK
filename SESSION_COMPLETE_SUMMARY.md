@@ -1,4 +1,4 @@
-# 🎉 Résumé Complet de la Session - VitalCHECK
+# 🎉 Résumé Complet de la Session - vitalCHECK
 
 ## 📋 Table des Matières
 1. [Pack Spécial Diagnostic](#1-pack-spécial-diagnostic)
@@ -186,7 +186,7 @@ Paiement reçu
 5. ✅ Client peut se connecter immédiatement
 
 **Email Envoyé** :
-- Titre : "Votre compte VitalCHECK [PLAN] est prêt !"
+- Titre : "Votre compte vitalCHECK [PLAN] est prêt !"
 - Identifiants complets
 - Mot de passe temporaire
 - Lien direct vers login
@@ -317,7 +317,7 @@ npm run dev
    - Détails de la commande
 
 4. **Email Reçu**
-   - "Votre compte VitalCHECK STANDARD est prêt !"
+   - "Votre compte vitalCHECK STANDARD est prêt !"
    - Email + Mot de passe temporaire
 
 5. **Admin Dashboard** (`/admin/payments`)
@@ -475,7 +475,7 @@ Suivez le **Scénario de Test Complet** dans ce document (section "Test Complet"
    ↓
 6. Client redirigé vers /payment-success
    ↓
-7. Client reçoit email "Votre compte VitalCHECK [PLAN] est prêt !"
+7. Client reçoit email "Votre compte vitalCHECK [PLAN] est prêt !"
    ↓
 8. Client clique "Se connecter maintenant"
    ↓
@@ -606,5 +606,5 @@ Pour toute question ou amélioration future, référez-vous aux guides de docume
 
 ---
 
-*Développé avec ❤️ pour VitalCHECK Enterprise Health Check*
+*Développé avec ❤️ pour vitalCHECK Enterprise Health Check*
 

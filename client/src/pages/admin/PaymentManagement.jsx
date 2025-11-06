@@ -48,8 +48,8 @@ const PaymentManagement = () => {
   const handleSendEmail = async (payment) => {
     setSelectedPayment(payment)
     setEmailData({
-      subject: `VitalCHECK - Confirmation de votre abonnement ${payment.planName}`,
-      message: `Bonjour,\n\nNous avons bien reçu votre paiement pour le plan ${payment.planName}.\n\nNos experts vont vous contacter sous peu pour organiser vos services.\n\nCordialement,\nL'équipe VitalCHECK`
+      subject: `vitalCHECK - Confirmation de votre abonnement ${payment.planName}`,
+      message: `Bonjour,\n\nNous avons bien reçu votre paiement pour le plan ${payment.planName}.\n\nNos experts vont vous contacter sous peu pour organiser vos services.\n\nCordialement,\nL'équipe vitalCHECK`
     })
     setShowEmailModal(true)
   }
