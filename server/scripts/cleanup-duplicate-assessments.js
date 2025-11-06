@@ -12,7 +12,7 @@ const Assessment = require('../models/Assessment');
 const User = require('../models/User');
 
 // Configuration de la base de données
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/vitalcheck';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/vitalCHECK';
 
 async function connectDB() {
   try {

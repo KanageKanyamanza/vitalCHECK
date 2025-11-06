@@ -18,7 +18,7 @@ async function generateSitemap() {
     console.log('🚀 [SITEMAP] Début de la génération du sitemap...');
     
     // Connexion à MongoDB
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/VitalCHECK-health-check');
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/vitalCHECK-health-check');
     console.log('✅ [SITEMAP] Connecté à MongoDB');
     
     // Récupérer tous les blogs publiés

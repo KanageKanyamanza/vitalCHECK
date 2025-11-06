@@ -1,7 +1,7 @@
 {
-  "name": "vitalcheck-enterprise-health-check",
+  "name": "vitalCHECK-enterprise-health-check",
   "version": "1.0.0",
-  "description": "VitalCheck Enterprise Health Check - Self-assessment tool for business health evaluation",
+  "description": "vitalCHECK Enterprise Health Check - Self-assessment tool for business health evaluation",
   "main": "server/index.js",
   "scripts": {
     "dev": "concurrently \"npm run server\" \"npm run client\"",
@@ -16,9 +16,9 @@
     "health-check",
     "assessment",
     "enterprise",
-    "VitalCheck"
+    "vitalCHECK"
   ],
-  "author": "VitalCheck",
+  "author": "vitalCHECK",
   "license": "MIT",
   "devDependencies": {
     "concurrently": "^8.2.2"

@@ -1,6 +1,6 @@
 services:
   - type: web
-    name: VitalCHECK-health-check-api
+    name: vitalCHECK-health-check-api
     env: docker
     plan: starter
     dockerfilePath: ./Dockerfile

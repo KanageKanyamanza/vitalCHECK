@@ -24,14 +24,14 @@
 #### **AVANT (rounded-full)**
 ```html
 <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" 
-     alt="VitalCHECK Logo" 
+     alt="vitalCHECK Logo" 
      style="width: 80px; height: 80px; border-radius: 50%; object-fit: contain;" />
 ```
 
 #### **MAINTENANT (rounded-lg)**
 ```html
 <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" 
-     alt="VitalCHECK Logo" 
+     alt="vitalCHECK Logo" 
      style="width: 80px; height: 80px; border-radius: 8px; object-fit: contain;" />
 ```
 
@@ -40,14 +40,14 @@
 #### **AVANT (rounded-full)**
 ```html
 <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" 
-     alt="VitalCHECK Logo" 
+     alt="vitalCHECK Logo" 
      style="width: 50px; height: 50px; border-radius: 50%; object-fit: contain; margin: 0 auto 10px auto;" />
 ```
 
 #### **MAINTENANT (rounded-lg)**
 ```html
 <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" 
-     alt="VitalCHECK Logo" 
+     alt="vitalCHECK Logo" 
      style="width: 50px; height: 50px; border-radius: 8px; object-fit: contain; margin: 0 auto 10px auto;" />
 ```
 
@@ -153,7 +153,7 @@ border-radius: 8px;    /* Coins légèrement arrondis */
 ### **Header Email**
 ```
 ┌─────────────────────────────────┐
-│  [🔲] VitalCHECK Enterprise     │  ← Logo avec rounded-lg
+│  [🔲] vitalCHECK Enterprise     │  ← Logo avec rounded-lg
 │      Health Check               │
 │                                 │
 │  Contenu de l'email...          │

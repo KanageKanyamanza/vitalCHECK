@@ -20,7 +20,7 @@ export const downloadReport = async (assessmentId) => {
     
     // Extraire le nom du fichier depuis les headers ou utiliser un nom par défaut
     const contentDisposition = response.headers['content-disposition']
-    let filename = 'VitalCHECK-Report.pdf'
+    let filename = 'vitalCHECK-Report.pdf'
     if (contentDisposition) {
       const filenameMatch = contentDisposition.match(/filename="(.+)"/)
       if (filenameMatch) {

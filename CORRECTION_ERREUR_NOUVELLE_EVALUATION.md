@@ -83,7 +83,7 @@ const handleNewAssessment = () => {
 
 ```javascript
 case 'CLEAR_STORAGE':
-  localStorage.removeItem('VitalCHECK-assessment-data')
+  localStorage.removeItem('vitalCHECK-assessment-data')
   return initialState
 ```
 

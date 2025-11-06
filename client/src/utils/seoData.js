@@ -3,8 +3,8 @@
 export const getHomePageStructuredData = () => ({
   "@context": "https://schema.org",
   "@type": "WebApplication",
-  "name": "VitalCHECK Enterprise Health Check",
-  "description": "Évaluez la santé organisationnelle de votre entreprise africaine avec VitalCHECK. Évaluation gratuite de 10 minutes avec recommandations personnalisées et rapport détaillé.",
+  "name": "vitalCHECK Enterprise Health Check",
+  "description": "Évaluez la santé organisationnelle de votre entreprise africaine avec vitalCHECK. Évaluation gratuite de 10 minutes avec recommandations personnalisées et rapport détaillé.",
   "url": "https://www.checkmyenterprise.com/",
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web Browser",
@@ -21,7 +21,7 @@ export const getHomePageStructuredData = () => ({
     "contactPoint": {
       "@type": "ContactPoint",
       "contactType": "customer service",
-      "email": "contact@vitalcheck.com"
+      "email": "contact@vitalCHECK.com"
     }
   },
   "author": {
@@ -45,12 +45,12 @@ export const getHomePageStructuredData = () => ({
 export const getAssessmentPageStructuredData = () => ({
   "@context": "https://schema.org",
   "@type": "WebPage",
-  "name": "Évaluation de Santé d'Entreprise - VitalCHECK",
-  "description": "Commencez votre évaluation gratuite de santé d'entreprise avec VitalCHECK. Diagnostic complet en 10 minutes avec recommandations personnalisées.",
+  "name": "Évaluation de Santé d'Entreprise - vitalCHECK",
+  "description": "Commencez votre évaluation gratuite de santé d'entreprise avec vitalCHECK. Diagnostic complet en 10 minutes avec recommandations personnalisées.",
   "url": "https://www.checkmyenterprise.com/assessment",
   "mainEntity": {
     "@type": "WebApplication",
-    "name": "VitalCHECK Assessment Tool",
+    "name": "vitalCHECK Assessment Tool",
     "applicationCategory": "BusinessApplication",
     "offers": {
       "@type": "Offer",
@@ -80,7 +80,7 @@ export const getAssessmentPageStructuredData = () => ({
 export const getBlogPageStructuredData = () => ({
   "@context": "https://schema.org",
   "@type": "Blog",
-  "name": "Blog VitalCHECK - Conseils et Actualités Business",
+  "name": "Blog vitalCHECK - Conseils et Actualités Business",
   "description": "Découvrez nos articles sur la santé d'entreprise, le management, la croissance et les bonnes pratiques pour PME et startups africaines.",
   "url": "https://www.checkmyenterprise.com/blog",
   "publisher": {
@@ -88,7 +88,7 @@ export const getBlogPageStructuredData = () => ({
     "name": "Ubuntu Business Builders",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://healthcheck.growthVitalCHECK.space/logo.png"
+      "url": "https://healthcheck.growthvitalCHECK.space/logo.png"
     }
   },
   "breadcrumb": {
@@ -120,7 +120,7 @@ export const getBlogPostStructuredData = (blog) => {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     "headline": blog.title || "Article de blog",
-    "description": blog.excerpt || (blog.content ? (typeof blog.content === 'string' ? blog.content.substring(0, 160) + "..." : (blog.content.fr ? blog.content.fr.substring(0, 160) + "..." : blog.content.en ? blog.content.en.substring(0, 160) + "..." : "Article de blog VitalCHECK")) : "Article de blog VitalCHECK"),
+    "description": blog.excerpt || (blog.content ? (typeof blog.content === 'string' ? blog.content.substring(0, 160) + "..." : (blog.content.fr ? blog.content.fr.substring(0, 160) + "..." : blog.content.en ? blog.content.en.substring(0, 160) + "..." : "Article de blog vitalCHECK")) : "Article de blog vitalCHECK"),
     "image": (blog.featuredImage && typeof blog.featuredImage === 'string') ? `https://www.checkmyenterprise.com${blog.featuredImage}` : "https://www.checkmyenterprise.com/og-image.png",
     "url": blog.slug ? `https://www.checkmyenterprise.com/blog/${blog.slug}` : "https://www.checkmyenterprise.com/blog",
   "datePublished": blog.publishedAt,
@@ -135,7 +135,7 @@ export const getBlogPostStructuredData = (blog) => {
     "name": "Ubuntu Business Builders",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://healthcheck.growthVitalCHECK.space/logo.png"
+      "url": "https://healthcheck.growthvitalCHECK.space/logo.png"
     }
   },
   "mainEntityOfPage": {
@@ -174,8 +174,8 @@ export const getBlogPostStructuredData = (blog) => {
 export const getAboutPageStructuredData = () => ({
   "@context": "https://schema.org",
   "@type": "AboutPage",
-  "name": "À Propos - VitalCHECK Enterprise Health Check",
-  "description": "Découvrez VitalCHECK, la plateforme d'évaluation de santé d'entreprise développée par Ubuntu Business Builders pour les PME africaines.",
+  "name": "À Propos - vitalCHECK Enterprise Health Check",
+  "description": "Découvrez vitalCHECK, la plateforme d'évaluation de santé d'entreprise développée par Ubuntu Business Builders pour les PME africaines.",
   "url": "https://www.checkmyenterprise.com/about",
   "mainEntity": {
     "@type": "Organization",
@@ -186,11 +186,11 @@ export const getAboutPageStructuredData = () => ({
     "contactPoint": {
       "@type": "ContactPoint",
       "contactType": "customer service",
-      "email": "contact@vitalcheck.com"
+      "email": "contact@vitalCHECK.com"
     },
     "sameAs": [
-      "https://twitter.com/VitalCHECK",
-      "https://linkedin.com/company/vitalcheck"
+      "https://twitter.com/vitalCHECK",
+      "https://linkedin.com/company/vitalCHECK"
     ]
   }
 })
@@ -198,8 +198,8 @@ export const getAboutPageStructuredData = () => ({
 export const getContactPageStructuredData = () => ({
   "@context": "https://schema.org",
   "@type": "ContactPage",
-  "name": "Contact - VitalCHECK Enterprise Health Check",
-  "description": "Contactez l'équipe VitalCHECK pour toute question sur l'évaluation de santé d'entreprise ou nos services de conseil.",
+  "name": "Contact - vitalCHECK Enterprise Health Check",
+  "description": "Contactez l'équipe vitalCHECK pour toute question sur l'évaluation de santé d'entreprise ou nos services de conseil.",
   "url": "https://www.checkmyenterprise.com/contact",
   "mainEntity": {
     "@type": "Organization",
@@ -207,7 +207,7 @@ export const getContactPageStructuredData = () => ({
     "contactPoint": {
       "@type": "ContactPoint",
       "contactType": "customer service",
-      "email": "contact@vitalcheck.com",
+      "email": "contact@vitalCHECK.com",
       "availableLanguage": ["French", "English"]
     }
   }
@@ -234,11 +234,11 @@ export const getOrganizationStructuredData = () => ({
   "name": "Ubuntu Business Builders",
   "description": "Organisation dédiée au développement et à l'accompagnement des entreprises africaines",
   "url": "https://www.checkmyenterprise.com/",
-  "logo": "https://healthcheck.growthVitalCHECK.space/logo.png",
+  "logo": "https://healthcheck.growthvitalCHECK.space/logo.png",
   "contactPoint": {
     "@type": "ContactPoint",
     "contactType": "customer service",
-    "email": "contact@vitalcheck.com",
+    "email": "contact@vitalCHECK.com",
     "availableLanguage": ["French", "English"]
   },
   "address": {
@@ -246,7 +246,7 @@ export const getOrganizationStructuredData = () => ({
     "addressCountry": "Africa"
   },
   "sameAs": [
-    "https://twitter.com/VitalCHECK",
-    "https://linkedin.com/company/vitalcheck"
+    "https://twitter.com/vitalCHECK",
+    "https://linkedin.com/company/vitalCHECK"
   ]
 })

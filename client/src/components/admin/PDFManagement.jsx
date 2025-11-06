@@ -40,7 +40,7 @@ const PDFManagement = () => {
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
       link.href = url;
-      link.download = `VitalCHECK-${pdf.user.companyName}-${new Date(pdf.completedAt).toISOString().split('T')[0]}.pdf`;
+      link.download = `vitalCHECK-${pdf.user.companyName}-${new Date(pdf.completedAt).toISOString().split('T')[0]}.pdf`;
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);

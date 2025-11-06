@@ -71,8 +71,8 @@ const sampleBlogs = [
     status: 'published',
     featuredImage: 'https://images.unsplash.com/photo-1554224155-6726b3ff858f?w=800',
     metaTitle: {
-      fr: "Améliorer Santé Financière Entreprise | VitalCHECK",
-      en: "Improve Company Financial Health | VitalCHECK"
+      fr: "Améliorer Santé Financière Entreprise | vitalCHECK",
+      en: "Improve Company Financial Health | vitalCHECK"
     },
     metaDescription: {
       fr: "5 stratégies éprouvées pour optimiser la trésorerie et renforcer la stabilité financière de votre PME en 2024.",
@@ -158,8 +158,8 @@ const sampleBlogs = [
     status: 'published',
     featuredImage: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=800',
     metaTitle: {
-      fr: "Transformation Digitale PME | VitalCHECK",
-      en: "SME Digital Transformation | VitalCHECK"
+      fr: "Transformation Digitale PME | vitalCHECK",
+      en: "SME Digital Transformation | vitalCHECK"
     },
     metaDescription: {
       fr: "Découvrez comment TechManuf a multiplié sa productivité par 3 grâce à une transformation digitale réussie.",
@@ -257,8 +257,8 @@ const sampleBlogs = [
     status: 'published',
     featuredImage: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=800',
     metaTitle: {
-      fr: "10 KPIs RH Essentiels | VitalCHECK",
-      en: "10 Essential HR KPIs | VitalCHECK"
+      fr: "10 KPIs RH Essentiels | vitalCHECK",
+      en: "10 Essential HR KPIs | vitalCHECK"
     },
     metaDescription: {
       fr: "Découvrez les 10 indicateurs RH indispensables pour mesurer et améliorer la performance de vos équipes.",
@@ -420,8 +420,8 @@ const sampleBlogs = [
     status: 'published',
     featuredImage: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=800',
     metaTitle: {
-      fr: "Stratégie Marketing Digital | VitalCHECK",
-      en: "Digital Marketing Strategy | VitalCHECK"
+      fr: "Stratégie Marketing Digital | vitalCHECK",
+      en: "Digital Marketing Strategy | vitalCHECK"
     },
     metaDescription: {
       fr: "Guide complet pour développer une stratégie marketing digital performante en 6 étapes avec outils et KPIs.",
@@ -561,8 +561,8 @@ const sampleBlogs = [
     status: 'published',
     featuredImage: 'https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=800',
     metaTitle: {
-      fr: "5 Méthodes Lean Optimisation | VitalCHECK",
-      en: "5 Lean Optimization Methods | VitalCHECK"
+      fr: "5 Méthodes Lean Optimisation | vitalCHECK",
+      en: "5 Lean Optimization Methods | vitalCHECK"
     },
     metaDescription: {
       fr: "Découvrez comment appliquer les principes Lean (5S, Kaizen, VSM) pour améliorer l'efficacité de votre PME.",
@@ -730,8 +730,8 @@ const sampleBlogs = [
     status: 'published',
     featuredImage: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=800',
     metaTitle: {
-      fr: "Gouvernance PME Croissance | VitalCHECK",
-      en: "SME Governance Growth | VitalCHECK"
+      fr: "Gouvernance PME Croissance | vitalCHECK",
+      en: "SME Governance Growth | vitalCHECK"
     },
     metaDescription: {
       fr: "Guide complet pour structurer la gouvernance de votre PME et préparer la croissance. 4 piliers essentiels expliqués.",
@@ -743,7 +743,7 @@ const sampleBlogs = [
 async function createBlogs() {
   try {
     console.log('🚀 Connexion à MongoDB...');
-    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/VitalCHECK-health-check');
+    await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/vitalCHECK-health-check');
     console.log('✅ Connecté à MongoDB');
 
     // Trouver un admin pour l'auteur

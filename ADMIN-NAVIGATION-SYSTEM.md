@@ -1,11 +1,11 @@
-# Système de Navigation Admin VitalCHECK
+# Système de Navigation Admin vitalCHECK
 
 ## Vue d'ensemble
 
 Le système de navigation admin utilise une approche responsive avec :
 - **Sidebar** sur desktop (1024px+)
 - **Bottom Navigation** sur mobile et tablette (< 1024px)
-- **Palette de couleurs VitalCHECK** intégrée
+- **Palette de couleurs vitalCHECK** intégrée
 - **Design moderne** avec animations fluides
 
 ## Architecture des Composants
@@ -35,9 +35,9 @@ Sidebar responsive avec :
 - **Authentification :** Bouton de déconnexion intégré
 
 **Sections de navigation :**
-1. **Tableau de bord** - `primary` (vert VitalCHECK)
+1. **Tableau de bord** - `primary` (vert vitalCHECK)
 2. **Utilisateurs** - `secondary` (ocre terreux)
-3. **Évaluations** - `accent` (jaune VitalCHECK)
+3. **Évaluations** - `accent` (jaune vitalCHECK)
 4. **Emails** - `earth` (vert profond)
 5. **Rapports** - `success` (vert)
 6. **Paramètres** - `warning` (ambre)
@@ -47,7 +47,7 @@ Sidebar responsive avec :
 
 Navigation mobile avec :
 - **6 boutons** en grille (2x3)
-- **Icônes colorées** selon la palette VitalCHECK
+- **Icônes colorées** selon la palette vitalCHECK
 - **États actifs** avec couleurs de fond
 - **Masquage automatique** sur desktop
 
@@ -60,13 +60,13 @@ Header responsive avec :
 - **Notifications** avec indicateur
 - **Bouton de déconnexion** (desktop uniquement)
 
-## Palette de Couleurs VitalCHECK
+## Palette de Couleurs vitalCHECK
 
 ### Couleurs Principales
 ```css
-/* VitalCHECK Green - Growth, trust, knowledge */
+/* vitalCHECK Green - Growth, trust, knowledge */
 primary: {
-  500: '#4CAF50',  // VitalCHECK Green principal
+  500: '#4CAF50',  // vitalCHECK Green principal
   600: '#16a34a',  // Hover states
   100: '#dcfce7',  // Backgrounds légers
 }
@@ -80,7 +80,7 @@ secondary: {
 
 /* Vibrant African Accents */
 accent: {
-  500: '#F4C542',  // VitalCHECK Yellow
+  500: '#F4C542',  // vitalCHECK Yellow
   600: '#f59e0b',  // Hover states
   100: '#fef9e7',  // Backgrounds légers
 }
@@ -182,7 +182,7 @@ useEffect(() => {
 1. Ajouter l'item dans `AdminSidebar.jsx`
 2. Ajouter l'item dans `AdminBottomNav.jsx`
 3. Créer la route dans `AdminApp.jsx`
-4. Choisir une couleur de la palette VitalCHECK
+4. Choisir une couleur de la palette vitalCHECK
 
 ### Modification des Couleurs
 1. Modifier `tailwind.config.js`
@@ -237,9 +237,9 @@ useEffect(() => {
 
 ## Conclusion
 
-Le système de navigation admin VitalCHECK offre :
+Le système de navigation admin vitalCHECK offre :
 - **Expérience utilisateur** optimale sur tous les appareils
-- **Design cohérent** avec l'identité VitalCHECK
+- **Design cohérent** avec l'identité vitalCHECK
 - **Performance** élevée
 - **Accessibilité** respectée
 - **Maintenabilité** facilitée

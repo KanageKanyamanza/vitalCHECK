@@ -1,4 +1,4 @@
-# VitalCHECK Enterprise Health Check
+# vitalCHECK Enterprise Health Check
 
 Une application web complète pour évaluer la santé d'entreprise avec la stack MERN + Vite + Tailwind CSS.
 
@@ -62,7 +62,7 @@ Une application web complète pour évaluer la santé d'entreprise avec la stack
 ```bash
 # Cloner le projet
 git clone <repository-url>
-cd VitalCHECK_Enterprise_Health_Check
+cd vitalCHECK_Enterprise_Health_Check
 
 # Installer toutes les dépendances
 npm run install-all
@@ -83,7 +83,7 @@ cp client/env.example client/.env
 ```env
 NODE_ENV=development
 PORT=5000
-MONGODB_URI=mongodb://localhost:27017/vitalcheck-health-check
+MONGODB_URI=mongodb://localhost:27017/vitalCHECK-health-check
 JWT_SECRET=your-super-secret-jwt-key
 JWT_EXPIRE=7d
 
@@ -128,7 +128,7 @@ npm start
 ## 📁 Structure du Projet
 
 ```
-VitalCHECK_Enterprise_Health_Check/
+vitalCHECK_Enterprise_Health_Check/
 ├── server/                 # Backend Node.js
 │   ├── models/            # Modèles MongoDB
 │   ├── routes/            # Routes API
@@ -238,12 +238,12 @@ Modifier `server/data/questions.js` pour :
 
 ```bash
 # Backend
-heroku create vitalcheck-health-check-api
+heroku create vitalCHECK-health-check-api
 heroku addons:create mongolab:sandbox
 heroku config:set NODE_ENV=production
 
 # Frontend
-heroku create vitalcheck-health-check-web
+heroku create vitalCHECK-health-check-web
 ```
 
 ### Serveur de Production
@@ -282,8 +282,8 @@ MIT License - Voir le fichier LICENSE pour plus de détails.
 Pour toute question ou problème :
 
 - Créer une issue sur GitHub
-- Contacter l'équipe VitalCHECK
+- Contacter l'équipe vitalCHECK
 
 ---
 
-**VitalCHECK Enterprise Health Check** - Évaluez la santé de votre entreprise en 10 minutes ! 🚀
+**vitalCHECK Enterprise Health Check** - Évaluez la santé de votre entreprise en 10 minutes ! 🚀

@@ -28,7 +28,7 @@ async function checkProductionHealth() {
       const response = await axios.get(`${productionUrl}${endpoint.path}`, {
         timeout: 10000,
         headers: {
-          'User-Agent': 'VitalCHECK-Health-Check/1.0'
+          'User-Agent': 'vitalCHECK-Health-Check/1.0'
         }
       });
 

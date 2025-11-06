@@ -199,9 +199,9 @@ const BlogPage = () => {
   return (
     <div className="min-h-screen bg-gray-50 pt-[50px]">
       <SEOHead
-        title="Blog VitalCHECK - Conseils et Actualités Business"
+        title="Blog vitalCHECK - Conseils et Actualités Business"
         description="Découvrez nos articles sur la santé d'entreprise, le management, la croissance et les bonnes pratiques pour PME et startups africaines."
-        keywords="blog business, conseils entreprise, management, croissance PME, startup, VitalCHECK, actualités business"
+        keywords="blog business, conseils entreprise, management, croissance PME, startup, vitalCHECK, actualités business"
         url="/blog"
         structuredData={getBlogPageStructuredData()}
       />

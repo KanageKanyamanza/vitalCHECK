@@ -1136,7 +1136,7 @@ router.post('/profile/avatar', authenticateAdmin, uploadSingleImage, async (req,
 
     // Upload vers Cloudinary avec dossier spécifique pour les avatars
     const result = await uploadToCloudinary(req.file.path, {
-      folder: 'vitalcheck-admin-avatars',
+      folder: 'vitalCHECK-admin-avatars',
       width: 300,
       height: 300,
       crop: 'fill',
@@ -1448,7 +1448,7 @@ router.post('/reports/resend/:assessmentId', authenticateAdmin, async (req, res)
     const clientUrl = process.env.CLIENT_URL || 'https://www.checkmyenterprise.com';
     const downloadUrl = `${clientUrl}/report/download/${assessment._id}`;
     
-    const pdfFilename = `VitalCHECK-Health-Check-${assessment.user.companyName}-${new Date(assessment.completedAt).toISOString().split('T')[0]}.pdf`;
+    const pdfFilename = `vitalCHECK-Health-Check-${assessment.user.companyName}-${new Date(assessment.completedAt).toISOString().split('T')[0]}.pdf`;
 
     const emailData = {
       to: assessment.user.email,

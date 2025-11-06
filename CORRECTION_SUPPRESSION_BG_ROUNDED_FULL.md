@@ -25,7 +25,7 @@
 ```html
 <div style="display: inline-block; background: rgba(255, 255, 255, 0.2); padding: 10px; border-radius: 50%; margin-bottom: 10px; backdrop-filter: blur(10px);">
   <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" 
-       alt="VitalCHECK Logo" 
+       alt="vitalCHECK Logo" 
        style="width: 80px; height: 80px; border-radius: 8px; object-fit: contain;" />
 </div>
 ```
@@ -33,7 +33,7 @@
 #### **MAINTENANT (logo direct)**
 ```html
 <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" 
-     alt="VitalCHECK Logo" 
+     alt="vitalCHECK Logo" 
      style="width: 80px; height: 80px; border-radius: 8px; object-fit: contain; margin-bottom: 10px;" />
 ```
 
@@ -114,7 +114,7 @@ Header:
 ┌─────────────────────────────────┐
 │  🔵 (conteneur avec flou)       │  ← Conteneur circulaire
 │  ┌─────────────────────────────┐│
-│  │  [🔲] Logo VitalCHECK       ││  ← Logo dans conteneur
+│  │  [🔲] Logo vitalCHECK       ││  ← Logo dans conteneur
 │  └─────────────────────────────┘│
 │  Enterprise Health Check        │
 └─────────────────────────────────┘
@@ -125,7 +125,7 @@ Header:
 Header:
 ┌─────────────────────────────────┐
 │                                 │
-│     [🔲] Logo VitalCHECK        │  ← Logo direct
+│     [🔲] Logo vitalCHECK        │  ← Logo direct
 │                                 │
 │  Enterprise Health Check        │
 └─────────────────────────────────┘
@@ -164,7 +164,7 @@ margin-bottom: 10px;             /* Déplacé sur le logo */
 ┌─────────────────────────────────┐
 │  🌈 Gradient Background         │
 │                                 │
-│     [🔲] Logo VitalCHECK        │  ← Logo avec rounded-lg
+│     [🔲] Logo vitalCHECK        │  ← Logo avec rounded-lg
 │                                 │
 │  Enterprise Health Check        │
 │  Tagline de l'entreprise        │

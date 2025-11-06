@@ -1,8 +1,8 @@
-# Flux de Paiement VitalCHECK
+# Flux de Paiement vitalCHECK
 
 ## Architecture du système de paiement
 
-Le système de paiement VitalCHECK utilise une page de checkout dédiée qui centralise toutes les options de paiement.
+Le système de paiement vitalCHECK utilise une page de checkout dédiée qui centralise toutes les options de paiement.
 
 ## Parcours utilisateur
 
@@ -34,7 +34,7 @@ L'utilisateur peut choisir entre deux options :
 **Option 2 : Virement bancaire / Contact**
 - Pour les clients préférant un paiement traditionnel
 - Redirection vers `/contact?plan={planId}`
-- L'équipe VitalCHECK contactera le client pour finaliser
+- L'équipe vitalCHECK contactera le client pour finaliser
 
 ### 3. Page de Succès (`/payment-success`)
 
@@ -114,7 +114,7 @@ const handlePaymentSuccess = async (order) => {
 Quand l'utilisateur choisit "Virement bancaire / Contact" :
 1. Redirection vers `/contact?plan={planId}`
 2. Le formulaire de contact est pré-rempli avec le plan sélectionné
-3. L'équipe VitalCHECK reçoit la demande et contacte le client
+3. L'équipe vitalCHECK reçoit la demande et contacte le client
 
 ## Tests
 

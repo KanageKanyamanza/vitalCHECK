@@ -248,7 +248,7 @@ const generateStatsHTML = (stats) => {
     <html>
     <head>
       <meta charset="UTF-8">
-      <title>Rapport Statistiques VitalCHECK</title>
+      <title>Rapport Statistiques vitalCHECK</title>
       <style>
         * {
           margin: 0;
@@ -419,9 +419,9 @@ const generateStatsHTML = (stats) => {
       <div class="header">
         <div class="header-content">
           <div class="logo-container">
-            <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="VitalCHECK Logo" class="logo" />
+            <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="vitalCHECK Logo" class="logo" />
           </div>
-          <h1>VitalCHECK Enterprise Health Check</h1>
+          <h1>vitalCHECK Enterprise Health Check</h1>
           <p>Rapport Statistiques Administrateur</p>
           <p>Généré le ${new Date().toLocaleDateString('fr-FR')}</p>
         </div>
@@ -501,8 +501,8 @@ const generateStatsHTML = (stats) => {
       ` : ''}
 
       <div class="footer">
-        <p>Rapport généré automatiquement par VitalCHECK Enterprise Health Check</p>
-        <p>© ${new Date().getFullYear()} VitalCHECK. Tous droits réservés.</p>
+        <p>Rapport généré automatiquement par vitalCHECK Enterprise Health Check</p>
+        <p>© ${new Date().getFullYear()} vitalCHECK. Tous droits réservés.</p>
       </div>
     </body>
     </html>
@@ -566,7 +566,7 @@ const generateUsersHTML = (users) => {
     <html>
     <head>
       <meta charset="UTF-8">
-      <title>Rapport Utilisateurs VitalCHECK</title>
+      <title>Rapport Utilisateurs vitalCHECK</title>
       <style>
         * {
           margin: 0;
@@ -752,9 +752,9 @@ const generateUsersHTML = (users) => {
       <div class="header">
         <div class="header-content">
           <div class="logo-container">
-            <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="VitalCHECK Logo" class="logo" />
+            <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="vitalCHECK Logo" class="logo" />
           </div>
-          <h1>VitalCHECK Enterprise Health Check</h1>
+          <h1>vitalCHECK Enterprise Health Check</h1>
           <p>Rapport Utilisateurs Administrateur</p>
           <p>Généré le ${new Date().toLocaleDateString('fr-FR')}</p>
         </div>
@@ -826,8 +826,8 @@ const generateUsersHTML = (users) => {
       </div>
 
       <div class="footer">
-        <p>Rapport généré automatiquement par VitalCHECK Enterprise Health Check</p>
-        <p>© ${new Date().getFullYear()} VitalCHECK. Tous droits réservés.</p>
+        <p>Rapport généré automatiquement par vitalCHECK Enterprise Health Check</p>
+        <p>© ${new Date().getFullYear()} vitalCHECK. Tous droits réservés.</p>
       </div>
     </body>
     </html>
@@ -891,7 +891,7 @@ const generateAssessmentsHTML = (assessments) => {
     <html>
     <head>
       <meta charset="UTF-8">
-      <title>Rapport Évaluations VitalCHECK</title>
+      <title>Rapport Évaluations vitalCHECK</title>
       <style>
         * {
           margin: 0;
@@ -1078,9 +1078,9 @@ const generateAssessmentsHTML = (assessments) => {
       <div class="header">
         <div class="header-content">
           <div class="logo-container">
-            <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="VitalCHECK Logo" class="logo" />
+            <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="vitalCHECK Logo" class="logo" />
           </div>
-          <h1>VitalCHECK Enterprise Health Check</h1>
+          <h1>vitalCHECK Enterprise Health Check</h1>
           <p>Rapport Évaluations Administrateur</p>
           <p>Généré le ${new Date().toLocaleDateString('fr-FR')}</p>
         </div>
@@ -1145,8 +1145,8 @@ const generateAssessmentsHTML = (assessments) => {
       </div>
 
       <div class="footer">
-        <p>Rapport généré automatiquement par VitalCHECK Enterprise Health Check</p>
-        <p>© ${new Date().getFullYear()} VitalCHECK. Tous droits réservés.</p>
+        <p>Rapport généré automatiquement par vitalCHECK Enterprise Health Check</p>
+        <p>© ${new Date().getFullYear()} vitalCHECK. Tous droits réservés.</p>
       </div>
     </body>
     </html>

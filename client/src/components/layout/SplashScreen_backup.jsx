@@ -12,7 +12,7 @@ import {
   Briefcase,
   Zap
 } from 'lucide-react'
-import { VitalCHECKLogo } from '../ui'
+import { vitalCHECKLogo } from '../ui'
 
 const SplashScreen = ({ onLoadingComplete }) => {
   const [loading, setLoading] = useState(true)
@@ -211,14 +211,14 @@ const SplashScreen = ({ onLoadingComplete }) => {
 
           {/* Contenu principal */}
           <div className="relative z-10 flex flex-col items-center justify-center h-full">
-            {/* Texte VitalCHECK */}
+            {/* Texte vitalCHECK */}
             <motion.div
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ duration: 0.8, ease: "easeOut" }}
               className="mb-8 text-center"
             >
-              <VitalCHECKLogo 
+              <vitalCHECKLogo 
                 size="large" 
                 showText={true}
               />

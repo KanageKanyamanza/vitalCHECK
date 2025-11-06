@@ -147,12 +147,12 @@ const isNewAccount = assessment.user.hasAccount &&
 
 ### **AVANT (Problématique)**
 ```
-📧 Email 1: "VitalCHECK - Votre compte est créé ! Accédez à vos identifiants"
+📧 Email 1: "vitalCHECK - Votre compte est créé ! Accédez à vos identifiants"
    ├── Identifiants de connexion
    ├── Score de l'évaluation
    └── Instructions de connexion
 
-📧 Email 2: "Votre rapport VitalCHECK Enterprise Health Check est prêt !"
+📧 Email 2: "Votre rapport vitalCHECK Enterprise Health Check est prêt !"
    ├── Rapport PDF en pièce jointe
    ├── Score détaillé
    └── Boutons d'action
@@ -162,7 +162,7 @@ const isNewAccount = assessment.user.hasAccount &&
 
 ### **MAINTENANT (Corrigé)**
 ```
-📧 Email Unique: "Votre rapport VitalCHECK Enterprise Health Check est prêt !"
+📧 Email Unique: "Votre rapport vitalCHECK Enterprise Health Check est prêt !"
    ├── Rapport PDF en pièce jointe
    ├── Score détaillé
    ├── Identifiants de connexion (si nouveau compte)

@@ -131,11 +131,11 @@ const PricingPage = () => {
   return (
     <>
       <Helmet>
-        <title>Tarifs - VitalCHECK | Plans d'abonnement pour votre entreprise</title>
-        <meta name="description" content="Découvrez nos plans tarifaires VitalCHECK : GRATUIT, STANDARD et PREMIUM. Choisissez la solution adaptée à votre entreprise pour améliorer votre santé organisationnelle." />
-        <meta name="keywords" content="tarifs, prix, abonnement, VitalCHECK, diagnostic entreprise, PME, TPE, coopératives" />
-        <meta property="og:title" content="Tarifs - VitalCHECK | Plans d'abonnement" />
-        <meta property="og:description" content="Choisissez le plan VitalCHECK adapté à votre entreprise. Plans GRATUIT, STANDARD et PREMIUM disponibles." />
+        <title>Tarifs - vitalCHECK | Plans d'abonnement pour votre entreprise</title>
+        <meta name="description" content="Découvrez nos plans tarifaires vitalCHECK : GRATUIT, STANDARD et PREMIUM. Choisissez la solution adaptée à votre entreprise pour améliorer votre santé organisationnelle." />
+        <meta name="keywords" content="tarifs, prix, abonnement, vitalCHECK, diagnostic entreprise, PME, TPE, coopératives" />
+        <meta property="og:title" content="Tarifs - vitalCHECK | Plans d'abonnement" />
+        <meta property="og:description" content="Choisissez le plan vitalCHECK adapté à votre entreprise. Plans GRATUIT, STANDARD et PREMIUM disponibles." />
         <meta property="og:type" content="website" />
       </Helmet>
 
@@ -609,7 +609,7 @@ const PricingPage = () => {
 
         {/* Social Share */}
         <SocialShare 
-          title="Tarifs VitalCHECK - Plans d'abonnement"
+          title="Tarifs vitalCHECK - Plans d'abonnement"
           description="Choisissez le plan adapté à votre entreprise : GRATUIT, STANDARD, PREMIUM ou SERVICE DE DIAGNOSTIC."
         />
       </div>

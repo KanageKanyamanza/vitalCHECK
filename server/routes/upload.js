@@ -160,14 +160,14 @@ router.delete('/image/:id', authenticateAdmin, async (req, res) => {
   }
 });
 
-// GET /upload/images - Lister les images du dossier vitalcheck-blog
+// GET /upload/images - Lister les images du dossier vitalCHECK-blog
 router.get('/images', authenticateAdmin, async (req, res) => {
   try {
     const { cloudinary } = require('../config/cloudinary');
     
     const result = await cloudinary.api.resources({
       type: 'upload',
-      prefix: 'vitalcheck-blog/',
+      prefix: 'vitalCHECK-blog/',
       max_results: 100
     });
 
