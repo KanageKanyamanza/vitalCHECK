@@ -32,6 +32,9 @@ app.use(
 			// Autoriser les requêtes sans origine (ex: mobile apps, Postman)
 			if (!origin) return callback(null, true);
 			
+			// Normaliser l'origine en supprimant le slash final
+			const normalizedOrigin = origin.replace(/\/$/, '');
+			
 			const allowedOrigins = [
 				"http://localhost:5173",
 				"http://localhost:5174",
@@ -43,13 +46,13 @@ app.use(
 			// En production, être plus permissif pour éviter les problèmes CORS
 			if (process.env.NODE_ENV === 'production') {
 				// Autoriser tous les sous-domaines de checkmyenterprise.com
-				if (origin.includes('checkmyenterprise.com')) {
+				if (normalizedOrigin.includes('checkmyenterprise.com')) {
 					return callback(null, true);
 				}
 			}
 			
-			// Vérifier si l'origine est autorisée
-			if (allowedOrigins.includes(origin)) {
+			// Vérifier si l'origine normalisée est autorisée
+			if (allowedOrigins.includes(normalizedOrigin)) {
 				return callback(null, true);
 			}
 			
