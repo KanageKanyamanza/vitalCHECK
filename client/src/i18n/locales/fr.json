@@ -1039,7 +1039,7 @@
     "success": "Paiement réussi ! Merci pour votre achat.",
     "error": "Erreur de paiement. Veuillez réessayer.",
     "processing": "Traitement du paiement...",
-    "payWith": "Payer avec PayPal",
+    "payWith": "Payer avec PayPal ou carte bancaire",
     "or": "ou"
   },
   "checkout": {
@@ -1053,8 +1053,8 @@
     "oneTime": "Paiement unique",
     "annualPrice": "Prix annuel",
     "selectPaymentMethod": "Sélectionnez le mode de paiement",
-    "paypal": "PayPal",
-    "paypalDescription": "Payez en toute sécurité avec PayPal ou carte bancaire",
+    "paypal": "PayPal ou carte bancaire",
+    "paypalDescription": "Payez en toute sécurité avec Carte bancaire ou PayPal",
     "bankTransfer": "Virement bancaire / Nous contacter",
     "bankTransferDescription": "Payez par virement bancaire ou contactez-nous pour d'autres options",
     "contactUsForPayment": "Contactez-nous pour organiser un paiement par virement bancaire ou discuter d'autres options de paiement.",

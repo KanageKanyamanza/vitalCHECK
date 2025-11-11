@@ -53,7 +53,7 @@ const PayPalButton = ({ planId, planName, amount, currency = 'USD', onSuccess, o
   }
 
   return (
-    <div className="w-full">
+    <div className="w-full relative z-0">
       <PayPalButtons
         createOrder={createOrder}
         onApprove={onApprove}
