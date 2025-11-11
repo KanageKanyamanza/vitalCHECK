@@ -981,7 +981,7 @@
     "success": "Payment successful! Thank you for your purchase.",
     "error": "Payment error. Please try again.",
     "processing": "Processing payment...",
-    "payWith": "Pay with PayPal",
+    "payWith": "Pay with PayPal or Credit card",
     "or": "or"
   },
   "checkout": {
@@ -995,8 +995,8 @@
     "oneTime": "One-time payment",
     "annualPrice": "Annual price",
     "selectPaymentMethod": "Select payment method",
-    "paypal": "PayPal",
-    "paypalDescription": "Pay securely with PayPal or credit card",
+    "paypal": "Credit card or PayPal",
+    "paypalDescription": "Pay securely with Credit card or PayPal",
     "bankTransfer": "Bank Transfer / Contact Us",
     "bankTransferDescription": "Pay by bank transfer or contact us for other options",
     "contactUsForPayment": "Contact us to arrange payment by bank transfer or discuss other payment options.",

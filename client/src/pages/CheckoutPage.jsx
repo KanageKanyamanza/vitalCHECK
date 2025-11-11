@@ -85,7 +85,7 @@ const CheckoutPage = () => {
         paymentDetails: {
           ...order,
           userCompanyName: companyName, // Ajouter le nom de l'entreprise
-          userEmail: userEmail // Ajouter l'email utilisateur
+          userEmail: userEmail
         }
       })
       
@@ -252,7 +252,7 @@ const CheckoutPage = () => {
                   </div>
 
                   {/* Bank Transfer / Contact Method */}
-                  <div
+                  {/* <div
                     className={`border-2 rounded-lg p-4 cursor-pointer transition-all ${
                       selectedPaymentMethod === 'contact'
                         ? 'border-primary-600 bg-primary-50'
@@ -303,7 +303,7 @@ const CheckoutPage = () => {
                         </button>
                       </motion.div>
                     )}
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="mt-6 p-4 bg-gray-50 rounded-lg">
