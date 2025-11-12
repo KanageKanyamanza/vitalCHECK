@@ -15,7 +15,8 @@ const AssessmentForm = ({ onFormSubmit }) => {
     companyName: '',
     sector: '',
     companySize: '',
-    email: ''
+    email: '',
+    phone: ''
   })
   const [loading, setLoading] = useState(false)
   const initializedRef = useRef(false)
@@ -31,7 +32,8 @@ const AssessmentForm = ({ onFormSubmit }) => {
         companyName: clientUser.companyName || '',
         sector: clientUser.sector || '',
         companySize: clientUser.companySize || '',
-        email: clientUser.email || ''
+        email: clientUser.email || '',
+        phone: clientUser.phone || ''
       })
       // Mettre à jour le contexte d'évaluation avec les données du client
       dispatch({ type: 'SET_USER', payload: {
@@ -39,7 +41,8 @@ const AssessmentForm = ({ onFormSubmit }) => {
         companyName: clientUser.companyName,
         sector: clientUser.sector,
         companySize: clientUser.companySize,
-        email: clientUser.email
+        email: clientUser.email,
+        phone: clientUser.phone || ''
       }})
       initializedRef.current = true
     } 
@@ -49,7 +52,8 @@ const AssessmentForm = ({ onFormSubmit }) => {
         companyName: user.companyName || '',
         sector: user.sector || '',
         companySize: user.companySize || '',
-        email: user.email || ''
+        email: user.email || '',
+        phone: user.phone || ''
       })
       initializedRef.current = true
     }
@@ -58,20 +62,21 @@ const AssessmentForm = ({ onFormSubmit }) => {
   // Sauvegarder automatiquement les changements dans le contexte avec debounce
   useEffect(() => {
     const timeoutId = setTimeout(() => {
-      if (formData.companyName || formData.sector || formData.companySize || formData.email) {
+      if (formData.companyName || formData.sector || formData.companySize || formData.email || formData.phone) {
         // Créer un objet user temporaire pour la sauvegarde
         const tempUser = {
           companyName: formData.companyName,
           sector: formData.sector,
           companySize: formData.companySize,
-          email: formData.email
+          email: formData.email,
+          phone: formData.phone
         }
         dispatch({ type: 'SET_USER', payload: tempUser })
       }
     }, 500) // Attendre 500ms après le dernier changement
 
     return () => clearTimeout(timeoutId)
-  }, [formData.companyName, formData.sector, formData.companySize, formData.email])
+  }, [formData.companyName, formData.sector, formData.companySize, formData.email, formData.phone])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -238,6 +243,21 @@ const AssessmentForm = ({ onFormSubmit }) => {
                   className="input-field"
                   placeholder={t('landing.form.emailPlaceholder')}
                   required
+                />
+              </div>
+
+              <div>
+                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+                  {t('landing.form.phone')}
+                </label>
+                <input
+                  type="tel"
+                  id="phone"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  className="input-field"
+                  placeholder={t('landing.form.phonePlaceholder')}
                 />
               </div>
 

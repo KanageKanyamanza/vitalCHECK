@@ -176,6 +176,10 @@ const UserDetail = () => {
                   <dd className="mt-1 text-sm text-gray-900">{user.email}</dd>
                 </div>
                 <div>
+                  <dt className="text-sm font-medium text-gray-500">Téléphone</dt>
+                  <dd className="mt-1 text-sm text-gray-900">{user.phone || 'Non renseigné'}</dd>
+                </div>
+                <div>
                   <dt className="text-sm font-medium text-gray-500">Secteur</dt>
                   <dd className="mt-1 text-sm text-gray-900 capitalize">{user.sector}</dd>
                 </div>

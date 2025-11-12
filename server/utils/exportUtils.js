@@ -9,6 +9,7 @@ const exportUsersToExcel = async (users) => {
   // Configuration des colonnes
   worksheet.columns = [
     { header: 'Email', key: 'email', width: 30 },
+    { header: 'Téléphone', key: 'phone', width: 18 },
     { header: 'Nom de l\'entreprise', key: 'companyName', width: 30 },
     { header: 'Secteur', key: 'sector', width: 20 },
     { header: 'Taille', key: 'companySize', width: 15 },
@@ -39,6 +40,7 @@ const exportUsersToExcel = async (users) => {
     
     worksheet.addRow({
       email: user.email,
+      phone: user.phone || '',
       companyName: user.companyName,
       sector: user.sector,
       companySize: user.companySize,
@@ -793,6 +795,7 @@ const generateUsersHTML = (users) => {
           <thead>
             <tr>
               <th>Email</th>
+              <th>Téléphone</th>
               <th>Entreprise</th>
               <th>Secteur</th>
               <th>Taille</th>
@@ -811,6 +814,7 @@ const generateUsersHTML = (users) => {
               return `
                 <tr>
                   <td>${user.email}</td>
+                  <td>${user.phone || 'N/A'}</td>
                   <td>${user.companyName}</td>
                   <td>${user.sector}</td>
                   <td>${user.companySize}</td>
