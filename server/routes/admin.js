@@ -749,7 +749,7 @@ router.get('/export/users', authenticateAdmin, checkPermission('viewUsers'), asy
       .populate('assessments', 'overallScore overallStatus completedAt')
       .sort({ createdAt: -1 });
 
-    let csv = 'Email,Nom de l\'entreprise,Secteur,Taille,Évaluations,Score moyen,Statut moyen,Date de création\n';
+    let csv = 'Email,Téléphone,Nom de l\'entreprise,Secteur,Taille,Évaluations,Score moyen,Statut moyen,Date de création\n';
     
     users.forEach(user => {
       const assessments = user.assessments || [];
@@ -759,8 +759,9 @@ router.get('/export/users', authenticateAdmin, checkPermission('viewUsers'), asy
       const avgStatus = assessments.length > 0 
         ? assessments[0].overallStatus 
         : 'N/A';
+      const phone = user.phone ? user.phone.replace(/"/g, '""') : '';
       
-      csv += `"${user.email}","${user.companyName}","${user.sector}","${user.companySize}","${assessments.length}","${avgScore}","${avgStatus}","${user.createdAt.toISOString()}"\n`;
+      csv += `"${user.email}","${phone}","${user.companyName}","${user.sector}","${user.companySize}","${assessments.length}","${avgScore}","${avgStatus}","${user.createdAt.toISOString()}"\n`;
     });
 
     res.setHeader('Content-Type', 'text/csv');

@@ -9,7 +9,8 @@ router.post('/register', [
   body('email').isEmail().normalizeEmail(),
   body('companyName').trim().isLength({ min: 2 }),
   body('sector').trim().isLength({ min: 2 }),
-  body('companySize').isIn(['micro', 'sme', 'large-sme'])
+  body('companySize').isIn(['micro', 'sme', 'large-sme']),
+  body('phone').optional().trim().isLength({ min: 6 }).withMessage('Phone number must be at least 6 characters')
 ], async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -17,12 +18,22 @@ router.post('/register', [
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { email, companyName, sector, companySize } = req.body;
+    const { email, companyName, sector, companySize, phone } = req.body;
 
     // Check if user already exists
     let user = await User.findOne({ email });
     
     if (user) {
+      let shouldSave = false;
+      if (phone && phone !== user.phone) {
+        user.phone = phone;
+        shouldSave = true;
+      }
+
+      if (shouldSave) {
+        await user.save();
+      }
+
       // User exists, return user info
       return res.json({
         success: true,
@@ -32,6 +43,7 @@ router.post('/register', [
           companyName: user.companyName,
           sector: user.sector,
           companySize: user.companySize,
+          phone: user.phone,
           hasCompletedAssessment: user.assessments.length > 0
         }
       });
@@ -42,7 +54,8 @@ router.post('/register', [
       email,
       companyName,
       sector,
-      companySize
+      companySize,
+      phone
     });
 
     await user.save();
@@ -55,6 +68,7 @@ router.post('/register', [
         companyName: user.companyName,
         sector: user.sector,
         companySize: user.companySize,
+        phone: user.phone,
         hasCompletedAssessment: false
       }
     });
@@ -88,6 +102,7 @@ router.get('/user/:email', async (req, res) => {
         companyName: user.companyName,
         sector: user.sector,
         companySize: user.companySize,
+        phone: user.phone,
         hasCompletedAssessment: user.assessments.length > 0
       }
     });
