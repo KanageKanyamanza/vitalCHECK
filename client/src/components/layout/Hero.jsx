@@ -17,7 +17,7 @@ const Hero = ({ onStartAssessment }) => {
     // style={{ backgroundImage: `url(${bgHero})` }}
     >
       {/* Hero Content */}
-      <div className="max-w-7xl min-h-[100vh] bg-white/95 mx-auto py-[50px] relative z-10 w-full">
+      <div className="max-w-7xl min-h-[100vh] bg-white/95 mx-auto pb-[50px] relative z-10 w-full">
         <div className='md:flex'>
         <div className="text-center pt-16">
           <motion.h1 

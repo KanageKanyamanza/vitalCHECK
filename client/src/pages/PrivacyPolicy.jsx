@@ -14,7 +14,7 @@ const PrivacyPolicy = () => {
   }, [scrollToTop])
 
   return (
-    <div className="min-h-screen bg-gray-50 py-[50px]">
+    <div className="min-h-screen bg-gray-50 pb-[50px]">
       {/* Back Button */}
       <div className="m-4">
         <BackButton />

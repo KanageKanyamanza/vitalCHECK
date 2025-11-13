@@ -101,11 +101,11 @@ const Navbar = () => {
 
   return (
     <motion.nav 
-      initial={{ y: -100, opacity: 0 }}
+      initial={{ y: 100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 
-          bg-white shadow-lg border-b border-gray-200"
+      className="fixed bottom-0 left-0 right-0 z-50 transition-all duration-300 
+          bg-white shadow-lg border-t border-gray-200"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
@@ -283,14 +283,15 @@ const Navbar = () => {
         <AnimatePresence>
           {isMobileMenuOpen && (
             <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.3, ease: "easeInOut" }}
-              className="md:hidden bg-white border-t border-gray-200 shadow-lg"
+              className="md:hidden fixed bottom-16 left-0 right-0 z-40"
             >
-              <div className="px-4 py-4 space-y-3">
-                {/* Liens de navigation mobile */}
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
+                <div className="bg-white border border-gray-200 shadow-lg rounded-t-xl px-4 py-4 space-y-3">
+                  {/* Liens de navigation mobile */}
                 <button
                   onClick={() => handleNavigation('/')}
                   className={`w-full text-left px-3 py-2 rounded-lg font-medium transition-colors duration-200 ${
@@ -387,19 +388,19 @@ const Navbar = () => {
                   </button>
                 )}
                 
-                {location.pathname === '/results' && (
-                  <button
-                    onClick={() => handleNavigation('/results')}
-                    className={`w-full text-left px-3 py-2 rounded-lg font-medium transition-colors duration-200 ${
-                      isActive('/results') 
-                        ? 'text-primary-600 bg-primary-50' 
-                        : 'text-gray-600 hover:text-primary-600 hover:bg-gray-50'
-                    }`}
-                  >
-                    {t('navigation.results')}
-                  </button>
-                )}
-
+                  {location.pathname === '/results' && (
+                    <button
+                      onClick={() => handleNavigation('/results')}
+                      className={`w-full text-left px-3 py-2 rounded-lg font-medium transition-colors duration-200 ${
+                        isActive('/results') 
+                          ? 'text-primary-600 bg-primary-50' 
+                          : 'text-gray-600 hover:text-primary-600 hover:bg-gray-50'
+                      }`}
+                    >
+                      {t('navigation.results')}
+                    </button>
+                  )}
+                </div>
               </div>
             </motion.div>
           )}
