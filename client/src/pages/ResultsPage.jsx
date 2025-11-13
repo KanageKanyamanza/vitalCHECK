@@ -263,7 +263,7 @@ const ResultsPage = () => {
 	}
 
 	return (
-		<div className="min-h-screen py-[60px] bg-gray-50">
+		<div className="min-h-screen pb-[50px] bg-gray-50">
 			{/* Report Generation Progress Modal */}
 			<ReportGenerationProgress
 				isGenerating={generatingReport}
