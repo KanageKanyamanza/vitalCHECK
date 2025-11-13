@@ -14,7 +14,7 @@ const Hero = ({ onStartAssessment }) => {
     // className="min-h-screen bg-cover bg-center bg-no-repeat relative flex items-center pt-16"
     className="min-h-screen bg-cover bg-center bg-no-repeat relative flex overflow-hidden"
 
-    style={{ backgroundImage: `url(${bgHero})` }}
+    // style={{ backgroundImage: `url(${bgHero})` }}
     >
       {/* Hero Content */}
       <div className="max-w-7xl min-h-[100vh] bg-white/95 mx-auto py-[50px] relative z-10 w-full">
