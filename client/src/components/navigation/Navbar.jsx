@@ -289,8 +289,8 @@ const Navbar = () => {
               transition={{ duration: 0.3, ease: "easeInOut" }}
               className="md:hidden fixed bottom-16 left-0 right-0 z-40"
             >
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-4">
-                <div className="bg-white border border-gray-200 shadow-lg rounded-t-xl px-4 py-4 space-y-3">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-7">
+                <div className="bg-white border border-gray-200 shadow-lg rounded-xl px-4 py-4 space-y-3">
                   {/* Liens de navigation mobile */}
                 <button
                   onClick={() => handleNavigation('/')}
