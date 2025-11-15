@@ -41,7 +41,7 @@ const NavbarLanguageSelector = ({ onLanguageChange, className = '', isScrolled =
         <span className="hidden sm:block">{selectedLang.name}</span>
         <ChevronDown 
           className={`w-3 h-3 transition-transform duration-200 ${
-            isOpen ? 'rotate-180' : ''
+            isOpen ? '' : 'rotate-180'
           }`} 
         />
       </button>
@@ -61,7 +61,7 @@ const NavbarLanguageSelector = ({ onLanguageChange, className = '', isScrolled =
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: -10, scale: 0.95 }}
               transition={{ duration: 0.2 }}
-              className="absolute top-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 min-w-[120px]"
+              className="absolute bottom-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 min-w-[120px]"
             >
               {languages.map((language) => (
                 <button

@@ -104,11 +104,11 @@ const Navbar = () => {
       initial={{ y: 100, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="fixed bottom-0 left-0 right-0 z-50 transition-all duration-300 
+      className="fixed w-[90%] mx-auto rounded-full bottom-7 left-0 right-0 z-50 transition-all duration-300 
           bg-white shadow-lg border-t border-gray-200"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
+        <div className="flex justify-between items-center h-14">
           {/* Logo et titre */}
           <div className="flex items-center space-x-3">
             <div className="flex items-center cursor-pointer" onClick={() => handleDesktopNavigation('/')}>

@@ -11,12 +11,12 @@ import {
 } from "lucide-react";
 import logoIcon from "/android-icon-96x96.png";
 import { InstallPWAButton, UserGuideButton } from "../ui";
-import useSmoothScroll from "../../hooks/useSmoothScroll";
+// import useSmoothScroll from "../../hooks/useSmoothScroll";
 
 const Footer = () => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
-	const { scrollToTop, scrollToElement } = useSmoothScroll();
+	// const { scrollToTop, scrollToElement } = useSmoothScroll();
 
 	const currentYear = new Date().getFullYear();
 
@@ -90,7 +90,7 @@ const Footer = () => {
 
 	return (
 		<footer className="bg-primary-600 text-white">
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5">
+			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-1">
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
 					{/* Logo et Description */}
 					<div className="lg:col-span-2">
