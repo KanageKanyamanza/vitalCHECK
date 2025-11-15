@@ -18,7 +18,7 @@ const Layout = ({ children }) => {
       {!isAdminPage && <Navbar />}
       
       {/* Contenu principal */}
-      <main className={`flex-1 ${!isAdminPage ? 'pb-[65px]' : ''}`}>
+      <main className={`flex-1 ${!isAdminPage ? '' : ''}`}>
         {children}
       </main>
       
