@@ -257,6 +257,105 @@ const questionsData = {
           "Implement comprehensive cybersecurity and data governance."
         ]
       }
+    },
+    {
+      id: "risks",
+      name: "Risks & Compliance",
+      questions: [
+        {
+          id: "r1",
+          text: "Risk management?",
+          options: [
+            { label: "No system", score: 0 },
+            { label: "Some risks identified", score: 1 },
+            { label: "Partial process", score: 2 },
+            { label: "Complete system", score: 3 }
+          ]
+        }
+      ],
+      recommendations: {
+        red: [
+          "Identify the main risks of your business.",
+          "Consult regulations applicable to your sector.",
+          "Implement basic compliance measures."
+        ],
+        amber: [
+          "Develop a formal risk management process.",
+          "Conduct regular compliance audits.",
+          "Document your compliance procedures."
+        ],
+        green: [
+          "Implement a complete risk management system with continuous monitoring.",
+          "Obtain relevant sector certifications.",
+          "Establish a risk management committee."
+        ]
+      }
+    },
+    {
+      id: "branding",
+      name: "Branding & Packaging",
+      questions: [
+        {
+          id: "b1",
+          text: "Branding?",
+          options: [
+            { label: "No clear branding", score: 0 },
+            { label: "Basic", score: 1 },
+            { label: "Coherent", score: 2 },
+            { label: "Professional", score: 3 }
+          ]
+        }
+      ],
+      recommendations: {
+        red: [
+          "Define your brand identity (values, mission, vision).",
+          "Create a logo and basic visual elements.",
+          "Develop a clear brand message."
+        ],
+        amber: [
+          "Harmonize your branding across all communication channels.",
+          "Improve your packaging quality.",
+          "Develop a coherent visual identity."
+        ],
+        green: [
+          "Create a premium and memorable brand experience.",
+          "Invest in innovative and differentiating packaging.",
+          "Develop a long-term brand strategy."
+        ]
+      }
+    },
+    {
+      id: "export",
+      name: "Export Readiness",
+      questions: [
+        {
+          id: "e1",
+          text: "Ready to export?",
+          options: [
+            { label: "No steps taken", score: 0 },
+            { label: "Informal interest", score: 1 },
+            { label: "Partial preparation", score: 2 },
+            { label: "Complete process", score: 3 }
+          ]
+        }
+      ],
+      recommendations: {
+        red: [
+          "Assess the export potential of your products/services.",
+          "Research regulatory requirements for export.",
+          "Identify at least one potential target market."
+        ],
+        amber: [
+          "Develop an export plan with priority markets.",
+          "Establish local partnerships in target markets.",
+          "Adapt your products/services to international market requirements."
+        ],
+        green: [
+          "Implement a complete export strategy with multiple markets.",
+          "Create a strong international presence with local partners.",
+          "Develop international logistics and distribution capabilities."
+        ]
+      }
     }
   ],
   scoring: {
