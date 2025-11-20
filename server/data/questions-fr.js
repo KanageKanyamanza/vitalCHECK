@@ -257,6 +257,105 @@ const questionsDataFR = {
           "Implémentez une cybersécurité complète et une gouvernance des données."
         ]
       }
+    },
+    {
+      id: "risks",
+      name: "Risques & Conformité",
+      questions: [
+        {
+          id: "r1",
+          text: "Gestion des risques ?",
+          options: [
+            { label: "Aucun système", score: 0 },
+            { label: "Quelques risques identifiés", score: 1 },
+            { label: "Processus partiel", score: 2 },
+            { label: "Système complet", score: 3 }
+          ]
+        }
+      ],
+      recommendations: {
+        red: [
+          "Identifiez les principaux risques de votre activité.",
+          "Consultez les réglementations applicables à votre secteur.",
+          "Mettez en place des mesures de base pour la conformité."
+        ],
+        amber: [
+          "Développez un processus formel de gestion des risques.",
+          "Effectuez des audits de conformité réguliers.",
+          "Documentez vos procédures de conformité."
+        ],
+        green: [
+          "Implémentez un système complet de gestion des risques avec suivi continu.",
+          "Obtenez des certifications sectorielles pertinentes.",
+          "Mettez en place un comité de gestion des risques."
+        ]
+      }
+    },
+    {
+      id: "branding",
+      name: "Branding & Packaging",
+      questions: [
+        {
+          id: "b1",
+          text: "Branding ?",
+          options: [
+            { label: "Aucun branding clair", score: 0 },
+            { label: "Basique", score: 1 },
+            { label: "Cohérent", score: 2 },
+            { label: "Professionnel", score: 3 }
+          ]
+        }
+      ],
+      recommendations: {
+        red: [
+          "Définissez votre identité de marque (valeurs, mission, vision).",
+          "Créez un logo et des éléments visuels de base.",
+          "Développez un message de marque clair."
+        ],
+        amber: [
+          "Harmonisez votre branding sur tous les canaux de communication.",
+          "Améliorez la qualité de votre packaging.",
+          "Développez une charte graphique cohérente."
+        ],
+        green: [
+          "Créez une expérience de marque premium et mémorable.",
+          "Investissez dans un packaging innovant et différenciant.",
+          "Développez une stratégie de marque à long terme."
+        ]
+      }
+    },
+    {
+      id: "export",
+      name: "Préparation à l'Export",
+      questions: [
+        {
+          id: "e1",
+          text: "Prêt à exporter ?",
+          options: [
+            { label: "Aucune démarche", score: 0 },
+            { label: "Intérêt informel", score: 1 },
+            { label: "Préparation partielle", score: 2 },
+            { label: "Processus complet", score: 3 }
+          ]
+        }
+      ],
+      recommendations: {
+        red: [
+          "Évaluez le potentiel d'exportation de vos produits/services.",
+          "Renseignez-vous sur les exigences réglementaires à l'export.",
+          "Identifiez au moins un marché cible potentiel."
+        ],
+        amber: [
+          "Développez un plan d'exportation avec des marchés prioritaires.",
+          "Établissez des partenariats locaux dans les marchés cibles.",
+          "Adaptez vos produits/services aux exigences des marchés internationaux."
+        ],
+        green: [
+          "Implémentez une stratégie d'exportation complète avec plusieurs marchés.",
+          "Créez une présence internationale solide avec des partenaires locaux.",
+          "Développez des capacités logistiques et de distribution à l'international."
+        ]
+      }
     }
   ],
   scoring: {

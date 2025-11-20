@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Questions d'Évaluation - Santé d'Entreprise | Ubuntu Business Builders</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #00751B 0%, #F4C542 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #00751B 0%, #F4C542 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .intro {
+            background: #f0fdf4;
+            padding: 30px;
+            border-radius: 10px;
+            margin-bottom: 40px;
+            border-left: 5px solid #00751B;
+        }
+
+        .intro h2 {
+            color: #00751B;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .intro ul {
+            margin-left: 20px;
+            margin-top: 10px;
+        }
+
+        .intro li {
+            margin: 8px 0;
+            font-size: 1.1em;
+        }
+
+        .pillar {
+            margin-bottom: 50px;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .pillar:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .pillar-header {
+            background: linear-gradient(135deg, #00751B 0%, #F4C542 100%);
+            color: white;
+            padding: 25px 30px;
+            font-size: 1.5em;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .pillar-number {
+            background: rgba(255, 255, 255, 0.2);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.2em;
+        }
+
+        .pillar-content {
+            padding: 30px;
+        }
+
+        .question {
+            background: #f0fdf4;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 4px solid #00751B;
+        }
+
+        .question:last-child {
+            margin-bottom: 0;
+        }
+
+        .question-title {
+            font-size: 1.2em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .question-id {
+            background: #00751B;
+            color: white;
+            padding: 5px 12px;
+            border-radius: 5px;
+            font-size: 0.9em;
+            font-weight: 700;
+        }
+
+        .options {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .option {
+            background: white;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .option:hover {
+            border-color: #00751B;
+            background: #f0fdf4;
+            transform: translateX(5px);
+        }
+
+        .option-score {
+            background: #00751B;
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .option-label {
+            flex: 1;
+            font-size: 1em;
+        }
+
+        .summary {
+            background: linear-gradient(135deg, #00751B 0%, #F4C542 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 40px;
+        }
+
+        .summary h2 {
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .summary-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+        }
+
+        .summary-item h3 {
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .threshold {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .threshold.red {
+            background: rgba(220, 53, 69, 0.2);
+        }
+
+        .threshold.amber {
+            background: rgba(255, 193, 7, 0.2);
+        }
+
+        .threshold.green {
+            background: rgba(40, 167, 69, 0.2);
+        }
+
+        .threshold-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+
+        .threshold-color.red {
+            background: #dc3545;
+        }
+
+        .threshold-color.amber {
+            background: #ffc107;
+        }
+
+        .threshold-color.green {
+            background: #28a745;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                max-width: 100%;
+                border-radius: 0;
+            }
+            .pillar:hover {
+                transform: none;
+            }
+            /* Réduire les espacements */
+            .header {
+                padding: 15px;
+                page-break-after: avoid;
+                break-after: avoid;
+            }
+            .content {
+                padding: 10px;
+            }
+            .intro {
+                padding: 12px;
+                margin-bottom: 15px;
+                page-break-after: avoid;
+                break-after: avoid;
+            }
+            /* Permettre aux piliers d'être coupés entre les questions */
+            .pillar {
+                margin-bottom: 10px;
+                border-radius: 8px;
+                page-break-inside: auto;
+                break-inside: auto;
+            }
+            .pillar-header {
+                padding: 12px 15px;
+                font-size: 1.2em;
+                page-break-after: avoid;
+                break-after: avoid;
+            }
+            .pillar-content {
+                padding: 12px;
+            }
+            /* Garder les questions intactes (question + options ensemble) */
+            .question {
+                page-break-inside: avoid;
+                break-inside: avoid;
+                margin-bottom: 10px;
+                padding: 12px;
+            }
+            .question-title {
+                font-size: 1.05em;
+                margin-bottom: 10px;
+            }
+            /* Permettre aux options d'être sur plusieurs pages si nécessaire */
+            .options {
+                margin-top: 8px;
+                page-break-inside: auto;
+                break-inside: auto;
+            }
+            .option {
+                padding: 8px 12px;
+                margin-bottom: 4px;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            /* Réduire la section summary */
+            .summary {
+                padding: 20px;
+                margin-top: 20px;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            .summary-grid {
+                gap: 15px;
+                margin-top: 15px;
+            }
+            .summary-item {
+                padding: 15px;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            /* Marges minimales pour le PDF */
+            @page {
+                margin: 0.5cm;
+            }
+            /* Réduire les tailles de police si nécessaire */
+            .header h1 {
+                font-size: 2em;
+                margin-bottom: 5px;
+            }
+            .header p {
+                font-size: 1em;
+            }
+            .intro h2 {
+                font-size: 1.5em;
+                margin-bottom: 10px;
+            }
+            .intro li {
+                font-size: 1em;
+                margin: 4px 0;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 1.8em;
+            }
+            .content {
+                padding: 20px;
+            }
+            .pillar-header {
+                font-size: 1.2em;
+                padding: 20px;
+            }
+            .question-title {
+                font-size: 1em;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 Questions d'Évaluation</h1>
+            <p>Évaluation de Santé d'Entreprise - Ubuntu Business Builders</p>
+        </div>
+
+        <div class="content">
+            <div class="intro">
+                <h2>Les 9 Piliers de la Santé d'Entreprise</h2>
+                <p style="margin-bottom: 15px; font-size: 1.1em;">
+                    Cette évaluation comprend <strong>15 questions</strong> réparties sur <strong>9 piliers</strong> essentiels. 
+                    Chaque question offre 4 options de réponse notées de 0 à 3 points.
+                </p>
+                <ul>
+                    <li><strong>Score par pilier :</strong> Moyenne des 2 questions × 25 (0-100 points)</li>
+                    <li><strong>Score global :</strong> Moyenne de tous les scores de piliers</li>
+                    <li><strong>Durée estimée :</strong> 15-20 minutes</li>
+                </ul>
+            </div>
+
+            <!-- Pilier 1: Finance & Trésorerie -->
+            <div class="pillar">
+                <div class="pillar-header">
+                    <div class="pillar-number">1</div>
+                    <div>💰 Finance & Trésorerie</div>
+                </div>
+                <div class="pillar-content">
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-id">F1</span>
+                            <span>Avez-vous des états financiers à jour (P&L, Bilan, Flux de trésorerie) ?</span>
+                        </div>
+                        <ul class="options">
+                            <li class="option">
+                                <span class="option-score">0</span>
+                                <span class="option-label">Aucun enregistrement</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">1</span>
+                                <span class="option-label">Enregistrements de base, non mis à jour</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">2</span>
+                                <span class="option-label">Mis à jour trimestriellement</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">3</span>
+                                <span class="option-label">Mis à jour mensuellement</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-id">F2</span>
+                            <span>Combien de mois de réserves de trésorerie votre entreprise peut-elle couvrir ?</span>
+                        </div>
+                        <ul class="options">
+                            <li class="option">
+                                <span class="option-score">0</span>
+                                <span class="option-label">&lt; 1 mois</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">1</span>
+                                <span class="option-label">1–3 mois</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">2</span>
+                                <span class="option-label">3–6 mois</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">3</span>
+                                <span class="option-label">&gt; 6 mois</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pilier 2: Opérations & Processus -->
+            <div class="pillar">
+                <div class="pillar-header">
+                    <div class="pillar-number">2</div>
+                    <div>⚙️ Opérations & Processus</div>
+                </div>
+                <div class="pillar-content">
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-id">O1</span>
+                            <span>Vos processus métier sont-ils documentés ?</span>
+                        </div>
+                        <ul class="options">
+                            <li class="option">
+                                <span class="option-score">0</span>
+                                <span class="option-label">Pas du tout</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">1</span>
+                                <span class="option-label">Seulement certains processus</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">2</span>
+                                <span class="option-label">La plupart des processus documentés</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">3</span>
+                                <span class="option-label">Entièrement standardisés et automatisés</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-id">O2</span>
+                            <span>Comment surveillez-vous l'efficacité opérationnelle ?</span>
+                        </div>
+                        <ul class="options">
+                            <li class="option">
+                                <span class="option-score">0</span>
+                                <span class="option-label">Aucune surveillance</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">1</span>
+                                <span class="option-label">Vérifications ad-hoc</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">2</span>
+                                <span class="option-label">Révisions régulières</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">3</span>
+                                <span class="option-label">KPI basés sur les données</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pilier 3: Ventes & Marketing -->
+            <div class="pillar">
+                <div class="pillar-header">
+                    <div class="pillar-number">3</div>
+                    <div>📈 Ventes & Marketing</div>
+                </div>
+                <div class="pillar-content">
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-id">S1</span>
+                            <span>Comment générez-vous des prospects/clients ?</span>
+                        </div>
+                        <ul class="options">
+                            <li class="option">
+                                <span class="option-score">0</span>
+                                <span class="option-label">Principalement par le bouche-à-oreille</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">1</span>
+                                <span class="option-label">Un peu de marketing irrégulier</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">2</span>
+                                <span class="option-label">Campagnes structurées (réseaux sociaux, email, etc.)</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">3</span>
+                                <span class="option-label">Stratégie intégrée ventes + marketing avec KPI</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-id">S2</span>
+                            <span>Suivez-vous la rétention client et la valeur vie client ?</span>
+                        </div>
+                        <ul class="options">
+                            <li class="option">
+                                <span class="option-score">0</span>
+                                <span class="option-label">Non</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">1</span>
+                                <span class="option-label">Suivi de base (tableurs)</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">2</span>
+                                <span class="option-label">Surveillance régulière</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">3</span>
+                                <span class="option-label">Analyses avancées + système CRM</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pilier 4: Personnel & RH -->
+            <div class="pillar">
+                <div class="pillar-header">
+                    <div class="pillar-number">4</div>
+                    <div>👥 Personnel & RH</div>
+                </div>
+                <div class="pillar-content">
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-id">P1</span>
+                            <span>Avez-vous des descriptions de poste claires et des évaluations de performance ?</span>
+                        </div>
+                        <ul class="options">
+                            <li class="option">
+                                <span class="option-score">0</span>
+                                <span class="option-label">Non</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">1</span>
+                                <span class="option-label">Partiel / informel</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">2</span>
+                                <span class="option-label">Évaluations régulières pour les rôles clés</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">3</span>
+                                <span class="option-label">Systématique pour tout le personnel</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-id">P2</span>
+                            <span>Investissez-vous dans la formation et le développement du personnel ?</span>
+                        </div>
+                        <ul class="options">
+                            <li class="option">
+                                <span class="option-score">0</span>
+                                <span class="option-label">Jamais</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">1</span>
+                                <span class="option-label">Occasionnellement</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">2</span>
+                                <span class="option-label">Plan de formation annuel</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">3</span>
+                                <span class="option-label">Programme de formation continue</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pilier 5: Stratégie & Gouvernance -->
+            <div class="pillar">
+                <div class="pillar-header">
+                    <div class="pillar-number">5</div>
+                    <div>🎯 Stratégie & Gouvernance</div>
+                </div>
+                <div class="pillar-content">
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-id">ST1</span>
+                            <span>Avez-vous une stratégie/plan d'entreprise documenté ?</span>
+                        </div>
+                        <ul class="options">
+                            <li class="option">
+                                <span class="option-score">0</span>
+                                <span class="option-label">Aucun</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">1</span>
+                                <span class="option-label">Idées informelles seulement</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">2</span>
+                                <span class="option-label">Plan écrit, pas régulièrement mis à jour</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">3</span>
+                                <span class="option-label">Plan clair, mis à jour avec surveillance</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-id">ST2</span>
+                            <span>À quelle fréquence la direction examine-t-elle les performances de l'entreprise ?</span>
+                        </div>
+                        <ul class="options">
+                            <li class="option">
+                                <span class="option-score">0</span>
+                                <span class="option-label">Jamais</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">1</span>
+                                <span class="option-label">Occasionnellement</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">2</span>
+                                <span class="option-label">Trimestriellement</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">3</span>
+                                <span class="option-label">Mensuellement</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pilier 6: Technologie & Maturité Numérique -->
+            <div class="pillar">
+                <div class="pillar-header">
+                    <div class="pillar-number">6</div>
+                    <div>💻 Technologie & Maturité Numérique</div>
+                </div>
+                <div class="pillar-content">
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-id">T1</span>
+                            <span>Quel rôle joue la technologie dans votre entreprise ?</span>
+                        </div>
+                        <ul class="options">
+                            <li class="option">
+                                <span class="option-score">0</span>
+                                <span class="option-label">Très limité</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">1</span>
+                                <span class="option-label">De base (emails, tableurs)</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">2</span>
+                                <span class="option-label">Systèmes de base en place (comptabilité, CRM, ERP)</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">3</span>
+                                <span class="option-label">Outils numériques avancés intégrés dans toutes les fonctions</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-id">T2</span>
+                            <span>Avez-vous une politique de cybersécurité/protection des données ?</span>
+                        </div>
+                        <ul class="options">
+                            <li class="option">
+                                <span class="option-score">0</span>
+                                <span class="option-label">Aucune</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">1</span>
+                                <span class="option-label">Pratiques informelles de base</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">2</span>
+                                <span class="option-label">Politique formelle, pas appliquée</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">3</span>
+                                <span class="option-label">Entièrement implémentée + personnel formé</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pilier 7: Risques & Conformité -->
+            <div class="pillar">
+                <div class="pillar-header">
+                    <div class="pillar-number">7</div>
+                    <div>🛡️ Risques & Conformité</div>
+                </div>
+                <div class="pillar-content">
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-id">R1</span>
+                            <span>Gestion des risques ?</span>
+                        </div>
+                        <ul class="options">
+                            <li class="option">
+                                <span class="option-score">0</span>
+                                <span class="option-label">Aucun système</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">1</span>
+                                <span class="option-label">Quelques risques identifiés</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">2</span>
+                                <span class="option-label">Processus partiel</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">3</span>
+                                <span class="option-label">Système complet</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pilier 8: Branding & Packaging -->
+            <div class="pillar">
+                <div class="pillar-header">
+                    <div class="pillar-number">8</div>
+                    <div>🎨 Branding & Packaging</div>
+                </div>
+                <div class="pillar-content">
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-id">B1</span>
+                            <span>Branding ?</span>
+                        </div>
+                        <ul class="options">
+                            <li class="option">
+                                <span class="option-score">0</span>
+                                <span class="option-label">Aucun branding clair</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">1</span>
+                                <span class="option-label">Basique</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">2</span>
+                                <span class="option-label">Cohérent</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">3</span>
+                                <span class="option-label">Professionnel</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pilier 9: Préparation à l'Export -->
+            <div class="pillar">
+                <div class="pillar-header">
+                    <div class="pillar-number">9</div>
+                    <div>🌍 Préparation à l'Export</div>
+                </div>
+                <div class="pillar-content">
+                    <div class="question">
+                        <div class="question-title">
+                            <span class="question-id">E1</span>
+                            <span>Prêt à exporter ?</span>
+                        </div>
+                        <ul class="options">
+                            <li class="option">
+                                <span class="option-score">0</span>
+                                <span class="option-label">Aucune démarche</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">1</span>
+                                <span class="option-label">Intérêt informel</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">2</span>
+                                <span class="option-label">Préparation partielle</span>
+                            </li>
+                            <li class="option">
+                                <span class="option-score">3</span>
+                                <span class="option-label">Processus complet</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Résumé -->
+            <div class="summary">
+                <h2>📋 Résumé du Système de Notation</h2>
+                <div class="summary-grid">
+                    <div class="summary-item">
+                        <h3>Structure</h3>
+                        <p><strong>9 piliers</strong> (6 avec 2 questions, 3 avec 1 question)</p>
+                        <p><strong>Total : 15 questions</strong></p>
+                    </div>
+                    <div class="summary-item">
+                        <h3>Notation</h3>
+                        <p>Chaque question : <strong>0 à 3 points</strong></p>
+                        <p>Score pilier : <strong>Moyenne × 25</strong> (0-100)</p>
+                        <p>Score global : <strong>Moyenne des piliers</strong></p>
+                    </div>
+                    <div class="summary-item">
+                        <h3>Seuils de Performance</h3>
+                        <div class="threshold red">
+                            <div class="threshold-color red"></div>
+                            <div><strong>Rouge :</strong> 0-39 points</div>
+                        </div>
+                        <div class="threshold amber">
+                            <div class="threshold-color amber"></div>
+                            <div><strong>Ambre :</strong> 40-69 points</div>
+                        </div>
+                        <div class="threshold green">
+                            <div class="threshold-color green"></div>
+                            <div><strong>Vert :</strong> 70-100 points</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
