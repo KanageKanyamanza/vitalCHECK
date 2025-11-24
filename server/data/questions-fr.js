@@ -263,13 +263,23 @@ const questionsDataFR = {
       name: "Risques & Conformité",
       questions: [
         {
-          id: "r1",
-          text: "Gestion des risques ?",
+          id: "rc1",
+          text: "Disposez-vous d'un système formel d'identification et de suivi des risques (opérationnels, financiers, juridiques) ?",
           options: [
-            { label: "Aucun système", score: 0 },
-            { label: "Quelques risques identifiés", score: 1 },
-            { label: "Processus partiel", score: 2 },
-            { label: "Système complet", score: 3 }
+            { label: "Aucun mécanisme, gestion entièrement réactive", score: 0 },
+            { label: "Quelques risques identifiés de manière informelle", score: 1 },
+            { label: "Risques identifiés + documents ou procédures partielles", score: 2 },
+            { label: "Système complet : cartographie, suivi régulier, plans de mitigation", score: 3 }
+          ]
+        },
+        {
+          id: "rc2",
+          text: "Votre entreprise respecte-t-elle les exigences légales, fiscales et réglementaires applicables à votre secteur ?",
+          options: [
+            { label: "Aucune conformité assurée / risques de sanctions", score: 0 },
+            { label: "Conformité de base mais irrégulière", score: 1 },
+            { label: "Conformité généralement assurée mais sans audit formel", score: 2 },
+            { label: "Conformité complète + contrôles/audits réguliers + documentation à jour", score: 3 }
           ]
         }
       ],
@@ -296,13 +306,23 @@ const questionsDataFR = {
       name: "Branding & Packaging",
       questions: [
         {
-          id: "b1",
-          text: "Branding ?",
+          id: "bp1",
+          text: "Votre identité visuelle (logo, couleurs, ton) est-elle cohérente et utilisée de manière uniforme ?",
           options: [
-            { label: "Aucun branding clair", score: 0 },
-            { label: "Basique", score: 1 },
-            { label: "Cohérent", score: 2 },
-            { label: "Professionnel", score: 3 }
+            { label: "Identité inexistante ou incohérente", score: 0 },
+            { label: "Éléments graphiques basiques, incohérence dans l'usage", score: 1 },
+            { label: "Identité visuelle claire et appliquée dans la plupart des supports", score: 2 },
+            { label: "Branding professionnel, cohérent, appliqué partout", score: 3 }
+          ]
+        },
+        {
+          id: "bp2",
+          text: "Votre packaging répond-il aux standards du marché (qualité, informations, lisibilité, attractivité, conformité) ?",
+          options: [
+            { label: "Packaging absent / non conforme", score: 0 },
+            { label: "Packaging basique, peu attractif ou incomplet", score: 1 },
+            { label: "Packaging fonctionnel et conforme, améliorable", score: 2 },
+            { label: "Packaging professionnel, attractif, conforme aux normes sectorielles", score: 3 }
           ]
         }
       ],
@@ -329,13 +349,23 @@ const questionsDataFR = {
       name: "Préparation à l'Export",
       questions: [
         {
-          id: "e1",
-          text: "Prêt à exporter ?",
+          id: "er1",
+          text: "Votre entreprise dispose-t-elle de la documentation, certifications et normes nécessaires pour exporter ?",
           options: [
-            { label: "Aucune démarche", score: 0 },
-            { label: "Intérêt informel", score: 1 },
-            { label: "Préparation partielle", score: 2 },
-            { label: "Processus complet", score: 3 }
+            { label: "Aucune démarche engagée", score: 0 },
+            { label: "Documents ou normes partiellement réunis", score: 1 },
+            { label: "Documentation en grande partie complète / certification en cours", score: 2 },
+            { label: "Documentation complète + certifications obtenues", score: 3 }
+          ]
+        },
+        {
+          id: "er2",
+          text: "Votre entreprise a-t-elle évalué et préparé la logistique, le packaging export, et les marchés cibles ?",
+          options: [
+            { label: "Aucun travail de préparation", score: 0 },
+            { label: "Intérêt exprimé mais aucune analyse structurée", score: 1 },
+            { label: "Analyse partielle : logistique, packaging ou marchés cibles", score: 2 },
+            { label: "Préparation complète : logistique, normes export, analyse marché, prospection", score: 3 }
           ]
         }
       ],

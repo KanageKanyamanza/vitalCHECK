@@ -209,10 +209,15 @@ const SubmissionProgress = ({ currentStep, error, onRetry }) => {
             />
           </div>
           <p className="text-xs text-gray-500 mt-1">
-            {t('results.submissionProgress.stepCounter', { 
-              current: Math.max(1, steps.findIndex(s => s.id === currentStep) + 1), 
-              total: steps.length 
-            })}
+            {(() => {
+              const currentIndex = steps.findIndex(s => s.id === currentStep)
+              const currentStepNumber = currentIndex >= 0 ? currentIndex + 1 : 1
+              const totalSteps = steps.length
+              const stepCounterText = t('results.submissionProgress.stepCounter')
+              return stepCounterText
+                .replace('{current}', currentStepNumber.toString())
+                .replace('{total}', totalSteps.toString())
+            })()}
           </p>
         </div>
       </motion.div>

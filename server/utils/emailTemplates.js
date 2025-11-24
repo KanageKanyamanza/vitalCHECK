@@ -19,13 +19,13 @@ const createUnifiedEmailTemplate = (config) => {
     fr: {
       generatedOn: 'Généré le',
       version: 'vitalCHECK Enterprise Health Check v1.0',
-      contact: '📧 info@checkmyenterprise.com | 📞 +221 771970713 (SEN) / +44 7546756325 (GB)',
+      contact: '📧 info@checkmyenterprise.com | 📞 +221 771970713 / +221 774536704',
       tagline: 'Évaluation Professionnelle d\'Entreprise & Conseil en Croissance'
     },
     en: {
       generatedOn: 'Generated on',
       version: 'vitalCHECK Enterprise Health Check v1.0',
-      contact: '📧 info@checkmyenterprise.com | 📞 +221 771970713 (SEN) / +44 7546756325 (GB)',
+      contact: '📧 info@checkmyenterprise.com | 📞 +221 771970713 / +221 774536704',
       tagline: 'Professional Business Assessment & Growth Consulting'
     }
   };

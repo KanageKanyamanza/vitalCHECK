@@ -263,13 +263,23 @@ const questionsData = {
       name: "Risks & Compliance",
       questions: [
         {
-          id: "r1",
-          text: "Risk management?",
+          id: "rc1",
+          text: "Do you have a formal system for identifying and tracking risks (operational, financial, legal)?",
           options: [
-            { label: "No system", score: 0 },
-            { label: "Some risks identified", score: 1 },
-            { label: "Partial process", score: 2 },
-            { label: "Complete system", score: 3 }
+            { label: "No mechanism, entirely reactive management", score: 0 },
+            { label: "Some risks identified informally", score: 1 },
+            { label: "Risks identified + partial documents or procedures", score: 2 },
+            { label: "Complete system: mapping, regular monitoring, mitigation plans", score: 3 }
+          ]
+        },
+        {
+          id: "rc2",
+          text: "Does your company comply with legal, tax and regulatory requirements applicable to your sector?",
+          options: [
+            { label: "No compliance ensured / risk of sanctions", score: 0 },
+            { label: "Basic but irregular compliance", score: 1 },
+            { label: "Generally compliant but without formal audit", score: 2 },
+            { label: "Full compliance + regular controls/audits + up-to-date documentation", score: 3 }
           ]
         }
       ],
@@ -296,13 +306,23 @@ const questionsData = {
       name: "Branding & Packaging",
       questions: [
         {
-          id: "b1",
-          text: "Branding?",
+          id: "bp1",
+          text: "Is your visual identity (logo, colors, tone) consistent and used uniformly?",
           options: [
-            { label: "No clear branding", score: 0 },
-            { label: "Basic", score: 1 },
-            { label: "Coherent", score: 2 },
-            { label: "Professional", score: 3 }
+            { label: "Identity non-existent or inconsistent", score: 0 },
+            { label: "Basic graphic elements, inconsistency in usage", score: 1 },
+            { label: "Clear visual identity applied to most materials", score: 2 },
+            { label: "Professional branding, consistent, applied everywhere", score: 3 }
+          ]
+        },
+        {
+          id: "bp2",
+          text: "Does your packaging meet market standards (quality, information, readability, attractiveness, compliance)?",
+          options: [
+            { label: "Packaging absent / non-compliant", score: 0 },
+            { label: "Basic packaging, unattractive or incomplete", score: 1 },
+            { label: "Functional and compliant packaging, improvable", score: 2 },
+            { label: "Professional packaging, attractive, compliant with sector standards", score: 3 }
           ]
         }
       ],
@@ -329,13 +349,23 @@ const questionsData = {
       name: "Export Readiness",
       questions: [
         {
-          id: "e1",
-          text: "Ready to export?",
+          id: "er1",
+          text: "Does your company have the documentation, certifications and standards necessary to export?",
           options: [
             { label: "No steps taken", score: 0 },
-            { label: "Informal interest", score: 1 },
-            { label: "Partial preparation", score: 2 },
-            { label: "Complete process", score: 3 }
+            { label: "Documents or standards partially gathered", score: 1 },
+            { label: "Documentation largely complete / certification in progress", score: 2 },
+            { label: "Complete documentation + certifications obtained", score: 3 }
+          ]
+        },
+        {
+          id: "er2",
+          text: "Has your company assessed and prepared logistics, export packaging, and target markets?",
+          options: [
+            { label: "No preparation work", score: 0 },
+            { label: "Interest expressed but no structured analysis", score: 1 },
+            { label: "Partial analysis: logistics, packaging or target markets", score: 2 },
+            { label: "Complete preparation: logistics, export standards, market analysis, prospecting", score: 3 }
           ]
         }
       ],
