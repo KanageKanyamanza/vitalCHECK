@@ -176,7 +176,7 @@ const Footer = () => {
 									<Phone className="w-5 h-5 text-accent-500" />
 									<div className="text-white">
 										<div className="text-sm">🇸🇳 +221 771970713</div>
-										<div className="text-sm">🇬🇧 +44 7546756325</div>
+										<div className="text-sm">🇸🇳 +221 774536704</div>
 									</div>
 								</div>
 							</div>

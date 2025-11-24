@@ -187,10 +187,7 @@ const PrivacyPolicy = () => {
                 <strong>Email:</strong> info@checkmyenterprise.com
               </p>
               <p className="text-gray-700">
-                <strong>Sénégal:</strong> +221 771970713
-              </p>
-              <p className="text-gray-700">
-                <strong>Royaume-Uni:</strong> +44 7546756325
+                <strong>Sénégal:</strong> +221 771970713 | +221 774536704
               </p>
             </div>
           </section>

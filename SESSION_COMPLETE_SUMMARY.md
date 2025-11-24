@@ -574,8 +574,7 @@ Suivez le **Scénario de Test Complet** dans ce document (section "Test Complet"
 
 **Email Entreprise** : info@checkmyenterprise.com  
 **Téléphones** :
-- 🇸🇳 Sénégal : +221 771970713
-- 🇬🇧 UK : +44 7546756325
+- 🇸🇳 Sénégal : +221 771970713 | +221 774536704
 
 **Localisation** : Dakar, Sénégal
 
