@@ -25,6 +25,7 @@ import { useBlogVisitorModal } from '../hooks/useBlogVisitorModal'
 import toast from 'react-hot-toast'
 import { normalizeTags } from '../utils/tagUtils'
 import { autoTranslateTag } from '../utils/autoTranslateTags'
+import { parseMarkdown } from '../utils/markdownParser'
 
 const BlogDetailPage = () => {
   const { slug } = useParams()
@@ -55,6 +56,46 @@ const BlogDetailPage = () => {
     }
     
     return fallback
+  }
+
+  /**
+   * Rendu enrichi du contenu de l'article avec support Markdown
+   * - Si le contenu contient déjà du HTML, on le rend tel quel (éditeur WYSIWYG)
+   * - Sinon, on parse le Markdown (gras, titres, listes, etc.) et on le convertit en HTML formaté
+   */
+  const renderBlogContent = () => {
+    const rawContent = getLocalizedContent(blog?.content, 'Contenu non disponible')
+
+    if (!rawContent) {
+      return (
+        <div className="prose prose-lg max-w-none">
+          <p>Contenu non disponible.</p>
+        </div>
+      )
+    }
+
+    // Heuristique : si on détecte des balises HTML complètes, on suppose que le contenu est déjà formaté
+    const hasHtmlTags = /<\/(p|h1|h2|h3|h4|h5|h6|ul|ol|li|strong|em|br|div|span)>/i.test(rawContent) || /<(p|h1|h2|h3|h4|h5|h6|ul|ol|li|strong|em|br|div|span)[\s>]/i.test(rawContent)
+
+    if (hasHtmlTags) {
+      // Contenu déjà en HTML, le rendre tel quel
+      return (
+        <div
+          className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-gray-900 prose-p:text-gray-700 prose-p:leading-relaxed prose-strong:text-gray-900 prose-ul:list-disc prose-ol:list-decimal prose-li:my-2 prose-a:text-primary-600 prose-a:underline hover:prose-a:text-primary-700"
+          dangerouslySetInnerHTML={{ __html: rawContent }}
+        />
+      )
+    }
+
+    // Sinon, parser le Markdown et convertir en HTML formaté
+    const htmlContent = parseMarkdown(rawContent)
+
+    return (
+      <div
+        className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-gray-900 prose-p:text-gray-700 prose-p:leading-relaxed prose-strong:text-gray-900 prose-ul:list-disc prose-ol:list-decimal prose-li:my-2 prose-a:text-primary-600 prose-a:underline hover:prose-a:text-primary-700"
+        dangerouslySetInnerHTML={{ __html: htmlContent }}
+      />
+    )
   }
   
   // Hook pour la modale des visiteurs (seulement en mode normal)
@@ -286,14 +327,36 @@ const BlogDetailPage = () => {
 
   const TypeIcon = getTypeIcon(blog.type)
 
+  // Données SEO localisées
+  const currentLanguage = i18n.language || 'fr'
+  const localizedTitle =
+    (blog?.metaTitle && getLocalizedContent(blog.metaTitle, null)) ||
+    getLocalizedContent(blog?.title, 'Article de blog vitalCHECK')
+
+  const localizedExcerpt =
+    (blog?.metaDescription && getLocalizedContent(blog.metaDescription, null)) ||
+    getLocalizedContent(blog?.excerpt, '') ||
+    getLocalizedContent(blog?.content, 'Article de blog vitalCHECK')
+
+  const localizedSlug = blog?.slug
+    ? getLocalizedContent(blog.slug, slug || '')
+    : slug || ''
+
+  const seoUrl = localizedSlug ? `/blog/${localizedSlug}` : '/blog'
+  const seoImage = blog?.featuredImage?.url || '/og-image.png'
+
   return (
     <div className="min-h-screen bg-gray-50 pt-[50px]">
       <SEOHead
-        title={blog?.title ? `${blog.title} - Blog vitalCHECK` : "Blog vitalCHECK"}
-        description={blog?.excerpt || (blog?.content ? (typeof blog.content === 'string' ? blog.content.substring(0, 160) + "..." : (blog.content.fr ? blog.content.fr.substring(0, 160) + "..." : blog.content.en ? blog.content.en.substring(0, 160) + "..." : "Article de blog vitalCHECK")) : "Article de blog vitalCHECK")}
+        title={localizedTitle ? `${localizedTitle} - Blog vitalCHECK` : 'Blog vitalCHECK'}
+        description={
+          localizedExcerpt && typeof localizedExcerpt === 'string'
+            ? `${localizedExcerpt.substring(0, 160)}${localizedExcerpt.length > 160 ? '...' : ''}`
+            : 'Article de blog vitalCHECK'
+        }
         keywords={blog?.tags ? blog.tags.join(", ") : "blog business, conseils entreprise, vitalCHECK"}
-        url={blog?.slug ? `/blog/${blog.slug}` : "/blog"}
-        image={blog?.featuredImage || '/og-image.png'}
+        url={seoUrl}
+        image={seoImage}
         type="article"
         structuredData={blog ? getBlogPostStructuredData(blog) : null}
       />
@@ -417,10 +480,7 @@ const BlogDetailPage = () => {
               )}
 
               {/* Contenu */}
-              <div 
-                className="prose prose-lg max-w-none"
-                dangerouslySetInnerHTML={{ __html: getLocalizedContent(blog.content, 'Contenu non disponible') }}
-              />
+              {renderBlogContent()}
 
               {/* Images au milieu */}
               {blog.images && blog.images.filter(img => img.position === 'middle').length > 0 && (

@@ -1,4 +1,5 @@
 import React from 'react'
+import { Bold, Italic, List, Link, Image as ImageIcon } from 'lucide-react'
 import { useTranslation } from 'react-i18next'
 
 const SimpleTextEditor = ({ 
@@ -6,7 +7,8 @@ const SimpleTextEditor = ({
   onChange, 
   placeholder = 'Commencez à écrire...',
   className = '',
-  editorId = 'content-editor'
+  editorId = 'content-editor',
+  showHint = true
 }) => {
   const { t } = useTranslation()
 
@@ -16,15 +18,11 @@ const SimpleTextEditor = ({
       switch (e.key) {
         case 'b':
           e.preventDefault()
-          insertFormatting('<strong>', '</strong>')
+          insertFormatting('**', '**')
           break
         case 'i':
           e.preventDefault()
-          insertFormatting('<em>', '</em>')
-          break
-        case 'u':
-          e.preventDefault()
-          insertFormatting('<u>', '</u>')
+          insertFormatting('*', '*')
           break
       }
     }
@@ -39,7 +37,6 @@ const SimpleTextEditor = ({
     const selectedText = value.substring(start, end)
     const newText = value.substring(0, start) + openTag + selectedText + closeTag + value.substring(end)
     
-    // Utiliser un délai pour éviter les sauvegardes trop fréquentes
     onChange(newText)
     
     // Restaurer la sélection
@@ -57,7 +54,6 @@ const SimpleTextEditor = ({
     const end = textarea.selectionEnd
     const newText = value.substring(0, start) + text + value.substring(end)
     
-    // Utiliser un délai pour éviter les sauvegardes trop fréquentes
     onChange(newText)
     
     // Positionner le curseur après l'insertion
@@ -67,123 +63,78 @@ const SimpleTextEditor = ({
     }, 0)
   }
 
-  const formatButtons = [
-    { label: 'Gras', tag: '<strong>', closeTag: '</strong>', shortcut: 'Ctrl+B' },
-    { label: 'Italique', tag: '<em>', closeTag: '</em>', shortcut: 'Ctrl+I' },
-    { label: 'Souligné', tag: '<u>', closeTag: '</u>', shortcut: 'Ctrl+U' },
-    { label: 'Barré', tag: '<s>', closeTag: '</s>', shortcut: '' },
-  ]
+  const handleBold = () => {
+    insertFormatting('**', '**')
+  }
 
-  const structureButtons = [
-    { label: 'Titre 1', tag: '<h1>', closeTag: '</h1>' },
-    { label: 'Titre 2', tag: '<h2>', closeTag: '</h2>' },
-    { label: 'Titre 3', tag: '<h3>', closeTag: '</h3>' },
-    { label: 'Paragraphe', tag: '<p>', closeTag: '</p>' },
-  ]
+  const handleItalic = () => {
+    insertFormatting('*', '*')
+  }
 
-  const listButtons = [
-    { label: 'Liste à puces', tag: '<ul>\n<li>', closeTag: '</li>\n</ul>' },
-    { label: 'Liste numérotée', tag: '<ol>\n<li>', closeTag: '</li>\n</ol>' },
-    { label: 'Citation', tag: '<blockquote>', closeTag: '</blockquote>' },
-  ]
+  const handleList = () => {
+    insertAtCursor('- ')
+  }
 
-  const insertButtons = [
-    { label: 'Ligne horizontale', tag: '<hr>' },
-    { label: 'Saut de ligne', tag: '<br>' },
-    { label: 'Lien', tag: '<a href="URL">Texte du lien</a>' },
-    { label: 'Image', tag: '<img src="URL" alt="Description">' },
-  ]
+  const handleLink = () => {
+    const url = prompt('Entrez l\'URL du lien:')
+    if (url) {
+      const text = prompt('Entrez le texte du lien:', url)
+      insertAtCursor(`[${text || url}](${url})`)
+    }
+  }
+
+  const handleImage = () => {
+    const url = prompt('Entrez l\'URL de l\'image:')
+    if (url) {
+      const alt = prompt('Entrez le texte alternatif:')
+      insertAtCursor(`![${alt || ''}](${url})`)
+    }
+  }
 
   return (
-    <div className={`border border-gray-300 rounded-lg ${className}`}>
-      {/* Barre d'outils */}
-      <div className="border-b border-gray-200 p-3 bg-gray-50 rounded-t-lg">
-        <div className="space-y-3">
-          {/* Formatage du texte */}
-          <div>
-            <h4 className="text-xs font-medium text-gray-700 mb-2">Formatage</h4>
-            <div className="flex flex-wrap gap-2">
-              {formatButtons.map((button, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    insertFormatting(button.tag, button.closeTag)
-                  }}
-                  className="px-3 py-1 text-xs bg-white border border-gray-300 rounded hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  title={button.shortcut ? `Raccourci: ${button.shortcut}` : ''}
-                >
-                  {button.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Structure */}
-          <div>
-            <h4 className="text-xs font-medium text-gray-700 mb-2">Structure</h4>
-            <div className="flex flex-wrap gap-2">
-              {structureButtons.map((button, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    insertFormatting(button.tag, button.closeTag)
-                  }}
-                  className="px-3 py-1 text-xs bg-white border border-gray-300 rounded hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  {button.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Listes et citations */}
-          <div>
-            <h4 className="text-xs font-medium text-gray-700 mb-2">Listes et citations</h4>
-            <div className="flex flex-wrap gap-2">
-              {listButtons.map((button, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    insertFormatting(button.tag, button.closeTag)
-                  }}
-                  className="px-3 py-1 text-xs bg-white border border-gray-300 rounded hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  {button.label}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Éléments spéciaux */}
-          <div>
-            <h4 className="text-xs font-medium text-gray-700 mb-2">Éléments</h4>
-            <div className="flex flex-wrap gap-2">
-              {insertButtons.map((button, index) => (
-                <button
-                  key={index}
-                  type="button"
-                  onClick={(e) => {
-                    e.preventDefault()
-                    e.stopPropagation()
-                    insertAtCursor(button.tag)
-                  }}
-                  className="px-3 py-1 text-xs bg-white border border-gray-300 rounded hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                >
-                  {button.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
+    <div className={`border border-gray-300 rounded-lg bg-white ${className}`}>
+      {/* Barre d'outils simplifiée */}
+      <div className="border-b border-gray-200 p-2 bg-gray-50 rounded-t-lg flex items-center gap-2">
+        <button
+          type="button"
+          onClick={handleBold}
+          className="p-2 hover:bg-gray-200 rounded transition-colors"
+          title="Gras (Ctrl+B)"
+        >
+          <Bold className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          onClick={handleItalic}
+          className="p-2 hover:bg-gray-200 rounded transition-colors"
+          title="Italique (Ctrl+I)"
+        >
+          <Italic className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          onClick={handleList}
+          className="p-2 hover:bg-gray-200 rounded transition-colors"
+          title="Liste"
+        >
+          <List className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          onClick={handleLink}
+          className="p-2 hover:bg-gray-200 rounded transition-colors"
+          title="Lien"
+        >
+          <Link className="h-4 w-4" />
+        </button>
+        <button
+          type="button"
+          onClick={handleImage}
+          className="p-2 hover:bg-gray-200 rounded transition-colors"
+          title="Image"
+        >
+          <ImageIcon className="h-4 w-4" />
+        </button>
       </div>
 
       {/* Zone d'édition */}
@@ -194,23 +145,19 @@ const SimpleTextEditor = ({
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          className="w-full h-64 p-3 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 resize-y"
-          style={{ fontFamily: 'monospace' }}
+          className="w-full min-h-[400px] p-3 border-0 focus:outline-none resize-y"
+          style={{ fontFamily: 'inherit' }}
         />
       </div>
 
-      {/* Aide */}
-      <div className="border-t border-gray-200 p-3 bg-gray-50 rounded-b-lg">
-        <div className="text-xs text-gray-600 space-y-1">
-          <p><strong>💡 Conseils :</strong></p>
-          <ul className="list-disc list-inside space-y-1 ml-2">
-            <li>Utilisez les boutons ci-dessus pour formater votre texte</li>
-            <li>Raccourcis clavier : <kbd className="px-1 py-0.5 bg-gray-200 rounded text-xs">Ctrl+B</kbd> (gras), <kbd className="px-1 py-0.5 bg-gray-200 rounded text-xs">Ctrl+I</kbd> (italique), <kbd className="px-1 py-0.5 bg-gray-200 rounded text-xs">Ctrl+U</kbd> (souligné)</li>
-            <li>Sélectionnez du texte avant d'appliquer un formatage</li>
-            <li>Le HTML généré sera automatiquement formaté dans l'article</li>
-          </ul>
+      {/* Aide Markdown */}
+      {showHint && (
+        <div className="border-t border-gray-200 p-3 bg-gray-50 rounded-b-lg">
+          <p className="text-xs text-gray-600">
+            Astuce: Utilisez la syntaxe Markdown. <strong>**gras**</strong>, <em>*italique*</em>, <span>- liste</span>
+          </p>
         </div>
-      </div>
+      )}
     </div>
   )
 }
