@@ -382,15 +382,26 @@ const BlogEditPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     
-    // Validation simple - seulement les champs essentiels
-    if (!formData.title[selectedLanguage]?.trim()) {
-      toast.error('Le titre est obligatoire')
-      return
-    }
-    
-    if (!formData.content[selectedLanguage]?.trim()) {
-      toast.error('Le contenu est obligatoire')
-      return
+    // Validation - vérifier les deux langues si mode manuel
+    if (!useAutoTranslation) {
+      if (!formData.title.fr?.trim() && !formData.title.en?.trim()) {
+        toast.error('Au moins un titre (FR ou EN) est requis')
+        return
+      }
+      if (!formData.content.fr?.trim() && !formData.content.en?.trim()) {
+        toast.error('Au moins un contenu (FR ou EN) est requis')
+        return
+      }
+    } else {
+      // Mode traduction automatique - vérifier la langue sélectionnée
+      if (!formData.title[selectedLanguage]?.trim()) {
+        toast.error(`Le titre ${selectedLanguage === 'fr' ? 'français' : 'anglais'} est obligatoire`)
+        return
+      }
+      if (!formData.content[selectedLanguage]?.trim()) {
+        toast.error(`Le contenu ${selectedLanguage === 'fr' ? 'français' : 'anglais'} est obligatoire`)
+        return
+      }
     }
 
     setLoading(true)
@@ -488,10 +499,17 @@ const BlogEditPage = () => {
           <div className="p-6 space-y-6">
             {/* Configuration de rédaction */}
             <div className="bg-blue-50 p-4 rounded-lg">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-medium text-gray-700">
-                  Configuration de rédaction
-                </h3>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-medium text-gray-700 mb-1">
+                    Configuration de rédaction
+                  </h3>
+                  {!useAutoTranslation && (
+                    <p className="text-sm text-gray-600">
+                      Mode manuel : Remplissez les champs en français et en anglais séparément.
+                    </p>
+                  )}
+                </div>
                 <div className="flex items-center space-x-2">
                   <input
                     type="checkbox"
@@ -506,8 +524,8 @@ const BlogEditPage = () => {
                 </div>
               </div>
               
-              {useAutoTranslation ? (
-                <div className="space-y-3">
+              {useAutoTranslation && (
+                <div className="mt-3 space-y-3">
                   <div className="text-sm text-blue-600 bg-blue-100 p-3 rounded-lg">
                     💡 <strong>Mode traduction automatique :</strong> Rédigez dans votre langue préférée, 
                     la traduction automatique générera l'autre version. Vous pourrez réviser les traductions avant de les appliquer.
@@ -541,111 +559,119 @@ const BlogEditPage = () => {
                     </div>
                   </div>
                 </div>
-              ) : (
-                <div className="text-sm text-gray-600">
-                  Mode manuel : Remplissez les champs en français et en anglais séparément.
-                </div>
               )}
             </div>
 
-            {/* Informations de base */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Titre {selectedLanguage === 'fr' ? 'Français' : 'Anglais'} *
-                </label>
-                <input
-                  type="text"
-                  value={formData.title[selectedLanguage] || ''}
-                  onChange={(e) => handleTitleChange(selectedLanguage, e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                  placeholder={`Titre du blog en ${selectedLanguage === 'fr' ? 'français' : 'anglais'}`}
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Type
-                </label>
-                <select
-                  value={formData.type}
-                  onChange={(e) => handleChange('type', e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                >
-                  {blogTypes.map(type => (
-                    <option key={type.value} value={type.value}>
-                      {type.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            {/* Slug généré automatiquement */}
-            {formData.slug[selectedLanguage] && (
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  URL du blog {selectedLanguage === 'fr' ? 'Français' : 'Anglais'} (générée automatiquement)
-                </label>
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-500">/blog/</span>
+            {/* Informations de base - Deux colonnes FR/EN */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Colonne Français */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Titre Français *
+                  </label>
                   <input
                     type="text"
-                    value={formData.slug[selectedLanguage] || ''}
-                    onChange={(e) => handleBilingualChange('slug', selectedLanguage, e.target.value)}
-                    className="flex-1 border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500 bg-gray-50"
-                    placeholder="slug-du-blog"
+                    value={formData.title.fr || ''}
+                    onChange={(e) => handleTitleChange('fr', e.target.value)}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                    placeholder="Titre du blog en français"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Type
+                  </label>
+                  <select
+                    value={formData.type}
+                    onChange={(e) => handleChange('type', e.target.value)}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  >
+                    {blogTypes.map(type => (
+                      <option key={type.value} value={type.value}>
+                        {type.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Résumé Français *
+                  </label>
+                  <textarea
+                    value={formData.excerpt.fr || ''}
+                    onChange={(e) => handleBilingualChange('excerpt', 'fr', e.target.value)}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                    rows={3}
+                    placeholder="Résumé de votre article en français..."
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Statut
+                  </label>
+                  <select
+                    value={formData.status}
+                    onChange={(e) => handleChange('status', e.target.value)}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  >
+                    <option value="draft">Brouillon</option>
+                    <option value="published">Publié</option>
+                    <option value="archived">Archivé</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Colonne Anglais */}
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Titre Anglais *
+                  </label>
+                  <input
+                    type="text"
+                    value={formData.title.en || ''}
+                    onChange={(e) => handleTitleChange('en', e.target.value)}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                    placeholder="Blog title in English"
+                    required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Catégorie
+                  </label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => handleChange('category', e.target.value)}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  >
+                    {blogCategories.map(category => (
+                      <option key={category.value} value={category.value}>
+                        {category.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Résumé Anglais *
+                  </label>
+                  <textarea
+                    value={formData.excerpt.en || ''}
+                    onChange={(e) => handleBilingualChange('excerpt', 'en', e.target.value)}
+                    className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                    rows={3}
+                    placeholder="Summary of your article in English..."
                   />
                 </div>
               </div>
-            )}
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Catégorie
-                </label>
-                <select
-                  value={formData.category}
-                  onChange={(e) => handleChange('category', e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                >
-                  {blogCategories.map(category => (
-                    <option key={category.value} value={category.value}>
-                      {category.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Statut
-                </label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => handleChange('status', e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                >
-                  <option value="draft">Brouillon</option>
-                  <option value="published">Publié</option>
-                  <option value="archived">Archivé</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Résumé {selectedLanguage === 'fr' ? 'Français' : 'Anglais'} *
-              </label>
-              <textarea
-                value={formData.excerpt[selectedLanguage] || ''}
-                onChange={(e) => handleBilingualChange('excerpt', selectedLanguage, e.target.value)}
-                className="w-full border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                rows={3}
-                placeholder={`Résumé de votre article en ${selectedLanguage === 'fr' ? 'français' : 'anglais'}...`}
-              />
             </div>
 
             {/* Champs spécifiques selon le type */}
@@ -810,6 +836,37 @@ const BlogEditPage = () => {
               </div>
             )}
 
+            {/* Contenu bilingue - Deux colonnes côte à côte */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Contenu Français */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Contenu Français *
+                </label>
+                <SimpleTextEditor
+                  value={formData.content.fr || ''}
+                  onChange={(value) => handleBilingualChange('content', 'fr', value)}
+                  placeholder="Rédigez votre article en français..."
+                  className="w-full"
+                  editorId="blog-content-editor-fr"
+                />
+              </div>
+
+              {/* Contenu Anglais */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Contenu Anglais *
+                </label>
+                <SimpleTextEditor
+                  value={formData.content.en || ''}
+                  onChange={(value) => handleBilingualChange('content', 'en', value)}
+                  placeholder="Write your article in English..."
+                  className="w-full"
+                  editorId="blog-content-editor-en"
+                />
+              </div>
+            </div>
+
             {/* Tags */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -819,20 +876,20 @@ const BlogEditPage = () => {
                 {formData.tags.map((tag, index) => (
                   <span
                     key={index}
-                    className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-800"
+                    className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800"
                   >
                     {tag}
                     <button
                       type="button"
                       onClick={() => removeTag(tag)}
-                      className="ml-2 text-primary-600 hover:text-primary-800"
+                      className="ml-2 text-green-600 hover:text-green-800"
                     >
                       <X className="h-3 w-3" />
                     </button>
                   </span>
                 ))}
               </div>
-              <div className="flex flex-wrap gap-2">
+              <div className="flex gap-2">
                 <input
                   type="text"
                   value={newTag}
@@ -844,49 +901,23 @@ const BlogEditPage = () => {
                 <button
                   type="button"
                   onClick={addTag}
-                  className="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700"
+                  className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
                 >
                   Ajouter
                 </button>
               </div>
             </div>
 
-
             {/* Images du blog */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Images du blog
               </label>
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                <h4 className="text-sm font-medium text-blue-900 mb-2">💡 Comment positionner vos images :</h4>
-                <ul className="text-sm text-blue-800 space-y-1">
-                  <li><strong>En haut :</strong> Images avant le contenu</li>
-                  <li><strong>Début du contenu :</strong> Images juste avant le premier paragraphe</li>
-                  <li><strong>Au milieu :</strong> Images entre les paragraphes</li>
-                  <li><strong>En bas :</strong> Images après le contenu</li>
-                  <li><strong>Fin du contenu :</strong> Images juste après le dernier paragraphe</li>
-                  <li><strong>Dans le texte :</strong> Copiez le HTML généré et collez-le dans votre contenu HTML</li>
-                </ul>
-              </div>
               <ImageUploader
                 images={formData.images}
                 onImagesChange={(images) => handleChange('images', images)}
                 maxImages={10}
                 showPositionControls={true}
-              />
-            </div>
-
-            {/* Contenu */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Contenu {selectedLanguage === 'fr' ? 'Français' : 'Anglais'} *
-              </label>
-              <SimpleTextEditor
-                value={formData.content[selectedLanguage] || ''}
-                onChange={(value) => handleBilingualChange('content', selectedLanguage, value)}
-                placeholder={`Rédigez votre article en ${selectedLanguage === 'fr' ? 'français' : 'anglais'}...`}
-                className="w-full"
-                editorId="blog-content-editor"
               />
             </div>
 
