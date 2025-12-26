@@ -1,213 +1,242 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const Contact = require('../models/Contact');
-const { emailService } = require('../utils/emailService');
+const Contact = require("../models/Contact");
+const { emailService } = require("../utils/emailService");
+const { notifyAdmins } = require("../utils/pushService");
 
 // POST /api/contact - Créer un nouveau message de contact
-router.post('/', async (req, res) => {
-  try {
-    const { name, email, company, phone, subject, message, inquiryType } = req.body;
+router.post("/", async (req, res) => {
+	try {
+		const { name, email, company, phone, subject, message, inquiryType } =
+			req.body;
 
-    // Validation des champs requis
-    if (!name || !email || !subject || !message || !inquiryType) {
-      return res.status(400).json({
-        success: false,
-        message: 'Tous les champs obligatoires doivent être remplis'
-      });
-    }
+		// Validation des champs requis
+		if (!name || !email || !subject || !message || !inquiryType) {
+			return res.status(400).json({
+				success: false,
+				message: "Tous les champs obligatoires doivent être remplis",
+			});
+		}
 
-    // Validation de l'email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return res.status(400).json({
-        success: false,
-        message: 'Adresse email invalide'
-      });
-    }
+		// Validation de l'email
+		const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+		if (!emailRegex.test(email)) {
+			return res.status(400).json({
+				success: false,
+				message: "Adresse email invalide",
+			});
+		}
 
-    // Créer le nouveau message de contact
-    const contactMessage = new Contact({
-      name,
-      email,
-      company,
-      phone,
-      subject,
-      message,
-      inquiryType
-    });
+		// Créer le nouveau message de contact
+		const contactMessage = new Contact({
+			name,
+			email,
+			company,
+			phone,
+			subject,
+			message,
+			inquiryType,
+		});
 
-    await contactMessage.save();
+		await contactMessage.save();
 
-    // Envoyer un email de confirmation au client
-    try {
-      await emailService.sendContactConfirmation(email, name, subject);
-    } catch (emailError) {
-      console.error('Erreur lors de l\'envoi de l\'email de confirmation:', emailError);
-      // Ne pas faire échouer la requête si l'email échoue
-    }
+		// Envoyer un email de confirmation au client
+		try {
+			await emailService.sendContactConfirmation(email, name, subject);
+		} catch (emailError) {
+			console.error(
+				"Erreur lors de l'envoi de l'email de confirmation:",
+				emailError
+			);
+			// Ne pas faire échouer la requête si l'email échoue
+		}
 
-    // Envoyer une notification à l'équipe vitalCHECK
-    try {
-      await emailService.sendContactNotification({
-        name,
-        email,
-        company,
-        phone,
-        subject,
-        message,
-        inquiryType
-      });
-    } catch (emailError) {
-      console.error('Erreur lors de l\'envoi de la notification à l\'équipe:', emailError);
-      // Ne pas faire échouer la requête si l'email échoue
-    }
+		// Envoyer une notification à l'équipe vitalCHECK
+		try {
+			await emailService.sendContactNotification({
+				name,
+				email,
+				company,
+				phone,
+				subject,
+				message,
+				inquiryType,
+			});
+		} catch (emailError) {
+			console.error(
+				"Erreur lors de l'envoi de la notification à l'équipe:",
+				emailError
+			);
+			// Ne pas faire échouer la requête si l'email échoue
+		}
 
-    res.status(201).json({
-      success: true,
-      message: 'Message envoyé avec succès',
-      data: {
-        id: contactMessage._id,
-        name: contactMessage.name,
-        email: contactMessage.email,
-        subject: contactMessage.subject,
-        inquiryType: contactMessage.inquiryType,
-        createdAt: contactMessage.createdAt
-      }
-    });
+		// Envoyer une notification Push aux admins
+		try {
+			await notifyAdmins({
+				title: "Nouveau message de contact",
+				body: `De: ${name} (${company || "Particulier"})\nSujet: ${subject}`,
+				data: { url: `/admin/contact/${contactMessage._id}` },
+			});
+		} catch (pushError) {
+			console.error(
+				"Erreur lors de l'envoi de la notification push admin (contact):",
+				pushError
+			);
+		}
 
-  } catch (error) {
-    console.error('Erreur lors de la création du message de contact:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur interne du serveur'
-    });
-  }
+		res.status(201).json({
+			success: true,
+			message: "Message envoyé avec succès",
+			data: {
+				id: contactMessage._id,
+				name: contactMessage.name,
+				email: contactMessage.email,
+				subject: contactMessage.subject,
+				inquiryType: contactMessage.inquiryType,
+				createdAt: contactMessage.createdAt,
+			},
+		});
+	} catch (error) {
+		console.error("Erreur lors de la création du message de contact:", error);
+		res.status(500).json({
+			success: false,
+			message: "Erreur interne du serveur",
+		});
+	}
 });
 
 // GET /api/contact - Récupérer tous les messages de contact (admin uniquement)
-router.get('/', async (req, res) => {
-  try {
-    // Note: Dans une vraie application, vous devriez vérifier l'authentification admin ici
-    const { page = 1, limit = 10, status, inquiryType } = req.query;
-    
-    const filter = {};
-    if (status) filter.status = status;
-    if (inquiryType) filter.inquiryType = inquiryType;
+router.get("/", async (req, res) => {
+	try {
+		// Note: Dans une vraie application, vous devriez vérifier l'authentification admin ici
+		const { page = 1, limit = 10, status, inquiryType } = req.query;
 
-    const contacts = await Contact.find(filter)
-      .sort({ createdAt: -1 })
-      .limit(limit * 1)
-      .skip((page - 1) * limit)
-      .select('-__v');
+		const filter = {};
+		if (status) filter.status = status;
+		if (inquiryType) filter.inquiryType = inquiryType;
 
-    const total = await Contact.countDocuments(filter);
+		const contacts = await Contact.find(filter)
+			.sort({ createdAt: -1 })
+			.limit(limit * 1)
+			.skip((page - 1) * limit)
+			.select("-__v");
 
-    res.json({
-      success: true,
-      data: {
-        contacts,
-        pagination: {
-          currentPage: parseInt(page),
-          totalPages: Math.ceil(total / limit),
-          totalContacts: total,
-          hasNext: page < Math.ceil(total / limit),
-          hasPrev: page > 1
-        }
-      }
-    });
+		const total = await Contact.countDocuments(filter);
 
-  } catch (error) {
-    console.error('Erreur lors de la récupération des messages de contact:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur interne du serveur'
-    });
-  }
+		res.json({
+			success: true,
+			data: {
+				contacts,
+				pagination: {
+					currentPage: parseInt(page),
+					totalPages: Math.ceil(total / limit),
+					totalContacts: total,
+					hasNext: page < Math.ceil(total / limit),
+					hasPrev: page > 1,
+				},
+			},
+		});
+	} catch (error) {
+		console.error(
+			"Erreur lors de la récupération des messages de contact:",
+			error
+		);
+		res.status(500).json({
+			success: false,
+			message: "Erreur interne du serveur",
+		});
+	}
 });
 
 // GET /api/contact/:id - Récupérer un message de contact spécifique (admin uniquement)
-router.get('/:id', async (req, res) => {
-  try {
-    const contact = await Contact.findById(req.params.id);
-    
-    if (!contact) {
-      return res.status(404).json({
-        success: false,
-        message: 'Message de contact non trouvé'
-      });
-    }
+router.get("/:id", async (req, res) => {
+	try {
+		const contact = await Contact.findById(req.params.id);
 
-    res.json({
-      success: true,
-      data: contact
-    });
+		if (!contact) {
+			return res.status(404).json({
+				success: false,
+				message: "Message de contact non trouvé",
+			});
+		}
 
-  } catch (error) {
-    console.error('Erreur lors de la récupération du message de contact:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur interne du serveur'
-    });
-  }
+		res.json({
+			success: true,
+			data: contact,
+		});
+	} catch (error) {
+		console.error(
+			"Erreur lors de la récupération du message de contact:",
+			error
+		);
+		res.status(500).json({
+			success: false,
+			message: "Erreur interne du serveur",
+		});
+	}
 });
 
 // PUT /api/contact/:id - Mettre à jour le statut d'un message (admin uniquement)
-router.put('/:id', async (req, res) => {
-  try {
-    const { status, adminNotes } = req.body;
+router.put("/:id", async (req, res) => {
+	try {
+		const { status, adminNotes } = req.body;
 
-    const contact = await Contact.findByIdAndUpdate(
-      req.params.id,
-      { status, adminNotes },
-      { new: true, runValidators: true }
-    );
+		const contact = await Contact.findByIdAndUpdate(
+			req.params.id,
+			{ status, adminNotes },
+			{ new: true, runValidators: true }
+		);
 
-    if (!contact) {
-      return res.status(404).json({
-        success: false,
-        message: 'Message de contact non trouvé'
-      });
-    }
+		if (!contact) {
+			return res.status(404).json({
+				success: false,
+				message: "Message de contact non trouvé",
+			});
+		}
 
-    res.json({
-      success: true,
-      message: 'Message de contact mis à jour avec succès',
-      data: contact
-    });
-
-  } catch (error) {
-    console.error('Erreur lors de la mise à jour du message de contact:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur interne du serveur'
-    });
-  }
+		res.json({
+			success: true,
+			message: "Message de contact mis à jour avec succès",
+			data: contact,
+		});
+	} catch (error) {
+		console.error(
+			"Erreur lors de la mise à jour du message de contact:",
+			error
+		);
+		res.status(500).json({
+			success: false,
+			message: "Erreur interne du serveur",
+		});
+	}
 });
 
 // DELETE /api/contact/:id - Supprimer un message de contact (admin uniquement)
-router.delete('/:id', async (req, res) => {
-  try {
-    const contact = await Contact.findByIdAndDelete(req.params.id);
+router.delete("/:id", async (req, res) => {
+	try {
+		const contact = await Contact.findByIdAndDelete(req.params.id);
 
-    if (!contact) {
-      return res.status(404).json({
-        success: false,
-        message: 'Message de contact non trouvé'
-      });
-    }
+		if (!contact) {
+			return res.status(404).json({
+				success: false,
+				message: "Message de contact non trouvé",
+			});
+		}
 
-    res.json({
-      success: true,
-      message: 'Message de contact supprimé avec succès'
-    });
-
-  } catch (error) {
-    console.error('Erreur lors de la suppression du message de contact:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur interne du serveur'
-    });
-  }
+		res.json({
+			success: true,
+			message: "Message de contact supprimé avec succès",
+		});
+	} catch (error) {
+		console.error(
+			"Erreur lors de la suppression du message de contact:",
+			error
+		);
+		res.status(500).json({
+			success: false,
+			message: "Erreur interne du serveur",
+		});
+	}
 });
 
 module.exports = router;
