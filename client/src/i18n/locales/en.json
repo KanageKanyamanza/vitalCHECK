@@ -1167,5 +1167,35 @@
       "whatsappSupport": "Priority response",
       "phoneSupport": "Dedicated support"
     }
+  },
+  "chatbot": {
+    "initialMessage": "Hello! 👋 I'm the vitalCHECK assistant. How can I help you?",
+    "topics": {
+      "evaluation": "The assessment",
+      "pricing": "Pricing",
+      "report": "Your report",
+      "account": "Your account"
+    },
+    "suggestion": "Or type your question directly!",
+    "popularTopics": "Popular topics:",
+    "topicsList": {
+      "assessment": "Assessment",
+      "pricing": "Pricing",
+      "contact": "Contact",
+      "blog": "Blog"
+    },
+    "assistantName": "vitalCHECK Assistant",
+    "online": "Online",
+    "instantResponse": "Instant response",
+    "typing": "The assistant is typing...",
+    "placeholder": "Type your message...",
+    "send": "Send",
+    "openChat": "Open chat",
+    "close": "Close",
+    "minimize": "Minimize",
+    "maximize": "Maximize",
+    "error": "Sorry, an error occurred. Check your connection or try again later.",
+    "notUnderstood": "I didn't understand. Can you rephrase?",
+    "questionsAbout": "You can ask me questions about:"
   }
 }

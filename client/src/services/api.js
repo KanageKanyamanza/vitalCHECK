@@ -142,6 +142,9 @@ export const publicApi = {
   downloadReport: (assessmentId) => api.get(`/reports/download/${assessmentId}`, {
     responseType: 'blob',
   }),
+
+  // Chatbot
+  chatWithBot: (payload) => api.post('/chat/chatbot', payload),
   
   // Health check
   healthCheck: () => api.get('/health'),

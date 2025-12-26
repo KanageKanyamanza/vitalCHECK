@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronUp } from 'lucide-react'
 
 const BackToTop = ({ 
-  showAfter = 300, // Afficher après 300px de scroll
+  showAfter = 0, // Afficher dès qu'on scroll (0px)
   smooth = true,
   duration = 800,
   className = ''
@@ -23,6 +23,7 @@ const BackToTop = ({
   }
 
   // Fonction pour vérifier si le bouton doit être visible
+  // Visible seulement si on a scrollé (scrollY > 0)
   const toggleVisibility = () => {
     if (window.pageYOffset > showAfter) {
       setIsVisible(true)
@@ -34,6 +35,8 @@ const BackToTop = ({
   // Écouter le scroll
   useEffect(() => {
     window.addEventListener('scroll', toggleVisibility)
+    // Vérifier immédiatement au montage
+    toggleVisibility()
     return () => window.removeEventListener('scroll', toggleVisibility)
   }, [showAfter])
 
@@ -46,7 +49,7 @@ const BackToTop = ({
           exit={{ opacity: 0, scale: 0.5, y: 20 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
           onClick={scrollToTop}
-          className={`fixed sm:bottom-10 bottom-24 right-3 z-50 bg-accent-500 text-black p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-accent-200 ${className}`}
+          className={`fixed sm:bottom-10 bottom-24 right-3 z-40 bg-accent-500 text-black p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-accent-200 ${className}`}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
           aria-label="Retour en haut"
