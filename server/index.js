@@ -10,31 +10,33 @@ require("dotenv").config();
 const app = express();
 
 // Configuration du trust proxy pour les headers X-Forwarded-For
-app.set('trust proxy', 1);
+app.set("trust proxy", 1);
 
 // Security middleware
-app.use(helmet({
-  frameguard: { action: 'deny' }, // X-Frame-Options: DENY
-  contentSecurityPolicy: {
-    directives: {
-      defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
-      imgSrc: ["'self'", "data:", "https:"],
-      scriptSrc: ["'self'"],
-      connectSrc: ["'self'"]
-    }
-  }
-}));
+app.use(
+	helmet({
+		frameguard: { action: "deny" }, // X-Frame-Options: DENY
+		contentSecurityPolicy: {
+			directives: {
+				defaultSrc: ["'self'"],
+				styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+				fontSrc: ["'self'", "https://fonts.gstatic.com"],
+				imgSrc: ["'self'", "data:", "https:"],
+				scriptSrc: ["'self'"],
+				connectSrc: ["'self'"],
+			},
+		},
+	})
+);
 app.use(
 	cors({
 		origin: function (origin, callback) {
 			// Autoriser les requêtes sans origine (ex: mobile apps, Postman)
 			if (!origin) return callback(null, true);
-			
+
 			// Normaliser l'origine en supprimant le slash final
-			const normalizedOrigin = origin.replace(/\/$/, '');
-			
+			const normalizedOrigin = origin.replace(/\/$/, "");
+
 			const allowedOrigins = [
 				"http://localhost:5173",
 				"http://localhost:5174",
@@ -42,26 +44,26 @@ app.use(
 				"https://www.checkmyenterprise.com",
 				"https://checkmyenterprise.com",
 			];
-			
+
 			// En production, être plus permissif pour éviter les problèmes CORS
-			if (process.env.NODE_ENV === 'production') {
+			if (process.env.NODE_ENV === "production") {
 				// Autoriser tous les sous-domaines de checkmyenterprise.com
-				if (normalizedOrigin.includes('checkmyenterprise.com')) {
+				if (normalizedOrigin.includes("checkmyenterprise.com")) {
 					return callback(null, true);
 				}
 			}
-			
+
 			// Vérifier si l'origine normalisée est autorisée
 			if (allowedOrigins.includes(normalizedOrigin)) {
 				return callback(null, true);
 			}
-			
-			console.log('🚫 [CORS] Origine non autorisée:', origin);
-			callback(new Error('Non autorisé par CORS'));
+
+			console.log("🚫 [CORS] Origine non autorisée:", origin);
+			callback(new Error("Non autorisé par CORS"));
 		},
 		credentials: true,
-		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-		allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+		methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+		allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
 		// Ajouter des headers supplémentaires pour éviter les problèmes
 		optionsSuccessStatus: 200, // Pour les navigateurs legacy
 		preflightContinue: false,
@@ -92,6 +94,7 @@ app.use("/api/blogs", require("./routes/blogs"));
 app.use("/api/blog-visitors/admin", require("./routes/blogVisitorsAdmin"));
 app.use("/api/blog-visitors", require("./routes/blogVisitors"));
 app.use("/api/upload", require("./routes/upload"));
+app.use("/api/notifications", require("./routes/notifications"));
 app.use("/api", require("./routes/ping"));
 
 // Routes SEO
@@ -104,14 +107,14 @@ app.get("/api/health", (req, res) => {
 
 // Test endpoint pour vérifier les routes
 app.get("/api/test", (req, res) => {
-	res.json({ 
-		status: "OK", 
+	res.json({
+		status: "OK",
 		message: "Test endpoint accessible",
 		timestamp: new Date().toISOString(),
 		routes: {
 			translate: "/api/blogs/translate",
-			translateTest: "/api/blogs/translate/test"
-		}
+			translateTest: "/api/blogs/translate/test",
+		},
 	});
 });
 
@@ -132,14 +135,15 @@ app.use("*", (req, res) => {
 // Database connection
 mongoose
 	.connect(
-		process.env.MONGODB_URI || "mongodb://localhost:27017/vitalCHECK-health-check"
+		process.env.MONGODB_URI ||
+			"mongodb://localhost:27017/vitalCHECK-health-check"
 	)
 	.then(async () => {
 		console.log("Connected to MongoDB");
-		
+
 		// Initialiser l'admin au démarrage
 		await initAdmin();
-		
+
 		const PORT = process.env.PORT || 5000;
 		app.listen(PORT, () => {
 			console.log(`Server running on port ${PORT}`);

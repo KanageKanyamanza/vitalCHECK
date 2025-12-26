@@ -1,575 +1,634 @@
-const express = require('express');
-const { body, validationResult } = require('express-validator');
-const mongoose = require('mongoose');
-const User = require('../models/User');
-const Assessment = require('../models/Assessment');
-const Notification = require('../models/Notification');
-const questionsData = require('../data/questions');
-const questionsDataFR = require('../data/questions-fr');
-const { calculateScores, generateRecommendations } = require('../utils/scoring');
-const { generateResumeToken, isValidResumeToken } = require('../utils/resumeToken');
-const { sendAccountCreatedAfterAssessment, sendAssessmentCompletedExistingUser } = require('../utils/emailService');
+const express = require("express");
+const { body, validationResult } = require("express-validator");
+const mongoose = require("mongoose");
+const User = require("../models/User");
+const Assessment = require("../models/Assessment");
+const Notification = require("../models/Notification");
+const questionsData = require("../data/questions");
+const questionsDataFR = require("../data/questions-fr");
+const {
+	calculateScores,
+	generateRecommendations,
+} = require("../utils/scoring");
+const {
+	generateResumeToken,
+	isValidResumeToken,
+} = require("../utils/resumeToken");
+const {
+	sendAccountCreatedAfterAssessment,
+	sendAssessmentCompletedExistingUser,
+} = require("../utils/emailService");
+const { sendPushNotification, notifyAdmins } = require("../utils/pushService");
 const router = express.Router();
 
 // Get supported languages
-router.get('/languages', (req, res) => {
-  try {
-    const languages = {
-      'en': 'English',
-      'fr': 'Français'
-    };
-    
-    res.json({
-      success: true,
-      languages
-    });
-  } catch (error) {
-    console.error('Get languages error:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Server error' 
-    });
-  }
+router.get("/languages", (req, res) => {
+	try {
+		const languages = {
+			en: "English",
+			fr: "Français",
+		};
+
+		res.json({
+			success: true,
+			languages,
+		});
+	} catch (error) {
+		console.error("Get languages error:", error);
+		res.status(500).json({
+			success: false,
+			message: "Server error",
+		});
+	}
 });
 
 // Create draft assessment
-router.post('/draft', [
-  body('userId').isMongoId(),
-  body('language').optional().isString()
-], async (req, res) => {
-  try {
-    // console.log('📝 [DRAFT] Création/récupération de draft pour userId:', req.body.userId);
-    
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+router.post(
+	"/draft",
+	[body("userId").isMongoId(), body("language").optional().isString()],
+	async (req, res) => {
+		try {
+			// console.log('📝 [DRAFT] Création/récupération de draft pour userId:', req.body.userId);
 
-    const { userId, language = 'fr' } = req.body;
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.status(400).json({ errors: errors.array() });
+			}
 
-    // Verify user exists
-    const user = await User.findById(userId);
-    if (!user) {
-      console.log('❌ [DRAFT] Utilisateur non trouvé:', userId);
-      return res.status(404).json({ 
-        success: false, 
-        message: 'User not found' 
-      });
-    }
+			const { userId, language = "fr" } = req.body;
 
-    // Check if user already has a draft assessment
-    let draftAssessment = await Assessment.findOne({ 
-      user: userId, 
-      status: 'draft' 
-    });
+			// Verify user exists
+			const user = await User.findById(userId);
+			if (!user) {
+				console.log("❌ [DRAFT] Utilisateur non trouvé:", userId);
+				return res.status(404).json({
+					success: false,
+					message: "User not found",
+				});
+			}
 
-    if (draftAssessment) {
-      // console.log('📋 [DRAFT] Draft existant trouvé:', {
-      //   id: draftAssessment._id,
-      //   currentQuestionIndex: draftAssessment.currentQuestionIndex,
-      //   answersCount: draftAssessment.answers.length,
-      //   hasResumeToken: !!draftAssessment.resumeToken
-      // });
-      
-      // Update resume token if needed
-      if (!draftAssessment.resumeToken) {
-        draftAssessment.resumeToken = generateResumeToken(userId, draftAssessment._id);
-        await draftAssessment.save();
-        // console.log('🔑 [DRAFT] ResumeToken généré pour draft existant');
-      }
-      
-      return res.json({
-        success: true,
-        assessment: {
-          id: draftAssessment._id,
-          resumeToken: draftAssessment.resumeToken,
-          currentQuestionIndex: draftAssessment.currentQuestionIndex,
-          answers: draftAssessment.answers,
-          language: draftAssessment.language,
-          status: draftAssessment.status
-        }
-      });
-    }
+			// Check if user already has a draft assessment
+			let draftAssessment = await Assessment.findOne({
+				user: userId,
+				status: "draft",
+			});
 
-    // Get total questions count
-    const selectedQuestions = language === 'fr' ? questionsDataFR : questionsData;
-    const totalQuestions = selectedQuestions.pillars.reduce((total, pillar) => total + pillar.questions.length, 0);
+			if (draftAssessment) {
+				// console.log('📋 [DRAFT] Draft existant trouvé:', {
+				//   id: draftAssessment._id,
+				//   currentQuestionIndex: draftAssessment.currentQuestionIndex,
+				//   answersCount: draftAssessment.answers.length,
+				//   hasResumeToken: !!draftAssessment.resumeToken
+				// });
 
-    // console.log('🆕 [DRAFT] Création d\'un nouveau draft pour:', user.companyName);
+				// Update resume token if needed
+				if (!draftAssessment.resumeToken) {
+					draftAssessment.resumeToken = generateResumeToken(
+						userId,
+						draftAssessment._id
+					);
+					await draftAssessment.save();
+					// console.log('🔑 [DRAFT] ResumeToken généré pour draft existant');
+				}
 
-    // Create new draft assessment
-    const assessment = new Assessment({
-      user: userId,
-      language,
-      status: 'draft',
-      totalQuestions
-      // resumeToken will be set after save
-    });
+				return res.json({
+					success: true,
+					assessment: {
+						id: draftAssessment._id,
+						resumeToken: draftAssessment.resumeToken,
+						currentQuestionIndex: draftAssessment.currentQuestionIndex,
+						answers: draftAssessment.answers,
+						language: draftAssessment.language,
+						status: draftAssessment.status,
+					},
+				});
+			}
 
-    await assessment.save();
+			// Get total questions count
+			const selectedQuestions =
+				language === "fr" ? questionsDataFR : questionsData;
+			const totalQuestions = selectedQuestions.pillars.reduce(
+				(total, pillar) => total + pillar.questions.length,
+				0
+			);
 
-    // Generate resume token
-    assessment.resumeToken = generateResumeToken(userId, assessment._id);
-    await assessment.save();
+			// console.log('🆕 [DRAFT] Création d\'un nouveau draft pour:', user.companyName);
 
-    // console.log('✅ [DRAFT] Nouveau draft créé:', {
-    //   id: assessment._id,
-    //   resumeToken: assessment.resumeToken,
-    //   totalQuestions: assessment.totalQuestions
-    // });
+			// Create new draft assessment
+			const assessment = new Assessment({
+				user: userId,
+				language,
+				status: "draft",
+				totalQuestions,
+				// resumeToken will be set after save
+			});
 
-    res.json({
-      success: true,
-      assessment: {
-        id: assessment._id,
-        resumeToken: assessment.resumeToken,
-        currentQuestionIndex: 0,
-        answers: [],
-        language: assessment.language,
-        status: assessment.status
-      }
-    });
+			await assessment.save();
 
-  } catch (error) {
-    console.error('Create draft assessment error:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Server error during draft creation' 
-    });
-  }
-});
+			// Generate resume token
+			assessment.resumeToken = generateResumeToken(userId, assessment._id);
+			await assessment.save();
+
+			// console.log('✅ [DRAFT] Nouveau draft créé:', {
+			//   id: assessment._id,
+			//   resumeToken: assessment.resumeToken,
+			//   totalQuestions: assessment.totalQuestions
+			// });
+
+			res.json({
+				success: true,
+				assessment: {
+					id: assessment._id,
+					resumeToken: assessment.resumeToken,
+					currentQuestionIndex: 0,
+					answers: [],
+					language: assessment.language,
+					status: assessment.status,
+				},
+			});
+		} catch (error) {
+			console.error("Create draft assessment error:", error);
+			res.status(500).json({
+				success: false,
+				message: "Server error during draft creation",
+			});
+		}
+	}
+);
 
 // Resume assessment by token
-router.get('/resume/:token', async (req, res) => {
-  try {
-    console.log('🔄 [RESUME] Tentative de reprise avec token:', req.params.token);
-    
-    const { token } = req.params;
+router.get("/resume/:token", async (req, res) => {
+	try {
+		console.log(
+			"🔄 [RESUME] Tentative de reprise avec token:",
+			req.params.token
+		);
 
-    if (!isValidResumeToken(token)) {
-      console.log('❌ [RESUME] Token invalide:', token);
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Invalid resume token' 
-      });
-    }
+		const { token } = req.params;
 
-    const assessment = await Assessment.findOne({ 
-      resumeToken: token, 
-      status: 'draft' 
-    }).populate('user', 'companyName email');
+		if (!isValidResumeToken(token)) {
+			console.log("❌ [RESUME] Token invalide:", token);
+			return res.status(400).json({
+				success: false,
+				message: "Invalid resume token",
+			});
+		}
 
-    if (!assessment) {
-      console.log('❌ [RESUME] Évaluation non trouvée ou terminée pour token:', token);
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Assessment not found or already completed' 
-      });
-    }
+		const assessment = await Assessment.findOne({
+			resumeToken: token,
+			status: "draft",
+		}).populate("user", "companyName email");
 
+		if (!assessment) {
+			console.log(
+				"❌ [RESUME] Évaluation non trouvée ou terminée pour token:",
+				token
+			);
+			return res.status(404).json({
+				success: false,
+				message: "Assessment not found or already completed",
+			});
+		}
 
-    res.json({
-      success: true,
-      assessment: {
-        id: assessment._id,
-        resumeToken: assessment.resumeToken,
-        currentQuestionIndex: assessment.currentQuestionIndex,
-        answers: assessment.answers,
-        language: assessment.language,
-        status: assessment.status,
-        user: {
-          id: assessment.user._id,
-          companyName: assessment.user.companyName,
-          email: assessment.user.email
-        }
-      }
-    });
-
-  } catch (error) {
-    console.error('Resume assessment error:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Server error' 
-    });
-  }
+		res.json({
+			success: true,
+			assessment: {
+				id: assessment._id,
+				resumeToken: assessment.resumeToken,
+				currentQuestionIndex: assessment.currentQuestionIndex,
+				answers: assessment.answers,
+				language: assessment.language,
+				status: assessment.status,
+				user: {
+					id: assessment.user._id,
+					companyName: assessment.user.companyName,
+					email: assessment.user.email,
+				},
+			},
+		});
+	} catch (error) {
+		console.error("Resume assessment error:", error);
+		res.status(500).json({
+			success: false,
+			message: "Server error",
+		});
+	}
 });
 
 // Get questions
-router.get('/questions', (req, res) => {
-  try {
-    const { lang = 'en' } = req.query;
-    
-    // Select questions based on language
-    let selectedQuestions = questionsData; // Default to English
-    
-    switch (lang) {
-      case 'fr':
-        selectedQuestions = questionsDataFR;
-        break;
-      // Add more languages here as needed
-      default:
-        selectedQuestions = questionsData;
-    }
-    
-    res.json({
-      success: true,
-      data: selectedQuestions,
-      language: lang
-    });
-  } catch (error) {
-    console.error('Get questions error:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Server error' 
-    });
-  }
+router.get("/questions", (req, res) => {
+	try {
+		const { lang = "en" } = req.query;
+
+		// Select questions based on language
+		let selectedQuestions = questionsData; // Default to English
+
+		switch (lang) {
+			case "fr":
+				selectedQuestions = questionsDataFR;
+				break;
+			// Add more languages here as needed
+			default:
+				selectedQuestions = questionsData;
+		}
+
+		res.json({
+			success: true,
+			data: selectedQuestions,
+			language: lang,
+		});
+	} catch (error) {
+		console.error("Get questions error:", error);
+		res.status(500).json({
+			success: false,
+			message: "Server error",
+		});
+	}
 });
 
 // Save assessment progress
-router.put('/progress/:assessmentId', [
-  body('answers').isArray(),
-  body('currentQuestionIndex').isInt({ min: 0 })
-], async (req, res) => {
-  try {
-    // console.log('💾 [PROGRESS] Sauvegarde de progression pour assessmentId:', req.params.assessmentId);
-    
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      // console.log('❌ [PROGRESS] Erreurs de validation:', errors.array());
-      return res.status(400).json({ errors: errors.array() });
-    }
+router.put(
+	"/progress/:assessmentId",
+	[body("answers").isArray(), body("currentQuestionIndex").isInt({ min: 0 })],
+	async (req, res) => {
+		try {
+			// console.log('💾 [PROGRESS] Sauvegarde de progression pour assessmentId:', req.params.assessmentId);
 
-    const { assessmentId } = req.params;
-    const { answers, currentQuestionIndex } = req.body;
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				// console.log('❌ [PROGRESS] Erreurs de validation:', errors.array());
+				return res.status(400).json({ errors: errors.array() });
+			}
 
-    // Validate assessmentId
-    if (!mongoose.Types.ObjectId.isValid(assessmentId)) {
-      // console.log('❌ [PROGRESS] AssessmentId invalide:', assessmentId);
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Invalid assessment ID' 
-      });
-    }
+			const { assessmentId } = req.params;
+			const { answers, currentQuestionIndex } = req.body;
 
-    // console.log('📊 [PROGRESS] Données reçues:', {
-    //   answersCount: answers.length,
-    //   currentQuestionIndex,
-    //   assessmentId
-    // });
+			// Validate assessmentId
+			if (!mongoose.Types.ObjectId.isValid(assessmentId)) {
+				// console.log('❌ [PROGRESS] AssessmentId invalide:', assessmentId);
+				return res.status(400).json({
+					success: false,
+					message: "Invalid assessment ID",
+				});
+			}
 
-    const assessment = await Assessment.findById(assessmentId);
-    if (!assessment) {
-      // console.log('❌ [PROGRESS] Assessment non trouvé:', assessmentId);
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Assessment not found' 
-      });
-    }
+			// console.log('📊 [PROGRESS] Données reçues:', {
+			//   answersCount: answers.length,
+			//   currentQuestionIndex,
+			//   assessmentId
+			// });
 
-    if (assessment.status === 'completed') {
-      // console.log('⚠️ [PROGRESS] Tentative de sauvegarde sur évaluation terminée:', assessmentId);
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Assessment already completed' 
-      });
-    }
+			const assessment = await Assessment.findById(assessmentId);
+			if (!assessment) {
+				// console.log('❌ [PROGRESS] Assessment non trouvé:', assessmentId);
+				return res.status(404).json({
+					success: false,
+					message: "Assessment not found",
+				});
+			}
 
-    // Filter valid answers before saving
-    const validAnswers = answers.filter(answer => 
-      answer && 
-      answer.questionId && 
-      answer.answer !== undefined && 
-      answer.answer !== null &&
-      typeof answer.answer === 'number'
-    );
+			if (assessment.status === "completed") {
+				// console.log('⚠️ [PROGRESS] Tentative de sauvegarde sur évaluation terminée:', assessmentId);
+				return res.status(400).json({
+					success: false,
+					message: "Assessment already completed",
+				});
+			}
 
-    // console.log('📊 [PROGRESS] Réponses valides filtrées:', {
-    //   originalCount: answers.length,
-    //   validCount: validAnswers.length,
-    //   invalidAnswers: answers.length - validAnswers.length
-    // });
+			// Filter valid answers before saving
+			const validAnswers = answers.filter(
+				(answer) =>
+					answer &&
+					answer.questionId &&
+					answer.answer !== undefined &&
+					answer.answer !== null &&
+					typeof answer.answer === "number"
+			);
 
-    // Update assessment progress
-    const previousAnswersCount = assessment.answers.length;
-    assessment.answers = validAnswers;
-    assessment.currentQuestionIndex = currentQuestionIndex;
-    assessment.lastAnsweredAt = new Date();
-    await assessment.save();
+			// console.log('📊 [PROGRESS] Réponses valides filtrées:', {
+			//   originalCount: answers.length,
+			//   validCount: validAnswers.length,
+			//   invalidAnswers: answers.length - validAnswers.length
+			// });
 
-    // console.log('✅ [PROGRESS] Progression sauvegardée:', {
-    //   assessmentId,
-    //   previousAnswersCount,
-    //   newAnswersCount: validAnswers.length,
-    //   currentQuestionIndex,
-    //   progressPercentage: Math.round((validAnswers.length / assessment.totalQuestions) * 100)
-    // });
+			// Update assessment progress
+			const previousAnswersCount = assessment.answers.length;
+			assessment.answers = validAnswers;
+			assessment.currentQuestionIndex = currentQuestionIndex;
+			assessment.lastAnsweredAt = new Date();
+			await assessment.save();
 
-    res.json({
-      success: true,
-      message: 'Progress saved successfully'
-    });
+			// console.log('✅ [PROGRESS] Progression sauvegardée:', {
+			//   assessmentId,
+			//   previousAnswersCount,
+			//   newAnswersCount: validAnswers.length,
+			//   currentQuestionIndex,
+			//   progressPercentage: Math.round((validAnswers.length / assessment.totalQuestions) * 100)
+			// });
 
-  } catch (error) {
-    console.error('Save progress error:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Server error during progress save' 
-    });
-  }
-});
+			res.json({
+				success: true,
+				message: "Progress saved successfully",
+			});
+		} catch (error) {
+			console.error("Save progress error:", error);
+			res.status(500).json({
+				success: false,
+				message: "Server error during progress save",
+			});
+		}
+	}
+);
 
 // Submit assessment
-router.post('/submit', [
-  body('userId').isMongoId(),
-  body('answers').isArray({ min: 1 }),
-  body('language').optional().isString(),
-  body('assessmentId').optional().isMongoId(),
-  body('submissionId').optional().isString()
-], async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+router.post(
+	"/submit",
+	[
+		body("userId").isMongoId(),
+		body("answers").isArray({ min: 1 }),
+		body("language").optional().isString(),
+		body("assessmentId").optional().isMongoId(),
+		body("submissionId").optional().isString(),
+	],
+	async (req, res) => {
+		try {
+			const errors = validationResult(req);
+			if (!errors.isEmpty()) {
+				return res.status(400).json({ errors: errors.array() });
+			}
 
-    const { userId, answers, language = 'en', assessmentId, submissionId } = req.body;
+			const {
+				userId,
+				answers,
+				language = "en",
+				assessmentId,
+				submissionId,
+			} = req.body;
 
-    // Protection contre les soumissions multiples
-    if (submissionId) {
-      // TODO: Implémenter un cache Redis pour vérifier les soumissions récentes
-    }
+			// Protection contre les soumissions multiples
+			if (submissionId) {
+				// TODO: Implémenter un cache Redis pour vérifier les soumissions récentes
+			}
 
-    // Verify user exists
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'User not found' 
-      });
-    }
+			// Verify user exists
+			const user = await User.findById(userId);
+			if (!user) {
+				return res.status(404).json({
+					success: false,
+					message: "User not found",
+				});
+			}
 
-    // Protection contre les soumissions multiples récentes (dans les 5 dernières minutes)
-    const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
-    const recentSubmission = await Assessment.findOne({
-      user: userId,
-      completedAt: { $gte: fiveMinutesAgo },
-      status: 'completed'
-    });
+			// Protection contre les soumissions multiples récentes (dans les 5 dernières minutes)
+			const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+			const recentSubmission = await Assessment.findOne({
+				user: userId,
+				completedAt: { $gte: fiveMinutesAgo },
+				status: "completed",
+			});
 
-    if (recentSubmission) {
-      return res.status(429).json({
-        success: false,
-        message: 'Une soumission récente a déjà été effectuée. Veuillez patienter quelques minutes.',
-        existingAssessment: {
-          id: recentSubmission._id,
-          completedAt: recentSubmission.completedAt,
-          score: recentSubmission.overallScore
-        }
-      });
-    }
+			if (recentSubmission) {
+				return res.status(429).json({
+					success: false,
+					message:
+						"Une soumission récente a déjà été effectuée. Veuillez patienter quelques minutes.",
+					existingAssessment: {
+						id: recentSubmission._id,
+						completedAt: recentSubmission.completedAt,
+						score: recentSubmission.overallScore,
+					},
+				});
+			}
 
-    // Select questions based on language for scoring
-    let selectedQuestions = questionsData;
-    switch (language) {
-      case 'fr':
-        selectedQuestions = questionsDataFR;
-        break;
-      default:
-        selectedQuestions = questionsData;
-    }
+			// Select questions based on language for scoring
+			let selectedQuestions = questionsData;
+			switch (language) {
+				case "fr":
+					selectedQuestions = questionsDataFR;
+					break;
+				default:
+					selectedQuestions = questionsData;
+			}
 
-    // Calculate scores
-    const { pillarScores, overallScore, overallStatus } = calculateScores(answers, selectedQuestions);
+			// Calculate scores
+			const { pillarScores, overallScore, overallStatus } = calculateScores(
+				answers,
+				selectedQuestions
+			);
 
-    // Generate recommendations
-    const recommendations = generateRecommendations(pillarScores, selectedQuestions);
+			// Generate recommendations
+			const recommendations = generateRecommendations(
+				pillarScores,
+				selectedQuestions
+			);
 
-    let assessment;
+			let assessment;
 
-    if (assessmentId) {
-      // Update existing draft assessment
-      assessment = await Assessment.findById(assessmentId);
-      if (!assessment || assessment.user.toString() !== userId) {
-        return res.status(404).json({ 
-          success: false, 
-          message: 'Assessment not found' 
-        });
-      }
+			if (assessmentId) {
+				// Update existing draft assessment
+				assessment = await Assessment.findById(assessmentId);
+				if (!assessment || assessment.user.toString() !== userId) {
+					return res.status(404).json({
+						success: false,
+						message: "Assessment not found",
+					});
+				}
 
-      // Update assessment with final data
-      assessment.answers = answers;
-      assessment.pillarScores = pillarScores.map((pillar, index) => ({
-        pillarId: selectedQuestions.pillars[index].id,
-        pillarName: selectedQuestions.pillars[index].name,
-        score: pillar.score,
-        status: pillar.status,
-        recommendations: recommendations[index]
-      }));
-      assessment.overallScore = overallScore;
-      assessment.overallStatus = overallStatus;
-      assessment.status = 'completed';
-      assessment.completedAt = new Date();
-      // Remove resume token field completely as assessment is completed
-      assessment.resumeToken = undefined;
-      delete assessment.resumeToken;
+				// Update assessment with final data
+				assessment.answers = answers;
+				assessment.pillarScores = pillarScores.map((pillar, index) => ({
+					pillarId: selectedQuestions.pillars[index].id,
+					pillarName: selectedQuestions.pillars[index].name,
+					score: pillar.score,
+					status: pillar.status,
+					recommendations: recommendations[index],
+				}));
+				assessment.overallScore = overallScore;
+				assessment.overallStatus = overallStatus;
+				assessment.status = "completed";
+				assessment.completedAt = new Date();
+				// Remove resume token field completely as assessment is completed
+				assessment.resumeToken = undefined;
+				delete assessment.resumeToken;
 
-      await assessment.save();
-    } else {
-      // Create new assessment
-      assessment = new Assessment({
-        user: userId,
-        answers,
-        pillarScores: pillarScores.map((pillar, index) => ({
-          pillarId: selectedQuestions.pillars[index].id,
-          pillarName: selectedQuestions.pillars[index].name,
-          score: pillar.score,
-          status: pillar.status,
-          recommendations: recommendations[index]
-        })),
-        overallScore,
-        overallStatus,
-        language,
-        status: 'completed',
-        completedAt: new Date()
-      });
+				await assessment.save();
+			} else {
+				// Create new assessment
+				assessment = new Assessment({
+					user: userId,
+					answers,
+					pillarScores: pillarScores.map((pillar, index) => ({
+						pillarId: selectedQuestions.pillars[index].id,
+						pillarName: selectedQuestions.pillars[index].name,
+						score: pillar.score,
+						status: pillar.status,
+						recommendations: recommendations[index],
+					})),
+					overallScore,
+					overallStatus,
+					language,
+					status: "completed",
+					completedAt: new Date(),
+				});
 
-      await assessment.save();
-    }
+				await assessment.save();
+			}
 
-    // Update user with assessment reference
-    user.assessments.push(assessment._id);
-    await user.save();
+			// Update user with assessment reference
+			user.assessments.push(assessment._id);
+			await user.save();
 
-    // Créer un compte automatiquement après l'évaluation (si pas déjà de compte)
-    let tempPassword = null;
-    let accountCreated = false;
+			// Créer un compte automatiquement après l'évaluation (si pas déjà de compte)
+			let tempPassword = null;
+			let accountCreated = false;
 
-    if (!user.hasAccount) {
-      // Générer un mot de passe temporaire
-      tempPassword = user.generateTempPassword();
-      user.password = tempPassword; // Hash automatique par le middleware
-      user.tempPassword = tempPassword; // Stocker le mot de passe en clair pour l'email
-      user.hasAccount = true;
-      user.accountCreatedAt = new Date(); // Enregistrer la date de création du compte
-      await user.save();
-      accountCreated = true;
-      
-      // Note: L'email avec les identifiants sera envoyé lors de la génération du rapport
-      // pour éviter d'envoyer deux emails séparés
-    } else {
-      // Note: L'email de notification sera envoyé lors de la génération du rapport
-    }
+			if (!user.hasAccount) {
+				// Générer un mot de passe temporaire
+				tempPassword = user.generateTempPassword();
+				user.password = tempPassword; // Hash automatique par le middleware
+				user.tempPassword = tempPassword; // Stocker le mot de passe en clair pour l'email
+				user.hasAccount = true;
+				user.accountCreatedAt = new Date(); // Enregistrer la date de création du compte
+				await user.save();
+				accountCreated = true;
 
-    // Create notification for admin
-    try {
-      const notification = new Notification({
-        type: 'new_assessment',
-        title: 'Nouvelle évaluation complétée',
-        message: `${user.companyName} a complété son évaluation`,
-        user: {
-          id: user._id,
-          name: user.companyName,
-          email: user.email,
-          sector: user.sector,
-          companySize: user.companySize
-        },
-        assessment: {
-          id: assessment._id,
-          score: overallScore,
-          status: overallStatus,
-          completedAt: assessment.completedAt
-        },
-        read: false
-      });
-      
-      await notification.save();
-    } catch (notificationError) {
-      console.error('Erreur lors de la création de la notification:', notificationError);
-      // Ne pas faire échouer la soumission pour une erreur de notification
-    }
+				// Note: L'email avec les identifiants sera envoyé lors de la génération du rapport
+				// pour éviter d'envoyer deux emails séparés
+			} else {
+				// Note: L'email de notification sera envoyé lors de la génération du rapport
+			}
 
-    // Nettoyer les brouillons d'évaluations pour cet utilisateur
-    try {
-      const deletedDrafts = await Assessment.deleteMany({
-        user: userId,
-        status: 'draft',
-        _id: { $ne: assessment._id } // Ne pas supprimer l'évaluation qui vient d'être complétée
-      });
-      
-      if (deletedDrafts.deletedCount > 0) {
-        console.log(`🧹 [CLEANUP] ${deletedDrafts.deletedCount} brouillon(s) supprimé(s) pour ${user.companyName}`);
-      }
-    } catch (cleanupError) {
-      console.error('❌ Erreur lors du nettoyage des brouillons:', cleanupError);
-      // Ne pas faire échouer la soumission pour une erreur de nettoyage
-    }
+			// Create notification for admin
+			try {
+				const notification = new Notification({
+					type: "new_assessment",
+					title: "Nouvelle évaluation complétée",
+					message: `${user.companyName} a complété son évaluation`,
+					user: {
+						id: user._id,
+						name: user.companyName,
+						email: user.email,
+						sector: user.sector,
+						companySize: user.companySize,
+					},
+					assessment: {
+						id: assessment._id,
+						score: overallScore,
+						status: overallStatus,
+						completedAt: assessment.completedAt,
+					},
+					read: false,
+				});
 
-    res.status(201).json({
-      success: true,
-      assessment: {
-        id: assessment._id,
-        overallScore,
-        overallStatus,
-        pillarScores: assessment.pillarScores,
-        completedAt: assessment.completedAt
-      }
-    });
+				await notification.save();
 
-  } catch (error) {
-    console.error('Submit assessment error:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Server error during assessment submission' 
-    });
-  }
-});
+				// Send push notification to user
+				await sendPushNotification(user._id, {
+					title: "Évaluation complétée !",
+					body: `Merci ${user.companyName}, votre rapport vitalCHECK est prêt à être consulté.`,
+					data: { url: "/results" },
+				});
+
+				// Notifier les admins de la nouvelle évaluation
+				await notifyAdmins({
+					title: "Diagnostic complété",
+					body: `${user.companyName} a fini son évaluation (Score: ${overallScore}/100)`,
+					data: { url: `/admin/assessments/${assessment._id}` },
+				});
+			} catch (notificationError) {
+				console.error(
+					"Erreur lors de la création de la notification:",
+					notificationError
+				);
+				// Ne pas faire échouer la soumission pour une erreur de notification
+			}
+
+			// Nettoyer les brouillons d'évaluations pour cet utilisateur
+			try {
+				const deletedDrafts = await Assessment.deleteMany({
+					user: userId,
+					status: "draft",
+					_id: { $ne: assessment._id }, // Ne pas supprimer l'évaluation qui vient d'être complétée
+				});
+
+				if (deletedDrafts.deletedCount > 0) {
+					console.log(
+						`🧹 [CLEANUP] ${deletedDrafts.deletedCount} brouillon(s) supprimé(s) pour ${user.companyName}`
+					);
+				}
+			} catch (cleanupError) {
+				console.error(
+					"❌ Erreur lors du nettoyage des brouillons:",
+					cleanupError
+				);
+				// Ne pas faire échouer la soumission pour une erreur de nettoyage
+			}
+
+			res.status(201).json({
+				success: true,
+				assessment: {
+					id: assessment._id,
+					overallScore,
+					overallStatus,
+					pillarScores: assessment.pillarScores,
+					completedAt: assessment.completedAt,
+				},
+			});
+		} catch (error) {
+			console.error("Submit assessment error:", error);
+			res.status(500).json({
+				success: false,
+				message: "Server error during assessment submission",
+			});
+		}
+	}
+);
 
 // Get user's assessments
-router.get('/user/:userId', async (req, res) => {
-  try {
-    const assessments = await Assessment.find({ user: req.params.userId })
-      .sort({ completedAt: -1 })
-      .populate('user', 'companyName email');
+router.get("/user/:userId", async (req, res) => {
+	try {
+		const assessments = await Assessment.find({ user: req.params.userId })
+			.sort({ completedAt: -1 })
+			.populate("user", "companyName email");
 
-    res.json({
-      success: true,
-      assessments
-    });
-
-  } catch (error) {
-    console.error('Get assessments error:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Server error' 
-    });
-  }
+		res.json({
+			success: true,
+			assessments,
+		});
+	} catch (error) {
+		console.error("Get assessments error:", error);
+		res.status(500).json({
+			success: false,
+			message: "Server error",
+		});
+	}
 });
 
 // Get specific assessment
-router.get('/:assessmentId', async (req, res) => {
-  try {
-    const assessment = await Assessment.findById(req.params.assessmentId)
-      .populate('user', 'companyName email sector companySize');
+router.get("/:assessmentId", async (req, res) => {
+	try {
+		const assessment = await Assessment.findById(
+			req.params.assessmentId
+		).populate("user", "companyName email sector companySize");
 
-    if (!assessment) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Assessment not found' 
-      });
-    }
+		if (!assessment) {
+			return res.status(404).json({
+				success: false,
+				message: "Assessment not found",
+			});
+		}
 
-    res.json({
-      success: true,
-      assessment
-    });
-
-  } catch (error) {
-    console.error('Get assessment error:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Server error' 
-    });
-  }
+		res.json({
+			success: true,
+			assessment,
+		});
+	} catch (error) {
+		console.error("Get assessment error:", error);
+		res.status(500).json({
+			success: false,
+			message: "Server error",
+		});
+	}
 });
 
 module.exports = router;
