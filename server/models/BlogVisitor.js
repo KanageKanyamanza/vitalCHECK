@@ -34,8 +34,7 @@ const blogVisitorSchema = new mongoose.Schema({
   // Informations de localisation
   ipAddress: {
     type: String,
-    required: true,
-    index: true
+    required: true
   },
   
   city: {
@@ -129,8 +128,7 @@ const blogVisitorSchema = new mongoose.Schema({
   // Informations de session
   sessionId: {
     type: String,
-    required: true,
-    index: true
+    required: true
   },
   
   // Métadonnées

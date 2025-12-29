@@ -74,7 +74,7 @@ const setupResponseInterceptor = (instance, isAdmin = false) => {
       // Gestion des erreurs HTTP
       if (error.response) {
         const { status, data } = error.response;
-        
+
         switch (status) {
           case 401:
             if (isAdmin) {
@@ -85,19 +85,19 @@ const setupResponseInterceptor = (instance, isAdmin = false) => {
             }
             toast.error('Session expirée. Veuillez vous reconnecter.');
             break;
-            
+
           case 403:
             toast.error('Accès refusé. Permissions insuffisantes.');
             break;
-            
+
           case 429:
             toast.error('Trop de requêtes. Veuillez patienter un moment.');
             break;
-            
+
           case 500:
             toast.error('Erreur serveur. Veuillez réessayer plus tard.');
             break;
-            
+
           default:
             if (data && data.message) {
               toast.error(data.message);
@@ -112,7 +112,7 @@ const setupResponseInterceptor = (instance, isAdmin = false) => {
         // Autre erreur
         toast.error('Une erreur inattendue est survenue.');
       }
-      
+
       return Promise.reject(error);
     }
   );
@@ -127,7 +127,7 @@ export const publicApi = {
   // Auth
   register: (data) => api.post('/auth/register', data),
   getUser: (email) => api.get(`/auth/user/${email}`),
-  
+
   // Assessments
   getQuestions: (lang = 'fr') => api.get(`/assessments/questions?lang=${lang}`),
   submitAssessment: (data) => api.post('/assessments/submit', data),
@@ -136,7 +136,7 @@ export const publicApi = {
   createDraft: (data) => api.post('/assessments/draft', data),
   resumeAssessment: (token) => api.get(`/assessments/resume/${token}`),
   saveProgress: (assessmentId, data) => api.put(`/assessments/progress/${assessmentId}`, data),
-  
+
   // Reports
   generateReport: (assessmentId) => api.post(`/reports/generate/${assessmentId}`),
   downloadReport: (assessmentId) => api.get(`/reports/download/${assessmentId}`, {
@@ -145,7 +145,7 @@ export const publicApi = {
 
   // Chatbot
   chatWithBot: (payload) => api.post('/chat/chatbot', payload),
-  
+
   // Health check
   healthCheck: () => api.get('/health'),
 };
@@ -164,10 +164,10 @@ export const paymentsAPI = {
 export const adminApiService = {
   // Auth Admin
   login: (credentials) => adminApi.post('/admin/login', credentials),
-  
+
   // Stats
   getStats: () => adminApi.get('/admin/stats'),
-  
+
   // Users
   getUsers: (params = {}) => {
     const queryParams = new URLSearchParams(params);
@@ -176,7 +176,7 @@ export const adminApiService = {
   getUser: (userId) => adminApi.get(`/admin/users/${userId}`),
   deleteUser: (userId) => adminApi.delete(`/admin/users/${userId}`),
   getUserDraftAssessment: (userId) => adminApi.get(`/admin/users/${userId}/draft-assessment`),
-  
+
   // Assessments
   getAssessments: (params = {}) => {
     const queryParams = new URLSearchParams(params);
@@ -188,21 +188,21 @@ export const adminApiService = {
     const queryParams = new URLSearchParams(params);
     return adminApi.get(`/admin/draft-assessments?${queryParams}`);
   },
-  
+
   // Emails
   sendReminderEmail: (userId, data) => adminApi.post(`/admin/users/${userId}/remind`, data),
   sendBulkEmails: (data) => adminApi.post('/admin/users/remind-bulk', data),
-  
-    // Export
-    exportUsers: () => adminApi.get('/admin/export/users', {
-      responseType: 'blob',
-    }),
-    
+
+  // Export
+  exportUsers: () => adminApi.get('/admin/export/users', {
+    responseType: 'blob',
+  }),
+
   // Notifications
   getNotifications: () => adminApi.get('/admin/notifications'),
   markNotificationAsRead: (notificationId) => adminApi.put(`/admin/notifications/${notificationId}/read`),
   markAllNotificationsAsRead: () => adminApi.put('/admin/notifications/read-all'),
-  
+
   // Blogs
   getBlogs: (params = {}) => {
     const queryParams = new URLSearchParams(params);
@@ -213,7 +213,7 @@ export const adminApiService = {
   updateBlog: (id, data) => adminApi.put(`/blogs/admin/blogs/${id}`, data),
   deleteBlog: (id) => adminApi.delete(`/blogs/admin/blogs/${id}`),
   getBlogStats: () => adminApi.get('/blogs/admin/stats'),
-  
+
   // Exports
   exportUsersExcel: () => adminApi.get('/admin/export/users/excel', { responseType: 'blob' }),
   exportUsersPDF: () => adminApi.get('/admin/export/users/pdf', { responseType: 'blob' }),
@@ -221,7 +221,7 @@ export const adminApiService = {
   exportAssessmentsPDF: () => adminApi.get('/admin/export/assessments/pdf', { responseType: 'blob' }),
   exportStatsExcel: () => adminApi.get('/admin/export/stats/excel', { responseType: 'blob' }),
   exportStatsPDF: () => adminApi.get('/admin/export/stats/pdf', { responseType: 'blob' }),
-  
+
   // Admins
   getAdmins: () => adminApi.get('/admin/admins'),
   updateAdmin: (data) => adminApi.put('/admin/profile', data),
@@ -238,6 +238,31 @@ export const adminApiService = {
   sendPaymentEmail: (paymentId, data) => adminApi.post(`/admin/payments/${paymentId}/send-email`, data),
   updatePaymentStatus: (paymentId, status) => adminApi.patch(`/admin/payments/${paymentId}/status`, { status }),
   exportPayments: () => adminApi.get('/admin/payments/export', { responseType: 'blob' }),
+
+  // Chatbot
+  getChatbotStats: (days = 30) => adminApi.get(`/admin/chatbot/stats?days=${days}`),
+  getChatbotAnalytics: (days = 30) => adminApi.get(`/admin/chatbot/analytics?days=${days}`),
+  getUnansweredQuestions: (params = {}) => {
+    const queryParams = new URLSearchParams(params);
+    return adminApi.get(`/admin/chatbot/unanswered?${queryParams}`);
+  },
+  getAllInteractions: (params = {}) => {
+    const queryParams = new URLSearchParams(params);
+    return adminApi.get(`/admin/chatbot/interactions?${queryParams}`);
+  },
+  answerQuestion: (id, data) => adminApi.post(`/admin/chatbot/answer/${id}`, data),
+  ignoreQuestion: (id) => adminApi.post(`/admin/chatbot/ignore/${id}`),
+  updateFeedback: (id, feedback) => adminApi.post(`/admin/chatbot/feedback/${id}`, { feedback }),
+
+  // Gestion des réponses personnalisées
+  getChatbotResponses: (params = {}) => {
+    const queryParams = new URLSearchParams(params);
+    return adminApi.get(`/admin/chatbot/responses?${queryParams}`);
+  },
+  createChatbotResponse: (data) => adminApi.post('/admin/chatbot/responses', data),
+  updateChatbotResponse: (id, data) => adminApi.put(`/admin/chatbot/responses/${id}`, data),
+  deleteChatbotResponse: (id) => adminApi.delete(`/admin/chatbot/responses/${id}`),
+  getChatbotResponsesStats: () => adminApi.get('/admin/chatbot/responses/stats'),
 };
 
 // Fonction utilitaire pour gérer les erreurs de rate limiting
@@ -245,14 +270,14 @@ export const handleRateLimit = (error, retryFunction, maxRetries = 3) => {
   if (error.response && error.response.status === 429) {
     const retryAfter = error.response.headers['retry-after'] || 1;
     const delay = parseInt(retryAfter) * 1000;
-    
+
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve(retryFunction());
       }, delay);
     });
   }
-  
+
   return Promise.reject(error);
 };
 
@@ -271,7 +296,7 @@ export const resetConnection = () => {
   // Nettoyer les tokens
   localStorage.removeItem('adminToken');
   localStorage.removeItem('adminData');
-  
+
   // Rediriger vers la page de connexion unifiée
   window.location.href = '/login';
 };
@@ -284,14 +309,14 @@ export const blogApiService = {
   getBlogs: (params = {}) => {
     // Ajouter la langue actuelle aux paramètres
     const currentLanguage = localStorage.getItem('i18nextLng') || 'fr';
-    return api.get('/blogs', { 
-      params: { 
-        ...params, 
-        lang: currentLanguage 
-      } 
+    return api.get('/blogs', {
+      params: {
+        ...params,
+        lang: currentLanguage
+      }
     });
   },
-  
+
   // Récupérer un blog par slug
   getBlogBySlug: (slug) => {
     const currentLanguage = localStorage.getItem('i18nextLng') || 'fr';
@@ -299,25 +324,25 @@ export const blogApiService = {
       params: { lang: currentLanguage }
     });
   },
-  
+
   // Liker un blog
   likeBlog: (id) => api.post(`/blogs/${id}/like`),
-  
+
   // Tracker une visite
   trackVisit: (visitId, data) => api.post(`/blogs/track`, {
     visitId,
     ...data
   }),
-  
+
   // Rechercher des blogs
   searchBlogs: (query) => {
     const currentLanguage = localStorage.getItem('i18nextLng') || 'fr';
-    return api.get('/blogs', { 
-      params: { 
-        search: query, 
+    return api.get('/blogs', {
+      params: {
+        search: query,
         limit: 20,
         lang: currentLanguage
-      } 
+      }
     });
   },
 
@@ -332,20 +357,20 @@ export const blogApiService = {
 export const adminBlogApiService = {
   // Récupérer tous les blogs (admin)
   getBlogs: (params = {}) => adminApi.get('/blogs/admin/blogs', { params }),
-  
+
   // Récupérer un blog par ID (admin)
   getBlog: (id) => adminApi.get(`/blogs/admin/blogs/${id}`),
-  
+
   // Créer un blog
   createBlog: (data) => adminApi.post('/blogs/admin/blogs', data),
-  
+
   // Mettre à jour un blog
   updateBlog: (id, data) => adminApi.put(`/blogs/admin/blogs/${id}`, data),
-  
+
   // Supprimer un blog
   deleteBlog: (id) => adminApi.delete(`/blogs/admin/blogs/${id}`),
-  
-  
+
+
   // Récupérer les statistiques
   getStats: () => {
     console.log('Getting blog stats...')
@@ -353,10 +378,10 @@ export const adminBlogApiService = {
     console.log('Admin token present:', !!token)
     return adminApi.get('/blogs/admin/stats')
   },
-  
+
   // Récupérer les visites d'un blog
   getBlogVisits: (blogId) => adminApi.get(`/blogs/admin/blogs/${blogId}/visits`),
-  
+
   // Récupérer toutes les visites
   getAllVisits: (params = {}) => {
     console.log('🌐 [API] getAllVisits appelé avec params:', params)

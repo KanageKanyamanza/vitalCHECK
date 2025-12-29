@@ -1170,6 +1170,14 @@
   },
   "chatbot": {
     "initialMessage": "Hello! 👋 I'm the vitalCHECK assistant. How can I help you?",
+    "welcomeMessage": "Hello! 👋 I'm the vitalCHECK assistant. To better help you, could you give me your first name?",
+    "askName": "Please enter your first name",
+    "askEmail": "Email (optional) - you can skip this step",
+    "namePlaceholder": "Enter your name",
+    "emailPlaceholder": "Enter your email or skip",
+    "emailRequest": "Thank you {{name}}! Would you like to share your email so we can contact you if needed? (optional - you can type \"skip\" or simply your question)",
+    "readyMessage": "Perfect {{name}}! 👋 I'm the vitalCHECK assistant. How can I help you?",
+    "ignore": "Skip",
     "topics": {
       "evaluation": "The assessment",
       "pricing": "Pricing",

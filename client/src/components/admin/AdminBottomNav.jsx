@@ -9,7 +9,8 @@ import {
   Clock,
   BookOpen,
   Settings,
-  Download
+  Download,
+  MessageCircle
 } from 'lucide-react';
 
 const AdminBottomNav = () => {
@@ -79,6 +80,13 @@ const AdminBottomNav = () => {
       icon: Download,
       color: 'text-blue-600',
       bgColor: 'bg-blue-50'
+    },
+    {
+      name: 'Chatbot',
+      path: '/admin/chatbot',
+      icon: MessageCircle,
+      color: 'text-primary-600',
+      bgColor: 'bg-primary-50'
     },
     {
       name: 'Paramètres',

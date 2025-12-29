@@ -1,9 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { publicApi } from '../../services/api';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { MessageCircle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { useClientAuth } from '../../context/ClientAuthContext';
 
 // Widget de chat inspiré du style Harvest avec la charte graphique vitalCHECK
 // Forme circulaire comme BackToTop, même dimension
@@ -11,21 +12,50 @@ import { useTranslation } from 'react-i18next';
 const ChatWidget = () => {
     const { t, i18n } = useTranslation();
     const navigate = useNavigate();
+    const { user: clientUser } = useClientAuth();
     const [isOpen, setIsOpen] = useState(false);
     const [isMinimized, setIsMinimized] = useState(false);
     const [scrollY, setScrollY] = useState(0);
+    const [visitorInfo, setVisitorInfo] = useState({
+        name: '',
+        email: ''
+    });
+    const [collectingInfo, setCollectingInfo] = useState({
+        step: null, // 'name', 'email', or null (ready for message)
+        askedName: false,
+        askedEmail: false
+    });
+    const nameRequestSentRef = useRef(false);
 
     // Messages initiaux avec traductions
-    const initialMessage = {
-        text: t('chatbot.initialMessage'),
-        topics: [
-            t('chatbot.topics.evaluation'),
-            t('chatbot.topics.pricing'),
-            t('chatbot.topics.report'),
-            t('chatbot.topics.account')
-        ],
-        suggestion: t('chatbot.suggestion')
+    const getInitialMessage = () => {
+        if (clientUser) {
+            const userName = clientUser.firstName || clientUser.email?.split('@')[0] || 'Utilisateur';
+            return {
+                text: `Bonjour ${userName} ! ${t('chatbot.initialMessage')}`,
+                topics: [
+                    t('chatbot.topics.evaluation'),
+                    t('chatbot.topics.pricing'),
+                    t('chatbot.topics.report'),
+                    t('chatbot.topics.account')
+                ],
+                suggestion: t('chatbot.suggestion')
+            };
+        }
+        // Pour les visiteurs non connectés, on demandera le nom d'abord
+        return {
+            text: t('chatbot.initialMessage'),
+            topics: [
+                t('chatbot.topics.evaluation'),
+                t('chatbot.topics.pricing'),
+                t('chatbot.topics.report'),
+                t('chatbot.topics.account')
+            ],
+            suggestion: t('chatbot.suggestion')
+        };
     };
+
+    const initialMessage = getInitialMessage();
 
     const popularTopics = [
         {
@@ -54,19 +84,17 @@ const ChatWidget = () => {
         }
     ];
 
-    const [messages, setMessages] = useState([
-        { from: 'bot', text: initialMessage.text, isInitial: true }
-    ]);
+    // Pour les utilisateurs non connectés, on commence par demander le nom
+    const [messages, setMessages] = useState(() => {
+        if (!clientUser) {
+            return [{ from: 'bot', text: t('chatbot.welcomeMessage'), isWelcome: true }];
+        }
+        return [{ from: 'bot', text: initialMessage.text, isInitial: true }];
+    });
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
     const messagesEndRef = useRef(null);
     const inputRef = useRef(null);
-
-    // Infos de base visiteur non connecté
-    const [visitor, setVisitor] = useState({
-        name: '',
-        email: ''
-    });
 
     // Gestion du scroll pour positionner le chatbot
     useEffect(() => {
@@ -87,12 +115,29 @@ const ChatWidget = () => {
         scrollToBottom();
     }, [messages, loading]);
 
-    // Mettre à jour le message initial quand la langue change
+    // Mettre à jour le message initial quand la langue change ou l'utilisateur change (seulement pour utilisateurs connectés)
     useEffect(() => {
-        if (messages.length === 1 && messages[0].isInitial) {
-            setMessages([{ from: 'bot', text: t('chatbot.initialMessage'), isInitial: true }]);
+        if (clientUser && messages.length === 1 && messages[0].isInitial) {
+            const newInitialMessage = getInitialMessage();
+            setMessages([{ from: 'bot', text: newInitialMessage.text, isInitial: true }]);
         }
-    }, [i18n.language, t]);
+    }, [i18n.language, t, clientUser]);
+
+    // Réinitialiser l'état de collecte quand l'utilisateur se connecte
+    useEffect(() => {
+        if (clientUser) {
+            setCollectingInfo({ step: null, askedName: false, askedEmail: false });
+            setVisitorInfo({ name: '', email: '' });
+            nameRequestSentRef.current = false;
+        }
+    }, [clientUser]);
+
+    // Réinitialiser le ref quand le chat se ferme
+    useEffect(() => {
+        if (!isOpen) {
+            nameRequestSentRef.current = false;
+        }
+    }, [isOpen]);
 
     // Focus sur l'input quand le chat s'ouvre
     useEffect(() => {
@@ -127,6 +172,81 @@ const ChatWidget = () => {
         const trimmed = messageText || input.trim();
         if (!trimmed || loading) return;
 
+        // Si l'utilisateur n'est pas connecté, collecter d'abord le nom puis l'email
+        if (!clientUser) {
+            // Étape 1: Demander le nom
+            if (collectingInfo.step === 'name' || (messages.length === 1 && messages[0].isWelcome)) {
+                if (trimmed.trim()) {
+                    setVisitorInfo(prev => ({ ...prev, name: trimmed.trim() }));
+                    appendMessage({ from: 'user', text: trimmed });
+                    setInput('');
+                    setCollectingInfo({ step: 'email', askedName: true, askedEmail: false });
+                    
+                    // Demander l'email (facultatif)
+                    setTimeout(() => {
+                        appendMessage({ 
+                            from: 'bot', 
+                            text: t('chatbot.emailRequest', { name: trimmed.trim() })
+                        });
+                    }, 500);
+                }
+                return;
+            }
+            
+            // Étape 2: Demander l'email (facultatif)
+            if (collectingInfo.step === 'email') {
+                const lowerTrimmed = trimmed.toLowerCase().trim();
+                if (lowerTrimmed === 'passer' || lowerTrimmed === 'skip' || lowerTrimmed === 'non' || lowerTrimmed === 'no' || lowerTrimmed === '') {
+                    // L'utilisateur ne veut pas donner son email
+                    appendMessage({ from: 'user', text: trimmed || 'Passer' });
+                    setInput('');
+                    setCollectingInfo({ step: null, askedName: true, askedEmail: true });
+                    
+                    // Afficher le message initial avec les sujets après la collecte
+                    setTimeout(() => {
+                        const newInitialMessage = getInitialMessage();
+                        appendMessage({ 
+                            from: 'bot', 
+                            text: t('chatbot.readyMessage', { name: visitorInfo.name }),
+                            isInitial: true,
+                            topics: newInitialMessage.topics,
+                            suggestion: newInitialMessage.suggestion
+                        });
+                    }, 500);
+                    return;
+                } else if (trimmed.includes('@') && trimmed.includes('.')) {
+                    // C'est probablement un email
+                    setVisitorInfo(prev => ({ ...prev, email: trimmed.trim() }));
+                    appendMessage({ from: 'user', text: trimmed });
+                    setInput('');
+                    setCollectingInfo({ step: null, askedName: true, askedEmail: true });
+                    
+                    // Afficher le message initial avec les sujets après la collecte
+                    setTimeout(() => {
+                        const newInitialMessage = getInitialMessage();
+                        appendMessage({ 
+                            from: 'bot', 
+                            text: t('chatbot.readyMessage', { name: visitorInfo.name }),
+                            isInitial: true,
+                            topics: newInitialMessage.topics,
+                            suggestion: newInitialMessage.suggestion
+                        });
+                    }, 500);
+                    return;
+                } else {
+                    // L'utilisateur a directement posé sa question, on considère qu'il passe l'email
+                    setCollectingInfo({ step: null, askedName: true, askedEmail: true });
+                    // Continuer avec l'envoi du message normal ci-dessous
+                }
+            }
+            
+            // Si on n'a pas encore collecté le nom, ne pas envoyer le message
+            if (!collectingInfo.askedName) {
+                return;
+            }
+        }
+
+        // Envoyer le message normal
         appendMessage({ from: 'user', text: trimmed });
         setInput('');
         setLoading(true);
@@ -138,13 +258,15 @@ const ChatWidget = () => {
             const payload = {
                 message: trimmed,
                 lang: currentLang,
-                visitor:
-                    visitor.name || visitor.email
+                userId: clientUser?._id || null,
+                visitor: clientUser ? undefined : (
+                    visitorInfo.name || visitorInfo.email
                         ? {
-                            name: visitor.name || undefined,
-                            email: visitor.email || undefined
+                            name: visitorInfo.name || undefined,
+                            email: visitorInfo.email || undefined
                         }
                         : undefined
+                )
             };
 
             const { data } = await publicApi.chatWithBot(payload);
@@ -314,8 +436,8 @@ const ChatWidget = () => {
                             <div className="flex-1 px-4 py-4 overflow-y-auto space-y-3 bg-gray-50">
                                 {messages.map((m, idx) => (
                                     <div key={idx}>
-                                        {m.from === 'bot' && m.isInitial ? (
-                                            // Message initial avec sujets
+                                        {m.from === 'bot' && (m.isInitial || m.isWelcome) ? (
+                                            // Message initial ou de bienvenue avec sujets
                                             <div className="space-y-3">
                                                 <div className="flex items-start gap-2">
                                                     <div className="flex-shrink-0 w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
@@ -336,18 +458,18 @@ const ChatWidget = () => {
                                                     <div className="flex-1">
                                                         <div className="bg-white rounded-lg px-3 py-2 shadow-sm">
                                                             <p className="text-sm text-gray-800">{m.text}</p>
-                                                            {initialMessage.topics && (
+                                                            {m.topics && (
                                                                 <div className="mt-2 space-y-1">
                                                                     <p className="text-xs text-gray-600 font-medium">
                                                                         {t('chatbot.questionsAbout')}
                                                                     </p>
                                                                     <ul className="text-xs text-gray-700 space-y-0.5 ml-2">
-                                                                        {initialMessage.topics.map((topic, i) => (
+                                                                        {m.topics.map((topic, i) => (
                                                                             <li key={i}>• {topic}</li>
                                                                         ))}
                                                                     </ul>
                                                                     <p className="text-xs text-gray-500 mt-2 italic">
-                                                                        {initialMessage.suggestion}
+                                                                        {m.suggestion}
                                                                     </p>
                                                                 </div>
                                                             )}
@@ -358,24 +480,26 @@ const ChatWidget = () => {
                                                     </div>
                                                 </div>
 
-                                                {/* Sujets populaires */}
-                                                <div className="ml-11">
-                                                    <p className="text-xs font-semibold text-gray-600 mb-2">
-                                                        {t('chatbot.popularTopics')}
-                                                    </p>
-                                                    <div className="grid grid-cols-2 gap-2">
-                                                        {popularTopics.map((topic) => (
-                                                            <button
-                                                                key={topic.id}
-                                                                onClick={() => handleTopicClick(topic)}
-                                                                className="flex items-center gap-2 bg-white hover:bg-primary-50 border border-gray-200 rounded-lg px-3 py-2 text-xs font-medium text-gray-700 transition-colors"
-                                                            >
-                                                                <span className="text-base">{topic.icon}</span>
-                                                                <span>{topic.label}</span>
-                                                            </button>
-                                                        ))}
+                                                {/* Sujets populaires - seulement si c'est le message initial (pas le welcome) */}
+                                                {m.isInitial && (
+                                                    <div className="ml-11">
+                                                        <p className="text-xs font-semibold text-gray-600 mb-2">
+                                                            {t('chatbot.popularTopics')}
+                                                        </p>
+                                                        <div className="grid grid-cols-2 gap-2">
+                                                            {popularTopics.map((topic) => (
+                                                                <button
+                                                                    key={topic.id}
+                                                                    onClick={() => handleTopicClick(topic)}
+                                                                    className="flex items-center gap-2 bg-white hover:bg-primary-50 border border-gray-200 rounded-lg px-3 py-2 text-xs font-medium text-gray-700 transition-colors"
+                                                                >
+                                                                    <span className="text-base">{topic.icon}</span>
+                                                                    <span>{topic.label}</span>
+                                                                </button>
+                                                            ))}
+                                                        </div>
                                                     </div>
-                                                </div>
+                                                )}
                                             </div>
                                         ) : (
                                             // Messages normaux
@@ -472,21 +596,62 @@ const ChatWidget = () => {
 
                             {/* Zone de saisie */}
                             <div className="border-t border-gray-200 px-4 py-3 bg-white">
+                                {!clientUser && collectingInfo.step === 'name' && (
+                                    <p className="text-xs text-gray-500 mb-2">
+                                        💬 {t('chatbot.askName')}
+                                    </p>
+                                )}
+                                {!clientUser && collectingInfo.step === 'email' && (
+                                    <p className="text-xs text-gray-500 mb-2">
+                                        💬 {t('chatbot.askEmail')}
+                                    </p>
+                                )}
                                 <div className="flex items-center gap-2">
                                     <input
                                         ref={inputRef}
-                                        type="text"
+                                        type={!clientUser && collectingInfo.step === 'email' ? 'email' : 'text'}
                                         className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                                        placeholder={t('chatbot.placeholder')}
+                                        placeholder={
+                                            !clientUser && collectingInfo.step === 'name' 
+                                                ? t('chatbot.namePlaceholder')
+                                                : !clientUser && collectingInfo.step === 'email'
+                                                ? t('chatbot.emailPlaceholder')
+                                                : t('chatbot.placeholder')
+                                        }
                                         value={input}
                                         onChange={(e) => setInput(e.target.value)}
                                         onKeyDown={handleKeyDown}
                                         disabled={loading}
                                     />
+                                    {!clientUser && collectingInfo.step === 'email' && (
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                appendMessage({ from: 'user', text: i18n.language === 'en' ? 'Skip' : 'Passer' });
+                                                setInput('');
+                                                setCollectingInfo({ step: null, askedName: true, askedEmail: true });
+                                                
+                                                // Afficher le message initial avec les sujets après avoir ignoré l'email
+                                                setTimeout(() => {
+                                                    const newInitialMessage = getInitialMessage();
+                                                    appendMessage({ 
+                                                        from: 'bot', 
+                                                        text: t('chatbot.readyMessage', { name: visitorInfo.name }),
+                                                        isInitial: true,
+                                                        topics: newInitialMessage.topics,
+                                                        suggestion: newInitialMessage.suggestion
+                                                    });
+                                                }, 500);
+                                            }}
+                                            className="px-3 py-2 text-xs font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors whitespace-nowrap"
+                                        >
+                                            {t('chatbot.ignore')}
+                                        </button>
+                                    )}
                                     <button
                                         type="button"
                                         onClick={handleSend}
-                                        disabled={loading || !input.trim()}
+                                        disabled={loading || (!input.trim() && (!clientUser && collectingInfo.step === 'name'))}
                                         className="bg-primary-500 hover:bg-primary-600 text-white rounded-lg p-2 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                                         aria-label={t('chatbot.send')}
                                     >

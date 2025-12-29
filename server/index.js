@@ -10,22 +10,24 @@ require("dotenv").config();
 const app = express();
 
 // Configuration du trust proxy pour les headers X-Forwarded-For
-app.set('trust proxy', 1);
+app.set("trust proxy", 1);
 
 // Security middleware
-app.use(helmet({
-	frameguard: { action: 'deny' }, // X-Frame-Options: DENY
-	contentSecurityPolicy: {
-		directives: {
-			defaultSrc: ["'self'"],
-			styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-			fontSrc: ["'self'", "https://fonts.gstatic.com"],
-			imgSrc: ["'self'", "data:", "https:"],
-			scriptSrc: ["'self'"],
-			connectSrc: ["'self'"]
-		}
-	}
-}));
+app.use(
+	helmet({
+		frameguard: { action: "deny" }, // X-Frame-Options: DENY
+		contentSecurityPolicy: {
+			directives: {
+				defaultSrc: ["'self'"],
+				styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+				fontSrc: ["'self'", "https://fonts.gstatic.com"],
+				imgSrc: ["'self'", "data:", "https:"],
+				scriptSrc: ["'self'"],
+				connectSrc: ["'self'"],
+			},
+		},
+	})
+);
 app.use(
 	cors({
 		origin: function (origin, callback) {
@@ -33,7 +35,7 @@ app.use(
 			if (!origin) return callback(null, true);
 
 			// Normaliser l'origine en supprimant le slash final
-			const normalizedOrigin = origin.replace(/\/$/, '');
+			const normalizedOrigin = origin.replace(/\/$/, "");
 
 			const allowedOrigins = [
 				"http://localhost:5173",
@@ -44,9 +46,9 @@ app.use(
 			];
 
 			// En production, être plus permissif pour éviter les problèmes CORS
-			if (process.env.NODE_ENV === 'production') {
+			if (process.env.NODE_ENV === "production") {
 				// Autoriser tous les sous-domaines de checkmyenterprise.com
-				if (normalizedOrigin.includes('checkmyenterprise.com')) {
+				if (normalizedOrigin.includes("checkmyenterprise.com")) {
 					return callback(null, true);
 				}
 			}
@@ -56,12 +58,12 @@ app.use(
 				return callback(null, true);
 			}
 
-			console.log('🚫 [CORS] Origine non autorisée:', origin);
-			callback(new Error('Non autorisé par CORS'));
+			console.log("🚫 [CORS] Origine non autorisée:", origin);
+			callback(new Error("Non autorisé par CORS"));
 		},
 		credentials: true,
-		methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-		allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
+		methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+		allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
 		// Ajouter des headers supplémentaires pour éviter les problèmes
 		optionsSuccessStatus: 200, // Pour les navigateurs legacy
 		preflightContinue: false,
@@ -93,6 +95,7 @@ app.use("/api/blog-visitors/admin", require("./routes/blogVisitorsAdmin"));
 app.use("/api/blog-visitors", require("./routes/blogVisitors"));
 app.use("/api/upload", require("./routes/upload"));
 app.use("/api/chat", require("./routes/chatbot"));
+// app.use("/api/notifications", require("./routes/notifications"));
 app.use("/api", require("./routes/ping"));
 
 // Routes SEO
@@ -111,8 +114,8 @@ app.get("/api/test", (req, res) => {
 		timestamp: new Date().toISOString(),
 		routes: {
 			translate: "/api/blogs/translate",
-			translateTest: "/api/blogs/translate/test"
-		}
+			translateTest: "/api/blogs/translate/test",
+		},
 	});
 });
 
@@ -130,25 +133,73 @@ app.use("*", (req, res) => {
 	res.status(404).json({ message: "Route not found" });
 });
 
-// Database connection
-mongoose
-	.connect(
-		process.env.MONGODB_URI || "mongodb://localhost:27017/vitalCHECK-health-check"
-	)
-	.then(async () => {
-		console.log("Connected to MongoDB");
+// Database connection with improved error handling
+const connectDB = async () => {
+	const mongoURI = process.env.MONGODB_URI || "mongodb://localhost:27017/vitalCHECK-health-check";
+
+	// Options de connexion améliorées
+	const mongooseOptions = {
+		serverSelectionTimeoutMS: 5000, // Timeout après 5 secondes
+		socketTimeoutMS: 45000,
+		bufferCommands: false, // Désactiver le buffering mongoose
+	};
+
+	try {
+		await mongoose.connect(mongoURI, mongooseOptions);
+		console.log("✅ Connected to MongoDB");
 
 		// Initialiser l'admin au démarrage
-		await initAdmin();
+		try {
+			await initAdmin();
+		} catch (err) {
+			console.warn("⚠️  Erreur lors de l'initialisation admin:", err.message);
+		}
 
 		const PORT = process.env.PORT || 5000;
 		app.listen(PORT, () => {
-			console.log(`Server running on port ${PORT}`);
+			console.log(`🚀 Server running on port ${PORT}`);
 		});
-	})
-	.catch((error) => {
-		console.error("MongoDB connection error:", error);
-		process.exit(1);
-	});
+	} catch (error) {
+		console.error("❌ MongoDB connection error:", error.message);
+
+		// En production, MongoDB est obligatoire
+		if (process.env.NODE_ENV === 'production') {
+			console.error("❌ Production mode: MongoDB est requis. Arrêt du serveur.");
+			process.exit(1);
+		}
+
+		// En développement, démarrer quand même avec avertissements
+		console.warn("⚠️  Mode développement: Le serveur démarre sans MongoDB.");
+		console.warn("💡 Solutions:");
+		console.warn("   1. Démarrer MongoDB local: net start MongoDB (Windows) ou mongod");
+		console.warn("   2. Utiliser MongoDB Atlas: Configurez MONGODB_URI dans .env");
+		console.warn("   3. Continuer sans MongoDB: Certaines fonctionnalités ne seront pas disponibles");
+
+		const PORT = process.env.PORT || 5000;
+		app.listen(PORT, () => {
+			console.log(`🚀 Server running on port ${PORT} (sans MongoDB)`);
+		});
+	}
+};
+
+// Gestion des événements de connexion
+mongoose.connection.on('error', (err) => {
+	if (process.env.NODE_ENV !== 'production') {
+		console.warn('⚠️  MongoDB connection error:', err.message);
+	} else {
+		console.error('❌ MongoDB connection error:', err);
+	}
+});
+
+mongoose.connection.on('disconnected', () => {
+	if (process.env.NODE_ENV !== 'production') {
+		console.warn('⚠️  MongoDB disconnected');
+	} else {
+		console.error('❌ MongoDB disconnected');
+	}
+});
+
+// Démarrer la connexion
+connectDB();
 
 module.exports = app;

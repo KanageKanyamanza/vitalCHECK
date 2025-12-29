@@ -6,6 +6,8 @@ const Admin = require('../models/Admin');
 const User = require('../models/User');
 const Assessment = require('../models/Assessment');
 const Notification = require('../models/Notification');
+const ChatbotInteraction = require('../models/ChatbotInteraction');
+const ChatbotResponse = require('../models/ChatbotResponse');
 const { sendEmail } = require('../utils/emailService');
 const { 
   exportUsersToExcel, 
@@ -1472,6 +1474,668 @@ router.post('/reports/resend/:assessmentId', authenticateAdmin, async (req, res)
     res.status(500).json({ 
       success: false, 
       message: 'Erreur lors de l\'envoi du rapport' 
+    });
+  }
+});
+
+// ===== ROUTES CHATBOT ADMIN =====
+
+// GET /admin/chatbot/stats - Statistiques du chatbot
+router.get('/chatbot/stats', authenticateAdmin, async (req, res) => {
+  try {
+    const { days = 30 } = req.query;
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - parseInt(days));
+
+    const totalInteractions = await ChatbotInteraction.countDocuments({
+      createdAt: { $gte: startDate }
+    });
+
+    const uniqueUsers = await ChatbotInteraction.distinct('userId', {
+      createdAt: { $gte: startDate },
+      userId: { $ne: null }
+    });
+
+    const answeredCount = await ChatbotInteraction.countDocuments({
+      createdAt: { $gte: startDate },
+      status: 'answered'
+    });
+
+    const pendingCount = await ChatbotInteraction.countDocuments({
+      createdAt: { $gte: startDate },
+      status: 'pending'
+    });
+
+    const responseRate = totalInteractions > 0 
+      ? ((answeredCount / totalInteractions) * 100).toFixed(1) 
+      : '0';
+
+    // Feedback
+    const usefulCount = await ChatbotInteraction.countDocuments({
+      createdAt: { $gte: startDate },
+      feedback: 'useful'
+    });
+
+    const uselessCount = await ChatbotInteraction.countDocuments({
+      createdAt: { $gte: startDate },
+      feedback: 'useless'
+    });
+
+    // Activité des 7 derniers jours
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    
+    const dailyActivity = [];
+    for (let i = 6; i >= 0; i--) {
+      const date = new Date();
+      date.setDate(date.getDate() - i);
+      date.setHours(0, 0, 0, 0);
+      const nextDate = new Date(date);
+      nextDate.setDate(nextDate.getDate() + 1);
+
+      const withResponse = await ChatbotInteraction.countDocuments({
+        createdAt: { $gte: date, $lt: nextDate },
+        status: 'answered'
+      });
+
+      const withoutResponse = await ChatbotInteraction.countDocuments({
+        createdAt: { $gte: date, $lt: nextDate },
+        status: 'pending'
+      });
+
+      dailyActivity.push({
+        date: date.toISOString().split('T')[0],
+        withResponse,
+        withoutResponse
+      });
+    }
+
+    // Top questions sans réponse
+    const topUnanswered = await ChatbotInteraction.find({
+      status: 'pending',
+      createdAt: { $gte: startDate }
+    })
+      .sort({ frequency: -1, createdAt: -1 })
+      .limit(5)
+      .select('question frequency createdAt')
+      .lean();
+
+    res.json({
+      success: true,
+      stats: {
+        totalInteractions,
+        uniqueUsers: uniqueUsers.length,
+        responseRate: parseFloat(responseRate),
+        pendingQuestions: pendingCount,
+        feedback: {
+          useful: usefulCount,
+          useless: uselessCount
+        },
+        dailyActivity,
+        topUnanswered
+      }
+    });
+  } catch (error) {
+    console.error('Get chatbot stats error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur' 
+    });
+  }
+});
+
+// GET /admin/chatbot/analytics - Analytics avancées
+router.get('/chatbot/analytics', authenticateAdmin, async (req, res) => {
+  try {
+    const { days = 30 } = req.query;
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - parseInt(days));
+
+    // Croissance vs période précédente
+    const previousStartDate = new Date(startDate);
+    previousStartDate.setDate(previousStartDate.getDate() - parseInt(days));
+    
+    const currentPeriod = await ChatbotInteraction.countDocuments({
+      createdAt: { $gte: startDate }
+    });
+    
+    const previousPeriod = await ChatbotInteraction.countDocuments({
+      createdAt: { $gte: previousStartDate, $lt: startDate }
+    });
+
+    const growth = previousPeriod > 0 
+      ? (((currentPeriod - previousPeriod) / previousPeriod) * 100).toFixed(1)
+      : '0';
+
+    // Taux de satisfaction
+    const totalFeedback = await ChatbotInteraction.countDocuments({
+      createdAt: { $gte: startDate },
+      feedback: { $in: ['useful', 'useless'] }
+    });
+
+    const usefulCount = await ChatbotInteraction.countDocuments({
+      createdAt: { $gte: startDate },
+      feedback: 'useful'
+    });
+
+    const satisfactionRate = totalFeedback > 0 
+      ? ((usefulCount / totalFeedback) * 100).toFixed(1)
+      : '0';
+
+    // Temps de réponse moyen (simulation - à améliorer avec timestamps réels)
+    const avgResponseTime = 148; // ms
+
+    // Types de questions
+    const questionTypes = await ChatbotInteraction.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: startDate }
+        }
+      },
+      {
+        $group: {
+          _id: '$responseType',
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
+    // Intentions détectées
+    const intents = await ChatbotInteraction.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: startDate },
+          responseType: 'intent'
+        }
+      },
+      {
+        $group: {
+          _id: '$responseType',
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
+    // Activité par heure
+    const hourlyActivity = [];
+    for (let hour = 0; hour < 24; hour++) {
+      const count = await ChatbotInteraction.countDocuments({
+        createdAt: { $gte: startDate },
+        $expr: {
+          $eq: [{ $hour: '$createdAt' }, hour]
+        }
+      });
+      hourlyActivity.push({ hour, count });
+    }
+
+    // Questions les plus fréquentes
+    const mostFrequent = await ChatbotInteraction.aggregate([
+      {
+        $match: {
+          createdAt: { $gte: startDate }
+        }
+      },
+      {
+        $group: {
+          _id: '$question',
+          count: { $sum: '$frequency' }
+        }
+      },
+      {
+        $sort: { count: -1 }
+      },
+      {
+        $limit: 10
+      }
+    ]);
+
+    res.json({
+      success: true,
+      analytics: {
+        growth: parseFloat(growth),
+        satisfactionRate: parseFloat(satisfactionRate),
+        avgResponseTime,
+        questionTypes,
+        intents,
+        hourlyActivity,
+        mostFrequent: mostFrequent.map(item => ({
+          question: item._id,
+          count: item.count
+        }))
+      }
+    });
+  } catch (error) {
+    console.error('Get chatbot analytics error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur' 
+    });
+  }
+});
+
+// GET /admin/chatbot/unanswered - Questions sans réponse
+router.get('/chatbot/unanswered', authenticateAdmin, async (req, res) => {
+  try {
+    const { status = 'pending', page = 1, limit = 10 } = req.query;
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    const query = { status };
+    if (status === 'pending') {
+      query.status = 'pending';
+    }
+
+    const total = await ChatbotInteraction.countDocuments(query);
+    
+    const questions = await ChatbotInteraction.find(query)
+      .sort({ frequency: -1, createdAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit))
+      .populate('userId', 'firstName lastName email companyName')
+      .lean();
+
+    res.json({
+      success: true,
+      questions,
+      pagination: {
+        total,
+        page: parseInt(page),
+        pages: Math.ceil(total / parseInt(limit)),
+        limit: parseInt(limit)
+      }
+    });
+  } catch (error) {
+    console.error('Get unanswered questions error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur' 
+    });
+  }
+});
+
+// GET /admin/chatbot/interactions - Toutes les interactions
+router.get('/chatbot/interactions', authenticateAdmin, async (req, res) => {
+  try {
+    const { 
+      page = 1, 
+      limit = 20, 
+      search = '', 
+      responseType = 'all',
+      feedback = 'all',
+      startDate,
+      endDate
+    } = req.query;
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    const query = {};
+
+    // Recherche
+    if (search) {
+      query.$or = [
+        { question: { $regex: search, $options: 'i' } },
+        { response: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    // Type de réponse
+    if (responseType !== 'all') {
+      query.responseType = responseType;
+    }
+
+    // Feedback
+    if (feedback !== 'all') {
+      query.feedback = feedback === 'none' ? null : feedback;
+    }
+
+    // Dates
+    if (startDate || endDate) {
+      query.createdAt = {};
+      if (startDate) {
+        query.createdAt.$gte = new Date(startDate);
+      }
+      if (endDate) {
+        query.createdAt.$lte = new Date(endDate);
+      }
+    }
+
+    const total = await ChatbotInteraction.countDocuments(query);
+    
+    const interactions = await ChatbotInteraction.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit))
+      .populate('userId', 'firstName lastName email companyName')
+      .populate('answeredBy', 'name email')
+      .lean();
+
+    res.json({
+      success: true,
+      interactions,
+      pagination: {
+        total,
+        page: parseInt(page),
+        pages: Math.ceil(total / parseInt(limit)),
+        limit: parseInt(limit)
+      }
+    });
+  } catch (error) {
+    console.error('Get interactions error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur' 
+    });
+  }
+});
+
+// POST /admin/chatbot/answer/:id - Répondre à une question
+router.post('/chatbot/answer/:id', authenticateAdmin, async (req, res) => {
+  try {
+    const { answer, keywords, category = 'Autre' } = req.body;
+    
+    if (!answer || !answer.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: 'La réponse est requise'
+      });
+    }
+
+    const interaction = await ChatbotInteraction.findById(req.params.id);
+    
+    if (!interaction) {
+      return res.status(404).json({
+        success: false,
+        message: 'Question non trouvée'
+      });
+    }
+
+    // Mettre à jour l'interaction
+    interaction.response = answer.trim();
+    interaction.status = 'answered';
+    interaction.answeredBy = req.admin._id;
+    interaction.answeredAt = new Date();
+    interaction.responseType = 'custom';
+    interaction.customAnswer = {
+      answer: answer.trim(),
+      keywords: keywords ? keywords.split(',').map(k => k.trim()) : [],
+      category,
+      createdAt: new Date(),
+      createdBy: req.admin._id
+    };
+
+    await interaction.save();
+
+    res.json({
+      success: true,
+      message: 'Réponse enregistrée avec succès',
+      interaction
+    });
+  } catch (error) {
+    console.error('Answer question error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur' 
+    });
+  }
+});
+
+// POST /admin/chatbot/ignore/:id - Ignorer une question
+router.post('/chatbot/ignore/:id', authenticateAdmin, async (req, res) => {
+  try {
+    const interaction = await ChatbotInteraction.findById(req.params.id);
+    
+    if (!interaction) {
+      return res.status(404).json({
+        success: false,
+        message: 'Question non trouvée'
+      });
+    }
+
+    interaction.status = 'ignored';
+    interaction.answeredBy = req.admin._id;
+    interaction.answeredAt = new Date();
+
+    await interaction.save();
+
+    res.json({
+      success: true,
+      message: 'Question ignorée'
+    });
+  } catch (error) {
+    console.error('Ignore question error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur' 
+    });
+  }
+});
+
+// POST /admin/chatbot/feedback/:id - Enregistrer le feedback
+router.post('/chatbot/feedback/:id', authenticateAdmin, async (req, res) => {
+  try {
+    const { feedback } = req.body;
+    
+    if (!['useful', 'useless'].includes(feedback)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Feedback invalide'
+      });
+    }
+
+    const interaction = await ChatbotInteraction.findById(req.params.id);
+    
+    if (!interaction) {
+      return res.status(404).json({
+        success: false,
+        message: 'Interaction non trouvée'
+      });
+    }
+
+    interaction.feedback = feedback;
+    await interaction.save();
+
+    res.json({
+      success: true,
+      message: 'Feedback enregistré'
+    });
+  } catch (error) {
+    console.error('Update feedback error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur' 
+    });
+  }
+});
+
+// ===== ROUTES GESTION RÉPONSES PERSONNALISÉES =====
+
+// GET /admin/chatbot/responses - Liste des réponses personnalisées
+router.get('/chatbot/responses', authenticateAdmin, async (req, res) => {
+  try {
+    const { category, lang, search, page = 1, limit = 20 } = req.query;
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+    
+    const query = {};
+    if (category && category !== 'all') query.category = category;
+    if (lang && lang !== 'all') query.lang = lang;
+    if (search) {
+      query.$or = [
+        { question: { $regex: search, $options: 'i' } },
+        { answer: { $regex: search, $options: 'i' } },
+        { keywords: { $in: [new RegExp(search, 'i')] } }
+      ];
+    }
+
+    const total = await ChatbotResponse.countDocuments(query);
+    const responses = await ChatbotResponse.find(query)
+      .sort({ priority: -1, usageCount: -1, createdAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit))
+      .populate('createdBy', 'name email')
+      .populate('updatedBy', 'name email')
+      .lean();
+
+    res.json({
+      success: true,
+      responses,
+      pagination: {
+        total,
+        page: parseInt(page),
+        pages: Math.ceil(total / parseInt(limit)),
+        limit: parseInt(limit)
+      }
+    });
+  } catch (error) {
+    console.error('Get responses error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur' 
+    });
+  }
+});
+
+// POST /admin/chatbot/responses - Créer une nouvelle réponse
+router.post('/chatbot/responses', authenticateAdmin, async (req, res) => {
+  try {
+    const { question, answer, keywords, category, lang, priority } = req.body;
+    
+    if (!question || !answer) {
+      return res.status(400).json({
+        success: false,
+        message: 'Question et réponse sont requises'
+      });
+    }
+
+    const response = await ChatbotResponse.create({
+      question: question.trim(),
+      answer: answer.trim(),
+      keywords: keywords ? keywords.split(',').map(k => k.trim().toLowerCase()).filter(k => k) : [],
+      category: category || 'Autre',
+      lang: lang || 'fr',
+      priority: priority || 0,
+      createdBy: req.admin._id
+    });
+
+    await response.populate('createdBy', 'name email');
+
+    res.json({
+      success: true,
+      message: 'Réponse créée avec succès',
+      response
+    });
+  } catch (error) {
+    console.error('Create response error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur' 
+    });
+  }
+});
+
+// PUT /admin/chatbot/responses/:id - Mettre à jour une réponse
+router.put('/chatbot/responses/:id', authenticateAdmin, async (req, res) => {
+  try {
+    const { question, answer, keywords, category, lang, priority, isActive } = req.body;
+    
+    const response = await ChatbotResponse.findById(req.params.id);
+    if (!response) {
+      return res.status(404).json({
+        success: false,
+        message: 'Réponse non trouvée'
+      });
+    }
+
+    if (question) response.question = question.trim();
+    if (answer) response.answer = answer.trim();
+    if (keywords) response.keywords = keywords.split(',').map(k => k.trim().toLowerCase()).filter(k => k);
+    if (category) response.category = category;
+    if (lang) response.lang = lang;
+    if (priority !== undefined) response.priority = priority;
+    if (isActive !== undefined) response.isActive = isActive;
+    response.updatedBy = req.admin._id;
+    response.updatedAt = new Date();
+
+    await response.save();
+    await response.populate('updatedBy', 'name email');
+
+    res.json({
+      success: true,
+      message: 'Réponse mise à jour',
+      response
+    });
+  } catch (error) {
+    console.error('Update response error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur' 
+    });
+  }
+});
+
+// DELETE /admin/chatbot/responses/:id - Supprimer une réponse
+router.delete('/chatbot/responses/:id', authenticateAdmin, async (req, res) => {
+  try {
+    const response = await ChatbotResponse.findById(req.params.id);
+    if (!response) {
+      return res.status(404).json({
+        success: false,
+        message: 'Réponse non trouvée'
+      });
+    }
+
+    await response.deleteOne();
+
+    res.json({
+      success: true,
+      message: 'Réponse supprimée'
+    });
+  } catch (error) {
+    console.error('Delete response error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur' 
+    });
+  }
+});
+
+// GET /admin/chatbot/responses/stats - Statistiques des réponses
+router.get('/chatbot/responses/stats', authenticateAdmin, async (req, res) => {
+  try {
+    const totalResponses = await ChatbotResponse.countDocuments();
+    const activeResponses = await ChatbotResponse.countDocuments({ isActive: true });
+    const totalUsage = await ChatbotResponse.aggregate([
+      { $group: { _id: null, total: { $sum: '$usageCount' } } }
+    ]);
+
+    const byCategory = await ChatbotResponse.aggregate([
+      { $group: { _id: '$category', count: { $sum: 1 }, usage: { $sum: '$usageCount' } } },
+      { $sort: { count: -1 } }
+    ]);
+
+    const byLang = await ChatbotResponse.aggregate([
+      { $group: { _id: '$lang', count: { $sum: 1 } } }
+    ]);
+
+    const mostUsed = await ChatbotResponse.find()
+      .sort({ usageCount: -1 })
+      .limit(5)
+      .select('question usageCount')
+      .lean();
+
+    res.json({
+      success: true,
+      stats: {
+        total: totalResponses,
+        active: activeResponses,
+        totalUsage: totalUsage[0]?.total || 0,
+        byCategory,
+        byLang,
+        mostUsed
+      }
+    });
+  } catch (error) {
+    console.error('Get responses stats error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur serveur' 
     });
   }
 });

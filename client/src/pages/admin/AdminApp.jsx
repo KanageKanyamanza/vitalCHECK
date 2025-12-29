@@ -16,6 +16,7 @@ import BlogVisitorsPageWrapper from './BlogVisitorsPageWrapper';
 import SettingsPage from './SettingsPage';
 import PDFManagementPage from './PDFManagementPage';
 import PaymentManagement from './PaymentManagement';
+import ChatbotManagement from './ChatbotManagement';
 
 const AdminApp = () => {
   const isAuthenticated = () => {
@@ -130,6 +131,12 @@ const AdminApp = () => {
         path="/settings" 
         element={
           isAuthenticated() ? <SettingsPage /> : <Navigate to="/login" replace />
+        } 
+      />
+      <Route 
+        path="/chatbot" 
+        element={
+          isAuthenticated() ? <ChatbotManagement /> : <Navigate to="/login" replace />
         } 
       />
       <Route 
