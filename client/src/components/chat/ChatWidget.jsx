@@ -20,19 +20,28 @@ const ChatWidget = () => {
         name: '',
         email: ''
     });
+    // Pour les utilisateurs connectés, on n'a pas besoin de collecter les infos
+    // Pour les utilisateurs non connectés, on collectera le prénom puis l'email
     const [collectingInfo, setCollectingInfo] = useState({
         step: null, // 'name', 'email', or null (ready for message)
         askedName: false,
         askedEmail: false
     });
     const nameRequestSentRef = useRef(false);
+    const wasOpenRef = useRef(false);
 
     // Messages initiaux avec traductions
     const getInitialMessage = () => {
         if (clientUser) {
             const userName = clientUser.firstName || clientUser.email?.split('@')[0] || 'Utilisateur';
+            // Message personnalisé pour utilisateur connecté : "Parfait NOM! 👋 Je suis l'assistant de vitalCHECK. Comment puis-je vous aider ?"
+            const isFrench = i18n.language === 'fr';
+            const greeting = isFrench 
+                ? `Parfait ${userName} ! 👋 Je suis l'assistant de vitalCHECK. Comment puis-je vous aider ?`
+                : `Perfect ${userName}! 👋 I'm the vitalCHECK assistant. How can I help you?`;
+            
             return {
-                text: `Bonjour ${userName} ! ${t('chatbot.initialMessage')}`,
+                text: greeting,
                 topics: [
                     t('chatbot.topics.evaluation'),
                     t('chatbot.topics.pricing'),
@@ -42,9 +51,9 @@ const ChatWidget = () => {
                 suggestion: t('chatbot.suggestion')
             };
         }
-        // Pour les visiteurs non connectés, on demandera le nom d'abord
+        // Pour les visiteurs non connectés, on utilisera welcomeMessage qui demande le prénom
         return {
-            text: t('chatbot.initialMessage'),
+            text: t('chatbot.welcomeMessage'),
             topics: [
                 t('chatbot.topics.evaluation'),
                 t('chatbot.topics.pricing'),
@@ -85,11 +94,19 @@ const ChatWidget = () => {
     ];
 
     // Pour les utilisateurs non connectés, on commence par demander le nom
+    // Pour les utilisateurs connectés, on affiche directement le message personnalisé avec les sujets
     const [messages, setMessages] = useState(() => {
         if (!clientUser) {
             return [{ from: 'bot', text: t('chatbot.welcomeMessage'), isWelcome: true }];
         }
-        return [{ from: 'bot', text: initialMessage.text, isInitial: true }];
+        // Pour les utilisateurs connectés, inclure les topics et suggestion
+        return [{ 
+            from: 'bot', 
+            text: initialMessage.text, 
+            isInitial: true,
+            topics: initialMessage.topics,
+            suggestion: initialMessage.suggestion
+        }];
     });
     const [input, setInput] = useState('');
     const [loading, setLoading] = useState(false);
@@ -119,16 +136,35 @@ const ChatWidget = () => {
     useEffect(() => {
         if (clientUser && messages.length === 1 && messages[0].isInitial) {
             const newInitialMessage = getInitialMessage();
-            setMessages([{ from: 'bot', text: newInitialMessage.text, isInitial: true }]);
+            setMessages([{ 
+                from: 'bot', 
+                text: newInitialMessage.text, 
+                isInitial: true,
+                topics: newInitialMessage.topics,
+                suggestion: newInitialMessage.suggestion
+            }]);
         }
     }, [i18n.language, t, clientUser]);
 
-    // Réinitialiser l'état de collecte quand l'utilisateur se connecte
+    // Réinitialiser l'état de collecte et les messages quand l'utilisateur se connecte
+    // Pour les utilisateurs connectés, on n'a pas besoin de collecter le prénom/email
+    // car on les a déjà dans clientUser
     useEffect(() => {
         if (clientUser) {
-            setCollectingInfo({ step: null, askedName: false, askedEmail: false });
+            // Marquer comme "déjà collecté" pour permettre l'envoi direct de messages
+            setCollectingInfo({ step: null, askedName: true, askedEmail: true });
             setVisitorInfo({ name: '', email: '' });
             nameRequestSentRef.current = false;
+            
+            // Réinitialiser les messages avec le message personnalisé pour utilisateur connecté
+            const newInitialMessage = getInitialMessage();
+            setMessages([{ 
+                from: 'bot', 
+                text: newInitialMessage.text, 
+                isInitial: true,
+                topics: newInitialMessage.topics,
+                suggestion: newInitialMessage.suggestion
+            }]);
         }
     }, [clientUser]);
 
@@ -138,6 +174,32 @@ const ChatWidget = () => {
             nameRequestSentRef.current = false;
         }
     }, [isOpen]);
+
+    // Réinitialiser les messages quand le chat s'ouvre (seulement lors de la première ouverture)
+    useEffect(() => {
+        // Si le chat vient de s'ouvrir (était fermé, maintenant ouvert)
+        if (isOpen && !wasOpenRef.current) {
+            wasOpenRef.current = true;
+            if (clientUser) {
+                // Utilisateur connecté : afficher le message personnalisé avec les sujets
+                const newInitialMessage = getInitialMessage();
+                setMessages([{ 
+                    from: 'bot', 
+                    text: newInitialMessage.text, 
+                    isInitial: true,
+                    topics: newInitialMessage.topics,
+                    suggestion: newInitialMessage.suggestion
+                }]);
+            } else {
+                // Utilisateur non connecté : afficher le message de bienvenue qui demande le prénom
+                setMessages([{ from: 'bot', text: t('chatbot.welcomeMessage'), isWelcome: true }]);
+                setCollectingInfo({ step: 'name', askedName: false, askedEmail: false });
+            }
+        } else if (!isOpen) {
+            // Quand le chat se ferme, réinitialiser le ref pour la prochaine ouverture
+            wasOpenRef.current = false;
+        }
+    }, [isOpen, clientUser]);
 
     // Focus sur l'input quand le chat s'ouvre
     useEffect(() => {
