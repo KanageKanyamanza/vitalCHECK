@@ -16,19 +16,88 @@ const ChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isMinimized, setIsMinimized] = useState(false);
     const [scrollY, setScrollY] = useState(0);
-    const [visitorInfo, setVisitorInfo] = useState({
-        name: '',
-        email: ''
+    
+    // Clé pour localStorage basée sur l'utilisateur (connecté ou visiteur)
+    const getStorageKey = () => {
+        if (clientUser) {
+            return `chatbot_messages_${clientUser._id || clientUser.id}`;
+        }
+        return 'chatbot_messages_visitor';
+    };
+
+    const getVisitorInfoKey = () => {
+        if (clientUser) {
+            return `chatbot_visitor_info_${clientUser._id || clientUser.id}`;
+        }
+        return 'chatbot_visitor_info_visitor';
+    };
+
+    const getCollectingInfoKey = () => {
+        if (clientUser) {
+            return `chatbot_collecting_info_${clientUser._id || clientUser.id}`;
+        }
+        return 'chatbot_collecting_info_visitor';
+    };
+
+    // Charger les messages depuis localStorage
+    const loadMessagesFromStorage = () => {
+        try {
+            const stored = localStorage.getItem(getStorageKey());
+            if (stored) {
+                const parsed = JSON.parse(stored);
+                // Vérifier que les messages sont valides et non vides
+                if (Array.isArray(parsed) && parsed.length > 0) {
+                    return parsed;
+                }
+            }
+        } catch (error) {
+            console.error('Erreur lors du chargement des messages:', error);
+        }
+        return null;
+    };
+
+    // Charger les infos visiteur depuis localStorage
+    const loadVisitorInfoFromStorage = () => {
+        try {
+            const stored = localStorage.getItem(getVisitorInfoKey());
+            if (stored) {
+                return JSON.parse(stored);
+            }
+        } catch (error) {
+            console.error('Erreur lors du chargement des infos visiteur:', error);
+        }
+        return { name: '', email: '' };
+    };
+
+    // Charger l'état de collecte depuis localStorage
+    const loadCollectingInfoFromStorage = () => {
+        try {
+            const stored = localStorage.getItem(getCollectingInfoKey());
+            if (stored) {
+                return JSON.parse(stored);
+            }
+        } catch (error) {
+            console.error('Erreur lors du chargement de l\'état de collecte:', error);
+        }
+        return { step: null, askedName: false, askedEmail: false };
+    };
+
+    const [visitorInfo, setVisitorInfo] = useState(() => {
+        if (clientUser) {
+            return { name: '', email: '' };
+        }
+        return loadVisitorInfoFromStorage();
     });
+    
     // Pour les utilisateurs connectés, on n'a pas besoin de collecter les infos
     // Pour les utilisateurs non connectés, on collectera le prénom puis l'email
-    const [collectingInfo, setCollectingInfo] = useState({
-        step: null, // 'name', 'email', or null (ready for message)
-        askedName: false,
-        askedEmail: false
+    const [collectingInfo, setCollectingInfo] = useState(() => {
+        if (clientUser) {
+            return { step: null, askedName: true, askedEmail: true };
+        }
+        return loadCollectingInfoFromStorage();
     });
     const nameRequestSentRef = useRef(false);
-    const wasOpenRef = useRef(false);
 
     // Messages initiaux avec traductions
     const getInitialMessage = () => {
@@ -64,8 +133,6 @@ const ChatWidget = () => {
         };
     };
 
-    const initialMessage = getInitialMessage();
-
     const popularTopics = [
         {
             id: 'assessment',
@@ -96,16 +163,24 @@ const ChatWidget = () => {
     // Pour les utilisateurs non connectés, on commence par demander le nom
     // Pour les utilisateurs connectés, on affiche directement le message personnalisé avec les sujets
     const [messages, setMessages] = useState(() => {
+        // Essayer de charger depuis localStorage
+        const storedMessages = loadMessagesFromStorage();
+        if (storedMessages) {
+            return storedMessages;
+        }
+        
+        // Sinon, créer le message initial
         if (!clientUser) {
             return [{ from: 'bot', text: t('chatbot.welcomeMessage'), isWelcome: true }];
         }
         // Pour les utilisateurs connectés, inclure les topics et suggestion
+        const initialMsg = getInitialMessage();
         return [{ 
             from: 'bot', 
-            text: initialMessage.text, 
+            text: initialMsg.text, 
             isInitial: true,
-            topics: initialMessage.topics,
-            suggestion: initialMessage.suggestion
+            topics: initialMsg.topics,
+            suggestion: initialMsg.suggestion
         }];
     });
     const [input, setInput] = useState('');
@@ -146,7 +221,7 @@ const ChatWidget = () => {
         }
     }, [i18n.language, t, clientUser]);
 
-    // Réinitialiser l'état de collecte et les messages quand l'utilisateur se connecte
+    // Réinitialiser l'état de collecte quand l'utilisateur se connecte
     // Pour les utilisateurs connectés, on n'a pas besoin de collecter le prénom/email
     // car on les a déjà dans clientUser
     useEffect(() => {
@@ -156,15 +231,38 @@ const ChatWidget = () => {
             setVisitorInfo({ name: '', email: '' });
             nameRequestSentRef.current = false;
             
-            // Réinitialiser les messages avec le message personnalisé pour utilisateur connecté
-            const newInitialMessage = getInitialMessage();
-            setMessages([{ 
-                from: 'bot', 
-                text: newInitialMessage.text, 
-                isInitial: true,
-                topics: newInitialMessage.topics,
-                suggestion: newInitialMessage.suggestion
-            }]);
+            // Charger les messages sauvegardés ou créer le message initial
+            const storedMessages = loadMessagesFromStorage();
+            if (storedMessages && storedMessages.length > 0) {
+                // Utiliser les messages sauvegardés
+                setMessages(storedMessages);
+            } else {
+                // Créer le message initial pour utilisateur connecté
+                const newInitialMessage = getInitialMessage();
+                setMessages([{ 
+                    from: 'bot', 
+                    text: newInitialMessage.text, 
+                    isInitial: true,
+                    topics: newInitialMessage.topics,
+                    suggestion: newInitialMessage.suggestion
+                }]);
+            }
+        } else {
+            // Utilisateur déconnecté : charger les données sauvegardées
+            const storedMessages = loadMessagesFromStorage();
+            if (storedMessages && storedMessages.length > 0) {
+                setMessages(storedMessages);
+            } else {
+                setMessages([{ from: 'bot', text: t('chatbot.welcomeMessage'), isWelcome: true }]);
+            }
+            
+            const storedVisitorInfo = loadVisitorInfoFromStorage();
+            if (storedVisitorInfo.name || storedVisitorInfo.email) {
+                setVisitorInfo(storedVisitorInfo);
+            }
+            
+            const storedCollectingInfo = loadCollectingInfoFromStorage();
+            setCollectingInfo(storedCollectingInfo);
         }
     }, [clientUser]);
 
@@ -175,31 +273,38 @@ const ChatWidget = () => {
         }
     }, [isOpen]);
 
-    // Réinitialiser les messages quand le chat s'ouvre (seulement lors de la première ouverture)
+    // Sauvegarder les messages dans localStorage à chaque changement
     useEffect(() => {
-        // Si le chat vient de s'ouvrir (était fermé, maintenant ouvert)
-        if (isOpen && !wasOpenRef.current) {
-            wasOpenRef.current = true;
-            if (clientUser) {
-                // Utilisateur connecté : afficher le message personnalisé avec les sujets
-                const newInitialMessage = getInitialMessage();
-                setMessages([{ 
-                    from: 'bot', 
-                    text: newInitialMessage.text, 
-                    isInitial: true,
-                    topics: newInitialMessage.topics,
-                    suggestion: newInitialMessage.suggestion
-                }]);
-            } else {
-                // Utilisateur non connecté : afficher le message de bienvenue qui demande le prénom
-                setMessages([{ from: 'bot', text: t('chatbot.welcomeMessage'), isWelcome: true }]);
-                setCollectingInfo({ step: 'name', askedName: false, askedEmail: false });
+        if (messages.length > 0) {
+            try {
+                localStorage.setItem(getStorageKey(), JSON.stringify(messages));
+            } catch (error) {
+                console.error('Erreur lors de la sauvegarde des messages:', error);
             }
-        } else if (!isOpen) {
-            // Quand le chat se ferme, réinitialiser le ref pour la prochaine ouverture
-            wasOpenRef.current = false;
         }
-    }, [isOpen, clientUser]);
+    }, [messages, clientUser]);
+
+    // Sauvegarder les infos visiteur dans localStorage
+    useEffect(() => {
+        if (!clientUser && (visitorInfo.name || visitorInfo.email)) {
+            try {
+                localStorage.setItem(getVisitorInfoKey(), JSON.stringify(visitorInfo));
+            } catch (error) {
+                console.error('Erreur lors de la sauvegarde des infos visiteur:', error);
+            }
+        }
+    }, [visitorInfo, clientUser]);
+
+    // Sauvegarder l'état de collecte dans localStorage
+    useEffect(() => {
+        if (!clientUser) {
+            try {
+                localStorage.setItem(getCollectingInfoKey(), JSON.stringify(collectingInfo));
+            } catch (error) {
+                console.error('Erreur lors de la sauvegarde de l\'état de collecte:', error);
+            }
+        }
+    }, [collectingInfo, clientUser]);
 
     // Focus sur l'input quand le chat s'ouvre
     useEffect(() => {
