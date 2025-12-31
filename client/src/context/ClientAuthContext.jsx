@@ -96,7 +96,27 @@ export const ClientAuthProvider = ({ children }) => {
     }
   }
 
+  // Fonction pour nettoyer les données du chatbot
+  const clearChatbotData = (userId) => {
+    if (userId) {
+      // Nettoyer les données pour l'utilisateur spécifique
+      localStorage.removeItem(`chatbot_messages_${userId}`)
+      localStorage.removeItem(`chatbot_visitor_info_${userId}`)
+      localStorage.removeItem(`chatbot_collecting_info_${userId}`)
+    }
+    // Nettoyer aussi les données visiteur (pour les utilisateurs non connectés)
+    localStorage.removeItem('chatbot_messages_visitor')
+    localStorage.removeItem('chatbot_visitor_info_visitor')
+    localStorage.removeItem('chatbot_collecting_info_visitor')
+  }
+
   const logout = () => {
+    // Nettoyer les données du chatbot avant de déconnecter
+    if (user?._id || user?.id) {
+      clearChatbotData(user._id || user.id)
+    }
+    clearChatbotData() // Nettoyer aussi les données visiteur
+    
     localStorage.removeItem('clientToken')
     setToken(null)
     setUser(null)

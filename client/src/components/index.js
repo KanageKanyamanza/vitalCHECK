@@ -14,3 +14,6 @@ export * from './assessment';
 
 // Test components
 export * from './test';
+
+// Chat components
+export * from './chat';

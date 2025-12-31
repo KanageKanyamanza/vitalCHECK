@@ -150,6 +150,9 @@ export const publicApi = {
 			responseType: "blob",
 		}),
 
+	// Chatbot
+	chatWithBot: (payload) => api.post("/chat/chatbot", payload),
+
 	// Health check
 	healthCheck: () => api.get("/health"),
 
@@ -263,6 +266,31 @@ export const adminApiService = {
 		adminApi.patch(`/admin/payments/${paymentId}/status`, { status }),
 	exportPayments: () =>
 		adminApi.get("/admin/payments/export", { responseType: "blob" }),
+
+	// Chatbot
+	getChatbotStats: (days = 30) => adminApi.get(`/admin/chatbot/stats?days=${days}`),
+	getChatbotAnalytics: (days = 30) => adminApi.get(`/admin/chatbot/analytics?days=${days}`),
+	getUnansweredQuestions: (params = {}) => {
+		const queryParams = new URLSearchParams(params);
+		return adminApi.get(`/admin/chatbot/unanswered?${queryParams}`);
+	},
+	getAllInteractions: (params = {}) => {
+		const queryParams = new URLSearchParams(params);
+		return adminApi.get(`/admin/chatbot/interactions?${queryParams}`);
+	},
+	answerQuestion: (id, data) => adminApi.post(`/admin/chatbot/answer/${id}`, data),
+	ignoreQuestion: (id) => adminApi.post(`/admin/chatbot/ignore/${id}`),
+	updateFeedback: (id, feedback) => adminApi.post(`/admin/chatbot/feedback/${id}`, { feedback }),
+
+	// Gestion des réponses personnalisées
+	getChatbotResponses: (params = {}) => {
+		const queryParams = new URLSearchParams(params);
+		return adminApi.get(`/admin/chatbot/responses?${queryParams}`);
+	},
+	createChatbotResponse: (data) => adminApi.post("/admin/chatbot/responses", data),
+	updateChatbotResponse: (id, data) => adminApi.put(`/admin/chatbot/responses/${id}`, data),
+	deleteChatbotResponse: (id) => adminApi.delete(`/admin/chatbot/responses/${id}`),
+	getChatbotResponsesStats: () => adminApi.get("/admin/chatbot/responses/stats"),
 };
 
 // Fonction utilitaire pour gérer les erreurs de rate limiting
