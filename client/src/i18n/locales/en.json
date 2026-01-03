@@ -1167,5 +1167,43 @@
       "whatsappSupport": "Priority response",
       "phoneSupport": "Dedicated support"
     }
+  },
+  "chatbot": {
+    "initialMessage": "Hello! 👋 I'm the vitalCHECK assistant. How can I help you?",
+    "welcomeMessage": "Hello! 👋 I'm the vitalCHECK assistant. To better help you, could you give me your first name?",
+    "askName": "Please enter your first name",
+    "askEmail": "Email (optional) - you can skip this step",
+    "namePlaceholder": "Enter your name",
+    "emailPlaceholder": "Enter your email or skip",
+    "emailRequest": "Thank you {{name}}! Would you like to share your email so we can contact you if needed? (optional - you can type \"skip\" or simply your question)",
+    "readyMessage": "Perfect {{name}}! 👋 I'm the vitalCHECK assistant. How can I help you?",
+    "ignore": "Skip",
+    "topics": {
+      "evaluation": "The assessment",
+      "pricing": "Pricing",
+      "report": "Your report",
+      "account": "Your account"
+    },
+    "suggestion": "Or type your question directly!",
+    "popularTopics": "Popular topics:",
+    "topicsList": {
+      "assessment": "Assessment",
+      "pricing": "Pricing",
+      "contact": "Contact",
+      "blog": "Blog"
+    },
+    "assistantName": "vitalCHECK Assistant",
+    "online": "Online",
+    "instantResponse": "Instant response",
+    "typing": "The assistant is typing...",
+    "placeholder": "Type your message...",
+    "send": "Send",
+    "openChat": "Open chat",
+    "close": "Close",
+    "minimize": "Minimize",
+    "maximize": "Maximize",
+    "error": "Sorry, an error occurred. Check your connection or try again later.",
+    "notUnderstood": "I didn't understand. Can you rephrase?",
+    "questionsAbout": "You can ask me questions about:"
   }
 }

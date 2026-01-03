@@ -17,8 +17,7 @@ const blogVisitSchema = new mongoose.Schema({
   // Informations de session
   sessionId: {
     type: String,
-    required: true,
-    index: true
+    required: true
   },
   
   // Informations géographiques

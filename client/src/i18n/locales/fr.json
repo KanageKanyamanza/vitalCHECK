@@ -1225,5 +1225,43 @@
       "whatsappSupport": "Réponse prioritaire",
       "phoneSupport": "Support dédié"
     }
+  },
+  "chatbot": {
+    "initialMessage": "Bonjour ! 👋 Je suis l'assistant de vitalCHECK. Comment puis-je vous aider ?",
+    "welcomeMessage": "Bonjour ! 👋 Je suis l'assistant de vitalCHECK. Pour mieux vous aider, pouvez-vous me donner votre prénom ?",
+    "askName": "Veuillez entrer votre prénom",
+    "askEmail": "Email (facultatif) - vous pouvez ignorer cette étape",
+    "namePlaceholder": "Donnez votre nom",
+    "emailPlaceholder": "Donnez votre email ou ignorer",
+    "emailRequest": "Merci {{name}} ! Souhaitez-vous partager votre email pour que nous puissions vous recontacter si nécessaire ? (facultatif - vous pouvez taper \"passer\" ou simplement votre question)",
+    "readyMessage": "Parfait {{name}} ! 👋 Je suis l'assistant de vitalCHECK. Comment puis-je vous aider ?",
+    "ignore": "Ignorer",
+    "topics": {
+      "evaluation": "L'évaluation",
+      "pricing": "Les tarifs",
+      "report": "Votre rapport",
+      "account": "Votre compte"
+    },
+    "suggestion": "Ou tapez votre question directement !",
+    "popularTopics": "Sujets populaires :",
+    "topicsList": {
+      "assessment": "Évaluation",
+      "pricing": "Tarifs",
+      "contact": "Contact",
+      "blog": "Blog"
+    },
+    "assistantName": "Assistant vitalCHECK",
+    "online": "En ligne",
+    "instantResponse": "Réponse instantanée",
+    "typing": "L'assistant écrit...",
+    "placeholder": "Tapez votre message...",
+    "send": "Envoyer",
+    "openChat": "Ouvrir le chat",
+    "close": "Fermer",
+    "minimize": "Minimiser",
+    "maximize": "Agrandir",
+    "error": "Désolé, une erreur est survenue. Vérifiez votre connexion ou réessayez plus tard.",
+    "notUnderstood": "Je n'ai pas bien compris. Pouvez-vous reformuler ?",
+    "questionsAbout": "Vous pouvez me poser des questions sur :"
   }
 }

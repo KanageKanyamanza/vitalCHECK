@@ -94,6 +94,7 @@ app.use("/api/blogs", require("./routes/blogs"));
 app.use("/api/blog-visitors/admin", require("./routes/blogVisitorsAdmin"));
 app.use("/api/blog-visitors", require("./routes/blogVisitors"));
 app.use("/api/upload", require("./routes/upload"));
+app.use("/api/chat", require("./routes/chatbot"));
 app.use("/api/notifications", require("./routes/notifications"));
 app.use("/api", require("./routes/ping"));
 
@@ -132,26 +133,73 @@ app.use("*", (req, res) => {
 	res.status(404).json({ message: "Route not found" });
 });
 
-// Database connection
-mongoose
-	.connect(
-		process.env.MONGODB_URI ||
-			"mongodb://localhost:27017/vitalCHECK-health-check"
-	)
-	.then(async () => {
-		console.log("Connected to MongoDB");
+// Database connection with improved error handling
+const connectDB = async () => {
+	const mongoURI = process.env.MONGODB_URI || "mongodb://localhost:27017/vitalCHECK-health-check";
+
+	// Options de connexion améliorées
+	const mongooseOptions = {
+		serverSelectionTimeoutMS: 5000, // Timeout après 5 secondes
+		socketTimeoutMS: 45000,
+		bufferCommands: false, // Désactiver le buffering mongoose
+	};
+
+	try {
+		await mongoose.connect(mongoURI, mongooseOptions);
+		console.log("✅ Connected to MongoDB");
 
 		// Initialiser l'admin au démarrage
-		await initAdmin();
+		try {
+			await initAdmin();
+		} catch (err) {
+			console.warn("⚠️  Erreur lors de l'initialisation admin:", err.message);
+		}
 
 		const PORT = process.env.PORT || 5000;
 		app.listen(PORT, () => {
-			console.log(`Server running on port ${PORT}`);
+			console.log(`🚀 Server running on port ${PORT}`);
 		});
-	})
-	.catch((error) => {
-		console.error("MongoDB connection error:", error);
-		process.exit(1);
-	});
+	} catch (error) {
+		console.error("❌ MongoDB connection error:", error.message);
+
+		// En production, MongoDB est obligatoire
+		if (process.env.NODE_ENV === 'production') {
+			console.error("❌ Production mode: MongoDB est requis. Arrêt du serveur.");
+			process.exit(1);
+		}
+
+		// En développement, démarrer quand même avec avertissements
+		console.warn("⚠️  Mode développement: Le serveur démarre sans MongoDB.");
+		console.warn("💡 Solutions:");
+		console.warn("   1. Démarrer MongoDB local: net start MongoDB (Windows) ou mongod");
+		console.warn("   2. Utiliser MongoDB Atlas: Configurez MONGODB_URI dans .env");
+		console.warn("   3. Continuer sans MongoDB: Certaines fonctionnalités ne seront pas disponibles");
+
+		const PORT = process.env.PORT || 5000;
+		app.listen(PORT, () => {
+			console.log(`🚀 Server running on port ${PORT} (sans MongoDB)`);
+		});
+	}
+};
+
+// Gestion des événements de connexion
+mongoose.connection.on('error', (err) => {
+	if (process.env.NODE_ENV === 'production') {
+		console.error('❌ MongoDB connection error:', err);
+	} else {
+		console.warn('⚠️  MongoDB connection error:', err.message);
+	}
+});
+
+mongoose.connection.on('disconnected', () => {
+	if (process.env.NODE_ENV === 'production') {
+		console.error('❌ MongoDB disconnected');
+	} else {
+		console.warn('⚠️  MongoDB disconnected');
+	}
+});
+
+// Démarrer la connexion
+connectDB();
 
 module.exports = app;

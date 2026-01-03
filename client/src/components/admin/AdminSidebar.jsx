@@ -16,7 +16,8 @@ import {
   Settings,
   UserCheck,
   Download,
-  DollarSign
+  DollarSign,
+  MessageCircle
 } from 'lucide-react';
 import Logo from '../../assets/Logo.png';
 
@@ -104,6 +105,14 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
       color: 'text-green-600',
       bgColor: 'bg-green-50',
       hoverColor: 'hover:bg-green-100'
+    },
+    {
+      name: 'Chatbot',
+      path: '/admin/chatbot',
+      icon: MessageCircle,
+      color: 'text-primary-600',
+      bgColor: 'bg-primary-50',
+      hoverColor: 'hover:bg-primary-100'
     },
     {
       name: 'Paramètres',
