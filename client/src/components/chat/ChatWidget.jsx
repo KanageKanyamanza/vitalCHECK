@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { publicApi } from '../../services/api';
-import { motion } from 'framer-motion';
-import { MessageCircle } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MessageCircle, X } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import { useClientAuth } from '../../context/ClientAuthContext';
 
@@ -16,6 +16,7 @@ const ChatWidget = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isMinimized, setIsMinimized] = useState(false);
     const [scrollY, setScrollY] = useState(0);
+    const [showIntroMessage, setShowIntroMessage] = useState(false);
     
     // Clé pour localStorage basée sur l'utilisateur (connecté ou visiteur)
     const getStorageKey = () => {
@@ -199,6 +200,44 @@ const ChatWidget = () => {
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    // Gestion du message d'introduction
+    useEffect(() => {
+        // Vérifier si le message a déjà été vu
+        const introMessageSeen = localStorage.getItem('chatbot_intro_message_seen');
+        
+        if (!introMessageSeen && !isOpen) {
+            // Afficher le message après un court délai
+            const timer = setTimeout(() => {
+                setShowIntroMessage(true);
+            }, 1000); // Afficher après 1 seconde
+
+            // Faire disparaître automatiquement après 15 secondes
+            const autoHideTimer = setTimeout(() => {
+                setShowIntroMessage(false);
+                localStorage.setItem('chatbot_intro_message_seen', 'true');
+            }, 15000);
+
+            return () => {
+                clearTimeout(timer);
+                clearTimeout(autoHideTimer);
+            };
+        }
+    }, [isOpen]);
+
+    // Fermer le message d'introduction manuellement
+    const handleCloseIntroMessage = () => {
+        setShowIntroMessage(false);
+        localStorage.setItem('chatbot_intro_message_seen', 'true');
+    };
+
+    // Fermer le message si l'utilisateur ouvre le chat
+    useEffect(() => {
+        if (isOpen && showIntroMessage) {
+            setShowIntroMessage(false);
+            localStorage.setItem('chatbot_intro_message_seen', 'true');
+        }
+    }, [isOpen, showIntroMessage]);
 
     // Fonction d'easing pour animation fluide (ease-out-cubic)
     const easeOutCubic = (t) => {
@@ -575,8 +614,75 @@ const ChatWidget = () => {
         ? 'sm:bottom-24 bottom-40'  // Remonte quand scrollTop apparaît
         : 'sm:bottom-8 bottom-24';  // Position par défaut (même que BackToTop)
 
+    // Calcul de la position du message d'introduction (au-dessus du chatbot)
+    // Le message doit être positionné juste au-dessus du bouton chatbot
+    const getIntroMessageBottom = () => {
+        const isMobile = window.innerWidth < 640;
+        if (scrollY > 0) {
+            // Quand on scroll, le chatbot est plus haut
+            return isMobile ? '13.5rem' : '9.5rem';
+        } else {
+            // Position par défaut
+            return isMobile ? '9.5rem' : '6rem';
+        }
+    };
+
     return (
         <>
+            {/* Message d'introduction */}
+            <AnimatePresence>
+                {showIntroMessage && !isOpen && (
+                    <motion.div
+                        initial={{ opacity: 0, y: -10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        transition={{ duration: 0.3 }}
+                        className={`fixed right-3 z-40 max-w-xs sm:max-w-xs`}
+                        style={{ 
+                            bottom: getIntroMessageBottom()
+                        }}
+                    >
+                        <div className="relative bg-white rounded-lg shadow-lg border-2 border-primary-200 p-4 mb-2">
+                            {/* Bouton fermer */}
+                            <button
+                                onClick={handleCloseIntroMessage}
+                                className="absolute top-2 right-2 text-gray-400 hover:text-gray-600 transition-colors"
+                                aria-label={t('chatbot.close')}
+                            >
+                                <X className="w-4 h-4" />
+                            </button>
+
+                            {/* Contenu du message */}
+                            <div className="flex items-start gap-3 pr-6">
+                                {/* Icône circulaire verte */}
+                                <div className="flex-shrink-0 w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+                                    <MessageCircle className="w-5 h-5 text-primary-600" />
+                                </div>
+
+                                {/* Texte */}
+                                <div className="flex-1">
+                                    <p className="text-sm text-gray-900 leading-relaxed">
+                                        <span className="font-semibold">{t('chatbot.introGreeting')}</span>
+                                        <br />
+                                        <span dangerouslySetInnerHTML={{
+                                            __html: t('chatbot.introMessage').replace(
+                                                'vitalCHECK',
+                                                '<span class="text-primary-600 font-semibold">vitalCHECK</span>'
+                                            )
+                                        }} />
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Flèche pointant vers le chatbot (en bas) */}
+                            <div className="absolute bottom-0 right-2 transform -translate-x-1/2 translate-y-full">
+                                <div className="w-0 h-0 border-l-8 border-l-transparent border-r-8 border-r-transparent border-t-8 border-t-white"></div>
+                            </div>
+                        </div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* Bouton flottant circulaire - même style que BackToTop */}
             {!isOpen && (
                 <motion.button

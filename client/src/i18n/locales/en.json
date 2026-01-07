@@ -1207,6 +1207,8 @@
     "maximize": "Maximize",
     "error": "Sorry, an error occurred. Check your connection or try again later.",
     "notUnderstood": "I didn't understand. Can you rephrase?",
-    "questionsAbout": "You can ask me questions about:"
+    "questionsAbout": "You can ask me questions about:",
+    "introGreeting": "Hello! 👋",
+    "introMessage": "I'm the vitalCHECK assistant! Ask me your questions, I'm here to help you! 😊"
   }
 }

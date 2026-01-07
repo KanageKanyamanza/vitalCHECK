@@ -1265,6 +1265,8 @@
     "maximize": "Agrandir",
     "error": "Désolé, une erreur est survenue. Vérifiez votre connexion ou réessayez plus tard.",
     "notUnderstood": "Je n'ai pas bien compris. Pouvez-vous reformuler ?",
-    "questionsAbout": "Vous pouvez me poser des questions sur :"
+    "questionsAbout": "Vous pouvez me poser des questions sur :",
+    "introGreeting": "Salut ! 👋",
+    "introMessage": "Je suis l'assistant vitalCHECK ! Posez-moi vos questions, je suis là pour vous aider ! 😊"
   }
 }
