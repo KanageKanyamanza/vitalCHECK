@@ -547,7 +547,7 @@ router.get('/:id/like/status', async (req, res) => {
   }
 });
 
-// POST /blogs/:id/like - Liker un blog
+// POST /blogs/:id/like - Toggle like/unlike d'un blog
 router.post('/:id/like', async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id);
@@ -586,32 +586,47 @@ router.post('/:id/like', async (req, res) => {
     }
 
     if (existingLike) {
-      return res.status(400).json({ 
-        success: false, 
-        message: 'Vous avez déjà aimé cet article' 
+      // L'utilisateur a déjà liké, on retire le like (unlike)
+      await BlogLike.findByIdAndDelete(existingLike._id);
+      
+      // Décrémenter le compteur de likes
+      await blog.decrementLikes();
+      
+      // Récupérer le blog mis à jour
+      const updatedBlog = await Blog.findById(req.params.id);
+
+      res.json({
+        success: true,
+        data: { 
+          likes: updatedBlog.likes,
+          hasLiked: false
+        }
+      });
+    } else {
+      // L'utilisateur n'a pas encore liké, on ajoute le like
+      const blogLike = new BlogLike({
+        blog: req.params.id,
+        userId: userId || null,
+        visitorId: visitorId || null,
+        ipAddress: ipAddress || null
+      });
+
+      await blogLike.save();
+
+      // Incrémenter le compteur de likes
+      await blog.incrementLikes();
+
+      // Récupérer le blog mis à jour
+      const updatedBlog = await Blog.findById(req.params.id);
+
+      res.json({
+        success: true,
+        data: { 
+          likes: updatedBlog.likes,
+          hasLiked: true
+        }
       });
     }
-
-    // Créer le like
-    const blogLike = new BlogLike({
-      blog: req.params.id,
-      userId: userId || null,
-      visitorId: visitorId || null,
-      ipAddress: ipAddress || null
-    });
-
-    await blogLike.save();
-
-    // Incrémenter le compteur de likes
-    await blog.incrementLikes();
-
-    // Récupérer le blog mis à jour
-    const updatedBlog = await Blog.findById(req.params.id);
-
-    res.json({
-      success: true,
-      data: { likes: updatedBlog.likes }
-    });
 
   } catch (error) {
     console.error('Like blog error:', error);

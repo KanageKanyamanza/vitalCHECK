@@ -260,6 +260,14 @@ blogSchema.methods.incrementLikes = function() {
   return this.save();
 };
 
+// Méthode pour décrémenter les likes
+blogSchema.methods.decrementLikes = function() {
+  if (this.likes > 0) {
+    this.likes -= 1;
+  }
+  return this.save();
+};
+
 // Méthodes utilitaires pour le contenu bilingue
 blogSchema.methods.getTitle = function(language = 'fr') {
   return this.title[language] || this.title.fr;

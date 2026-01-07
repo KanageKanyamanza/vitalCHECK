@@ -208,29 +208,26 @@ const BlogDetailPage = () => {
     }
   }, [i18n])
 
-  // Gérer le like
+  // Gérer le like/unlike (toggle)
   const handleLike = async () => {
-    if (liked) return
-    
     try {
       const visitorId = getOrCreateVisitorId()
       const response = await blogApiService.likeBlog(blog._id, visitorId)
       
       if (response.data.success) {
+        const newLikedState = response.data.data.hasLiked
         setBlog({ ...blog, likes: response.data.data.likes })
-        setLiked(true)
-        toast.success(t('blog.likeSuccess'))
+        setLiked(newLikedState)
+        
+        if (newLikedState) {
+          toast.success(t('blog.likeSuccess'))
+        } else {
+          toast.success(t('blog.unlikeSuccess'))
+        }
       }
     } catch (error) {
-      console.error('Error liking blog:', error)
-      
-      // Vérifier si l'erreur indique que l'utilisateur a déjà liké
-      if (error.response?.status === 400 && error.response?.data?.message?.includes('déjà aimé')) {
-        setLiked(true)
-        toast.error(t('blog.alreadyLiked') || 'Vous avez déjà aimé cet article')
-      } else {
-        toast.error(t('blog.likeError'))
-      }
+      console.error('Error toggling like:', error)
+      toast.error(t('blog.likeError'))
     }
   }
 
@@ -462,14 +459,13 @@ const BlogDetailPage = () => {
               <div className="flex items-center space-x-3">
                 <button
                   onClick={handleLike}
-                  disabled={liked}
                   className={`flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                     liked 
-                      ? 'text-red-600 bg-red-100' 
+                      ? 'text-red-600 bg-red-100 hover:bg-red-200' 
                       : 'text-gray-500 hover:text-red-600 hover:bg-red-50'
                   }`}
                 >
-                  <Heart className="h-4 w-4 mr-1" />
+                  <Heart className={`h-4 w-4 mr-1 ${liked ? 'fill-current' : ''}`} />
                   {blog.likes}
                 </button>
                 
@@ -562,11 +558,14 @@ const BlogDetailPage = () => {
                   <div className="space-y-3">
                     <button
                       onClick={handleLike}
-                      disabled={liked}
-                      className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className={`w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium transition-colors ${
+                        liked 
+                          ? 'text-red-600 bg-red-100 hover:bg-red-200' 
+                          : 'text-white bg-primary-600 hover:bg-primary-700'
+                      }`}
                     >
-                      <Heart className="h-4 w-4 mr-2" />
-                      {liked ? t('blog.thankYou') : t('blog.likeArticle')}
+                      <Heart className={`h-4 w-4 mr-2 ${liked ? 'fill-current' : ''}`} />
+                      {liked ? t('blog.unlikeArticle') : t('blog.likeArticle')}
                     </button>
                     
                     <button

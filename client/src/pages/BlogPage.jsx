@@ -117,7 +117,7 @@ const BlogPage = () => {
     return () => clearTimeout(timer)
   }, [searchTerm])
 
-  // Gérer le like
+  // Gérer le like/unlike (toggle)
   const handleLike = async (blogId) => {
     try {
       const visitorId = getOrCreateVisitorId()
@@ -129,17 +129,16 @@ const BlogPage = () => {
             ? { ...blog, likes: response.data.data.likes }
             : blog
         ))
-        toast.success(t('blog.likeSuccess'))
+        
+        if (response.data.data.hasLiked) {
+          toast.success(t('blog.likeSuccess'))
+        } else {
+          toast.success(t('blog.unlikeSuccess'))
+        }
       }
     } catch (error) {
-      console.error('Error liking blog:', error)
-      
-      // Vérifier si l'erreur indique que l'utilisateur a déjà liké
-      if (error.response?.status === 400 && error.response?.data?.message?.includes('déjà aimé')) {
-        toast.error(t('blog.alreadyLiked') || 'Vous avez déjà aimé cet article')
-      } else {
-        toast.error(t('blog.likeError'))
-      }
+      console.error('Error toggling like:', error)
+      toast.error(t('blog.likeError'))
     }
   }
 

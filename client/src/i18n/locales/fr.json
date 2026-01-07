@@ -656,6 +656,7 @@
     "error": "Erreur lors du chargement des blogs",
     "likeError": "Erreur lors du like",
     "alreadyLiked": "Vous avez déjà aimé cet article",
+    "unlikeSuccess": "Like retiré",
     "images": {
       "title": "Images du blog",
       "uploadTitle": "Ajouter des images",
@@ -759,6 +760,7 @@
     "noResults": "Aucun article trouvé",
     "actions": "Actions",
     "likeArticle": "J'aime cet article",
+    "unlikeArticle": "Je n'aime plus cet article",
     "thankYou": "Merci !",
     "relatedArticles": "Articles similaires",
     "types": {
