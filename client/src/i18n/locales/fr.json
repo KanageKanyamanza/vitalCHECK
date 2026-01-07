@@ -655,6 +655,7 @@
     "loading": "Chargement...",
     "error": "Erreur lors du chargement des blogs",
     "likeError": "Erreur lors du like",
+    "alreadyLiked": "Vous avez déjà aimé cet article",
     "images": {
       "title": "Images du blog",
       "uploadTitle": "Ajouter des images",

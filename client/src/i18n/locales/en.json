@@ -655,6 +655,7 @@
     "loading": "Loading...",
     "error": "Error loading blogs",
     "likeError": "Error liking article",
+    "alreadyLiked": "You have already liked this article",
     "likeSuccess": "Thank you for your like!",
     "shareSuccess": "Link copied to clipboard",
     "articleNotFound": "Article not found",

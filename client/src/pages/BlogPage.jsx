@@ -23,6 +23,7 @@ import { blogApiService } from '../services/api'
 import toast from 'react-hot-toast'
 import { normalizeTags } from '../utils/tagUtils'
 import { autoTranslateTag } from '../utils/autoTranslateTags'
+import { getOrCreateVisitorId } from '../utils/visitorId'
 
 const BlogPage = () => {
   const navigate = useNavigate()
@@ -119,16 +120,26 @@ const BlogPage = () => {
   // Gérer le like
   const handleLike = async (blogId) => {
     try {
-      await blogApiService.likeBlog(blogId)
-      setBlogs(blogs.map(blog => 
-        blog._id === blogId 
-          ? { ...blog, likes: blog.likes + 1 }
-          : blog
-      ))
-      toast.success(t('blog.likeSuccess'))
+      const visitorId = getOrCreateVisitorId()
+      const response = await blogApiService.likeBlog(blogId, visitorId)
+      
+      if (response.data.success) {
+        setBlogs(blogs.map(blog => 
+          blog._id === blogId 
+            ? { ...blog, likes: response.data.data.likes }
+            : blog
+        ))
+        toast.success(t('blog.likeSuccess'))
+      }
     } catch (error) {
       console.error('Error liking blog:', error)
-      toast.error(t('blog.likeError'))
+      
+      // Vérifier si l'erreur indique que l'utilisateur a déjà liké
+      if (error.response?.status === 400 && error.response?.data?.message?.includes('déjà aimé')) {
+        toast.error(t('blog.alreadyLiked') || 'Vous avez déjà aimé cet article')
+      } else {
+        toast.error(t('blog.likeError'))
+      }
     }
   }
 

@@ -26,6 +26,7 @@ import toast from 'react-hot-toast'
 import { normalizeTags } from '../utils/tagUtils'
 import { autoTranslateTag } from '../utils/autoTranslateTags'
 import { parseMarkdown } from '../utils/markdownParser'
+import { getOrCreateVisitorId } from '../utils/visitorId'
 
 const BlogDetailPage = () => {
   const { slug } = useParams()
@@ -149,6 +150,20 @@ const BlogDetailPage = () => {
       
       setBlog(response.data.data)
       
+      // Vérifier si l'utilisateur a déjà liké cet article (seulement en mode normal)
+      if (!isPreviewMode && response.data.data._id) {
+        try {
+          const visitorId = getOrCreateVisitorId()
+          const likeStatusResponse = await blogApiService.checkLikeStatus(response.data.data._id, visitorId)
+          if (likeStatusResponse.data.success && likeStatusResponse.data.data.hasLiked) {
+            setLiked(true)
+          }
+        } catch (error) {
+          console.error('Error checking like status:', error)
+          // Ne pas afficher d'erreur, juste continuer
+        }
+      }
+      
       // Charger des blogs similaires (seulement en mode normal)
       if (!isPreviewMode) {
         const relatedResponse = await blogApiService.getBlogs({
@@ -198,13 +213,24 @@ const BlogDetailPage = () => {
     if (liked) return
     
     try {
-      await blogApiService.likeBlog(blog._id)
-      setBlog({ ...blog, likes: blog.likes + 1 })
-      setLiked(true)
-      toast.success(t('blog.likeSuccess'))
+      const visitorId = getOrCreateVisitorId()
+      const response = await blogApiService.likeBlog(blog._id, visitorId)
+      
+      if (response.data.success) {
+        setBlog({ ...blog, likes: response.data.data.likes })
+        setLiked(true)
+        toast.success(t('blog.likeSuccess'))
+      }
     } catch (error) {
       console.error('Error liking blog:', error)
-      toast.error(t('blog.likeError'))
+      
+      // Vérifier si l'erreur indique que l'utilisateur a déjà liké
+      if (error.response?.status === 400 && error.response?.data?.message?.includes('déjà aimé')) {
+        setLiked(true)
+        toast.error(t('blog.alreadyLiked') || 'Vous avez déjà aimé cet article')
+      } else {
+        toast.error(t('blog.likeError'))
+      }
     }
   }
 
