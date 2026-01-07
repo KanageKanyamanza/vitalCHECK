@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
 const User = require("../models/User");
 const Payment = require("../models/Payment");
 const {
@@ -290,6 +291,111 @@ router.get("/payments", authenticateClient, async (req, res) => {
 		console.error("Get payments error:", error);
 		res.status(500).json({
 			message: "Erreur lors de la récupération des paiements",
+			error: error.message,
+		});
+	}
+});
+
+// Forgot password - Request password reset
+router.post("/forgot-password", async (req, res) => {
+	try {
+		const { email } = req.body;
+
+		if (!email) {
+			return res.status(400).json({
+				message: "L'adresse email est requise",
+			});
+		}
+
+		// Trouver l'utilisateur
+		const user = await User.findOne({ 
+			email: email.toLowerCase(),
+			hasAccount: true 
+		});
+
+		// Pour des raisons de sécurité, on ne révèle pas si l'email existe ou non
+		if (!user) {
+			return res.json({
+				message: "Si cet email existe, un lien de réinitialisation a été envoyé.",
+			});
+		}
+
+		// Générer un token de réinitialisation
+		const resetToken = crypto.randomBytes(32).toString("hex");
+		const resetTokenHash = crypto
+			.createHash("sha256")
+			.update(resetToken)
+			.digest("hex");
+
+		// Sauvegarder le token hashé et la date d'expiration (1 heure)
+		user.resetPasswordToken = resetTokenHash;
+		user.resetPasswordExpires = Date.now() + 3600000; // 1 heure
+		await user.save();
+
+		// Envoyer l'email de réinitialisation
+		try {
+			const userName = user.firstName || user.companyName || "Utilisateur";
+			await sendPasswordResetEmail(user.email, userName, resetToken);
+		} catch (emailError) {
+			console.error("Error sending password reset email:", emailError);
+			// Ne pas révéler l'erreur à l'utilisateur pour des raisons de sécurité
+		}
+
+		res.json({
+			message: "Si cet email existe, un lien de réinitialisation a été envoyé.",
+		});
+	} catch (error) {
+		console.error("Forgot password error:", error);
+		res.status(500).json({
+			message: "Erreur lors de la demande de réinitialisation",
+			error: error.message,
+		});
+	}
+});
+
+// Reset password - Reset password with token
+router.post("/reset-password/:token", async (req, res) => {
+	try {
+		const { token } = req.params;
+		const { password } = req.body;
+
+		if (!password || password.length < 6) {
+			return res.status(400).json({
+				message: "Le mot de passe doit contenir au moins 6 caractères",
+			});
+		}
+
+		// Hasher le token pour le comparer avec celui en base
+		const resetTokenHash = crypto
+			.createHash("sha256")
+			.update(token)
+			.digest("hex");
+
+		// Trouver l'utilisateur avec un token valide et non expiré
+		const user = await User.findOne({
+			resetPasswordToken: resetTokenHash,
+			resetPasswordExpires: { $gt: Date.now() },
+		}).select("+resetPasswordToken +resetPasswordExpires");
+
+		if (!user) {
+			return res.status(400).json({
+				message: "Le lien de réinitialisation est invalide ou a expiré",
+			});
+		}
+
+		// Mettre à jour le mot de passe
+		user.password = password;
+		user.resetPasswordToken = undefined;
+		user.resetPasswordExpires = undefined;
+		await user.save();
+
+		res.json({
+			message: "Mot de passe réinitialisé avec succès",
+		});
+	} catch (error) {
+		console.error("Reset password error:", error);
+		res.status(500).json({
+			message: "Erreur lors de la réinitialisation du mot de passe",
 			error: error.message,
 		});
 	}

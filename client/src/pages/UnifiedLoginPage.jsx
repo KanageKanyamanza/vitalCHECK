@@ -184,6 +184,15 @@ const UnifiedLoginPage = () => {
               </div>
             </div>
 
+            <div className="flex items-center justify-end">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-primary-600 hover:text-primary-500"
+              >
+                Mot de passe oublié ?
+              </Link>
+            </div>
+
             <div>
               <motion.button
                 type="submit"
