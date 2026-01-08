@@ -312,6 +312,9 @@ router.get('/', async (req, res) => {
         excerpt: localizedContent.excerpt,
         metaTitle: localizedContent.metaTitle,
         metaDescription: localizedContent.metaDescription,
+        // Préserver featuredImage et images
+        featuredImage: blogObj.featuredImage,
+        images: blogObj.images,
         // Exclure le contenu complet pour la liste
         content: undefined
       };
@@ -469,7 +472,10 @@ router.get('/:slug', async (req, res) => {
           excerpt: localizedContent.excerpt,
           content: localizedContent.content,
           metaTitle: localizedContent.metaTitle,
-          metaDescription: localizedContent.metaDescription
+          metaDescription: localizedContent.metaDescription,
+          // Préserver featuredImage et images
+          featuredImage: blogObj.featuredImage,
+          images: blogObj.images
         },
         language,
         visitId: visit._id
@@ -479,9 +485,24 @@ router.get('/:slug', async (req, res) => {
       console.error('❌ [TRACKING] Erreur lors du tracking:', trackingError);
       console.error('❌ [TRACKING] Stack trace:', trackingError.stack);
       // Ne pas faire échouer la requête si le tracking échoue
+      const blogObj = blog.toObject();
+      const localizedContent = blog.getLocalizedContent(language);
+      
       res.json({
         success: true,
-        data: blog
+        data: {
+          ...blogObj,
+          title: localizedContent.title,
+          slug: localizedContent.slug,
+          excerpt: localizedContent.excerpt,
+          content: localizedContent.content,
+          metaTitle: localizedContent.metaTitle,
+          metaDescription: localizedContent.metaDescription,
+          // Préserver featuredImage et images
+          featuredImage: blogObj.featuredImage,
+          images: blogObj.images
+        },
+        language
       });
     }
 
@@ -882,6 +903,21 @@ router.put('/admin/blogs/:id', authenticateAdmin, [
 
     fieldsToUpdate.forEach(field => {
       if (req.body[field] !== undefined) {
+        // Traitement spécial pour featuredImage
+        if (field === 'featuredImage') {
+          const featuredImage = req.body.featuredImage;
+          // Si featuredImage est un objet avec une URL vide, ne pas l'inclure
+          if (featuredImage && typeof featuredImage === 'object' && (!featuredImage.url || featuredImage.url.trim() === '')) {
+            // Ne pas inclure featuredImage si l'URL est vide
+            return;
+          }
+          // Sinon, inclure featuredImage tel quel
+          if (featuredImage && typeof featuredImage === 'object') {
+            updateData[field] = featuredImage;
+          }
+          return;
+        }
+        
         const cleaned = cleanValue(req.body[field]);
         if (cleaned !== undefined) {
           updateData[field] = cleaned;
