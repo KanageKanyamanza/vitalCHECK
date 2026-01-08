@@ -7,6 +7,7 @@ const BlogLike = require('../models/BlogLike');
 const Admin = require('../models/Admin');
 const User = require('../models/User');
 const { analyzeDevice, extractReferrerDomain, extractUTMParameters, generateSessionId, isBounce } = require('../utils/deviceAnalyzer');
+const { getClientIP } = require('../utils/visitorUtils');
 const axios = require('axios');
 const fetch = require('node-fetch');
 const router = express.Router();
@@ -516,6 +517,7 @@ router.get('/:slug', async (req, res) => {
 });
 
 // GET /blogs/:id/like/status - Vérifier si l'utilisateur a déjà liké
+// Comportement: Chaque navigateur (visitorId) est traité indépendamment
 router.get('/:id/like/status', async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id);
@@ -541,18 +543,23 @@ router.get('/:id/like/status', async (req, res) => {
       // Token invalide ou absent, continuer sans userId
     }
 
-    // Récupérer le visitorId depuis le body ou les query params
-    const visitorId = req.body.visitorId || req.query.visitorId;
+    // Récupérer le visitorId depuis les query params (GET request)
+    const visitorId = req.query.visitorId;
 
     // Vérifier si l'utilisateur a déjà liké
     let hasLiked = false;
+    
     if (userId) {
+      // Utilisateur connecté: vérifier par userId
       const existingLike = await BlogLike.findOne({ blog: req.params.id, userId });
       hasLiked = !!existingLike;
     } else if (visitorId) {
+      // Utilisateur non connecté: vérifier par visitorId (navigateur spécifique)
+      // Chaque navigateur a son propre visitorId, donc chaque navigateur peut liker indépendamment
       const existingLike = await BlogLike.findOne({ blog: req.params.id, visitorId });
       hasLiked = !!existingLike;
     }
+    // Si ni userId ni visitorId, hasLiked reste false
 
     res.json({
       success: true,
@@ -569,6 +576,11 @@ router.get('/:id/like/status', async (req, res) => {
 });
 
 // POST /blogs/:id/like - Toggle like/unlike d'un blog
+// Comportement:
+// - Chaque navigateur (visitorId) est traité indépendamment
+// - Un navigateur peut liker une seule fois par article
+// - Un navigateur peut retirer son like (unlike)
+// - Les likes d'un navigateur n'affectent pas les autres navigateurs
 router.post('/:id/like', async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id);
@@ -596,13 +608,26 @@ router.post('/:id/like', async (req, res) => {
 
     // Récupérer le visitorId depuis le body
     const visitorId = req.body.visitorId;
-    const ipAddress = req.ip || req.connection.remoteAddress || req.headers['x-forwarded-for']?.split(',')[0];
+    
+    // Validation: pour les utilisateurs non connectés, visitorId est requis
+    if (!userId && !visitorId) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Identifiant visiteur requis pour les utilisateurs non connectés' 
+      });
+    }
+    
+    // Récupérer l'adresse IP du client (pour tracking/analytics, pas pour la contrainte)
+    const ipAddress = getClientIP(req);
 
     // Vérifier si l'utilisateur a déjà liké
     let existingLike = null;
     if (userId) {
+      // Utilisateur connecté: vérifier par userId
       existingLike = await BlogLike.findOne({ blog: req.params.id, userId });
     } else if (visitorId) {
+      // Utilisateur non connecté: vérifier par visitorId (navigateur spécifique)
+      // Chaque navigateur a son propre visitorId, donc chaque navigateur peut liker indépendamment
       existingLike = await BlogLike.findOne({ blog: req.params.id, visitorId });
     }
 
@@ -653,7 +678,34 @@ router.post('/:id/like', async (req, res) => {
     console.error('Like blog error:', error);
     
     // Gérer les erreurs de duplication (index unique)
+    // Cela peut arriver en cas de requête simultanée
     if (error.code === 11000) {
+      // Vérifier à nouveau l'état actuel
+      try {
+        const blog = await Blog.findById(req.params.id);
+        let existingLike = null;
+        
+        if (req.body.visitorId) {
+          existingLike = await BlogLike.findOne({ 
+            blog: req.params.id, 
+            visitorId: req.body.visitorId 
+          });
+        }
+        
+        if (existingLike) {
+          // Le like existe déjà, retourner l'état actuel
+          return res.json({
+            success: true,
+            data: { 
+              likes: blog.likes,
+              hasLiked: true
+            }
+          });
+        }
+      } catch (checkError) {
+        // Ignorer l'erreur de vérification
+      }
+      
       return res.status(400).json({ 
         success: false, 
         message: 'Vous avez déjà aimé cet article' 

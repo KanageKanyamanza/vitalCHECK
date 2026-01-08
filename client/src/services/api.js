@@ -396,10 +396,23 @@ export const blogApiService = {
 	},
 
 	// Vérifier si un visiteur existe par IP
-	checkVisitorByIP: () => api.get("/blog-visitors/check"),
+	checkVisitorByIP: async (visitorId) => {
+		const { getOrCreateVisitorId } = await import('../utils/visitorId');
+		const vId = visitorId || getOrCreateVisitorId();
+		return api.get("/blog-visitors/check", {
+			params: { visitorId: vId }
+		});
+	},
 
 	// Soumettre le formulaire de visiteur
-	submitVisitorForm: (data) => api.post("/blog-visitors/submit", data),
+	submitVisitorForm: async (data) => {
+		const { getOrCreateVisitorId } = await import('../utils/visitorId');
+		const visitorId = data.visitorId || getOrCreateVisitorId();
+		return api.post("/blog-visitors/submit", {
+			...data,
+			visitorId
+		});
+	},
 };
 
 // Services admin pour les blogs

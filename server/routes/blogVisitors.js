@@ -7,11 +7,18 @@ const { getClientIP, getDeviceInfo, getLocationInfo } = require('../utils/visito
 
 // ===== ROUTES PUBLIQUES =====
 
-// Vérifier si un visiteur existe par IP
+// Vérifier si un visiteur existe par visitorId (navigateur spécifique)
+// Chaque navigateur a son propre visitorId, donc chaque navigateur est traité séparément
 router.get('/check', async (req, res) => {
   try {
-    const ipAddress = getClientIP(req);
-    const visitor = await BlogVisitor.findByIP(ipAddress);
+    // Récupérer le visitorId depuis les query params
+    const visitorId = req.query.visitorId;
+    
+    if (!visitorId) {
+      return res.json({ exists: false });
+    }
+    
+    const visitor = await BlogVisitor.findByVisitorId(visitorId);
     
     if (visitor) {
       return res.json({
@@ -39,9 +46,19 @@ router.get('/check', async (req, res) => {
 });
 
 // Soumettre le formulaire de visiteur
+// Chaque navigateur (visitorId) crée son propre BlogVisitor
+// Si on change de navigateur, un nouveau BlogVisitor est créé
 router.post('/submit', async (req, res) => {
   try {
-    const { firstName, lastName, email, country, blogId, blogTitle, blogSlug, scrollDepth = 0, timeOnPage = 0 } = req.body;
+    const { firstName, lastName, email, country, blogId, blogTitle, blogSlug, visitorId, scrollDepth = 0, timeOnPage = 0 } = req.body;
+    
+    // Validation: visitorId est requis pour identifier le navigateur
+    if (!visitorId) {
+      return res.status(400).json({
+        success: false,
+        message: 'visitorId est requis pour identifier le navigateur'
+      });
+    }
     
     console.log('📊 [BLOG VISITORS] Soumission formulaire avec données de tracking:', {
       firstName,
@@ -51,6 +68,7 @@ router.post('/submit', async (req, res) => {
       blogId,
       blogTitle,
       blogSlug,
+      visitorId,
       scrollDepth,
       timeOnPage
     });
@@ -73,12 +91,13 @@ router.post('/submit', async (req, res) => {
     await blog.incrementViews();
     console.log(`📈 [BLOG VIEWS] Vue incrémentée pour le blog: ${blogTitle} (Total: ${blog.views + 1})`);
     
-    // Vérifier si un visiteur existe déjà avec cette IP
-    let visitor = await BlogVisitor.findByIP(ipAddress);
+    // Vérifier si un visiteur existe déjà avec ce visitorId (navigateur spécifique)
+    // Chaque navigateur a son propre visitorId, donc chaque navigateur crée un nouveau BlogVisitor
+    let visitor = await BlogVisitor.findByVisitorId(visitorId);
     let isNewVisitor = false;
     
     if (visitor) {
-      // Visiteur existant - marquer comme visiteur de retour
+      // Visiteur existant pour ce navigateur - marquer comme visiteur de retour
       visitor.isReturningVisitor = true;
       visitor.lastVisitAt = new Date();
       
@@ -95,9 +114,11 @@ router.post('/submit', async (req, res) => {
         await visitor.save();
       }
     } else {
-      // Nouveau visiteur
+      // Nouveau visiteur pour ce navigateur
+      // Chaque navigateur crée son propre BlogVisitor
       isNewVisitor = true;
       visitor = new BlogVisitor({
+        visitorId, // Identifiant unique du navigateur
         firstName,
         lastName,
         email,

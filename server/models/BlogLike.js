@@ -38,6 +38,7 @@ blogLikeSchema.index({ blog: 1, userId: 1 }, {
 });
 
 // Index unique pour les visiteurs non connectés
+// Un navigateur spécifique (visitorId) ne peut liker qu'une seule fois par article
 blogLikeSchema.index({ blog: 1, visitorId: 1 }, { 
   unique: true, 
   sparse: true // Permet les valeurs null
@@ -47,6 +48,7 @@ blogLikeSchema.index({ blog: 1, visitorId: 1 }, {
 blogLikeSchema.index({ blog: 1 });
 blogLikeSchema.index({ userId: 1 });
 blogLikeSchema.index({ visitorId: 1 });
+blogLikeSchema.index({ ipAddress: 1 });
 
 module.exports = mongoose.model('BlogLike', blogLikeSchema);
 
