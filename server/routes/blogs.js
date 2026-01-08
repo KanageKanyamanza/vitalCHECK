@@ -847,14 +847,56 @@ router.put('/admin/blogs/:id', authenticateAdmin, [
       });
     }
 
+    // Préparer les données de mise à jour
+    const updateData = {};
+    
+    // Fonction pour nettoyer les valeurs vides (ne pas envoyer de chaînes vides)
+    const cleanValue = (value) => {
+      if (typeof value === 'string' && value.trim() === '') {
+        return undefined; // Ne pas inclure les chaînes vides
+      }
+      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+        // Pour les objets bilingues (metaTitle, metaDescription, title, etc.)
+        if (value.hasOwnProperty('fr') || value.hasOwnProperty('en')) {
+          const cleaned = {};
+          if (value.fr !== undefined && value.fr !== null && String(value.fr).trim() !== '') {
+            cleaned.fr = String(value.fr).trim();
+          }
+          if (value.en !== undefined && value.en !== null && String(value.en).trim() !== '') {
+            cleaned.en = String(value.en).trim();
+          }
+          return Object.keys(cleaned).length > 0 ? cleaned : undefined;
+        }
+        // Pour les autres objets (featuredImage, caseStudy, etc.), les garder tels quels
+        return value;
+      }
+      return value;
+    };
+
+    // Copier uniquement les champs fournis et non vides
+    const fieldsToUpdate = [
+      'title', 'slug', 'excerpt', 'content', 'type', 'category', 
+      'tags', 'status', 'featuredImage', 'images', 'caseStudy', 
+      'tutorial', 'testimonial', 'metaTitle', 'metaDescription'
+    ];
+
+    fieldsToUpdate.forEach(field => {
+      if (req.body[field] !== undefined) {
+        const cleaned = cleanValue(req.body[field]);
+        if (cleaned !== undefined) {
+          updateData[field] = cleaned;
+        }
+      }
+    });
+
     // Générer les slugs si les titres ont changé
-    if (req.body.title) {
-      if (!req.body.slug) {
-        req.body.slug = {};
+    if (updateData.title) {
+      if (!updateData.slug) {
+        updateData.slug = blog.slug || {};
       }
       
-      if (req.body.title.fr && req.body.title.fr !== blog.title.fr && !req.body.slug.fr) {
-        req.body.slug.fr = req.body.title.fr
+      if (updateData.title.fr && updateData.title.fr !== blog.title?.fr && !updateData.slug.fr) {
+        updateData.slug.fr = updateData.title.fr
           .toLowerCase()
           .replace(/[^a-z0-9\s-]/g, '')
           .replace(/\s+/g, '-')
@@ -862,8 +904,8 @@ router.put('/admin/blogs/:id', authenticateAdmin, [
           .trim('-');
       }
       
-      if (req.body.title.en && req.body.title.en !== blog.title.en && !req.body.slug.en) {
-        req.body.slug.en = req.body.title.en
+      if (updateData.title.en && updateData.title.en !== blog.title?.en && !updateData.slug.en) {
+        updateData.slug.en = updateData.title.en
           .toLowerCase()
           .replace(/[^a-z0-9\s-]/g, '')
           .replace(/\s+/g, '-')
@@ -872,20 +914,52 @@ router.put('/admin/blogs/:id', authenticateAdmin, [
       }
     }
 
-    Object.assign(blog, req.body);
-    await blog.save();
+    // Gérer publishedAt si le statut passe à published
+    if (updateData.status === 'published' && blog.status !== 'published') {
+      updateData.publishedAt = new Date();
+    }
+
+    // Utiliser findByIdAndUpdate avec $set pour ne pas écraser les champs non fournis
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      req.params.id,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedBlog) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Blog non trouvé après mise à jour' 
+      });
+    }
 
     res.json({
       success: true,
-      data: blog,
+      data: updatedBlog,
       message: 'Blog mis à jour avec succès'
     });
 
   } catch (error) {
     console.error('Update blog error:', error);
+    
+    // Logger l'erreur de validation complète
+    if (error.name === 'ValidationError') {
+      const validationErrors = Object.values(error.errors).map(err => ({
+        field: err.path,
+        message: err.message
+      }));
+      console.error('Validation errors:', validationErrors);
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Erreur de validation',
+        errors: validationErrors
+      });
+    }
+    
     res.status(500).json({ 
       success: false, 
-      message: 'Erreur lors de la mise à jour du blog' 
+      message: 'Erreur lors de la mise à jour du blog',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 });
