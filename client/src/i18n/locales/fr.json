@@ -274,7 +274,18 @@
     "openHours": "Heures d'ouverture",
     "allRightsReserved": "Tous droits réservés",
     "terms": "Conditions d'utilisation",
-    "userGuide": "Guide d'utilisation"
+    "userGuide": "Guide d'utilisation",
+    "newsletter": {
+      "title": "Newsletter",
+      "subtitle": "Restez informé",
+      "description": "Recevez nos dernières actualités, conseils et insights directement dans votre boîte mail.",
+      "emailPlaceholder": "Votre adresse email",
+      "subscribe": "S'abonner",
+      "subscribing": "Abonnement...",
+      "success": "Merci pour votre abonnement !",
+      "error": "Une erreur est survenue. Veuillez réessayer.",
+      "invalidEmail": "Veuillez entrer une adresse email valide"
+    }
   },
   "privacy": {
     "title": "Politique de Confidentialité",

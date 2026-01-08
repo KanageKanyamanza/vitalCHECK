@@ -547,11 +547,27 @@ router.get('/:id/like/status', async (req, res) => {
     const visitorId = req.query.visitorId;
 
     // Vérifier si l'utilisateur a déjà liké
+    // Si l'utilisateur est connecté ET qu'un visitorId est fourni, vérifier les deux
+    // Cela permet de détecter si un visiteur a liké avant de se connecter
     let hasLiked = false;
     
     if (userId) {
-      // Utilisateur connecté: vérifier par userId
-      const existingLike = await BlogLike.findOne({ blog: req.params.id, userId });
+      // Utilisateur connecté: vérifier d'abord par userId
+      let existingLike = await BlogLike.findOne({ blog: req.params.id, userId });
+      
+      // Si pas de like trouvé par userId ET qu'un visitorId est fourni, vérifier aussi par visitorId
+      // Cela permet de détecter si l'utilisateur a liké avant de se connecter
+      if (!existingLike && visitorId) {
+        existingLike = await BlogLike.findOne({ blog: req.params.id, visitorId });
+        
+        // Si un like existe avec le visitorId, le migrer vers le userId
+        if (existingLike) {
+          existingLike.userId = userId;
+          // Garder le visitorId pour l'historique (les index sparse permettent cela)
+          await existingLike.save();
+        }
+      }
+      
       hasLiked = !!existingLike;
     } else if (visitorId) {
       // Utilisateur non connecté: vérifier par visitorId (navigateur spécifique)
@@ -623,8 +639,21 @@ router.post('/:id/like', async (req, res) => {
     // Vérifier si l'utilisateur a déjà liké
     let existingLike = null;
     if (userId) {
-      // Utilisateur connecté: vérifier par userId
+      // Utilisateur connecté: vérifier d'abord par userId
       existingLike = await BlogLike.findOne({ blog: req.params.id, userId });
+      
+      // Si pas de like trouvé par userId ET qu'un visitorId est fourni, vérifier aussi par visitorId
+      // Cela permet de détecter si l'utilisateur a liké avant de se connecter
+      if (!existingLike && visitorId) {
+        existingLike = await BlogLike.findOne({ blog: req.params.id, visitorId });
+        
+        // Si un like existe avec le visitorId, le migrer vers le userId
+        if (existingLike) {
+          existingLike.userId = userId;
+          // Garder le visitorId pour l'historique (les index sparse permettent cela)
+          await existingLike.save();
+        }
+      }
     } else if (visitorId) {
       // Utilisateur non connecté: vérifier par visitorId (navigateur spécifique)
       // Chaque navigateur a son propre visitorId, donc chaque navigateur peut liker indépendamment
