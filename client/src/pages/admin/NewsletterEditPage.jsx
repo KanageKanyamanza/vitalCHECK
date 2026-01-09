@@ -40,13 +40,26 @@ const NewsletterEditPage = () => {
   const [customEmailInput, setCustomEmailInput] = useState('');
 
   useEffect(() => {
-    if (isEdit) {
+    if (isEdit && id) {
       fetchNewsletter();
     }
-    fetchRecipientCount();
-  }, [isEdit, formData.recipients]);
+  }, [isEdit, id]);
+
+  useEffect(() => {
+    // Mettre à jour le comptage quand le type de destinataire change
+    // Ne pas appeler si on est en train de charger une newsletter
+    if (loading) return;
+
+    if (formData.recipients?.type === 'custom') {
+      setRecipientCount(formData.recipients.customEmails?.length || 0);
+    } else if (formData.recipients?.type) {
+      fetchRecipientCount();
+    }
+  }, [formData.recipients?.type, formData.recipients?.tags, loading]);
 
   const fetchNewsletter = async () => {
+    if (!id) return;
+    
     try {
       setLoading(true);
       const token = localStorage.getItem('adminToken');
@@ -77,12 +90,18 @@ const NewsletterEditPage = () => {
 
   const fetchRecipientCount = async () => {
     try {
+      // Ne pas appeler l'API si le type est custom (comptage côté client)
+      if (formData.recipients.type === 'custom') {
+        setRecipientCount(formData.recipients.customEmails?.length || 0);
+        return;
+      }
+
       const token = localStorage.getItem('adminToken');
       const params = {
         type: formData.recipients.type
       };
 
-      if (formData.recipients.type === 'tags' && formData.recipients.tags.length > 0) {
+      if (formData.recipients.type === 'tags' && formData.recipients.tags?.length > 0) {
         params.tags = formData.recipients.tags.join(',');
       }
 
@@ -92,10 +111,11 @@ const NewsletterEditPage = () => {
       });
 
       if (response.data.success) {
-        setRecipientCount(response.data.count);
+        setRecipientCount(response.data.count || 0);
       }
     } catch (error) {
       console.error('Erreur lors du comptage des destinataires:', error);
+      setRecipientCount(0);
     }
   };
 
@@ -123,8 +143,18 @@ const NewsletterEditPage = () => {
         const response = await axios.post(`${API_BASE_URL}/newsletters/admin/create`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        toast.success('Newsletter créée avec succès');
-        navigate(`/admin/newsletters/edit/${response.data.newsletter._id}`);
+        
+        if (response.data.success && response.data.newsletter?._id) {
+          toast.success('Newsletter créée avec succès');
+          // Utiliser replace pour éviter d'ajouter une entrée dans l'historique
+          // Attendre un peu pour que le toast s'affiche et que l'état se stabilise
+          setTimeout(() => {
+            navigate(`/admin/newsletters/edit/${response.data.newsletter._id}`, { replace: true });
+          }, 300);
+        } else {
+          console.error('Réponse API invalide:', response.data);
+          toast.error('Erreur: Newsletter créée mais ID non reçu');
+        }
       }
     } catch (error) {
       console.error('Erreur lors de la sauvegarde:', error);
@@ -215,31 +245,43 @@ const NewsletterEditPage = () => {
       return;
     }
 
-    if (formData.recipients.customEmails.includes(email)) {
+    const currentEmails = formData.recipients.customEmails || [];
+    if (currentEmails.includes(email)) {
       toast.error('Cet email est déjà dans la liste');
       return;
     }
 
+    const newCustomEmails = [...currentEmails, email];
     setFormData({
       ...formData,
       recipients: {
         ...formData.recipients,
-        customEmails: [...formData.recipients.customEmails, email]
+        customEmails: newCustomEmails
       }
     });
 
     setCustomEmailInput('');
+    // Mettre à jour le comptage immédiatement pour le type custom
+    if (formData.recipients.type === 'custom') {
+      setRecipientCount(newCustomEmails.length);
+    }
     toast.success('Email ajouté');
   };
 
   const removeCustomEmail = (email) => {
+    const currentEmails = formData.recipients.customEmails || [];
+    const newCustomEmails = currentEmails.filter(e => e !== email);
     setFormData({
       ...formData,
       recipients: {
         ...formData.recipients,
-        customEmails: formData.recipients.customEmails.filter(e => e !== email)
+        customEmails: newCustomEmails
       }
     });
+    // Mettre à jour le comptage immédiatement pour le type custom
+    if (formData.recipients.type === 'custom') {
+      setRecipientCount(newCustomEmails.length);
+    }
   };
 
   if (loading) {
@@ -255,18 +297,18 @@ const NewsletterEditPage = () => {
   if (previewMode) {
     return (
       <AdminLayout>
-        <div className="space-y-6">
-          <div className="flex justify-between items-center">
+        <div className="p-4 lg:p-8">
+          <div className="flex justify-between items-center mb-6">
             <h1 className="text-3xl font-bold text-gray-900">Aperçu de la Newsletter</h1>
             <button
               onClick={() => setPreviewMode(false)}
-              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors"
+              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors shadow-sm"
             >
               Retour à l'édition
             </button>
           </div>
 
-          <div className="bg-white rounded-lg shadow p-6">
+          <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
             <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
               <div dangerouslySetInnerHTML={{ __html: previewHTML }} />
             </div>
@@ -278,9 +320,9 @@ const NewsletterEditPage = () => {
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="p-4 lg:p-8">
         {/* Header */}
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-4">
             <button
               onClick={() => navigate('/admin/newsletters')}
@@ -302,7 +344,7 @@ const NewsletterEditPage = () => {
             {isEdit && (
               <button
                 onClick={handlePreview}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
               >
                 <Eye className="w-5 h-5" />
                 Aperçu
@@ -311,7 +353,7 @@ const NewsletterEditPage = () => {
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 shadow-sm"
             >
               <Save className="w-5 h-5" />
               {saving ? 'Enregistrement...' : 'Enregistrer'}
@@ -320,7 +362,7 @@ const NewsletterEditPage = () => {
               <button
                 onClick={handleSend}
                 disabled={saving || recipientCount === 0}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 shadow-sm"
               >
                 <Send className="w-5 h-5" />
                 Envoyer
@@ -333,7 +375,7 @@ const NewsletterEditPage = () => {
           {/* Formulaire principal */}
           <div className="lg:col-span-2 space-y-6">
             {/* Sujet */}
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Sujet de l'email *
               </label>
@@ -342,12 +384,12 @@ const NewsletterEditPage = () => {
                 value={formData.subject}
                 onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                 placeholder="Ex: Nouvelles fonctionnalités de vitalCHECK"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
               />
             </div>
 
             {/* Texte d'aperçu */}
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Texte d'aperçu (optionnel)
               </label>
@@ -356,7 +398,7 @@ const NewsletterEditPage = () => {
                 value={formData.previewText}
                 onChange={(e) => setFormData({ ...formData, previewText: e.target.value })}
                 placeholder="Court texte qui apparaît dans l'aperçu de l'email"
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
               />
               <p className="text-xs text-gray-500 mt-1">
                 Ce texte apparaît dans l'aperçu de l'email avant l'ouverture
@@ -364,7 +406,7 @@ const NewsletterEditPage = () => {
             </div>
 
             {/* Contenu */}
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Contenu de la newsletter *
               </label>
@@ -379,7 +421,7 @@ const NewsletterEditPage = () => {
           {/* Panneau latéral */}
           <div className="space-y-6">
             {/* Destinataires */}
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Users className="w-5 h-5 text-primary-600" />
                 <h3 className="text-lg font-semibold text-gray-900">Destinataires</h3>
@@ -398,7 +440,7 @@ const NewsletterEditPage = () => {
                         recipients: { ...formData.recipients, type: e.target.value }
                       })
                     }
-                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                   >
                     <option value="all">Tous les abonnés actifs</option>
                     <option value="active">Abonnés actifs uniquement</option>
@@ -419,11 +461,11 @@ const NewsletterEditPage = () => {
                         onChange={(e) => setCustomEmailInput(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && addCustomEmail()}
                         placeholder="email@exemple.com"
-                        className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                       />
                       <button
                         onClick={addCustomEmail}
-                        className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                        className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors shadow-sm"
                       >
                         Ajouter
                       </button>
@@ -462,7 +504,7 @@ const NewsletterEditPage = () => {
             </div>
 
             {/* Aide */}
-            <div className="bg-blue-50 rounded-lg p-6">
+            <div className="bg-blue-50 rounded-xl border border-blue-100 p-6">
               <h3 className="text-sm font-semibold text-blue-900 mb-2">💡 Conseils</h3>
               <ul className="text-xs text-blue-800 space-y-1">
                 <li>• Rédigez un sujet accrocheur</li>

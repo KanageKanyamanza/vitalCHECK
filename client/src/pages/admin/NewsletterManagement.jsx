@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Mail, Eye, Send, Trash2, Calendar, Users, FileText } from 'lucide-react';
+import { Plus, Mail, Eye, Send, Trash2, Calendar, Users, FileText, Search } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import toast from 'react-hot-toast';
 import axios from 'axios';
@@ -19,6 +19,8 @@ const NewsletterManagement = () => {
   const navigate = useNavigate();
   const [newsletters, setNewsletters] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
   const [stats, setStats] = useState({
     total: 0,
     active: 0,
@@ -57,10 +59,12 @@ const NewsletterManagement = () => {
       });
 
       if (response.data.success) {
-        setStats(response.data.stats);
+        setStats(response.data.stats || { total: 0, active: 0, inactive: 0 });
       }
     } catch (error) {
       console.error('Erreur lors de la récupération des statistiques:', error);
+      // Initialiser avec des valeurs par défaut en cas d'erreur
+      setStats({ total: 0, active: 0, inactive: 0 });
     }
   };
 
@@ -119,16 +123,16 @@ const NewsletterManagement = () => {
 
   return (
     <AdminLayout>
-      <div className="space-y-6">
+      <div className="p-4 lg:p-8">
         {/* Header */}
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Gestion des Newsletters</h1>
             <p className="text-gray-600 mt-1">Créez et gérez vos newsletters</p>
           </div>
           <button
             onClick={() => navigate('/admin/newsletters/create')}
-            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors shadow-sm"
           >
             <Plus className="w-5 h-5" />
             Nouvelle Newsletter
@@ -136,55 +140,114 @@ const NewsletterManagement = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white p-6 rounded-lg shadow">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Newsletters</p>
-                <p className="text-2xl font-bold text-gray-900">{newsletters.length}</p>
+                <p className="text-sm font-medium text-gray-600">Total Newsletters</p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">{newsletters.length}</p>
               </div>
-              <FileText className="w-8 h-8 text-primary-600" />
+              <div className="p-3 bg-primary-50 rounded-lg">
+                <FileText className="w-6 h-6 text-primary-600" />
+              </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow">
+          <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Abonnés Actifs</p>
-                <p className="text-2xl font-bold text-gray-900">{stats.active}</p>
+                <p className="text-sm font-medium text-gray-600">Abonnés Actifs</p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">{stats.active}</p>
               </div>
-              <Users className="w-8 h-8 text-green-600" />
+              <div className="p-3 bg-green-50 rounded-lg">
+                <Users className="w-6 h-6 text-green-600" />
+              </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow">
+          <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Envoyées</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm font-medium text-gray-600">Envoyées</p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">
                   {newsletters.filter(n => n.status === 'sent').length}
                 </p>
               </div>
-              <Send className="w-8 h-8 text-blue-600" />
+              <div className="p-3 bg-blue-50 rounded-lg">
+                <Send className="w-6 h-6 text-blue-600" />
+              </div>
             </div>
           </div>
 
-          <div className="bg-white p-6 rounded-lg shadow">
+          <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Brouillons</p>
-                <p className="text-2xl font-bold text-gray-900">
+                <p className="text-sm font-medium text-gray-600">Brouillons</p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">
                   {newsletters.filter(n => n.status === 'draft').length}
                 </p>
               </div>
-              <Mail className="w-8 h-8 text-gray-600" />
+              <div className="p-3 bg-gray-50 rounded-lg">
+                <Mail className="w-6 h-6 text-gray-600" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Filters */}
+        <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Recherche
+              </label>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Rechercher par sujet..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Statut
+              </label>
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              >
+                <option value="">Tous les statuts</option>
+                <option value="draft">Brouillon</option>
+                <option value="scheduled">Programmée</option>
+                <option value="sending">En cours</option>
+                <option value="sent">Envoyée</option>
+                <option value="cancelled">Annulée</option>
+              </select>
+            </div>
+
+            <div className="flex items-end">
+              <button
+                onClick={() => {
+                  setSearchTerm('');
+                  setStatusFilter('');
+                }}
+                className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
+              >
+                Réinitialiser
+              </button>
             </div>
           </div>
         </div>
 
         {/* Newsletters List */}
-        <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200">
+        <div className="bg-white shadow-lg rounded-xl border border-gray-100 overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
             <h2 className="text-lg font-semibold text-gray-900">Liste des Newsletters</h2>
           </div>
 
@@ -194,7 +257,7 @@ const NewsletterManagement = () => {
               <p className="text-gray-600 mb-4">Aucune newsletter pour le moment</p>
               <button
                 onClick={() => navigate('/admin/newsletters/create')}
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors shadow-sm"
               >
                 Créer votre première newsletter
               </button>
@@ -222,45 +285,65 @@ const NewsletterManagement = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {newsletters.map((newsletter) => (
-                    <tr key={newsletter._id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="text-sm font-medium text-gray-900">{newsletter.subject}</div>
-                        {newsletter.previewText && (
-                          <div className="text-sm text-gray-500 truncate max-w-md">
-                            {newsletter.previewText}
-                          </div>
-                        )}
+                  {newsletters
+                    .filter(newsletter => {
+                      const matchesSearch = !searchTerm || 
+                        newsletter.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        (newsletter.previewText && newsletter.previewText.toLowerCase().includes(searchTerm.toLowerCase()));
+                      const matchesStatus = !statusFilter || newsletter.status === statusFilter;
+                      return matchesSearch && matchesStatus;
+                    })
+                    .map((newsletter) => (
+                    <tr key={newsletter._id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{newsletter.subject}</div>
+                          {newsletter.previewText && (
+                            <div className="text-sm text-gray-500 truncate max-w-md mt-1">
+                              {newsletter.previewText}
+                            </div>
+                          )}
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {getStatusBadge(newsletter.status)}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {newsletter.stats?.totalRecipients || 0} destinataires
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <Users className="h-4 w-4 text-gray-400 mr-2" />
+                          <span className="text-sm text-gray-900">
+                            {newsletter.stats?.totalRecipients || 0}
+                          </span>
+                        </div>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {newsletter.sentAt
-                          ? new Date(newsletter.sentAt).toLocaleDateString('fr-FR')
-                          : newsletter.createdAt
-                          ? new Date(newsletter.createdAt).toLocaleDateString('fr-FR')
-                          : '-'}
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <Calendar className="h-4 w-4 text-gray-400 mr-2" />
+                          <span className="text-sm text-gray-900">
+                            {newsletter.sentAt
+                              ? new Date(newsletter.sentAt).toLocaleDateString('fr-FR')
+                              : newsletter.createdAt
+                              ? new Date(newsletter.createdAt).toLocaleDateString('fr-FR')
+                              : '-'}
+                          </span>
+                        </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                        <div className="flex items-center gap-2">
+                        <div className="flex space-x-2">
                           <button
                             onClick={() => navigate(`/admin/newsletters/edit/${newsletter._id}`)}
-                            className="text-primary-600 hover:text-primary-900"
+                            className="text-success-600 hover:text-success-900 p-1 rounded hover:bg-success-50 transition-colors"
                             title="Modifier"
                           >
-                            <Eye className="w-5 h-5" />
+                            <Eye className="h-4 w-4" />
                           </button>
                           {newsletter.status !== 'sent' && (
                             <button
                               onClick={() => handleDelete(newsletter._id)}
-                              className="text-red-600 hover:text-red-900"
+                              className="text-danger-600 hover:text-danger-900 p-1 rounded hover:bg-danger-50 transition-colors"
                               title="Supprimer"
                             >
-                              <Trash2 className="w-5 h-5" />
+                              <Trash2 className="h-4 w-4" />
                             </button>
                           )}
                         </div>
