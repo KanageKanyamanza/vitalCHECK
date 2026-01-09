@@ -1,0 +1,280 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Plus, Mail, Eye, Send, Trash2, Calendar, Users, FileText } from 'lucide-react';
+import AdminLayout from '../../components/admin/AdminLayout';
+import toast from 'react-hot-toast';
+import axios from 'axios';
+
+// Configuration de l'URL de l'API
+const getApiBaseUrl = () => {
+  if (import.meta.env.PROD) {
+    return "https://ubb-enterprise-health-check.onrender.com/api";
+  }
+  return import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+};
+
+const API_BASE_URL = getApiBaseUrl();
+
+const NewsletterManagement = () => {
+  const navigate = useNavigate();
+  const [newsletters, setNewsletters] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState({
+    total: 0,
+    active: 0,
+    inactive: 0
+  });
+
+  useEffect(() => {
+    fetchNewsletters();
+    fetchSubscriberStats();
+  }, []);
+
+  const fetchNewsletters = async () => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await axios.get(`${API_BASE_URL}/newsletters/admin/list`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (response.data.success) {
+        setNewsletters(response.data.newsletters);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération des newsletters:', error);
+      toast.error('Erreur lors du chargement des newsletters');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchSubscriberStats = async () => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await axios.get(`${API_BASE_URL}/newsletters/admin/subscribers`, {
+        headers: { Authorization: `Bearer ${token}` },
+        params: { limit: 1 }
+      });
+
+      if (response.data.success) {
+        setStats(response.data.stats);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération des statistiques:', error);
+    }
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Êtes-vous sûr de vouloir supprimer cette newsletter ?')) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('adminToken');
+      await axios.delete(`${API_BASE_URL}/newsletters/admin/${id}`, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      toast.success('Newsletter supprimée avec succès');
+      fetchNewsletters();
+    } catch (error) {
+      console.error('Erreur lors de la suppression:', error);
+      toast.error(error.response?.data?.message || 'Erreur lors de la suppression');
+    }
+  };
+
+  const getStatusBadge = (status) => {
+    const badges = {
+      draft: 'bg-gray-100 text-gray-800',
+      scheduled: 'bg-blue-100 text-blue-800',
+      sending: 'bg-yellow-100 text-yellow-800',
+      sent: 'bg-green-100 text-green-800',
+      cancelled: 'bg-red-100 text-red-800'
+    };
+
+    const labels = {
+      draft: 'Brouillon',
+      scheduled: 'Programmée',
+      sending: 'En cours',
+      sent: 'Envoyée',
+      cancelled: 'Annulée'
+    };
+
+    return (
+      <span className={`px-2 py-1 rounded-full text-xs font-medium ${badges[status] || badges.draft}`}>
+        {labels[status] || status}
+      </span>
+    );
+  };
+
+  if (loading) {
+    return (
+      <AdminLayout>
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+        </div>
+      </AdminLayout>
+    );
+  }
+
+  return (
+    <AdminLayout>
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="flex justify-between items-center">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900">Gestion des Newsletters</h1>
+            <p className="text-gray-600 mt-1">Créez et gérez vos newsletters</p>
+          </div>
+          <button
+            onClick={() => navigate('/admin/newsletters/create')}
+            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+          >
+            <Plus className="w-5 h-5" />
+            Nouvelle Newsletter
+          </button>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="bg-white p-6 rounded-lg shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Total Newsletters</p>
+                <p className="text-2xl font-bold text-gray-900">{newsletters.length}</p>
+              </div>
+              <FileText className="w-8 h-8 text-primary-600" />
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Abonnés Actifs</p>
+                <p className="text-2xl font-bold text-gray-900">{stats.active}</p>
+              </div>
+              <Users className="w-8 h-8 text-green-600" />
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Envoyées</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {newsletters.filter(n => n.status === 'sent').length}
+                </p>
+              </div>
+              <Send className="w-8 h-8 text-blue-600" />
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-lg shadow">
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm text-gray-600">Brouillons</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {newsletters.filter(n => n.status === 'draft').length}
+                </p>
+              </div>
+              <Mail className="w-8 h-8 text-gray-600" />
+            </div>
+          </div>
+        </div>
+
+        {/* Newsletters List */}
+        <div className="bg-white rounded-lg shadow overflow-hidden">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h2 className="text-lg font-semibold text-gray-900">Liste des Newsletters</h2>
+          </div>
+
+          {newsletters.length === 0 ? (
+            <div className="p-12 text-center">
+              <Mail className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600 mb-4">Aucune newsletter pour le moment</p>
+              <button
+                onClick={() => navigate('/admin/newsletters/create')}
+                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
+              >
+                Créer votre première newsletter
+              </button>
+            </div>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Sujet
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Statut
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Destinataires
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Date
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {newsletters.map((newsletter) => (
+                    <tr key={newsletter._id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm font-medium text-gray-900">{newsletter.subject}</div>
+                        {newsletter.previewText && (
+                          <div className="text-sm text-gray-500 truncate max-w-md">
+                            {newsletter.previewText}
+                          </div>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {getStatusBadge(newsletter.status)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {newsletter.stats?.totalRecipients || 0} destinataires
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {newsletter.sentAt
+                          ? new Date(newsletter.sentAt).toLocaleDateString('fr-FR')
+                          : newsletter.createdAt
+                          ? new Date(newsletter.createdAt).toLocaleDateString('fr-FR')
+                          : '-'}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={() => navigate(`/admin/newsletters/edit/${newsletter._id}`)}
+                            className="text-primary-600 hover:text-primary-900"
+                            title="Modifier"
+                          >
+                            <Eye className="w-5 h-5" />
+                          </button>
+                          {newsletter.status !== 'sent' && (
+                            <button
+                              onClick={() => handleDelete(newsletter._id)}
+                              className="text-red-600 hover:text-red-900"
+                              title="Supprimer"
+                            >
+                              <Trash2 className="w-5 h-5" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      </div>
+    </AdminLayout>
+  );
+};
+
+export default NewsletterManagement;

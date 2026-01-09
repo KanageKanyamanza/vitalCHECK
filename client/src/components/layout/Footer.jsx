@@ -50,18 +50,32 @@ const Footer = () => {
 		setIsSubscribing(true);
 		
 		try {
-			// TODO: Implémenter l'appel API pour l'abonnement
-			// Pour l'instant, on simule juste le succès
-			await new Promise(resolve => setTimeout(resolve, 1000));
-			
-			setIsSubscribed(true);
-			toast.success(t("footer.newsletter.success"));
-			setEmail("");
-			
-			// Réinitialiser après 3 secondes
-			setTimeout(() => {
-				setIsSubscribed(false);
-			}, 3000);
+			const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+			const response = await fetch(`${API_BASE_URL}/newsletters/subscribe`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					email: email.trim(),
+					source: 'footer'
+				})
+			});
+
+			const data = await response.json();
+
+			if (data.success) {
+				setIsSubscribed(true);
+				toast.success(t("footer.newsletter.success"));
+				setEmail("");
+				
+				// Réinitialiser après 3 secondes
+				setTimeout(() => {
+					setIsSubscribed(false);
+				}, 3000);
+			} else {
+				toast.error(data.message || t("footer.newsletter.error"));
+			}
 		} catch (error) {
 			console.error("Erreur lors de l'abonnement:", error);
 			toast.error(t("footer.newsletter.error"));
