@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save, Eye, Send, Users, Mail } from 'lucide-react';
+import { ArrowLeft, Save, Eye, Send, Users, Mail, X } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import SimpleTextEditor from '../../components/admin/SimpleTextEditor';
 import toast from 'react-hot-toast';
 import axios from 'axios';
+import { parseMarkdown } from '../../utils/markdownParser';
 
 // Configuration de l'URL de l'API
 const getApiBaseUrl = () => {
@@ -38,6 +39,7 @@ const NewsletterEditPage = () => {
   const [previewHTML, setPreviewHTML] = useState('');
   const [recipientCount, setRecipientCount] = useState(0);
   const [customEmailInput, setCustomEmailInput] = useState('');
+  const [showPreview, setShowPreview] = useState(true); // Aperçu visible par défaut
 
   useEffect(() => {
     if (isEdit && id) {
@@ -164,6 +166,137 @@ const NewsletterEditPage = () => {
     }
   };
 
+  // Fonction pour convertir les classes Tailwind en styles inline pour l'email
+  const convertToEmailHTML = (html) => {
+    // Remplacer les classes Tailwind par des styles inline pour l'email
+    let emailHTML = html
+      // Adapter les images pour qu'elles s'ajustent à la largeur
+      .replace(/<img([^>]*)>/gi, (match, attrs) => {
+        // Ajouter max-width: 100% et height: auto si pas déjà présent
+        if (!attrs.includes('style=')) {
+          return `<img${attrs} style="max-width: 100%; height: auto;">`;
+        }
+        // Si style existe, ajouter max-width et height
+        return match.replace(/style="([^"]*)"/i, (styleMatch, styleContent) => {
+          if (!styleContent.includes('max-width')) {
+            return `style="${styleContent}; max-width: 100%; height: auto;"`;
+          }
+          return styleMatch;
+        });
+      })
+      // Adapter les tableaux pour qu'ils s'ajustent à la largeur
+      .replace(/<table([^>]*)>/gi, (match, attrs) => {
+        if (!attrs.includes('style=')) {
+          return `<table${attrs} style="width: 100%; max-width: 100%; table-layout: auto;">`;
+        }
+        return match.replace(/style="([^"]*)"/i, (styleMatch, styleContent) => {
+          if (!styleContent.includes('width')) {
+            return `style="${styleContent}; width: 100%; max-width: 100%; table-layout: auto;"`;
+          }
+          return styleMatch;
+        });
+      })
+      .replace(/class="[^"]*text-2xl[^"]*"/g, 'style="font-size: 1.5em; font-weight: 700; margin-top: 1.5em; margin-bottom: 0.75em; color: #1a202c;"')
+      .replace(/class="[^"]*text-3xl[^"]*"/g, 'style="font-size: 1.875em; font-weight: 700; margin-top: 1.5em; margin-bottom: 0.75em; color: #1a202c;"')
+      .replace(/class="[^"]*text-4xl[^"]*"/g, 'style="font-size: 2.25em; font-weight: 700; margin-top: 1.5em; margin-bottom: 0.75em; color: #1a202c;"')
+      .replace(/class="[^"]*font-bold[^"]*"/g, 'style="font-weight: 700;"')
+      .replace(/class="[^"]*italic[^"]*"/g, 'style="font-style: italic;"')
+      .replace(/class="[^"]*text-gray-900[^"]*"/g, 'style="color: #1a202c;"')
+      .replace(/class="[^"]*text-gray-700[^"]*"/g, 'style="color: #4a5568;"')
+      .replace(/class="[^"]*text-gray-600[^"]*"/g, 'style="color: #4a5568;"')
+      .replace(/class="[^"]*text-primary-600[^"]*"/g, 'style="color: #00751B; text-decoration: underline;"')
+      .replace(/class="[^"]*mb-4[^"]*"/g, 'style="margin-bottom: 1em;"')
+      .replace(/class="[^"]*leading-relaxed[^"]*"/g, 'style="line-height: 1.7;"')
+      .replace(/class="[^"]*list-disc[^"]*"/g, 'style="list-style-type: disc; padding-left: 1.5em; margin: 0.75em 0;"')
+      .replace(/class="[^"]*list-decimal[^"]*"/g, 'style="list-style-type: decimal; padding-left: 1.5em; margin: 0.75em 0;"')
+      .replace(/class="[^"]*border-l-4[^"]*border-primary-500[^"]*"/g, 'style="border-left: 4px solid #00751B; padding-left: 1em; margin: 1em 0; font-style: italic; color: #4a5568;"')
+      .replace(/class="[^"]*bg-gray-100[^"]*"/g, 'style="background-color: #f3f4f6; padding: 0.2em 0.4em; border-radius: 4px;"')
+      .replace(/class="[^"]*font-mono[^"]*"/g, 'style="font-family: monospace;"')
+      .replace(/class="[^"]*text-sm[^"]*"/g, 'style="font-size: 0.875em;"')
+      .replace(/class="[^"]*px-2[^"]*py-1[^"]*"/g, 'style="padding: 0.2em 0.4em;"')
+      .replace(/class="[^"]*rounded[^"]*"/g, 'style="border-radius: 4px;"')
+      .replace(/class="[^"]*my-4[^"]*"/g, 'style="margin: 1em 0;"')
+      .replace(/class="[^"]*my-8[^"]*"/g, 'style="margin: 2em 0;"')
+      .replace(/class="[^"]*border-gray-300[^"]*"/g, 'style="border-color: #d1d5db;"')
+      .replace(/class="[^"]*space-y-2[^"]*"/g, '')
+      .replace(/class="[^"]*ml-6[^"]*mb-2[^"]*"/g, 'style="margin-left: 1.5em; margin-bottom: 0.5em;"')
+      .replace(/class="[^"]*hover:[^"]*"/g, '')
+      .replace(/class="[^"]*"/g, '')
+    
+    return emailHTML
+  }
+
+  // Générer l'aperçu en temps réel
+  const generatePreview = useMemo(() => {
+    // Convertir le Markdown en HTML
+    const htmlContent = parseMarkdown(formData.content);
+    
+    // Convertir pour l'email (styles inline)
+    const emailContent = convertToEmailHTML(htmlContent);
+    
+    // Générer le HTML de la newsletter avec le template (similaire au serveur)
+    const newsletterHTML = `
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>${formData.subject || 'Newsletter'} - vitalCHECK</title>
+</head>
+  <body style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+  <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="width: 100%; background-color: #f5f5f5;">
+    <tr>
+      <td align="center" style="padding: 10px;">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="width: 100%; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          
+          <!-- Header -->
+          <tr>
+            <td style="background: linear-gradient(135deg, #00751B 0%, #F4C542 100%); padding: 20px 15px; text-align: center;">
+              <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="vitalCHECK Logo" style="width: 50px; height: 50px; max-width: 100%; border-radius: 8px; object-fit: contain; margin-bottom: 10px; background: rgba(255,255,255,0.1); padding: 6px; border-radius: 12px;" />
+              <h1 style="color: #ffffff; margin: 0; font-size: clamp(20px, 4vw, 28px); font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.2); letter-spacing: -0.5px;">
+                ${formData.subject || 'Newsletter vitalCHECK'}
+              </h1>
+              ${formData.previewText ? `<p style="color: rgba(255, 255, 255, 0.95); margin: 8px 0 0 0; font-size: clamp(14px, 2.5vw, 16px); font-weight: 400; line-height: 1.4;">${formData.previewText}</p>` : ''}
+            </td>
+          </tr>
+
+          <!-- Contenu principal -->
+          <tr>
+            <td style="padding: 20px 15px;">
+              <div style="color: #333333; font-size: clamp(14px, 2vw, 16px); line-height: 1.7; word-wrap: break-word;">
+                ${emailContent}
+              </div>
+            </td>
+          </tr>
+
+          <!-- Footer -->
+          <tr>
+            <td style="background: #1f2937; padding: 20px 15px; text-align: center;">
+              <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="vitalCHECK Logo" style="width: 40px; height: 40px; max-width: 100%; border-radius: 8px; object-fit: contain; margin: 0 auto 10px auto; background: rgba(255,255,255,0.1); padding: 4px; border-radius: 10px; display: block;" />
+              <h3 style="color: #ffffff; margin: 0 0 6px 0; font-size: clamp(16px, 3vw, 18px); font-weight: 700;">Enterprise Health Check</h3>
+              <p style="color: #9ca3af; margin: 0; font-size: clamp(12px, 2vw, 13px); line-height: 1.5;">Évaluation Professionnelle d'Entreprise & Conseil en Croissance</p>
+              <div style="margin: 15px 0; padding-top: 15px; border-top: 1px solid #374151;">
+                <p style="color: #9ca3af; margin: 0 0 8px 0; font-size: clamp(12px, 2vw, 13px); line-height: 1.6; word-wrap: break-word;">📧 info@checkmyenterprise.com | 📞 +221 771970713 / +221 774536704</p>
+                <p style="color: #6b7280; margin: 0; font-size: clamp(11px, 1.8vw, 12px);"><a href="https://www.checkmyenterprise.com" style="color: #60a5fa; text-decoration: none;">www.checkmyenterprise.com</a></p>
+              </div>
+              <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #374151;">
+                <p style="color: #6b7280; margin: 0; font-size: clamp(10px, 1.6vw, 11px); line-height: 1.5; word-wrap: break-word;">Vous recevez cet email car vous êtes abonné à la newsletter vitalCHECK.</p>
+                <p style="color: #4b5563; margin: 10px 0 0 0; font-size: clamp(9px, 1.4vw, 10px);">&copy; ${new Date().getFullYear()} vitalCHECK Enterprise Health Check. Tous droits réservés.</p>
+              </div>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+    `;
+    
+    return newsletterHTML;
+  }, [formData.subject, formData.previewText, formData.content]);
+
   const handlePreview = async () => {
     try {
       const token = localStorage.getItem('adminToken');
@@ -182,22 +315,8 @@ const NewsletterEditPage = () => {
       }
     } catch (error) {
       console.error('Erreur lors de la prévisualisation:', error);
-      // Si c'est une nouvelle newsletter, générer un aperçu local
-      if (!id && formData.content) {
-        const previewHTML = `
-          <div style="max-width: 600px; margin: 0 auto; font-family: Arial, sans-serif;">
-            <h1 style="color: #1a202c; font-size: 24px; margin-bottom: 10px;">${formData.subject || 'Sujet de la newsletter'}</h1>
-            ${formData.previewText ? `<p style="color: #718096; font-size: 14px; margin-bottom: 20px;">${formData.previewText}</p>` : ''}
-            <div style="color: #4a5568; line-height: 1.6;">
-              ${formData.content}
-            </div>
-          </div>
-        `;
-        setPreviewHTML(previewHTML);
-        setPreviewMode(true);
-      } else {
-        toast.error('Erreur lors de la prévisualisation');
-      }
+      setPreviewHTML(generatePreview);
+      setPreviewMode(true);
     }
   };
 
@@ -341,15 +460,15 @@ const NewsletterEditPage = () => {
           </div>
 
           <div className="flex items-center gap-2">
-            {isEdit && (
-              <button
-                onClick={handlePreview}
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
-              >
-                <Eye className="w-5 h-5" />
-                Aperçu
-              </button>
-            )}
+            <button
+              onClick={() => setShowPreview(!showPreview)}
+              disabled={showPreview}
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              title={showPreview ? "L'aperçu est déjà visible" : "Afficher l'aperçu"}
+            >
+              <Eye className="w-5 h-5" />
+              Aperçu
+            </button>
             <button
               onClick={handleSave}
               disabled={saving}
@@ -371,9 +490,9 @@ const NewsletterEditPage = () => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className={`grid gap-6 ${showPreview ? 'lg:grid-cols-2' : 'lg:grid-cols-3'}`}>
           {/* Formulaire principal */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className={`space-y-6 ${showPreview ? 'lg:col-span-1' : 'lg:col-span-2'}`}>
             {/* Sujet */}
             <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -418,8 +537,41 @@ const NewsletterEditPage = () => {
             </div>
           </div>
 
-          {/* Panneau latéral */}
-          <div className="space-y-6">
+          {/* Aperçu en temps réel */}
+          {showPreview && (
+            <div className="space-y-6 lg:col-span-1">
+              <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-4 h-full flex flex-col">
+                <div className="flex justify-between items-center mb-3 flex-shrink-0">
+                  <h3 className="text-base font-semibold text-gray-900">Aperçu en temps réel</h3>
+                  <button
+                    onClick={() => setShowPreview(false)}
+                    className="p-1 hover:bg-gray-100 rounded transition-colors"
+                    title="Fermer l'aperçu"
+                  >
+                    <X className="w-4 h-4 text-gray-500" />
+                  </button>
+                </div>
+                <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50 flex-1 flex flex-col">
+                  <div className="flex-1 overflow-y-auto overflow-x-hidden" style={{ maxHeight: 'calc(100vh - 200px)' }}>
+                    <div className="p-2">
+                      <div 
+                        className="bg-white w-full"
+                        style={{ 
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                          overflow: 'hidden'
+                        }}
+                        dangerouslySetInnerHTML={{ __html: generatePreview }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Panneau latéral - Destinataires (s'affiche à la place de l'aperçu quand il est fermé) */}
+          {!showPreview && (
+            <div className="space-y-6 lg:col-span-1">
             {/* Destinataires */}
             <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
               <div className="flex items-center gap-2 mb-4">
@@ -514,6 +666,7 @@ const NewsletterEditPage = () => {
               </ul>
             </div>
           </div>
+          )}
         </div>
       </div>
     </AdminLayout>
