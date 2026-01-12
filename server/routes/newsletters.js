@@ -218,12 +218,13 @@ router.post('/admin/create', authenticateAdmin, [
       });
     }
 
-    const { subject, content, previewText, recipients, scheduledAt } = req.body;
+    const { subject, content, previewText, imageUrl, recipients, scheduledAt } = req.body;
 
     const newsletter = new Newsletter({
       subject,
       content,
       previewText,
+      imageUrl,
       recipients: recipients || { type: 'all' },
       scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
       status: scheduledAt ? 'scheduled' : 'draft',
@@ -260,7 +261,7 @@ router.put('/admin/:id', authenticateAdmin, [
       });
     }
 
-    const { subject, content, previewText, recipients, scheduledAt } = req.body;
+    const { subject, content, previewText, imageUrl, recipients, scheduledAt } = req.body;
 
     const newsletter = await Newsletter.findById(req.params.id);
 
@@ -282,6 +283,7 @@ router.put('/admin/:id', authenticateAdmin, [
     if (subject) newsletter.subject = subject;
     if (content) newsletter.content = content;
     if (previewText !== undefined) newsletter.previewText = previewText;
+    if (imageUrl !== undefined) newsletter.imageUrl = imageUrl;
     if (recipients) newsletter.recipients = recipients;
     if (scheduledAt) {
       newsletter.scheduledAt = new Date(scheduledAt);
@@ -308,7 +310,7 @@ router.put('/admin/:id', authenticateAdmin, [
 router.post('/admin/:id/preview', authenticateAdmin, async (req, res) => {
   try {
     const { id } = req.params;
-    const { subject, previewText, content } = req.body;
+    const { subject, previewText, content, imageUrl } = req.body;
 
     let newsletter = null;
     
@@ -321,6 +323,7 @@ router.post('/admin/:id/preview', authenticateAdmin, async (req, res) => {
     const newsletterSubject = subject || newsletter?.subject || 'Sujet de la newsletter';
     const newsletterPreviewText = previewText || newsletter?.previewText || '';
     const newsletterContent = content || newsletter?.content || '';
+    const newsletterImageUrl = imageUrl || newsletter?.imageUrl || null;
 
     // Générer le HTML de prévisualisation
     const previewHTML = createUnifiedEmailTemplate({
@@ -328,6 +331,7 @@ router.post('/admin/:id/preview', authenticateAdmin, async (req, res) => {
       title: newsletterSubject,
       subtitle: newsletterPreviewText,
       content: newsletterContent,
+      imageUrl: newsletterImageUrl,
       buttons: [],
       note: 'Ceci est un aperçu de votre newsletter'
     });
@@ -338,7 +342,8 @@ router.post('/admin/:id/preview', authenticateAdmin, async (req, res) => {
       newsletter: {
         subject: newsletterSubject,
         previewText: newsletterPreviewText,
-        content: newsletterContent
+        content: newsletterContent,
+        imageUrl: newsletterImageUrl
       }
     });
   } catch (error) {
@@ -497,6 +502,7 @@ router.post('/admin/:id/send', authenticateAdmin, async (req, res) => {
       title: newsletter.subject,
       subtitle: newsletter.previewText || '',
       content: newsletter.content,
+      imageUrl: newsletter.imageUrl || null,
       buttons: [],
       note: 'Vous recevez cet email car vous êtes abonné à la newsletter vitalCHECK.'
     });

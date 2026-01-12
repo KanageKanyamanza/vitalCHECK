@@ -14,6 +14,10 @@ const newsletterSchema = new mongoose.Schema({
     type: String,
     trim: true
   },
+  imageUrl: {
+    type: String,
+    trim: true
+  },
   status: {
     type: String,
     enum: ['draft', 'scheduled', 'sending', 'sent', 'cancelled'],

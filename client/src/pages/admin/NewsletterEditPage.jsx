@@ -1,11 +1,12 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save, Eye, Send, Users, Mail, X } from 'lucide-react';
+import { ArrowLeft, Save, Eye, Send, Users, Mail, X, Upload, Image as ImageIcon, Trash2 } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import SimpleTextEditor from '../../components/admin/SimpleTextEditor';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 import { parseMarkdown } from '../../utils/markdownParser';
+import { uploadApiService } from '../../services/api';
 
 // Configuration de l'URL de l'API
 const getApiBaseUrl = () => {
@@ -26,6 +27,7 @@ const NewsletterEditPage = () => {
     subject: '',
     previewText: '',
     content: '',
+    imageUrl: '',
     recipients: {
       type: 'all',
       tags: [],
@@ -40,6 +42,7 @@ const NewsletterEditPage = () => {
   const [recipientCount, setRecipientCount] = useState(0);
   const [customEmailInput, setCustomEmailInput] = useState('');
   const [showPreview, setShowPreview] = useState(true); // Aperçu visible par défaut
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     if (isEdit && id) {
@@ -75,6 +78,7 @@ const NewsletterEditPage = () => {
           subject: newsletter.subject || '',
           previewText: newsletter.previewText || '',
           content: newsletter.content || '',
+          imageUrl: newsletter.imageUrl || '',
           recipients: newsletter.recipients || {
             type: 'all',
             tags: [],
@@ -241,29 +245,119 @@ const NewsletterEditPage = () => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <title>${formData.subject || 'Newsletter'} - vitalCHECK</title>
+  <!--[if mso]>
+  <style type="text/css">
+    body, table, td {font-family: Arial, sans-serif !important;}
+  </style>
+  <![endif]-->
+  <style type="text/css">
+    /* Reset styles */
+    body, table, td, p, a, li, blockquote {
+      -webkit-text-size-adjust: 100%;
+      -ms-text-size-adjust: 100%;
+    }
+    table, td {
+      mso-table-lspace: 0pt;
+      mso-table-rspace: 0pt;
+    }
+    img {
+      -ms-interpolation-mode: bicubic;
+      border: 0;
+      outline: none;
+      text-decoration: none;
+    }
+    
+    /* Responsive styles */
+    @media only screen and (max-width: 600px) {
+      .container {
+        width: 100% !important;
+        max-width: 100% !important;
+        border-radius: 0 !important;
+      }
+      .header-padding {
+        padding: 15px 10px !important;
+      }
+      .content-padding {
+        padding: 15px 10px !important;
+      }
+      .footer-padding {
+        padding: 15px 10px !important;
+      }
+      .logo-size {
+        width: 50px !important;
+        height: 50px !important;
+      }
+      .title-size {
+        font-size: 22px !important;
+        line-height: 1.2 !important;
+      }
+      .subtitle-size {
+        font-size: 14px !important;
+        line-height: 1.4 !important;
+      }
+      .text-size {
+        font-size: 14px !important;
+        line-height: 1.6 !important;
+      }
+      .footer-text {
+        font-size: 11px !important;
+        line-height: 1.5 !important;
+      }
+      .contact-text {
+        font-size: 11px !important;
+        word-break: break-word !important;
+        line-height: 1.6 !important;
+      }
+      /* Table responsive */
+      table[class="responsive-table"] {
+        width: 100% !important;
+      }
+      td[width="50%"] {
+        width: 100% !important;
+        display: block !important;
+        padding: 6px !important;
+      }
+    }
+  </style>
+  <!--[if mso]>
+  <style type="text/css">
+    .container { width: 600px !important; }
+    td[width="50%"] { width: 50% !important; }
+  </style>
+  <![endif]-->
 </head>
-  <body style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;">
+<body style="margin: 0; padding: 0; background-color: #f5f5f5; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;">
   <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="width: 100%; background-color: #f5f5f5;">
     <tr>
       <td align="center" style="padding: 10px;">
-        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="width: 100%; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="container" style="max-width: 600px; width: 100%; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
           
           <!-- Header -->
           <tr>
-            <td style="background: linear-gradient(135deg, #00751B 0%, #F4C542 100%); padding: 20px 15px; text-align: center;">
-              <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="vitalCHECK Logo" style="width: 50px; height: 50px; max-width: 100%; border-radius: 8px; object-fit: contain; margin-bottom: 10px; background: rgba(255,255,255,0.1); padding: 6px; border-radius: 12px;" />
-              <h1 style="color: #ffffff; margin: 0; font-size: clamp(20px, 4vw, 28px); font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.2); letter-spacing: -0.5px;">
+            <td class="header-padding" style="background: linear-gradient(135deg, #00751B 0%, #F4C542 100%); padding: 20px 15px; text-align: center;">
+              <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="vitalCHECK Logo" class="logo-size" style="width: 50px; height: 50px; max-width: 100%; border-radius: 8px; object-fit: contain; margin-bottom: 10px; background: rgba(255,255,255,0.1); padding: 6px; border-radius: 12px; display: block; margin-left: auto; margin-right: auto;" />
+              <h1 class="title-size" style="color: #ffffff; margin: 0; font-size: clamp(20px, 4vw, 28px); font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.2); letter-spacing: -0.5px; line-height: 1.2;">
                 ${formData.subject || 'Newsletter vitalCHECK'}
               </h1>
-              ${formData.previewText ? `<p style="color: rgba(255, 255, 255, 0.95); margin: 8px 0 0 0; font-size: clamp(14px, 2.5vw, 16px); font-weight: 400; line-height: 1.4;">${formData.previewText}</p>` : ''}
+              ${formData.previewText ? `<p class="subtitle-size" style="color: rgba(255, 255, 255, 0.95); margin: 8px 0 0 0; font-size: clamp(14px, 2.5vw, 16px); font-weight: 400; line-height: 1.4;">${formData.previewText}</p>` : ''}
             </td>
           </tr>
 
+          ${formData.imageUrl ? `
+          <!-- Image de la newsletter -->
+          <tr>
+            <td style="padding: 0;">
+              <img src="${formData.imageUrl}" alt="${formData.subject || 'Newsletter'}" style="width: 100%; max-width: 100%; height: auto; display: block;" />
+            </td>
+          </tr>
+          ` : ''}
+
           <!-- Contenu principal -->
           <tr>
-            <td style="padding: 20px 15px;">
-              <div style="color: #333333; font-size: clamp(14px, 2vw, 16px); line-height: 1.7; word-wrap: break-word;">
+            <td class="content-padding" style="padding: 20px 15px;">
+              <div class="text-size" style="color: #333333; font-size: clamp(14px, 2vw, 16px); line-height: 1.7; word-wrap: break-word;">
                 ${emailContent}
               </div>
             </td>
@@ -271,17 +365,17 @@ const NewsletterEditPage = () => {
 
           <!-- Footer -->
           <tr>
-            <td style="background: #1f2937; padding: 20px 15px; text-align: center;">
+            <td class="footer-padding" style="background: #1f2937; padding: 20px 15px; text-align: center;">
               <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="vitalCHECK Logo" style="width: 40px; height: 40px; max-width: 100%; border-radius: 8px; object-fit: contain; margin: 0 auto 10px auto; background: rgba(255,255,255,0.1); padding: 4px; border-radius: 10px; display: block;" />
-              <h3 style="color: #ffffff; margin: 0 0 6px 0; font-size: clamp(16px, 3vw, 18px); font-weight: 700;">Enterprise Health Check</h3>
-              <p style="color: #9ca3af; margin: 0; font-size: clamp(12px, 2vw, 13px); line-height: 1.5;">Évaluation Professionnelle d'Entreprise & Conseil en Croissance</p>
+              <h3 style="color: #ffffff; margin: 0 0 6px 0; font-size: clamp(16px, 3vw, 18px); font-weight: 700; line-height: 1.2;">Enterprise Health Check</h3>
+              <p class="text-size" style="color: #9ca3af; margin: 0; font-size: clamp(12px, 2vw, 13px); line-height: 1.5;">Évaluation Professionnelle d'Entreprise & Conseil en Croissance</p>
               <div style="margin: 15px 0; padding-top: 15px; border-top: 1px solid #374151;">
-                <p style="color: #9ca3af; margin: 0 0 8px 0; font-size: clamp(12px, 2vw, 13px); line-height: 1.6; word-wrap: break-word;">📧 info@checkmyenterprise.com | 📞 +221 771970713 / +221 774536704</p>
-                <p style="color: #6b7280; margin: 0; font-size: clamp(11px, 1.8vw, 12px);"><a href="https://www.checkmyenterprise.com" style="color: #60a5fa; text-decoration: none;">www.checkmyenterprise.com</a></p>
+                <p class="contact-text" style="color: #9ca3af; margin: 0 0 8px 0; font-size: clamp(12px, 2vw, 13px); line-height: 1.6; word-wrap: break-word;">📧 info@checkmyenterprise.com | 📞 +221 771970713 / +221 774536704</p>
+                <p class="footer-text" style="color: #6b7280; margin: 0; font-size: clamp(11px, 1.8vw, 12px);"><a href="https://www.checkmyenterprise.com" style="color: #60a5fa; text-decoration: none;">www.checkmyenterprise.com</a></p>
               </div>
               <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #374151;">
-                <p style="color: #6b7280; margin: 0; font-size: clamp(10px, 1.6vw, 11px); line-height: 1.5; word-wrap: break-word;">Vous recevez cet email car vous êtes abonné à la newsletter vitalCHECK.</p>
-                <p style="color: #4b5563; margin: 10px 0 0 0; font-size: clamp(9px, 1.4vw, 10px);">&copy; ${new Date().getFullYear()} vitalCHECK Enterprise Health Check. Tous droits réservés.</p>
+                <p class="footer-text" style="color: #6b7280; margin: 0; font-size: clamp(10px, 1.6vw, 11px); line-height: 1.5; word-wrap: break-word;">Vous recevez cet email car vous êtes abonné à la newsletter vitalCHECK.</p>
+                <p class="footer-text" style="color: #4b5563; margin: 10px 0 0 0; font-size: clamp(9px, 1.4vw, 10px);">&copy; ${new Date().getFullYear()} vitalCHECK Enterprise Health Check. Tous droits réservés.</p>
               </div>
             </td>
           </tr>
@@ -295,7 +389,7 @@ const NewsletterEditPage = () => {
     `;
     
     return newsletterHTML;
-  }, [formData.subject, formData.previewText, formData.content]);
+  }, [formData.subject, formData.previewText, formData.content, formData.imageUrl]);
 
   const handlePreview = async () => {
     try {
@@ -303,7 +397,12 @@ const NewsletterEditPage = () => {
       const newsletterId = id || 'new';
       const response = await axios.post(
         `${API_BASE_URL}/newsletters/admin/${newsletterId}/preview`,
-        formData,
+        {
+          subject: formData.subject,
+          previewText: formData.previewText,
+          content: formData.content,
+          imageUrl: formData.imageUrl
+        },
         {
           headers: { Authorization: `Bearer ${token}` }
         }
@@ -403,6 +502,52 @@ const NewsletterEditPage = () => {
     }
   };
 
+  const handleImageUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Vérifier le type de fichier
+    if (!file.type.startsWith('image/')) {
+      toast.error('Veuillez sélectionner un fichier image');
+      return;
+    }
+
+    // Vérifier la taille (5MB max)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('L\'image ne doit pas dépasser 5MB');
+      return;
+    }
+
+    setUploadingImage(true);
+    try {
+      const formData = new FormData();
+      formData.append('image', file);
+
+      const response = await uploadApiService.uploadImage(formData);
+      
+      if (response.data.success) {
+        setFormData(prev => ({
+          ...prev,
+          imageUrl: response.data.data.url
+        }));
+        toast.success('Image uploadée avec succès');
+      }
+    } catch (error) {
+      console.error('Erreur lors de l\'upload:', error);
+      toast.error(error.response?.data?.message || 'Erreur lors de l\'upload de l\'image');
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setFormData(prev => ({
+      ...prev,
+      imageUrl: ''
+    }));
+    toast.success('Image supprimée');
+  };
+
   if (loading) {
     return (
       <AdminLayout>
@@ -416,20 +561,27 @@ const NewsletterEditPage = () => {
   if (previewMode) {
     return (
       <AdminLayout>
-        <div className="p-4 lg:p-8">
-          <div className="flex justify-between items-center mb-6">
-            <h1 className="text-3xl font-bold text-gray-900">Aperçu de la Newsletter</h1>
+        <div className="p-4 sm:p-6 lg:p-8">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">Aperçu de la Newsletter</h1>
             <button
               onClick={() => setPreviewMode(false)}
-              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors shadow-sm"
+              className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors shadow-sm text-sm sm:text-base whitespace-nowrap"
             >
               Retour à l'édition
             </button>
           </div>
 
-          <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
-            <div className="border border-gray-200 rounded-lg p-4 bg-gray-50">
-              <div dangerouslySetInnerHTML={{ __html: previewHTML }} />
+          <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-3 sm:p-6">
+            <div className="border border-gray-200 rounded-lg p-2 sm:p-4 bg-gray-50 overflow-x-auto">
+              <div 
+                className="newsletter-preview"
+                style={{
+                  minWidth: '280px',
+                  maxWidth: '100%'
+                }}
+                dangerouslySetInnerHTML={{ __html: previewHTML }} 
+              />
             </div>
           </div>
         </div>
@@ -439,62 +591,65 @@ const NewsletterEditPage = () => {
 
   return (
     <AdminLayout>
-      <div className="p-4 lg:p-8">
+      <div className="p-4 sm:p-6 lg:p-8">
         {/* Header */}
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-4">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+          <div className="flex items-center gap-2 sm:gap-4">
             <button
               onClick={() => navigate('/admin/newsletters')}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-gray-100 rounded-lg transition-colors flex-shrink-0"
+              aria-label="Retour"
             >
               <ArrowLeft className="w-5 h-5" />
             </button>
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900">
+            <div className="min-w-0 flex-1">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 truncate">
                 {isEdit ? 'Modifier la Newsletter' : 'Nouvelle Newsletter'}
               </h1>
-              <p className="text-gray-600 mt-1">
+              <p className="text-sm sm:text-base text-gray-600 mt-1">
                 {isEdit ? 'Modifiez votre newsletter' : 'Créez une nouvelle newsletter'}
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-2">
             <button
               onClick={() => setShowPreview(!showPreview)}
               disabled={showPreview}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
               title={showPreview ? "L'aperçu est déjà visible" : "Afficher l'aperçu"}
             >
-              <Eye className="w-5 h-5" />
-              Aperçu
+              <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="hidden sm:inline">Aperçu</span>
             </button>
             <button
               onClick={handleSave}
               disabled={saving}
-              className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 shadow-sm"
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 shadow-sm text-sm sm:text-base"
             >
-              <Save className="w-5 h-5" />
-              {saving ? 'Enregistrement...' : 'Enregistrer'}
+              <Save className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="hidden sm:inline">{saving ? 'Enregistrement...' : 'Enregistrer'}</span>
+              <span className="sm:hidden">{saving ? '...' : 'Sauver'}</span>
             </button>
             {isEdit && (
               <button
                 onClick={handleSend}
                 disabled={saving || recipientCount === 0}
-                className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 shadow-sm"
+                className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 shadow-sm text-sm sm:text-base"
               >
-                <Send className="w-5 h-5" />
-                Envoyer
+                <Send className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="hidden sm:inline">Envoyer</span>
+                <span className="sm:hidden">Envoyer</span>
               </button>
             )}
           </div>
         </div>
 
-        <div className={`grid gap-6 ${showPreview ? 'lg:grid-cols-2' : 'lg:grid-cols-3'}`}>
+        <div className={`grid gap-4 sm:gap-6 grid-cols-1 ${showPreview ? 'lg:grid-cols-2' : 'lg:grid-cols-3'}`}>
           {/* Formulaire principal */}
-          <div className={`space-y-6 ${showPreview ? 'lg:col-span-1' : 'lg:col-span-2'}`}>
+          <div className={`space-y-4 sm:space-y-6 ${showPreview ? 'lg:col-span-1' : 'lg:col-span-2'}`}>
             {/* Sujet */}
-            <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
+            <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-4 sm:p-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Sujet de l'email *
               </label>
@@ -508,7 +663,7 @@ const NewsletterEditPage = () => {
             </div>
 
             {/* Texte d'aperçu */}
-            <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
+            <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-4 sm:p-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Texte d'aperçu (optionnel)
               </label>
@@ -524,8 +679,70 @@ const NewsletterEditPage = () => {
               </p>
             </div>
 
+            {/* Image de la newsletter */}
+            <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-4 sm:p-6">
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Image de la newsletter (optionnel)
+              </label>
+              
+              {formData.imageUrl ? (
+                <div className="space-y-3">
+                  <div className="relative rounded-lg overflow-hidden border border-gray-200">
+                    <img 
+                      src={formData.imageUrl} 
+                      alt="Newsletter" 
+                      className="w-full h-auto max-h-64 object-contain"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleRemoveImage}
+                    className="flex items-center gap-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    Supprimer l'image
+                  </button>
+                </div>
+              ) : (
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-primary-500 transition-colors">
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleImageUpload}
+                    disabled={uploadingImage}
+                    className="hidden"
+                    id="image-upload"
+                  />
+                  <label
+                    htmlFor="image-upload"
+                    className="cursor-pointer flex flex-col items-center gap-2"
+                  >
+                    {uploadingImage ? (
+                      <>
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
+                        <span className="text-sm text-gray-600">Upload en cours...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Upload className="w-8 h-8 text-gray-400" />
+                        <span className="text-sm text-gray-600">
+                          Cliquez pour uploader une image
+                        </span>
+                        <span className="text-xs text-gray-500">
+                          Formats acceptés: JPG, PNG, GIF (max 5MB)
+                        </span>
+                      </>
+                    )}
+                  </label>
+                </div>
+              )}
+              <p className="text-xs text-gray-500 mt-2">
+                L'image sera affichée en haut de la newsletter, juste après le header
+              </p>
+            </div>
+
             {/* Contenu */}
-            <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
+            <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-4 sm:p-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Contenu de la newsletter *
               </label>
@@ -539,26 +756,28 @@ const NewsletterEditPage = () => {
 
           {/* Aperçu en temps réel */}
           {showPreview && (
-            <div className="space-y-6 lg:col-span-1">
-              <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-4 h-full flex flex-col">
+            <div className="space-y-4 sm:space-y-6 lg:col-span-1">
+              <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-3 sm:p-4 h-full flex flex-col min-h-[400px] sm:min-h-[600px]">
                 <div className="flex justify-between items-center mb-3 flex-shrink-0">
-                  <h3 className="text-base font-semibold text-gray-900">Aperçu en temps réel</h3>
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900">Aperçu en temps réel</h3>
                   <button
                     onClick={() => setShowPreview(false)}
-                    className="p-1 hover:bg-gray-100 rounded transition-colors"
+                    className="p-1 hover:bg-gray-100 rounded transition-colors flex-shrink-0"
                     title="Fermer l'aperçu"
+                    aria-label="Fermer l'aperçu"
                   >
                     <X className="w-4 h-4 text-gray-500" />
                   </button>
                 </div>
-                <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50 flex-1 flex flex-col">
-                  <div className="flex-1 overflow-y-auto overflow-x-hidden" style={{ maxHeight: 'calc(100vh - 200px)' }}>
-                    <div className="p-2">
+                <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50 flex-1 flex flex-col min-h-0">
+                  <div className="flex-1 overflow-y-auto overflow-x-auto" style={{ maxHeight: 'calc(100vh - 250px)' }}>
+                    <div className="p-2 sm:p-4">
                       <div 
-                        className="bg-white w-full"
+                        className="bg-white w-full max-w-full"
                         style={{ 
                           boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                          overflow: 'hidden'
+                          overflow: 'hidden',
+                          margin: '0 auto'
                         }}
                         dangerouslySetInnerHTML={{ __html: generatePreview }}
                       />
@@ -571,9 +790,9 @@ const NewsletterEditPage = () => {
 
           {/* Panneau latéral - Destinataires (s'affiche à la place de l'aperçu quand il est fermé) */}
           {!showPreview && (
-            <div className="space-y-6 lg:col-span-1">
+            <div className="space-y-4 sm:space-y-6 lg:col-span-1">
             {/* Destinataires */}
-            <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
+            <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-4 sm:p-6">
               <div className="flex items-center gap-2 mb-4">
                 <Users className="w-5 h-5 text-primary-600" />
                 <h3 className="text-lg font-semibold text-gray-900">Destinataires</h3>
@@ -606,36 +825,38 @@ const NewsletterEditPage = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Ajouter un email
                     </label>
-                    <div className="flex gap-2">
+                    <div className="flex flex-col sm:flex-row gap-2">
                       <input
                         type="email"
                         value={customEmailInput}
                         onChange={(e) => setCustomEmailInput(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && addCustomEmail()}
                         placeholder="email@exemple.com"
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-sm sm:text-base"
                       />
                       <button
                         onClick={addCustomEmail}
-                        className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors shadow-sm"
+                        className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors shadow-sm text-sm sm:text-base whitespace-nowrap"
                       >
                         Ajouter
                       </button>
                     </div>
 
                     {formData.recipients.customEmails.length > 0 && (
-                      <div className="mt-2 space-y-1">
+                      <div className="mt-2 space-y-2">
                         {formData.recipients.customEmails.map((email) => (
                           <div
                             key={email}
-                            className="flex items-center justify-between px-3 py-2 bg-gray-50 rounded-lg"
+                            className="flex items-center justify-between gap-2 px-3 py-2 bg-gray-50 rounded-lg"
                           >
-                            <span className="text-sm text-gray-700">{email}</span>
+                            <span className="text-xs sm:text-sm text-gray-700 truncate flex-1 min-w-0">{email}</span>
                             <button
                               onClick={() => removeCustomEmail(email)}
-                              className="text-red-600 hover:text-red-800"
+                              className="text-red-600 hover:text-red-800 flex-shrink-0 p-1 hover:bg-red-50 rounded transition-colors"
+                              aria-label={`Supprimer ${email}`}
+                              title={`Supprimer ${email}`}
                             >
-                              ×
+                              <X className="w-4 h-4" />
                             </button>
                           </div>
                         ))}
@@ -656,9 +877,9 @@ const NewsletterEditPage = () => {
             </div>
 
             {/* Aide */}
-            <div className="bg-blue-50 rounded-xl border border-blue-100 p-6">
+            <div className="bg-blue-50 rounded-xl border border-blue-100 p-4 sm:p-6">
               <h3 className="text-sm font-semibold text-blue-900 mb-2">💡 Conseils</h3>
-              <ul className="text-xs text-blue-800 space-y-1">
+              <ul className="text-xs sm:text-sm text-blue-800 space-y-1">
                 <li>• Rédigez un sujet accrocheur</li>
                 <li>• Utilisez le texte d'aperçu pour inciter à l'ouverture</li>
                 <li>• Testez avec l'aperçu avant l'envoi</li>
