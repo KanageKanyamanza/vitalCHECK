@@ -73,6 +73,14 @@ const BlogPage = () => {
       }
 
       const response = await blogApiService.getBlogs(params)
+      // Debug: vérifier la structure des données
+      if (response.data.data && response.data.data.length > 0) {
+        console.log('📝 [BLOG PAGE] Premier blog:', {
+          id: response.data.data[0]._id,
+          title: response.data.data[0].title,
+          featuredImage: response.data.data[0].featuredImage
+        })
+      }
       setBlogs(response.data.data)
       setTotalPages(response.data.pagination.pages)
     } catch (error) {
@@ -308,12 +316,16 @@ const BlogPage = () => {
                     onClick={() => handleBlogClick(blog)}
                   >
                     {/* Image */}
-                    {blog.featuredImage?.url && (
+                    {blog.featuredImage && blog.featuredImage.url && blog.featuredImage.url.trim() !== '' && (
                       <div className="aspect-w-16 aspect-h-9 rounded-t-lg overflow-hidden">
                         <img
                           src={blog.featuredImage.url}
                           alt={blog.featuredImage.alt || blog.title}
                           className="w-full h-48 object-cover"
+                          onError={(e) => {
+                            console.error('❌ [BLOG PAGE] Erreur de chargement de l\'image:', blog.featuredImage.url)
+                            e.target.style.display = 'none'
+                          }}
                         />
                       </div>
                     )}

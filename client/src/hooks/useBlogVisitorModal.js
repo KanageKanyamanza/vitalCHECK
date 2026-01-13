@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { blogApiService } from '../services/api'
+import { getOrCreateVisitorId } from '../utils/visitorId'
 
 export const useBlogVisitorModal = (blogId, blogTitle, blogSlug) => {
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -17,10 +18,11 @@ export const useBlogVisitorModal = (blogId, blogTitle, blogSlug) => {
     return Math.min(Math.max(scrollPercent, 0), 100)
   }, [])
 
-  // Fonction pour vérifier si un visiteur existe déjà
+  // Fonction pour vérifier si un visiteur existe déjà pour ce navigateur
   const checkExistingVisitor = useCallback(async () => {
     try {
-      const response = await blogApiService.checkVisitorByIP()
+      const visitorId = getOrCreateVisitorId()
+      const response = await blogApiService.checkVisitorByIP(visitorId)
       if (response.data.exists) {
         setIsReturningVisitor(true)
         setVisitorData(response.data.visitor)
@@ -36,19 +38,24 @@ export const useBlogVisitorModal = (blogId, blogTitle, blogSlug) => {
   // Fonction pour soumettre le formulaire
   const handleFormSubmit = useCallback(async (formData) => {
     try {
+      // Récupérer le visitorId pour ce navigateur
+      const visitorId = getOrCreateVisitorId()
+      
       // Récupérer les métriques actuelles du tracking service
       const trackingMetrics = window.trackingService?.getMetrics() || null
       
-      // Ajouter les données de tracking au formulaire
+      // Ajouter les données de tracking et le visitorId au formulaire
       const formDataWithTracking = {
         ...formData,
+        visitorId, // Identifiant unique du navigateur
         scrollDepth: trackingMetrics?.scrollDepth || 0,
         timeOnPage: trackingMetrics?.timeOnPage || 0
       }
       
       console.log('📊 [BLOG MODAL] Soumission avec données de tracking:', {
         formData: formDataWithTracking,
-        trackingMetrics
+        trackingMetrics,
+        visitorId
       })
       
       const response = await blogApiService.submitVisitorForm(formDataWithTracking)
@@ -90,12 +97,16 @@ export const useBlogVisitorModal = (blogId, blogTitle, blogSlug) => {
     // Si c'est un visiteur de retour, soumettre automatiquement SANS afficher le modal
     if (isReturning && visitor) {
       try {
+        // Récupérer le visitorId pour ce navigateur
+        const visitorId = getOrCreateVisitorId()
+        
         // Récupérer les métriques actuelles du tracking service
         const trackingMetrics = window.trackingService?.getMetrics() || null
         
         console.log('👋 [BLOG MODAL] Visiteur de retour détecté - Soumission automatique', {
           email: visitor.email,
-          blogTitle
+          blogTitle,
+          visitorId
         })
         
         await blogApiService.submitVisitorForm({
@@ -106,6 +117,7 @@ export const useBlogVisitorModal = (blogId, blogTitle, blogSlug) => {
           blogId,
           blogTitle,
           blogSlug,
+          visitorId, // Identifiant unique du navigateur
           scrollDepth: trackingMetrics?.scrollDepth || 0,
           timeOnPage: trackingMetrics?.timeOnPage || 0
         })

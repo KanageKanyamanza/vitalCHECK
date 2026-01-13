@@ -83,6 +83,14 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
       hoverColor: 'hover:bg-earth-100'
     },
     {
+      name: 'Newsletters',
+      path: '/admin/newsletters',
+      icon: Mail,
+      color: 'text-pink-600',
+      bgColor: 'bg-pink-50',
+      hoverColor: 'hover:bg-pink-100'
+    },
+    {
       name: 'Rapports',
       path: '/admin/reports',
       icon: BarChart3,

@@ -22,8 +22,8 @@ const BlogEditPage = () => {
     category: 'strategie',
     tags: [],
     status: 'draft',
-    metaTitle: '',
-    metaDescription: '',
+    metaTitle: { fr: '', en: '' },
+    metaDescription: { fr: '', en: '' },
     featuredImage: {
       url: '',
       alt: '',
@@ -203,8 +203,8 @@ const BlogEditPage = () => {
         category: blog.category || 'strategie',
         tags: blog.tags || [],
         status: blog.status || 'draft',
-        metaTitle: blog.metaTitle || '',
-        metaDescription: blog.metaDescription || '',
+        metaTitle: blog.metaTitle ? (typeof blog.metaTitle === 'object' ? { fr: blog.metaTitle.fr || '', en: blog.metaTitle.en || '' } : { fr: blog.metaTitle, en: '' }) : { fr: '', en: '' },
+        metaDescription: blog.metaDescription ? (typeof blog.metaDescription === 'object' ? { fr: blog.metaDescription.fr || '', en: blog.metaDescription.en || '' } : { fr: blog.metaDescription, en: '' }) : { fr: '', en: '' },
         featuredImage: blog.featuredImage || { url: '', alt: '', caption: '' },
         images: blog.images || [],
         caseStudy: blog.caseStudy || {
@@ -295,17 +295,17 @@ const BlogEditPage = () => {
     }))
   }
 
-  // Gérer le changement de metaTitle avec limite de caractères
-  const handleMetaTitleChange = (value) => {
+  // Gérer le changement de metaTitle avec limite de caractères (bilingue)
+  const handleMetaTitleChange = (language, value) => {
     if (value.length <= 60) {
-      handleChange('metaTitle', value)
+      handleBilingualChange('metaTitle', language, value)
     }
   }
 
-  // Gérer le changement de metaDescription avec limite de caractères
-  const handleMetaDescriptionChange = (value) => {
+  // Gérer le changement de metaDescription avec limite de caractères (bilingue)
+  const handleMetaDescriptionChange = (language, value) => {
     if (value.length <= 160) {
-      handleChange('metaDescription', value)
+      handleBilingualChange('metaDescription', language, value)
     }
   }
 
@@ -406,13 +406,43 @@ const BlogEditPage = () => {
 
     setLoading(true)
     try {
+      // Préparer les données à envoyer (ne pas envoyer les champs vides)
+      const dataToSend = { ...formData }
+      
+      // Nettoyer les champs SEO vides
+      if (dataToSend.metaTitle) {
+        const hasMetaTitle = dataToSend.metaTitle.fr?.trim() || dataToSend.metaTitle.en?.trim()
+        if (!hasMetaTitle) {
+          delete dataToSend.metaTitle
+        } else {
+          // Nettoyer les valeurs vides dans les objets bilingues
+          const cleaned = {}
+          if (dataToSend.metaTitle.fr?.trim()) cleaned.fr = dataToSend.metaTitle.fr.trim()
+          if (dataToSend.metaTitle.en?.trim()) cleaned.en = dataToSend.metaTitle.en.trim()
+          dataToSend.metaTitle = cleaned
+        }
+      }
+      
+      if (dataToSend.metaDescription) {
+        const hasMetaDescription = dataToSend.metaDescription.fr?.trim() || dataToSend.metaDescription.en?.trim()
+        if (!hasMetaDescription) {
+          delete dataToSend.metaDescription
+        } else {
+          // Nettoyer les valeurs vides dans les objets bilingues
+          const cleaned = {}
+          if (dataToSend.metaDescription.fr?.trim()) cleaned.fr = dataToSend.metaDescription.fr.trim()
+          if (dataToSend.metaDescription.en?.trim()) cleaned.en = dataToSend.metaDescription.en.trim()
+          dataToSend.metaDescription = cleaned
+        }
+      }
+      
       if (isEdit) {
         // Mode édition
-        await adminBlogApiService.updateBlog(id, formData)
+        await adminBlogApiService.updateBlog(id, dataToSend)
         toast.success('Blog mis à jour avec succès')
       } else {
         // Mode création
-        await adminBlogApiService.createBlog(formData)
+        await adminBlogApiService.createBlog(dataToSend)
         toast.success('Blog créé avec succès')
         // Effacer le brouillon après création réussie
         clearStorage()
@@ -420,7 +450,8 @@ const BlogEditPage = () => {
       navigate('/admin/blog')
     } catch (error) {
       console.error('Error saving blog:', error)
-      toast.error('Erreur lors de la sauvegarde')
+      const errorMessage = error.response?.data?.message || error.response?.data?.errors?.[0]?.message || 'Erreur lors de la sauvegarde'
+      toast.error(errorMessage)
     } finally {
       setLoading(false)
     }
@@ -476,8 +507,8 @@ const BlogEditPage = () => {
                     category: 'strategie',
                     tags: [],
                     status: 'draft',
-                    metaTitle: '',
-                    metaDescription: '',
+                    metaTitle: { fr: '', en: '' },
+                    metaDescription: { fr: '', en: '' },
                     featuredImage: { url: '', alt: '', caption: '' },
                     images: [],
                     caseStudy: { company: '', sector: '', companySize: '', challenge: '', solution: '', results: '', metrics: [] },
@@ -933,58 +964,119 @@ const BlogEditPage = () => {
             {/* SEO */}
             <div className="border-t border-gray-200 pt-6">
               <h3 className="text-lg font-medium text-gray-900 mb-4">SEO</h3>
-              <div className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Titre SEO
-                    <span className="text-sm text-gray-500 ml-2">
-                      ({formData.metaTitle.length}/60 caractères)
-                    </span>
-                  </label>
-                  <input
-                    type="text"
-                    value={formData.metaTitle}
-                    onChange={(e) => handleMetaTitleChange(e.target.value)}
-                    className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500 ${
-                      formData.metaTitle.length > 60 
-                        ? 'border-red-300 bg-red-50' 
-                        : formData.metaTitle.length > 50 
-                          ? 'border-yellow-300 bg-yellow-50' 
-                          : 'border-gray-300'
-                    }`}
-                    placeholder="Titre pour les moteurs de recherche"
-                  />
-                  {formData.metaTitle.length > 60 && (
-                    <p className="text-red-500 text-sm mt-1">
-                      Le titre SEO ne peut pas dépasser 60 caractères
-                    </p>
-                  )}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* SEO Français */}
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium text-gray-700">SEO Français</h4>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Titre SEO (FR)
+                      <span className="text-sm text-gray-500 ml-2">
+                        ({(formData.metaTitle?.fr || '').length}/60 caractères)
+                      </span>
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.metaTitle?.fr || ''}
+                      onChange={(e) => handleMetaTitleChange('fr', e.target.value)}
+                      className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500 ${
+                        (formData.metaTitle?.fr || '').length > 60 
+                          ? 'border-red-300 bg-red-50' 
+                          : (formData.metaTitle?.fr || '').length > 50 
+                            ? 'border-yellow-300 bg-yellow-50' 
+                            : 'border-gray-300'
+                      }`}
+                      placeholder="Titre SEO en français"
+                    />
+                    {(formData.metaTitle?.fr || '').length > 60 && (
+                      <p className="text-red-500 text-sm mt-1">
+                        Le titre SEO ne peut pas dépasser 60 caractères
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Description SEO (FR)
+                      <span className="text-sm text-gray-500 ml-2">
+                        ({(formData.metaDescription?.fr || '').length}/160 caractères)
+                      </span>
+                    </label>
+                    <textarea
+                      value={formData.metaDescription?.fr || ''}
+                      onChange={(e) => handleMetaDescriptionChange('fr', e.target.value)}
+                      className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500 ${
+                        (formData.metaDescription?.fr || '').length > 160 
+                          ? 'border-red-300 bg-red-50' 
+                          : (formData.metaDescription?.fr || '').length > 140 
+                            ? 'border-yellow-300 bg-yellow-50' 
+                            : 'border-gray-300'
+                      }`}
+                      rows={3}
+                      placeholder="Description SEO en français"
+                    />
+                    {(formData.metaDescription?.fr || '').length > 160 && (
+                      <p className="text-red-500 text-sm mt-1">
+                        La description SEO ne peut pas dépasser 160 caractères
+                      </p>
+                    )}
+                  </div>
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Description SEO
-                    <span className="text-sm text-gray-500 ml-2">
-                      ({formData.metaDescription.length}/160 caractères)
-                    </span>
-                  </label>
-                  <textarea
-                    value={formData.metaDescription}
-                    onChange={(e) => handleMetaDescriptionChange(e.target.value)}
-                    className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500 ${
-                      formData.metaDescription.length > 160 
-                        ? 'border-red-300 bg-red-50' 
-                        : formData.metaDescription.length > 140 
-                          ? 'border-yellow-300 bg-yellow-50' 
-                          : 'border-gray-300'
-                    }`}
-                    rows={3}
-                    placeholder="Description pour les moteurs de recherche"
-                  />
-                  {formData.metaDescription.length > 160 && (
-                    <p className="text-red-500 text-sm mt-1">
-                      La description SEO ne peut pas dépasser 160 caractères
-                    </p>
-                  )}
+
+                {/* SEO Anglais */}
+                <div className="space-y-4">
+                  <h4 className="text-sm font-medium text-gray-700">SEO Anglais</h4>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Titre SEO (EN)
+                      <span className="text-sm text-gray-500 ml-2">
+                        ({(formData.metaTitle?.en || '').length}/60 caractères)
+                      </span>
+                    </label>
+                    <input
+                      type="text"
+                      value={formData.metaTitle?.en || ''}
+                      onChange={(e) => handleMetaTitleChange('en', e.target.value)}
+                      className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500 ${
+                        (formData.metaTitle?.en || '').length > 60 
+                          ? 'border-red-300 bg-red-50' 
+                          : (formData.metaTitle?.en || '').length > 50 
+                            ? 'border-yellow-300 bg-yellow-50' 
+                            : 'border-gray-300'
+                      }`}
+                      placeholder="SEO title in English"
+                    />
+                    {(formData.metaTitle?.en || '').length > 60 && (
+                      <p className="text-red-500 text-sm mt-1">
+                        Le titre SEO ne peut pas dépasser 60 caractères
+                      </p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Description SEO (EN)
+                      <span className="text-sm text-gray-500 ml-2">
+                        ({(formData.metaDescription?.en || '').length}/160 caractères)
+                      </span>
+                    </label>
+                    <textarea
+                      value={formData.metaDescription?.en || ''}
+                      onChange={(e) => handleMetaDescriptionChange('en', e.target.value)}
+                      className={`w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-primary-500 focus:border-primary-500 ${
+                        (formData.metaDescription?.en || '').length > 160 
+                          ? 'border-red-300 bg-red-50' 
+                          : (formData.metaDescription?.en || '').length > 140 
+                            ? 'border-yellow-300 bg-yellow-50' 
+                            : 'border-gray-300'
+                      }`}
+                      rows={3}
+                      placeholder="SEO description in English"
+                    />
+                    {(formData.metaDescription?.en || '').length > 160 && (
+                      <p className="text-red-500 text-sm mt-1">
+                        La description SEO ne peut pas dépasser 160 caractères
+                      </p>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

@@ -125,6 +125,15 @@ const blogVisitorSchema = new mongoose.Schema({
     default: Date.now
   },
   
+  // Identifiant unique du navigateur (visitorId)
+  // Chaque navigateur a son propre visitorId, donc chaque navigateur crée un nouveau BlogVisitor
+  visitorId: {
+    type: String,
+    required: true,
+    unique: true,
+    index: true
+  },
+  
   // Informations de session
   sessionId: {
     type: String,
@@ -148,6 +157,7 @@ const blogVisitorSchema = new mongoose.Schema({
 });
 
 // Index pour les requêtes fréquentes
+blogVisitorSchema.index({ visitorId: 1 }); // Index unique pour identifier les visiteurs par navigateur
 blogVisitorSchema.index({ ipAddress: 1 });
 blogVisitorSchema.index({ email: 1 });
 blogVisitorSchema.index({ sessionId: 1 });
@@ -212,7 +222,12 @@ blogVisitorSchema.methods.getStats = function() {
   };
 };
 
-// Méthode statique pour trouver un visiteur par IP
+// Méthode statique pour trouver un visiteur par visitorId (navigateur spécifique)
+blogVisitorSchema.statics.findByVisitorId = function(visitorId) {
+  return this.findOne({ visitorId }).populate('blogsVisited.blog', 'title slug');
+};
+
+// Méthode statique pour trouver un visiteur par IP (conservée pour compatibilité)
 blogVisitorSchema.statics.findByIP = function(ipAddress) {
   return this.findOne({ ipAddress }).populate('blogsVisited.blog', 'title slug');
 };
