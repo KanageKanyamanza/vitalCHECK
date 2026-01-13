@@ -3,7 +3,9 @@ const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const Blog = require('../models/Blog');
 const BlogVisit = require('../models/BlogVisit');
+const BlogLike = require('../models/BlogLike');
 const Admin = require('../models/Admin');
+const User = require('../models/User');
 const { analyzeDevice, extractReferrerDomain, extractUTMParameters, generateSessionId, isBounce } = require('../utils/deviceAnalyzer');
 const axios = require('axios');
 const fetch = require('node-fetch');
@@ -492,7 +494,60 @@ router.get('/:slug', async (req, res) => {
   }
 });
 
-// POST /blogs/:id/like - Liker un blog
+// GET /blogs/:id/like/status - Vérifier si l'utilisateur a déjà liké
+router.get('/:id/like/status', async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    
+    if (!blog) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Blog non trouvé' 
+      });
+    }
+
+    // Récupérer l'utilisateur si connecté
+    let userId = null;
+    try {
+      const token = req.header('Authorization')?.replace('Bearer ', '');
+      if (token) {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.userId) {
+          userId = decoded.userId;
+        }
+      }
+    } catch (error) {
+      // Token invalide ou absent, continuer sans userId
+    }
+
+    // Récupérer le visitorId depuis le body ou les query params
+    const visitorId = req.body.visitorId || req.query.visitorId;
+
+    // Vérifier si l'utilisateur a déjà liké
+    let hasLiked = false;
+    if (userId) {
+      const existingLike = await BlogLike.findOne({ blog: req.params.id, userId });
+      hasLiked = !!existingLike;
+    } else if (visitorId) {
+      const existingLike = await BlogLike.findOne({ blog: req.params.id, visitorId });
+      hasLiked = !!existingLike;
+    }
+
+    res.json({
+      success: true,
+      data: { hasLiked }
+    });
+
+  } catch (error) {
+    console.error('Check like status error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur lors de la vérification du like' 
+    });
+  }
+});
+
+// POST /blogs/:id/like - Toggle like/unlike d'un blog
 router.post('/:id/like', async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id);
@@ -504,15 +559,86 @@ router.post('/:id/like', async (req, res) => {
       });
     }
 
-    await blog.incrementLikes();
+    // Récupérer l'utilisateur si connecté
+    let userId = null;
+    try {
+      const token = req.header('Authorization')?.replace('Bearer ', '');
+      if (token) {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.userId) {
+          userId = decoded.userId;
+        }
+      }
+    } catch (error) {
+      // Token invalide ou absent, continuer sans userId
+    }
 
-    res.json({
-      success: true,
-      data: { likes: blog.likes }
-    });
+    // Récupérer le visitorId depuis le body
+    const visitorId = req.body.visitorId;
+    const ipAddress = req.ip || req.connection.remoteAddress || req.headers['x-forwarded-for']?.split(',')[0];
+
+    // Vérifier si l'utilisateur a déjà liké
+    let existingLike = null;
+    if (userId) {
+      existingLike = await BlogLike.findOne({ blog: req.params.id, userId });
+    } else if (visitorId) {
+      existingLike = await BlogLike.findOne({ blog: req.params.id, visitorId });
+    }
+
+    if (existingLike) {
+      // L'utilisateur a déjà liké, on retire le like (unlike)
+      await BlogLike.findByIdAndDelete(existingLike._id);
+      
+      // Décrémenter le compteur de likes
+      await blog.decrementLikes();
+      
+      // Récupérer le blog mis à jour
+      const updatedBlog = await Blog.findById(req.params.id);
+
+      res.json({
+        success: true,
+        data: { 
+          likes: updatedBlog.likes,
+          hasLiked: false
+        }
+      });
+    } else {
+      // L'utilisateur n'a pas encore liké, on ajoute le like
+      const blogLike = new BlogLike({
+        blog: req.params.id,
+        userId: userId || null,
+        visitorId: visitorId || null,
+        ipAddress: ipAddress || null
+      });
+
+      await blogLike.save();
+
+      // Incrémenter le compteur de likes
+      await blog.incrementLikes();
+
+      // Récupérer le blog mis à jour
+      const updatedBlog = await Blog.findById(req.params.id);
+
+      res.json({
+        success: true,
+        data: { 
+          likes: updatedBlog.likes,
+          hasLiked: true
+        }
+      });
+    }
 
   } catch (error) {
     console.error('Like blog error:', error);
+    
+    // Gérer les erreurs de duplication (index unique)
+    if (error.code === 11000) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Vous avez déjà aimé cet article' 
+      });
+    }
+
     res.status(500).json({ 
       success: false, 
       message: 'Erreur lors du like' 

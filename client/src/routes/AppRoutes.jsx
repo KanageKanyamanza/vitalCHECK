@@ -13,6 +13,8 @@ import ClientRegisterPage from '../pages/client/ClientRegisterPage'
 import UnifiedLoginPage from '../pages/UnifiedLoginPage'
 import ClientDashboardPage from '../pages/client/ClientDashboardPage'
 import ClientProfilePage from '../pages/client/ClientProfilePage'
+import ForgotPasswordPage from '../pages/ForgotPasswordPage'
+import ResetPasswordPage from '../pages/ResetPasswordPage'
 import PrivacyPolicy from '../pages/PrivacyPolicy'
 import TermsOfService from '../pages/TermsOfService'
 import BlogPage from '../pages/BlogPage'
@@ -36,6 +38,8 @@ const AppRoutes = () => {
       <Route path="/login" element={<UnifiedLoginPage />} />
       {/* Redirection de l'ancienne route client/login vers la page unifiée */}
       <Route path="/client/login" element={<Navigate to="/login" replace />} />
+      <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
       <Route path="/client/register" element={<ClientRegisterPage />} />
       <Route path="/client/dashboard" element={<ClientDashboardPage />} />
       <Route path="/client/profile" element={<ClientProfilePage />} />

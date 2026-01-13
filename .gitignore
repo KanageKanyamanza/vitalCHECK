@@ -20,3 +20,7 @@ dist
 .env.development.example.example
 .env.test.example.example
 .env.production.example.example
+
+# Documentation de fonctionnalités
+docs/LIKE_FEATURE_DOCUMENTATION.md
+docs/RESET_PASSWORD_FEATURE_DOCUMENTATION.md

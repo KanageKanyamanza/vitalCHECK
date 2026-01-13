@@ -23,6 +23,7 @@ import { blogApiService } from '../services/api'
 import toast from 'react-hot-toast'
 import { normalizeTags } from '../utils/tagUtils'
 import { autoTranslateTag } from '../utils/autoTranslateTags'
+import { getOrCreateVisitorId } from '../utils/visitorId'
 
 const BlogPage = () => {
   const navigate = useNavigate()
@@ -116,18 +117,27 @@ const BlogPage = () => {
     return () => clearTimeout(timer)
   }, [searchTerm])
 
-  // Gérer le like
+  // Gérer le like/unlike (toggle)
   const handleLike = async (blogId) => {
     try {
-      await blogApiService.likeBlog(blogId)
-      setBlogs(blogs.map(blog => 
-        blog._id === blogId 
-          ? { ...blog, likes: blog.likes + 1 }
-          : blog
-      ))
-      toast.success(t('blog.likeSuccess'))
+      const visitorId = getOrCreateVisitorId()
+      const response = await blogApiService.likeBlog(blogId, visitorId)
+      
+      if (response.data.success) {
+        setBlogs(blogs.map(blog => 
+          blog._id === blogId 
+            ? { ...blog, likes: response.data.data.likes }
+            : blog
+        ))
+        
+        if (response.data.data.hasLiked) {
+          toast.success(t('blog.likeSuccess'))
+        } else {
+          toast.success(t('blog.unlikeSuccess'))
+        }
+      }
     } catch (error) {
-      console.error('Error liking blog:', error)
+      console.error('Error toggling like:', error)
       toast.error(t('blog.likeError'))
     }
   }

@@ -157,6 +157,30 @@ export const ClientAuthProvider = ({ children }) => {
     }
   }
 
+  const forgotPassword = async (email) => {
+    try {
+      await axios.post(`${API_URL}/client-auth/forgot-password`, { email })
+      toast.success('Si cet email existe, un lien de réinitialisation a été envoyé.')
+      return { success: true }
+    } catch (error) {
+      const message = error.response?.data?.message || 'Erreur lors de la demande de réinitialisation'
+      toast.error(message)
+      return { success: false, error: message }
+    }
+  }
+
+  const resetPassword = async (token, password) => {
+    try {
+      await axios.post(`${API_URL}/client-auth/reset-password/${token}`, { password })
+      toast.success('Mot de passe réinitialisé avec succès!')
+      return { success: true }
+    } catch (error) {
+      const message = error.response?.data?.message || 'Erreur lors de la réinitialisation'
+      toast.error(message)
+      return { success: false, error: message }
+    }
+  }
+
   const value = {
     user,
     loading,
@@ -166,6 +190,8 @@ export const ClientAuthProvider = ({ children }) => {
     logout,
     updateProfile,
     changePassword,
+    forgotPassword,
+    resetPassword,
     refreshUser: loadUser,
     setToken,
     setUser
