@@ -28,6 +28,7 @@ const NewsletterEditPage = () => {
     previewText: '',
     content: '',
     imageUrl: '',
+    status: 'draft',
     recipients: {
       type: 'all',
       tags: [],
@@ -45,6 +46,33 @@ const NewsletterEditPage = () => {
   const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
+    // Vérifier si des emails ont été sélectionnés depuis la page des abonnés
+    const selectedEmails = localStorage.getItem('newsletterSelectedEmails');
+    if (selectedEmails && !isEdit) {
+      try {
+        const emails = JSON.parse(selectedEmails);
+        if (emails && emails.length > 0) {
+          // Pré-remplir avec les emails sélectionnés
+          setFormData(prev => ({
+            ...prev,
+            recipients: {
+              type: 'custom',
+              tags: [],
+              customEmails: emails
+            }
+          }));
+          // Mettre à jour le comptage
+          setRecipientCount(emails.length);
+          // Nettoyer le localStorage après utilisation
+          localStorage.removeItem('newsletterSelectedEmails');
+          toast.success(`${emails.length} email${emails.length > 1 ? 's' : ''} sélectionné${emails.length > 1 ? 's' : ''} depuis la liste des abonnés`);
+        }
+      } catch (error) {
+        console.error('Erreur lors de la lecture des emails sélectionnés:', error);
+        localStorage.removeItem('newsletterSelectedEmails');
+      }
+    }
+
     if (isEdit && id) {
       fetchNewsletter();
     }
@@ -79,6 +107,7 @@ const NewsletterEditPage = () => {
           previewText: newsletter.previewText || '',
           content: newsletter.content || '',
           imageUrl: newsletter.imageUrl || '',
+          status: newsletter.status || 'draft',
           recipients: newsletter.recipients || {
             type: 'all',
             tags: [],
@@ -420,7 +449,12 @@ const NewsletterEditPage = () => {
   };
 
   const handleSend = async () => {
-    if (!window.confirm(`Êtes-vous sûr de vouloir envoyer cette newsletter à ${recipientCount} destinataires ?`)) {
+    const isResend = formData.status === 'sent';
+    const confirmMessage = isResend 
+      ? `Êtes-vous sûr de vouloir RENVOYER cette newsletter à ${recipientCount} destinataires ?`
+      : `Êtes-vous sûr de vouloir envoyer cette newsletter à ${recipientCount} destinataires ?`;
+    
+    if (!window.confirm(confirmMessage)) {
       return;
     }
 
@@ -442,7 +476,10 @@ const NewsletterEditPage = () => {
       });
 
       if (response.data.success) {
-        toast.success(`Newsletter envoyée à ${response.data.stats.sent} destinataires`);
+        const message = isResend 
+          ? `Newsletter renvoyée à ${response.data.stats.sent} destinataires`
+          : `Newsletter envoyée à ${response.data.stats.sent} destinataires`;
+        toast.success(message);
         navigate('/admin/newsletters');
       }
     } catch (error) {
@@ -635,11 +672,19 @@ const NewsletterEditPage = () => {
               <button
                 onClick={handleSend}
                 disabled={saving || recipientCount === 0}
-                className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 shadow-sm text-sm sm:text-base"
+                className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg transition-colors disabled:opacity-50 shadow-sm text-sm sm:text-base ${
+                  formData.status === 'sent' 
+                    ? 'bg-orange-600 hover:bg-orange-700 text-white' 
+                    : 'bg-green-600 hover:bg-green-700 text-white'
+                }`}
               >
                 <Send className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="hidden sm:inline">Envoyer</span>
-                <span className="sm:hidden">Envoyer</span>
+                <span className="hidden sm:inline">
+                  {formData.status === 'sent' ? 'Renvoyer' : 'Envoyer'}
+                </span>
+                <span className="sm:hidden">
+                  {formData.status === 'sent' ? 'Renvoyer' : 'Envoyer'}
+                </span>
               </button>
             )}
           </div>

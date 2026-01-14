@@ -3,6 +3,7 @@ const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const Newsletter = require('../models/Newsletter');
 const NewsletterSubscriber = require('../models/NewsletterSubscriber');
+const User = require('../models/User');
 const Admin = require('../models/Admin');
 const { sendEmail } = require('../utils/emailService');
 const { createUnifiedEmailTemplate } = require('../utils/emailTemplates');
@@ -60,6 +61,17 @@ router.post('/subscribe', [
     // Vérifier si l'email existe déjà
     let subscriber = await NewsletterSubscriber.findOne({ email });
 
+    // Vérifier si l'email correspond à un utilisateur de la plateforme
+    const user = await User.findOne({ email: email.toLowerCase() });
+    let finalFirstName = firstName;
+    let finalLastName = lastName;
+
+    // Si c'est un utilisateur de la plateforme, utiliser ses informations
+    if (user) {
+      finalFirstName = firstName || user.firstName || finalFirstName;
+      finalLastName = lastName || user.lastName || finalLastName;
+    }
+
     if (subscriber) {
       if (subscriber.isActive) {
         return res.status(400).json({
@@ -71,8 +83,9 @@ router.post('/subscribe', [
         subscriber.isActive = true;
         subscriber.subscribedAt = new Date();
         subscriber.unsubscribedAt = null;
-        subscriber.firstName = firstName || subscriber.firstName;
-        subscriber.lastName = lastName || subscriber.lastName;
+        // Mettre à jour avec les informations de l'utilisateur si disponible
+        subscriber.firstName = finalFirstName || subscriber.firstName;
+        subscriber.lastName = finalLastName || subscriber.lastName;
         await subscriber.save();
         
         return res.json({
@@ -85,8 +98,8 @@ router.post('/subscribe', [
     // Créer un nouvel abonné
     subscriber = new NewsletterSubscriber({
       email,
-      firstName,
-      lastName,
+      firstName: finalFirstName,
+      lastName: finalLastName,
       source,
       isActive: true
     });
@@ -178,7 +191,152 @@ router.get('/admin/list', authenticateAdmin, async (req, res) => {
   }
 });
 
-// Obtenir une newsletter spécifique
+// Obtenir la liste des abonnés (DOIT être avant /admin/:id pour éviter les conflits de route)
+router.get('/admin/subscribers', authenticateAdmin, async (req, res) => {
+  try {
+    const { page = 1, limit = 50, isActive, search, dateRange } = req.query;
+    const skip = (page - 1) * limit;
+
+    const query = {};
+    if (isActive !== undefined) {
+      query.isActive = isActive === 'true';
+    }
+    if (search) {
+      query.$or = [
+        { email: { $regex: search, $options: 'i' } },
+        { firstName: { $regex: search, $options: 'i' } },
+        { lastName: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    // Filtrer par période (jour, semaine, mois, année)
+    if (dateRange) {
+      const now = new Date();
+      let startDate = new Date();
+
+      switch (dateRange) {
+        case 'today':
+          startDate.setHours(0, 0, 0, 0);
+          break;
+        case 'week':
+          startDate.setDate(now.getDate() - 7);
+          startDate.setHours(0, 0, 0, 0);
+          break;
+        case 'month':
+          startDate.setMonth(now.getMonth() - 1);
+          startDate.setHours(0, 0, 0, 0);
+          break;
+        case 'year':
+          startDate.setFullYear(now.getFullYear() - 1);
+          startDate.setHours(0, 0, 0, 0);
+          break;
+        default:
+          break;
+      }
+
+      if (dateRange === 'today' || dateRange === 'week' || dateRange === 'month' || dateRange === 'year') {
+        query.subscribedAt = {
+          $gte: startDate,
+          $lte: now
+        };
+      }
+    }
+
+    const subscribers = await NewsletterSubscriber.find(query)
+      .sort({ subscribedAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit));
+
+    // Enrichir les données avec les informations des utilisateurs de la plateforme
+    const enrichedSubscribers = await Promise.all(
+      subscribers.map(async (subscriber) => {
+        const subscriberObj = subscriber.toObject();
+        
+        // Vérifier si l'email correspond à un utilisateur de la plateforme
+        const user = await User.findOne({ email: subscriber.email.toLowerCase() })
+          .select('firstName lastName companyName');
+        
+        // Si c'est un utilisateur de la plateforme et qu'on n'a pas de nom dans le subscriber
+        if (user && (!subscriberObj.firstName || !subscriberObj.lastName)) {
+          subscriberObj.firstName = subscriberObj.firstName || user.firstName || '';
+          subscriberObj.lastName = subscriberObj.lastName || user.lastName || '';
+          subscriberObj.isPlatformUser = true;
+          subscriberObj.companyName = user.companyName || null;
+        } else if (user) {
+          // Même si on a déjà un nom, marquer comme utilisateur de la plateforme
+          subscriberObj.isPlatformUser = true;
+          subscriberObj.companyName = user.companyName || null;
+        } else {
+          subscriberObj.isPlatformUser = false;
+        }
+        
+        return subscriberObj;
+      })
+    );
+
+    const total = await NewsletterSubscriber.countDocuments(query);
+    const activeCount = await NewsletterSubscriber.countDocuments({ isActive: true });
+
+    res.json({
+      success: true,
+      subscribers: enrichedSubscribers,
+      stats: {
+        total,
+        active: activeCount,
+        inactive: total - activeCount
+      },
+      pagination: {
+        page: parseInt(page),
+        limit: parseInt(limit),
+        total,
+        pages: Math.ceil(total / limit)
+      }
+    });
+  } catch (error) {
+    console.error('Erreur lors de la récupération des abonnés:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de la récupération des abonnés'
+    });
+  }
+});
+
+// Obtenir le nombre d'abonnés actifs (DOIT être avant /admin/:id pour éviter les conflits)
+router.get('/admin/subscribers/count', authenticateAdmin, async (req, res) => {
+  try {
+    const { type, tags, customEmails } = req.query;
+
+    let count = 0;
+
+    if (type === 'all') {
+      count = await NewsletterSubscriber.countDocuments({ isActive: true });
+    } else if (type === 'active') {
+      count = await NewsletterSubscriber.countDocuments({ isActive: true });
+    } else if (type === 'tags' && tags) {
+      const tagArray = Array.isArray(tags) ? tags : tags.split(',');
+      count = await NewsletterSubscriber.countDocuments({
+        isActive: true,
+        tags: { $in: tagArray }
+      });
+    } else if (type === 'custom' && customEmails) {
+      const emailArray = Array.isArray(customEmails) ? customEmails : customEmails.split(',');
+      count = emailArray.length;
+    }
+
+    res.json({
+      success: true,
+      count
+    });
+  } catch (error) {
+    console.error('Erreur lors du comptage des abonnés:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors du comptage des abonnés'
+    });
+  }
+});
+
+// Obtenir une newsletter spécifique (DOIT être après les routes spécifiques)
 router.get('/admin/:id', authenticateAdmin, async (req, res) => {
   try {
     const newsletter = await Newsletter.findById(req.params.id)
@@ -355,90 +513,6 @@ router.post('/admin/:id/preview', authenticateAdmin, async (req, res) => {
   }
 });
 
-// Obtenir la liste des abonnés
-router.get('/admin/subscribers', authenticateAdmin, async (req, res) => {
-  try {
-    const { page = 1, limit = 50, isActive, search } = req.query;
-    const skip = (page - 1) * limit;
-
-    const query = {};
-    if (isActive !== undefined) {
-      query.isActive = isActive === 'true';
-    }
-    if (search) {
-      query.$or = [
-        { email: { $regex: search, $options: 'i' } },
-        { firstName: { $regex: search, $options: 'i' } },
-        { lastName: { $regex: search, $options: 'i' } }
-      ];
-    }
-
-    const subscribers = await NewsletterSubscriber.find(query)
-      .sort({ subscribedAt: -1 })
-      .skip(skip)
-      .limit(parseInt(limit));
-
-    const total = await NewsletterSubscriber.countDocuments(query);
-    const activeCount = await NewsletterSubscriber.countDocuments({ isActive: true });
-
-    res.json({
-      success: true,
-      subscribers,
-      stats: {
-        total,
-        active: activeCount,
-        inactive: total - activeCount
-      },
-      pagination: {
-        page: parseInt(page),
-        limit: parseInt(limit),
-        total,
-        pages: Math.ceil(total / limit)
-      }
-    });
-  } catch (error) {
-    console.error('Erreur lors de la récupération des abonnés:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de la récupération des abonnés'
-    });
-  }
-});
-
-// Obtenir le nombre d'abonnés actifs
-router.get('/admin/subscribers/count', authenticateAdmin, async (req, res) => {
-  try {
-    const { type, tags, customEmails } = req.query;
-
-    let count = 0;
-
-    if (type === 'all') {
-      count = await NewsletterSubscriber.countDocuments({ isActive: true });
-    } else if (type === 'active') {
-      count = await NewsletterSubscriber.countDocuments({ isActive: true });
-    } else if (type === 'tags' && tags) {
-      const tagArray = Array.isArray(tags) ? tags : tags.split(',');
-      count = await NewsletterSubscriber.countDocuments({
-        isActive: true,
-        tags: { $in: tagArray }
-      });
-    } else if (type === 'custom' && customEmails) {
-      const emailArray = Array.isArray(customEmails) ? customEmails : customEmails.split(',');
-      count = emailArray.length;
-    }
-
-    res.json({
-      success: true,
-      count
-    });
-  } catch (error) {
-    console.error('Erreur lors du comptage des abonnés:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors du comptage des abonnés'
-    });
-  }
-});
 
 // Envoyer une newsletter
 router.post('/admin/:id/send', authenticateAdmin, async (req, res) => {
@@ -452,13 +526,8 @@ router.post('/admin/:id/send', authenticateAdmin, async (req, res) => {
       });
     }
 
-    if (newsletter.status === 'sent') {
-      return res.status(400).json({
-        success: false,
-        message: 'Cette newsletter a déjà été envoyée'
-      });
-    }
-
+    // Permettre le renvoi même si déjà envoyée
+    // Seulement bloquer si en cours d'envoi
     if (newsletter.status === 'sending') {
       return res.status(400).json({
         success: false,
@@ -469,25 +538,63 @@ router.post('/admin/:id/send', authenticateAdmin, async (req, res) => {
     // Obtenir la liste des destinataires
     let subscribers = [];
 
+    console.log('📧 [NEWSLETTER SEND] Type de destinataires:', newsletter.recipients.type);
+    console.log('📧 [NEWSLETTER SEND] Données recipients:', JSON.stringify(newsletter.recipients, null, 2));
+
     if (newsletter.recipients.type === 'all') {
       subscribers = await NewsletterSubscriber.find({ isActive: true });
+      console.log('📧 [NEWSLETTER SEND] Tous les abonnés actifs trouvés:', subscribers.length);
     } else if (newsletter.recipients.type === 'active') {
       subscribers = await NewsletterSubscriber.find({ isActive: true });
-    } else if (newsletter.recipients.type === 'tags' && newsletter.recipients.tags) {
+      console.log('📧 [NEWSLETTER SEND] Abonnés actifs trouvés:', subscribers.length);
+    } else if (newsletter.recipients.type === 'tags' && newsletter.recipients.tags && newsletter.recipients.tags.length > 0) {
       subscribers = await NewsletterSubscriber.find({
         isActive: true,
         tags: { $in: newsletter.recipients.tags }
       });
-    } else if (newsletter.recipients.type === 'custom' && newsletter.recipients.customEmails) {
-      subscribers = newsletter.recipients.customEmails.map(email => ({ email }));
+      console.log('📧 [NEWSLETTER SEND] Abonnés par tags trouvés:', subscribers.length);
+    } else if (newsletter.recipients.type === 'custom' && newsletter.recipients.customEmails && newsletter.recipients.customEmails.length > 0) {
+      // Pour les emails personnalisés, récupérer les abonnés existants
+      const customEmails = newsletter.recipients.customEmails;
+      console.log('📧 [NEWSLETTER SEND] Emails personnalisés:', customEmails.length, customEmails);
+      
+      // Récupérer les abonnés existants (même inactifs, on les inclut quand même)
+      subscribers = await NewsletterSubscriber.find({ 
+        email: { $in: customEmails.map(e => e.toLowerCase()) }
+      });
+      
+      console.log('📧 [NEWSLETTER SEND] Abonnés existants trouvés:', subscribers.length);
+      
+      // Si certains emails ne sont pas des abonnés, les ajouter quand même
+      const existingEmails = new Set(subscribers.map(s => s.email.toLowerCase()));
+      const missingEmails = customEmails.filter(e => !existingEmails.has(e.toLowerCase()));
+      
+      if (missingEmails.length > 0) {
+        console.log('📧 [NEWSLETTER SEND] Emails non trouvés dans les abonnés:', missingEmails.length, missingEmails);
+        // Pour les emails qui ne sont pas des abonnés, créer des objets temporaires
+        missingEmails.forEach(email => {
+          subscribers.push({ 
+            email: email.toLowerCase(),
+            isActive: true,
+            _id: null, // Pas un vrai document MongoDB
+            generateUnsubscribeToken: function() {},
+            save: async function() { return this; }
+          });
+        });
+      }
     }
 
     const totalRecipients = subscribers.length;
+    console.log('📧 [NEWSLETTER SEND] Total destinataires:', totalRecipients);
 
     if (totalRecipients === 0) {
+      console.error('❌ [NEWSLETTER SEND] Aucun destinataire trouvé!');
+      console.error('❌ [NEWSLETTER SEND] Newsletter ID:', newsletter._id);
+      console.error('❌ [NEWSLETTER SEND] Recipients type:', newsletter.recipients?.type);
+      console.error('❌ [NEWSLETTER SEND] Recipients data:', JSON.stringify(newsletter.recipients, null, 2));
       return res.status(400).json({
         success: false,
-        message: 'Aucun destinataire trouvé'
+        message: `Aucun destinataire trouvé. Type: ${newsletter.recipients?.type || 'non défini'}. Vérifiez que les destinataires sélectionnés existent et sont actifs.`
       });
     }
 
@@ -520,26 +627,50 @@ router.post('/admin/:id/send', authenticateAdmin, async (req, res) => {
       await Promise.allSettled(
         batch.map(async (subscriber) => {
           try {
-            // Générer le token de désabonnement si nécessaire
-            if (!subscriber.unsubscribeToken) {
-              subscriber.generateUnsubscribeToken();
-              await subscriber.save();
+            let unsubscribeUrl = '';
+            const email = subscriber.email || subscriber.emailAddress;
+            
+            if (!email) {
+              console.error('📧 [NEWSLETTER SEND] Email manquant pour le subscriber:', subscriber);
+              bounced++;
+              return;
+            }
+            
+            // Si c'est un vrai document MongoDB (abonné existant avec _id)
+            if (subscriber._id && typeof subscriber.save === 'function') {
+              // Générer le token de désabonnement si nécessaire
+              if (!subscriber.unsubscribeToken) {
+                subscriber.generateUnsubscribeToken();
+                await subscriber.save();
+              }
+              unsubscribeUrl = `${process.env.CLIENT_URL || 'https://www.checkmyenterprise.com'}/newsletter/unsubscribe/${subscriber.unsubscribeToken}`;
+            } else {
+              // Pour les emails personnalisés qui ne sont pas des abonnés, chercher dans la DB
+              const tempSubscriber = await NewsletterSubscriber.findOne({ email: email.toLowerCase() });
+              if (tempSubscriber) {
+                if (!tempSubscriber.unsubscribeToken) {
+                  tempSubscriber.generateUnsubscribeToken();
+                  await tempSubscriber.save();
+                }
+                unsubscribeUrl = `${process.env.CLIENT_URL || 'https://www.checkmyenterprise.com'}/newsletter/unsubscribe/${tempSubscriber.unsubscribeToken}`;
+              }
+              // Si pas d'abonné trouvé, pas de lien de désabonnement (email externe)
             }
 
-            const unsubscribeUrl = `${process.env.CLIENT_URL || 'https://www.checkmyenterprise.com'}/newsletter/unsubscribe/${subscriber.unsubscribeToken}`;
-
-            // Ajouter le lien de désabonnement au bas de l'email
-            const emailHTML = newsletterHTML.replace(
-              '</body>',
-              `<div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
-                <p style="font-size: 12px; color: #718096;">
-                  <a href="${unsubscribeUrl}" style="color: #718096; text-decoration: underline;">Se désabonner</a>
-                </p>
-              </div></body>`
-            );
+            // Ajouter le lien de désabonnement au bas de l'email si disponible
+            const emailHTML = unsubscribeUrl
+              ? newsletterHTML.replace(
+                  '</body>',
+                  `<div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+                    <p style="font-size: 12px; color: #718096;">
+                      <a href="${unsubscribeUrl}" style="color: #718096; text-decoration: underline;">Se désabonner</a>
+                    </p>
+                  </div></body>`
+                )
+              : newsletterHTML;
 
             await sendEmail({
-              to: subscriber.email,
+              to: email,
               subject: newsletter.subject,
               html: emailHTML
             });
@@ -547,7 +678,7 @@ router.post('/admin/:id/send', authenticateAdmin, async (req, res) => {
             sent++;
             delivered++;
           } catch (error) {
-            console.error(`Erreur lors de l'envoi à ${subscriber.email}:`, error);
+            console.error(`❌ [NEWSLETTER SEND] Erreur lors de l'envoi à ${subscriber.email || 'email inconnu'}:`, error.message);
             bounced++;
           }
         })
@@ -587,6 +718,119 @@ router.post('/admin/:id/send', authenticateAdmin, async (req, res) => {
       await newsletter.save();
     }
 
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de l\'envoi de la newsletter'
+    });
+  }
+});
+
+// Envoyer une newsletter directement à des emails spécifiques (sans créer de newsletter dans la DB)
+router.post('/admin/send-direct', authenticateAdmin, [
+  body('subject').trim().notEmpty().withMessage('Le sujet est requis'),
+  body('content').notEmpty().withMessage('Le contenu est requis'),
+  body('emails').isArray().withMessage('Les emails doivent être un tableau'),
+  body('emails.*').isEmail().withMessage('Chaque email doit être valide')
+], async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        success: false,
+        errors: errors.array()
+      });
+    }
+
+    const { subject, content, previewText, imageUrl, emails } = req.body;
+
+    if (!emails || emails.length === 0) {
+      return res.status(400).json({
+        success: false,
+        message: 'Aucun email fourni'
+      });
+    }
+
+    // Générer le HTML de la newsletter
+    const newsletterHTML = createUnifiedEmailTemplate({
+      language: 'fr',
+      title: subject,
+      subtitle: previewText || '',
+      content: content,
+      imageUrl: imageUrl || null,
+      buttons: [],
+      note: 'Vous recevez cet email car vous êtes abonné à la newsletter vitalCHECK.'
+    });
+
+    // Envoyer les emails (en arrière-plan)
+    let sent = 0;
+    let delivered = 0;
+    let bounced = 0;
+
+    // Envoyer par lots pour éviter de surcharger le serveur
+    const batchSize = 10;
+    for (let i = 0; i < emails.length; i += batchSize) {
+      const batch = emails.slice(i, i + batchSize);
+      
+      await Promise.allSettled(
+        batch.map(async (email) => {
+          try {
+            // Récupérer le subscriber pour générer le token de désabonnement
+            const subscriber = await NewsletterSubscriber.findOne({ email: email.toLowerCase() });
+            
+            let unsubscribeUrl = '';
+            if (subscriber) {
+              if (!subscriber.unsubscribeToken) {
+                subscriber.generateUnsubscribeToken();
+                await subscriber.save();
+              }
+              unsubscribeUrl = `${process.env.CLIENT_URL || 'https://www.checkmyenterprise.com'}/newsletter/unsubscribe/${subscriber.unsubscribeToken}`;
+            }
+
+            // Ajouter le lien de désabonnement au bas de l'email
+            const emailHTML = unsubscribeUrl
+              ? newsletterHTML.replace(
+                  '</body>',
+                  `<div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+                    <p style="font-size: 12px; color: #718096;">
+                      <a href="${unsubscribeUrl}" style="color: #718096; text-decoration: underline;">Se désabonner</a>
+                    </p>
+                  </div></body>`
+                )
+              : newsletterHTML;
+
+            await sendEmail({
+              to: email,
+              subject: subject,
+              html: emailHTML
+            });
+
+            sent++;
+            delivered++;
+          } catch (error) {
+            console.error(`Erreur lors de l'envoi à ${email}:`, error);
+            bounced++;
+          }
+        })
+      );
+
+      // Petite pause entre les lots
+      if (i + batchSize < emails.length) {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+      }
+    }
+
+    res.json({
+      success: true,
+      message: `Newsletter envoyée à ${sent} destinataire(s)`,
+      stats: {
+        totalRecipients: emails.length,
+        sent,
+        delivered,
+        bounced
+      }
+    });
+  } catch (error) {
+    console.error('Erreur lors de l\'envoi direct de la newsletter:', error);
     res.status(500).json({
       success: false,
       message: 'Erreur lors de l\'envoi de la newsletter'

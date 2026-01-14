@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Mail, Eye, Send, Trash2, Calendar, Users, FileText, Search } from 'lucide-react';
+import { Plus, Mail, Eye, Send, Trash2, Calendar, Users, FileText, Search, RotateCw } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import toast from 'react-hot-toast';
 import axios from 'axios';
@@ -87,6 +87,27 @@ const NewsletterManagement = () => {
     }
   };
 
+  const handleResend = async (id) => {
+    if (!window.confirm('Êtes-vous sûr de vouloir renvoyer cette newsletter ?')) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem('adminToken');
+      const response = await axios.post(`${API_BASE_URL}/newsletters/admin/${id}/send`, {}, {
+        headers: { Authorization: `Bearer ${token}` }
+      });
+
+      if (response.data.success) {
+        toast.success(`Newsletter renvoyée à ${response.data.stats.sent} destinataires`);
+        fetchNewsletters();
+      }
+    } catch (error) {
+      console.error('Erreur lors du renvoi:', error);
+      toast.error(error.response?.data?.message || 'Erreur lors du renvoi');
+    }
+  };
+
   const getStatusBadge = (status) => {
     const badges = {
       draft: 'bg-gray-100 text-gray-800',
@@ -130,13 +151,22 @@ const NewsletterManagement = () => {
             <h1 className="text-3xl font-bold text-gray-900">Gestion des Newsletters</h1>
             <p className="text-gray-600 mt-1">Créez et gérez vos newsletters</p>
           </div>
-          <button
-            onClick={() => navigate('/admin/newsletters/create')}
-            className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors shadow-sm"
-          >
-            <Plus className="w-5 h-5" />
-            Nouvelle Newsletter
-          </button>
+          <div className="flex gap-2">
+            <button
+              onClick={() => navigate('/admin/newsletters/subscribers')}
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm"
+            >
+              <Users className="w-5 h-5" />
+              Voir les Abonnés
+            </button>
+            <button
+              onClick={() => navigate('/admin/newsletters/create')}
+              className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors shadow-sm"
+            >
+              <Plus className="w-5 h-5" />
+              Nouvelle Newsletter
+            </button>
+          </div>
         </div>
 
         {/* Stats Cards */}
@@ -337,6 +367,15 @@ const NewsletterManagement = () => {
                           >
                             <Eye className="h-4 w-4" />
                           </button>
+                          {newsletter.status === 'sent' && (
+                            <button
+                              onClick={() => handleResend(newsletter._id)}
+                              className="text-orange-600 hover:text-orange-900 p-1 rounded hover:bg-orange-50 transition-colors"
+                              title="Renvoyer"
+                            >
+                              <RotateCw className="h-4 w-4" />
+                            </button>
+                          )}
                           {newsletter.status !== 'sent' && (
                             <button
                               onClick={() => handleDelete(newsletter._id)}
