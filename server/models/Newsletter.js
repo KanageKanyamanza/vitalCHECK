@@ -49,6 +49,10 @@ const newsletterSchema = new mongoose.Schema({
       trim: true
     }]
   },
+  opens: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'NewsletterSubscriber'
+  }],
   stats: {
     totalRecipients: {
       type: Number,

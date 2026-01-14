@@ -7,6 +7,9 @@ const User = require('../models/User');
 const Admin = require('../models/Admin');
 const { sendEmail } = require('../utils/emailService');
 const { createUnifiedEmailTemplate } = require('../utils/emailTemplates');
+const emailQueueService = require('../utils/emailQueueService');
+const NewsletterEmail = require('../utils/newsletterEmail');
+const { getTrackingPixelResponse } = require('../utils/trackingPixel');
 const router = express.Router();
 
 // Middleware d'authentification admin
@@ -603,124 +606,84 @@ router.post('/admin/:id/send', authenticateAdmin, async (req, res) => {
     newsletter.stats.totalRecipients = totalRecipients;
     await newsletter.save();
 
-    // Générer le HTML de la newsletter
-    const newsletterHTML = createUnifiedEmailTemplate({
-      language: 'fr',
-      title: newsletter.subject,
-      subtitle: newsletter.previewText || '',
-      content: newsletter.content,
-      imageUrl: newsletter.imageUrl || null,
-      buttons: [],
-      note: 'Vous recevez cet email car vous êtes abonné à la newsletter vitalCHECK.'
-    });
-
-    // Envoyer les emails (en arrière-plan)
-    let sent = 0;
-    let delivered = 0;
-    let bounced = 0;
-
-    // Envoyer par lots pour éviter de surcharger le serveur
-    const batchSize = 10;
-    for (let i = 0; i < subscribers.length; i += batchSize) {
-      const batch = subscribers.slice(i, i + batchSize);
+    // Ajouter tous les emails à la file d'attente
+    let jobsAdded = 0;
+    
+    for (const subscriber of subscribers) {
+      const email = subscriber.email || subscriber.emailAddress;
       
-      await Promise.allSettled(
-        batch.map(async (subscriber) => {
-          try {
-            let unsubscribeUrl = '';
-            const email = subscriber.email || subscriber.emailAddress;
-            
-            if (!email) {
-              console.error('📧 [NEWSLETTER SEND] Email manquant pour le subscriber:', subscriber);
-              bounced++;
-              return;
-            }
-            
-            // Si c'est un vrai document MongoDB (abonné existant avec _id)
-            if (subscriber._id && typeof subscriber.save === 'function') {
-              // Générer le token de désabonnement si nécessaire
-              if (!subscriber.unsubscribeToken) {
-                subscriber.generateUnsubscribeToken();
-                await subscriber.save();
-              }
-              unsubscribeUrl = `${process.env.CLIENT_URL || 'https://www.checkmyenterprise.com'}/newsletter/unsubscribe/${subscriber.unsubscribeToken}`;
-            } else {
-              // Pour les emails personnalisés qui ne sont pas des abonnés, chercher dans la DB
-              const tempSubscriber = await NewsletterSubscriber.findOne({ email: email.toLowerCase() });
-              if (tempSubscriber) {
-                if (!tempSubscriber.unsubscribeToken) {
-                  tempSubscriber.generateUnsubscribeToken();
-                  await tempSubscriber.save();
-                }
-                unsubscribeUrl = `${process.env.CLIENT_URL || 'https://www.checkmyenterprise.com'}/newsletter/unsubscribe/${tempSubscriber.unsubscribeToken}`;
-              }
-              // Si pas d'abonné trouvé, pas de lien de désabonnement (email externe)
-            }
-
-            // Ajouter le lien de désabonnement au bas de l'email si disponible
-            const emailHTML = unsubscribeUrl
-              ? newsletterHTML.replace(
-                  '</body>',
-                  `<div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
-                    <p style="font-size: 12px; color: #718096;">
-                      <a href="${unsubscribeUrl}" style="color: #718096; text-decoration: underline;">Se désabonner</a>
-                    </p>
-                  </div></body>`
-                )
-              : newsletterHTML;
-
-            await sendEmail({
-              to: email,
-              subject: newsletter.subject,
-              html: emailHTML
-            });
-
-            sent++;
-            delivered++;
-          } catch (error) {
-            console.error(`❌ [NEWSLETTER SEND] Erreur lors de l'envoi à ${subscriber.email || 'email inconnu'}:`, error.message);
-            bounced++;
-          }
-        })
-      );
-
-      // Petite pause entre les lots
-      if (i + batchSize < subscribers.length) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
+      if (!email) {
+        console.error('📧 [NEWSLETTER SEND] Email manquant pour le subscriber:', subscriber);
+        continue;
       }
+
+      // Obtenir l'ID de l'abonné (peut être null pour les emails personnalisés)
+      const subscriberId = subscriber._id ? subscriber._id.toString() : null;
+      
+      // Générer le contenu de l'email avec le template NewsletterEmail
+      const emailContent = NewsletterEmail.sendNewsletter({
+        to: email,
+        subject: newsletter.subject,
+        htmlContent: newsletter.content,
+        imageUrl: newsletter.imageUrl,
+        newsletterId: newsletter._id.toString(),
+        subscriberId: subscriberId,
+        subscriberEmail: email,
+        previewText: newsletter.previewText
+      });
+
+      // Ajouter à la file d'attente
+      emailQueueService.addToQueue({
+        to: email,
+        subject: newsletter.subject,
+        html: emailContent.html,
+        text: emailContent.text,
+        metadata: {
+          newsletterId: newsletter._id.toString(),
+          subscriberId: subscriberId,
+          emailType: 'newsletter'
+        }
+      });
+
+      jobsAdded++;
     }
 
-    // Mettre à jour les statistiques
+    console.log(`📬 [NEWSLETTER SEND] ${jobsAdded} email(s) ajouté(s) à la file d'attente`);
+
+    // Mettre à jour le statut (l'envoi se fera en arrière-plan via la queue)
     newsletter.status = 'sent';
     newsletter.sentAt = new Date();
-    newsletter.stats.sent = sent;
-    newsletter.stats.delivered = delivered;
-    newsletter.stats.bounced = bounced;
+    newsletter.stats.sent = jobsAdded;
     await newsletter.save();
 
     res.json({
       success: true,
-      message: `Newsletter envoyée à ${sent} destinataires`,
+      message: `Newsletter ajoutée à la file d'attente. ${jobsAdded} email(s) seront envoyé(s) progressivement.`,
       stats: {
         totalRecipients,
-        sent,
-        delivered,
-        bounced
+        sent: jobsAdded,
+        queued: jobsAdded
       }
     });
   } catch (error) {
-    console.error('Erreur lors de l\'envoi de la newsletter:', error);
+    console.error('❌ [NEWSLETTER SEND] Erreur lors de l\'envoi de la newsletter:', error);
+    console.error('❌ [NEWSLETTER SEND] Stack:', error.stack);
     
     // Remettre le statut en draft en cas d'erreur
-    const newsletter = await Newsletter.findById(req.params.id);
-    if (newsletter && newsletter.status === 'sending') {
-      newsletter.status = 'draft';
-      await newsletter.save();
+    try {
+      const newsletter = await Newsletter.findById(req.params.id);
+      if (newsletter && newsletter.status === 'sending') {
+        newsletter.status = 'draft';
+        await newsletter.save();
+      }
+    } catch (saveError) {
+      console.error('❌ [NEWSLETTER SEND] Erreur lors de la restauration du statut:', saveError);
     }
 
     res.status(500).json({
       success: false,
-      message: 'Erreur lors de l\'envoi de la newsletter'
+      message: 'Erreur lors de l\'envoi de la newsletter',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 });
@@ -869,6 +832,57 @@ router.delete('/admin/:id', authenticateAdmin, async (req, res) => {
       success: false,
       message: 'Erreur lors de la suppression de la newsletter'
     });
+  }
+});
+
+// Route publique : Tracking des ouvertures d'email (pixel invisible)
+router.get('/track/:id/:subscriberId', async (req, res) => {
+  try {
+    const { id: newsletterId, subscriberId } = req.params;
+
+    // Vérifier que la newsletter existe
+    const newsletter = await Newsletter.findById(newsletterId);
+    if (!newsletter) {
+      console.error(`❌ [TRACK] Newsletter ${newsletterId} non trouvée`);
+      // Retourner quand même le pixel pour ne pas révéler l'erreur
+      const pixelResponse = getTrackingPixelResponse();
+      res.set(pixelResponse.headers);
+      return res.send(pixelResponse.buffer);
+    }
+
+    // Vérifier que l'abonné existe
+    const subscriber = await NewsletterSubscriber.findById(subscriberId);
+    if (!subscriber) {
+      console.error(`❌ [TRACK] Subscriber ${subscriberId} non trouvé`);
+      // Retourner quand même le pixel
+      const pixelResponse = getTrackingPixelResponse();
+      res.set(pixelResponse.headers);
+      return res.send(pixelResponse.buffer);
+    }
+
+    // Ajouter le subscriberId au tableau opens si pas déjà présent
+    const subscriberObjectId = subscriber._id;
+    if (!newsletter.opens.includes(subscriberObjectId)) {
+      newsletter.opens.push(subscriberObjectId);
+      newsletter.stats.opened = newsletter.opens.length;
+      await newsletter.save();
+      
+      console.log(`✅ [TRACK] Ouverture enregistrée pour newsletter ${newsletterId}, subscriber ${subscriberId}`);
+    } else {
+      console.log(`ℹ️  [TRACK] Ouverture déjà enregistrée pour newsletter ${newsletterId}, subscriber ${subscriberId}`);
+    }
+
+    // Retourner le pixel GIF transparent
+    const pixelResponse = getTrackingPixelResponse();
+    res.set(pixelResponse.headers);
+    res.send(pixelResponse.buffer);
+
+  } catch (error) {
+    console.error('❌ [TRACK] Erreur lors du tracking:', error);
+    // Retourner quand même le pixel pour ne pas révéler l'erreur
+    const pixelResponse = getTrackingPixelResponse();
+    res.set(pixelResponse.headers);
+    res.send(pixelResponse.buffer);
   }
 });
 

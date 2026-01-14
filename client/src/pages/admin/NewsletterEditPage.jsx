@@ -44,6 +44,13 @@ const NewsletterEditPage = () => {
   const [customEmailInput, setCustomEmailInput] = useState('');
   const [showPreview, setShowPreview] = useState(true); // Aperçu visible par défaut
   const [uploadingImage, setUploadingImage] = useState(false);
+  const [emailSuggestions, setEmailSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
+  const [allSubscribers, setAllSubscribers] = useState([]);
+  const [loadingSubscribers, setLoadingSubscribers] = useState(false);
+  const [selectedSubscriberEmails, setSelectedSubscriberEmails] = useState([]);
+  const [subscriberSearchTerm, setSubscriberSearchTerm] = useState('');
 
   useEffect(() => {
     // Vérifier si des emails ont été sélectionnés depuis la page des abonnés
@@ -88,7 +95,23 @@ const NewsletterEditPage = () => {
     } else if (formData.recipients?.type) {
       fetchRecipientCount();
     }
+
+    // Nettoyer les suggestions si on change de type
+    if (formData.recipients?.type !== 'custom') {
+      setEmailSuggestions([]);
+      setShowSuggestions(false);
+      setCustomEmailInput('');
+      setSelectedSubscriberEmails([]);
+      setSubscriberSearchTerm('');
+    }
   }, [formData.recipients?.type, formData.recipients?.tags, loading]);
+
+  // Charger tous les abonnés quand on passe en mode custom
+  useEffect(() => {
+    if (formData.recipients?.type === 'custom' && allSubscribers.length === 0 && !loadingSubscribers) {
+      fetchAllSubscribers();
+    }
+  }, [formData.recipients?.type]);
 
   const fetchNewsletter = async () => {
     if (!id) return;
@@ -490,8 +513,161 @@ const NewsletterEditPage = () => {
     }
   };
 
-  const addCustomEmail = () => {
-    const email = customEmailInput.trim();
+  // Récupérer les suggestions d'emails depuis les abonnés
+  const fetchEmailSuggestions = async (searchTerm) => {
+    if (!searchTerm || searchTerm.length < 2) {
+      setEmailSuggestions([]);
+      setShowSuggestions(false);
+      return;
+    }
+
+    try {
+      setLoadingSuggestions(true);
+      const token = localStorage.getItem('adminToken');
+      const response = await axios.get(`${API_BASE_URL}/newsletters/admin/subscribers`, {
+        headers: { Authorization: `Bearer ${token}` },
+        params: {
+          search: searchTerm,
+          limit: 10,
+          page: 1
+        }
+      });
+
+      if (response.data.success) {
+        const emails = response.data.subscribers
+          .map(sub => sub.email)
+          .filter(email => {
+            // Filtrer les emails déjà ajoutés
+            return !formData.recipients.customEmails?.includes(email);
+          })
+          .slice(0, 10); // Limiter à 10 suggestions
+        setEmailSuggestions(emails);
+        setShowSuggestions(emails.length > 0);
+      }
+    } catch (error) {
+      console.error('Erreur lors de la récupération des suggestions:', error);
+      setEmailSuggestions([]);
+      setShowSuggestions(false);
+    } finally {
+      setLoadingSuggestions(false);
+    }
+  };
+
+  const handleEmailInputChange = (e) => {
+    const value = e.target.value;
+    setCustomEmailInput(value);
+    fetchEmailSuggestions(value);
+  };
+
+  const selectEmail = (email) => {
+    setCustomEmailInput(email);
+    setShowSuggestions(false);
+    setEmailSuggestions([]);
+    // Ajouter automatiquement l'email sélectionné
+    addCustomEmail(email);
+  };
+
+  // Charger tous les abonnés pour la sélection multiple
+  const fetchAllSubscribers = async () => {
+    try {
+      setLoadingSubscribers(true);
+      const token = localStorage.getItem('adminToken');
+      
+      // Charger tous les abonnés (avec une limite raisonnable)
+      const response = await axios.get(`${API_BASE_URL}/newsletters/admin/subscribers`, {
+        headers: { Authorization: `Bearer ${token}` },
+        params: {
+          limit: 1000, // Limite élevée pour charger beaucoup d'abonnés
+          page: 1
+        }
+      });
+
+      if (response.data.success) {
+        setAllSubscribers(response.data.subscribers);
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des abonnés:', error);
+      toast.error('Erreur lors du chargement de la liste des abonnés');
+    } finally {
+      setLoadingSubscribers(false);
+    }
+  };
+
+  // Filtrer les abonnés selon le terme de recherche
+  const filteredSubscribers = useMemo(() => {
+    if (!subscriberSearchTerm) return allSubscribers;
+    
+    const searchLower = subscriberSearchTerm.toLowerCase();
+    return allSubscribers.filter(sub => 
+      sub.email.toLowerCase().includes(searchLower) ||
+      (sub.firstName && sub.firstName.toLowerCase().includes(searchLower)) ||
+      (sub.lastName && sub.lastName.toLowerCase().includes(searchLower))
+    );
+  }, [allSubscribers, subscriberSearchTerm]);
+
+  // Gérer la sélection/désélection d'un abonné
+  const toggleSubscriberSelection = (email) => {
+    setSelectedSubscriberEmails(prev => {
+      if (prev.includes(email)) {
+        return prev.filter(e => e !== email);
+      } else {
+        return [...prev, email];
+      }
+    });
+  };
+
+  // Sélectionner/désélectionner tous les abonnés filtrés
+  const toggleAllSubscribers = () => {
+    const filteredEmails = filteredSubscribers.map(sub => sub.email);
+    const allSelected = filteredEmails.every(email => selectedSubscriberEmails.includes(email));
+    
+    if (allSelected) {
+      // Désélectionner tous les emails filtrés
+      setSelectedSubscriberEmails(prev => 
+        prev.filter(email => !filteredEmails.includes(email))
+      );
+    } else {
+      // Sélectionner tous les emails filtrés qui ne sont pas déjà dans la liste
+      const currentEmails = formData.recipients.customEmails || [];
+      const newSelections = filteredEmails.filter(email => !currentEmails.includes(email));
+      setSelectedSubscriberEmails(prev => {
+        const combined = [...prev, ...newSelections];
+        return [...new Set(combined)]; // Supprimer les doublons
+      });
+    }
+  };
+
+  // Ajouter les emails sélectionnés à la liste des destinataires
+  const addSelectedSubscribers = () => {
+    if (selectedSubscriberEmails.length === 0) {
+      toast.error('Aucun email sélectionné');
+      return;
+    }
+
+    const currentEmails = formData.recipients.customEmails || [];
+    const newEmails = selectedSubscriberEmails.filter(email => !currentEmails.includes(email));
+    
+    if (newEmails.length === 0) {
+      toast.error('Tous les emails sélectionnés sont déjà dans la liste');
+      return;
+    }
+
+    const newCustomEmails = [...currentEmails, ...newEmails];
+    setFormData({
+      ...formData,
+      recipients: {
+        ...formData.recipients,
+        customEmails: newCustomEmails
+      }
+    });
+
+    setSelectedSubscriberEmails([]);
+    setRecipientCount(newCustomEmails.length);
+    toast.success(`${newEmails.length} email${newEmails.length > 1 ? 's' : ''} ajouté${newEmails.length > 1 ? 's' : ''}`);
+  };
+
+  const addCustomEmail = (emailToAdd = null) => {
+    const email = (emailToAdd || customEmailInput).trim();
     if (!email) return;
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -516,6 +692,8 @@ const NewsletterEditPage = () => {
     });
 
     setCustomEmailInput('');
+    setShowSuggestions(false);
+    setEmailSuggestions([]);
     // Mettre à jour le comptage immédiatement pour le type custom
     if (formData.recipients.type === 'custom') {
       setRecipientCount(newCustomEmails.length);
@@ -870,22 +1048,56 @@ const NewsletterEditPage = () => {
                     <label className="block text-sm font-medium text-gray-700 mb-2">
                       Ajouter un email
                     </label>
-                    <div className="flex flex-col sm:flex-row gap-2">
-                      <input
-                        type="email"
-                        value={customEmailInput}
-                        onChange={(e) => setCustomEmailInput(e.target.value)}
-                        onKeyPress={(e) => e.key === 'Enter' && addCustomEmail()}
-                        placeholder="email@exemple.com"
-                        className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-sm sm:text-base"
-                      />
+                    <div className="relative flex flex-col sm:flex-row gap-2">
+                      <div className="flex-1 relative">
+                        <input
+                          type="email"
+                          value={customEmailInput}
+                          onChange={handleEmailInputChange}
+                          onKeyPress={(e) => e.key === 'Enter' && addCustomEmail()}
+                          onFocus={() => {
+                            if (emailSuggestions.length > 0) {
+                              setShowSuggestions(true);
+                            }
+                          }}
+                          onBlur={() => {
+                            // Délai pour permettre le clic sur une suggestion
+                            setTimeout(() => setShowSuggestions(false), 200);
+                          }}
+                          placeholder="Tapez un email ou sélectionnez depuis la liste"
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-sm sm:text-base"
+                        />
+                        {showSuggestions && emailSuggestions.length > 0 && (
+                          <div className="absolute z-10 w-full mt-1 bg-white border border-gray-300 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                            {loadingSuggestions ? (
+                              <div className="px-3 py-2 text-sm text-gray-500 text-center">
+                                Chargement...
+                              </div>
+                            ) : (
+                              emailSuggestions.map((suggestion, index) => (
+                                <button
+                                  key={index}
+                                  type="button"
+                                  onClick={() => selectEmail(suggestion)}
+                                  className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-700 transition-colors border-b border-gray-100 last:border-b-0"
+                                >
+                                  {suggestion}
+                                </button>
+                              ))
+                            )}
+                          </div>
+                        )}
+                      </div>
                       <button
-                        onClick={addCustomEmail}
+                        onClick={() => addCustomEmail()}
                         className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors shadow-sm text-sm sm:text-base whitespace-nowrap"
                       >
                         Ajouter
                       </button>
                     </div>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Tapez pour rechercher dans les abonnés ou saisissez un nouvel email
+                    </p>
 
                     {formData.recipients.customEmails.length > 0 && (
                       <div className="mt-2 space-y-2">
@@ -907,6 +1119,101 @@ const NewsletterEditPage = () => {
                         ))}
                       </div>
                     )}
+
+                    {/* Section de sélection multiple des abonnés */}
+                    <div className="mt-6 pt-6 border-t border-gray-200">
+                      <div className="flex items-center justify-between mb-3">
+                        <label className="block text-sm font-medium text-gray-700">
+                          Sélectionner depuis les abonnés inscrits
+                        </label>
+                        {filteredSubscribers.length > 0 && (
+                          <button
+                            onClick={toggleAllSubscribers}
+                            className="text-xs text-primary-600 hover:text-primary-700 font-medium"
+                          >
+                            {filteredSubscribers.every(sub => selectedSubscriberEmails.includes(sub.email))
+                              ? 'Tout désélectionner'
+                              : 'Tout sélectionner'}
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Barre de recherche pour les abonnés */}
+                      <div className="mb-3">
+                        <input
+                          type="text"
+                          value={subscriberSearchTerm}
+                          onChange={(e) => setSubscriberSearchTerm(e.target.value)}
+                          placeholder="Rechercher un abonné..."
+                          className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-sm"
+                        />
+                      </div>
+
+                      {/* Liste des abonnés avec checkboxes */}
+                      <div className="border border-gray-200 rounded-lg max-h-60 overflow-y-auto bg-white">
+                        {loadingSubscribers ? (
+                          <div className="px-4 py-8 text-center text-sm text-gray-500">
+                            Chargement des abonnés...
+                          </div>
+                        ) : filteredSubscribers.length === 0 ? (
+                          <div className="px-4 py-8 text-center text-sm text-gray-500">
+                            {subscriberSearchTerm ? 'Aucun abonné trouvé' : 'Aucun abonné disponible'}
+                          </div>
+                        ) : (
+                          <div className="divide-y divide-gray-100">
+                            {filteredSubscribers.map((subscriber) => {
+                              const isSelected = selectedSubscriberEmails.includes(subscriber.email);
+                              const isAlreadyAdded = formData.recipients.customEmails?.includes(subscriber.email);
+                              
+                              return (
+                                <label
+                                  key={subscriber.email}
+                                  className={`flex items-center gap-3 px-4 py-3 hover:bg-gray-50 cursor-pointer ${
+                                    isAlreadyAdded ? 'opacity-50 bg-gray-50' : ''
+                                  }`}
+                                >
+                                  <input
+                                    type="checkbox"
+                                    checked={isSelected}
+                                    onChange={() => !isAlreadyAdded && toggleSubscriberSelection(subscriber.email)}
+                                    disabled={isAlreadyAdded}
+                                    className="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+                                  />
+                                  <div className="flex-1 min-w-0">
+                                    <div className="text-sm font-medium text-gray-900 truncate">
+                                      {subscriber.email}
+                                    </div>
+                                    {(subscriber.firstName || subscriber.lastName) && (
+                                      <div className="text-xs text-gray-500 truncate">
+                                        {[subscriber.firstName, subscriber.lastName].filter(Boolean).join(' ')}
+                                      </div>
+                                    )}
+                                  </div>
+                                  {isAlreadyAdded && (
+                                    <span className="text-xs text-gray-400 italic">Déjà ajouté</span>
+                                  )}
+                                </label>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Bouton pour ajouter les sélections */}
+                      {selectedSubscriberEmails.length > 0 && (
+                        <div className="mt-3 flex items-center justify-between">
+                          <span className="text-sm text-gray-600">
+                            {selectedSubscriberEmails.length} email{selectedSubscriberEmails.length > 1 ? 's' : ''} sélectionné{selectedSubscriberEmails.length > 1 ? 's' : ''}
+                          </span>
+                          <button
+                            onClick={addSelectedSubscribers}
+                            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors shadow-sm text-sm font-medium"
+                          >
+                            Ajouter les sélections
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 )}
 
