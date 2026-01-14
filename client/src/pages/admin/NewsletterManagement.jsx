@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Mail, Eye, Send, Trash2, Calendar, Users, FileText, Search, RotateCw, Archive, ArchiveRestore } from 'lucide-react';
+import { Plus, Mail, Eye, Send, Trash2, Calendar, Users, FileText, Search, RotateCw } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
-import Pagination from '../../components/admin/Pagination';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 
@@ -22,13 +21,6 @@ const NewsletterManagement = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
-  const [archiveFilter, setArchiveFilter] = useState('non-archived'); // 'non-archived', 'archived', 'all'
-  const [pagination, setPagination] = useState({
-    page: 1,
-    limit: 10,
-    total: 0,
-    pages: 1
-  });
   const [stats, setStats] = useState({
     total: 0,
     active: 0,
@@ -38,32 +30,17 @@ const NewsletterManagement = () => {
   useEffect(() => {
     fetchNewsletters();
     fetchSubscriberStats();
-  }, [archiveFilter, pagination.page, statusFilter, searchTerm]);
+  }, []);
 
   const fetchNewsletters = async () => {
     try {
-      setLoading(true);
       const token = localStorage.getItem('adminToken');
       const response = await axios.get(`${API_BASE_URL}/newsletters/admin/list`, {
-        headers: { Authorization: `Bearer ${token}` },
-        params: {
-          archiveFilter: archiveFilter,
-          page: pagination.page,
-          limit: pagination.limit,
-          ...(statusFilter && { status: statusFilter }),
-          ...(searchTerm && { search: searchTerm })
-        }
+        headers: { Authorization: `Bearer ${token}` }
       });
 
       if (response.data.success) {
         setNewsletters(response.data.newsletters);
-        if (response.data.pagination) {
-          setPagination(prev => ({
-            ...prev,
-            total: response.data.pagination.total,
-            pages: response.data.pagination.pages
-          }));
-        }
       }
     } catch (error) {
       console.error('Erreur lors de la récupération des newsletters:', error);
@@ -131,44 +108,10 @@ const NewsletterManagement = () => {
     }
   };
 
-  const handleArchive = async (id) => {
-    try {
-      const token = localStorage.getItem('adminToken');
-      const response = await axios.post(`${API_BASE_URL}/newsletters/admin/${id}/archive`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      if (response.data.success) {
-        toast.success('Newsletter archivée avec succès');
-        fetchNewsletters();
-      }
-    } catch (error) {
-      console.error('Erreur lors de l\'archivage:', error);
-      toast.error(error.response?.data?.message || 'Erreur lors de l\'archivage');
-    }
-  };
-
-  const handleUnarchive = async (id) => {
-    try {
-      const token = localStorage.getItem('adminToken');
-      const response = await axios.post(`${API_BASE_URL}/newsletters/admin/${id}/unarchive`, {}, {
-        headers: { Authorization: `Bearer ${token}` }
-      });
-
-      if (response.data.success) {
-        toast.success('Newsletter désarchivée avec succès');
-        fetchNewsletters();
-      }
-    } catch (error) {
-      console.error('Erreur lors du désarchivage:', error);
-      toast.error(error.response?.data?.message || 'Erreur lors du désarchivage');
-    }
-  };
-
   const getStatusBadge = (status) => {
     const badges = {
       draft: 'bg-gray-100 text-gray-800',
-      scheduled: 'bg-purple-100 text-purple-800',
+      scheduled: 'bg-blue-100 text-blue-800',
       sending: 'bg-yellow-100 text-yellow-800',
       sent: 'bg-green-100 text-green-800',
       cancelled: 'bg-red-100 text-red-800'
@@ -203,38 +146,36 @@ const NewsletterManagement = () => {
     <AdminLayout>
       <div className="p-4 lg:p-8">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6">
+        <div className="flex justify-between items-center mb-6">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Gestion des Newsletters</h1>
-            <p className="text-gray-600 mt-1 text-sm sm:text-base">Créez et gérez vos newsletters</p>
+            <h1 className="text-3xl font-bold text-gray-900">Gestion des Newsletters</h1>
+            <p className="text-gray-600 mt-1">Créez et gérez vos newsletters</p>
           </div>
-          <div className="flex flex-col sm:flex-row gap-2">
+          <div className="flex gap-2">
             <button
               onClick={() => navigate('/admin/newsletters/subscribers')}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm text-sm sm:text-base"
+              className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm"
             >
-              <Users className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="hidden sm:inline">Voir les Abonnés</span>
-              <span className="sm:hidden">Abonnés</span>
+              <Users className="w-5 h-5" />
+              Voir les Abonnés
             </button>
             <button
               onClick={() => navigate('/admin/newsletters/create')}
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors shadow-sm text-sm sm:text-base"
+              className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors shadow-sm"
             >
-              <Plus className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="hidden sm:inline">Nouvelle Newsletter</span>
-              <span className="sm:hidden">Nouvelle</span>
+              <Plus className="w-5 h-5" />
+              Nouvelle Newsletter
             </button>
           </div>
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Newsletters</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{pagination.total}</p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">{newsletters.length}</p>
               </div>
               <div className="p-3 bg-primary-50 rounded-lg">
                 <FileText className="w-6 h-6 text-primary-600" />
@@ -284,8 +225,8 @@ const NewsletterManagement = () => {
         </div>
 
         {/* Filters */}
-        <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-4 sm:p-6 mb-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6 mb-6">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Recherche
@@ -296,10 +237,7 @@ const NewsletterManagement = () => {
                   type="text"
                   placeholder="Rechercher par sujet..."
                   value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setPagination(prev => ({ ...prev, page: 1 }));
-                  }}
+                  onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                 />
               </div>
@@ -311,10 +249,7 @@ const NewsletterManagement = () => {
               </label>
               <select
                 value={statusFilter}
-                onChange={(e) => {
-                  setStatusFilter(e.target.value);
-                  setPagination(prev => ({ ...prev, page: 1 }));
-                }}
+                onChange={(e) => setStatusFilter(e.target.value)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
               >
                 <option value="">Tous les statuts</option>
@@ -326,31 +261,11 @@ const NewsletterManagement = () => {
               </select>
             </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Filtre d'archivage
-              </label>
-              <select
-                value={archiveFilter}
-                onChange={(e) => {
-                  setArchiveFilter(e.target.value);
-                  setPagination(prev => ({ ...prev, page: 1 }));
-                }}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-              >
-                <option value="non-archived">Non archivées</option>
-                <option value="archived">Archivées uniquement</option>
-                <option value="all">Toutes</option>
-              </select>
-            </div>
-
             <div className="flex items-end">
               <button
                 onClick={() => {
                   setSearchTerm('');
                   setStatusFilter('');
-                  setArchiveFilter('non-archived');
-                  setPagination(prev => ({ ...prev, page: 1 }));
                 }}
                 className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
               >
@@ -362,257 +277,121 @@ const NewsletterManagement = () => {
 
         {/* Newsletters List */}
         <div className="bg-white shadow-lg rounded-xl border border-gray-100 overflow-hidden">
-          <div className="px-4 sm:px-6 py-4 border-b border-gray-200 bg-gray-50">
-            <h2 className="text-base sm:text-lg font-semibold text-gray-900">Liste des Newsletters</h2>
+          <div className="px-6 py-4 border-b border-gray-200 bg-gray-50">
+            <h2 className="text-lg font-semibold text-gray-900">Liste des Newsletters</h2>
           </div>
 
           {newsletters.length === 0 ? (
-            <div className="p-8 sm:p-12 text-center">
-              <Mail className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600 mb-4 text-sm sm:text-base">Aucune newsletter pour le moment</p>
+            <div className="p-12 text-center">
+              <Mail className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600 mb-4">Aucune newsletter pour le moment</p>
               <button
                 onClick={() => navigate('/admin/newsletters/create')}
-                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors shadow-sm text-sm sm:text-base"
+                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors shadow-sm"
               >
                 Créer votre première newsletter
               </button>
             </div>
           ) : (
-            <>
-              {/* Desktop Table View */}
-              <div className="hidden lg:block overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Sujet
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Statut
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Destinataires
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Date
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {newsletters.map((newsletter) => (
-                      <tr key={newsletter._id} className={`hover:bg-gray-50 transition-colors ${newsletter.archived ? 'opacity-60' : ''}`}>
-                        <td className="px-6 py-4">
-                          <div>
-                            <div className="text-sm font-medium text-gray-900">{newsletter.subject}</div>
-                            {newsletter.previewText && (
-                              <div className="text-sm text-gray-500 truncate max-w-md mt-1">
-                                {newsletter.previewText}
-                              </div>
-                            )}
-                          </div>
-                        </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex flex-col gap-1">
-                          {getStatusBadge(newsletter.status)}
-                          {newsletter.archived && (
-                            <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-200 text-gray-700">
-                              Archivée
-                            </span>
-                          )}
-                          {newsletter.status === 'scheduled' && newsletter.scheduledAt && (
-                            <span className="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                              Programmée: {new Date(newsletter.scheduledAt).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })}
-                            </span>
+            <div className="overflow-x-auto">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-gray-50">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Sujet
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Statut
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Destinataires
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Date
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-200">
+                  {newsletters
+                    .filter(newsletter => {
+                      const matchesSearch = !searchTerm || 
+                        newsletter.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                        (newsletter.previewText && newsletter.previewText.toLowerCase().includes(searchTerm.toLowerCase()));
+                      const matchesStatus = !statusFilter || newsletter.status === statusFilter;
+                      return matchesSearch && matchesStatus;
+                    })
+                    .map((newsletter) => (
+                    <tr key={newsletter._id} className="hover:bg-gray-50 transition-colors">
+                      <td className="px-6 py-4">
+                        <div>
+                          <div className="text-sm font-medium text-gray-900">{newsletter.subject}</div>
+                          {newsletter.previewText && (
+                            <div className="text-sm text-gray-500 truncate max-w-md mt-1">
+                              {newsletter.previewText}
+                            </div>
                           )}
                         </div>
                       </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <Users className="h-4 w-4 text-gray-400 mr-2" />
-                            <span className="text-sm text-gray-900">
-                              {newsletter.stats?.totalRecipients || 0}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <div className="flex items-center">
-                            <Calendar className="h-4 w-4 text-gray-400 mr-2" />
-                            <span className="text-sm text-gray-900">
-                              {newsletter.status === 'scheduled' && newsletter.scheduledAt
-                                ? new Date(newsletter.scheduledAt).toLocaleDateString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })
-                                : newsletter.sentAt
-                                ? new Date(newsletter.sentAt).toLocaleDateString('fr-FR')
-                                : newsletter.createdAt
-                                ? new Date(newsletter.createdAt).toLocaleDateString('fr-FR')
-                                : '-'}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          <div className="flex space-x-2">
-                            <button
-                              onClick={() => navigate(`/admin/newsletters/edit/${newsletter._id}`)}
-                              className="text-success-600 hover:text-success-900 p-1 rounded hover:bg-success-50 transition-colors"
-                              title="Modifier"
-                            >
-                              <Eye className="h-4 w-4" />
-                            </button>
-                            {newsletter.status === 'sent' && (
-                              <>
-                                <button
-                                  onClick={() => handleResend(newsletter._id)}
-                                  className="text-orange-600 hover:text-orange-900 p-1 rounded hover:bg-orange-50 transition-colors"
-                                  title="Renvoyer"
-                                >
-                                  <RotateCw className="h-4 w-4" />
-                                </button>
-                                {newsletter.archived ? (
-                                  <button
-                                    onClick={() => handleUnarchive(newsletter._id)}
-                                    className="text-blue-600 hover:text-blue-900 p-1 rounded hover:bg-blue-50 transition-colors"
-                                    title="Désarchiver"
-                                  >
-                                    <ArchiveRestore className="h-4 w-4" />
-                                  </button>
-                                ) : (
-                                  <button
-                                    onClick={() => handleArchive(newsletter._id)}
-                                    className="text-gray-600 hover:text-gray-900 p-1 rounded hover:bg-gray-50 transition-colors"
-                                    title="Archiver"
-                                  >
-                                    <Archive className="h-4 w-4" />
-                                  </button>
-                                )}
-                              </>
-                            )}
-                            {newsletter.status !== 'sent' && (
-                              <button
-                                onClick={() => handleDelete(newsletter._id)}
-                                className="text-danger-600 hover:text-danger-900 p-1 rounded hover:bg-danger-50 transition-colors"
-                                title="Supprimer"
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </button>
-                            )}
-                          </div>
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Mobile/Tablet Card View */}
-              <div className="lg:hidden divide-y divide-gray-200">
-                {newsletters.map((newsletter) => (
-                  <div key={newsletter._id} className={`p-4 sm:p-6 hover:bg-gray-50 transition-colors ${newsletter.archived ? 'opacity-60' : ''}`}>
-                    <div className="flex justify-between items-start mb-3">
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-sm sm:text-base font-medium text-gray-900 truncate">
-                          {newsletter.subject}
-                        </h3>
-                        {newsletter.previewText && (
-                          <p className="text-xs sm:text-sm text-gray-500 mt-1 line-clamp-2">
-                            {newsletter.previewText}
-                          </p>
-                        )}
-                      </div>
-                      <div className="flex space-x-2 ml-2">
-                        <button
-                          onClick={() => navigate(`/admin/newsletters/edit/${newsletter._id}`)}
-                          className="text-success-600 hover:text-success-900 p-1.5 rounded hover:bg-success-50 transition-colors"
-                          title="Modifier"
-                        >
-                          <Eye className="h-4 w-4" />
-                        </button>
-                        {newsletter.status === 'sent' && (
-                          <>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {getStatusBadge(newsletter.status)}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <Users className="h-4 w-4 text-gray-400 mr-2" />
+                          <span className="text-sm text-gray-900">
+                            {newsletter.stats?.totalRecipients || 0}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <Calendar className="h-4 w-4 text-gray-400 mr-2" />
+                          <span className="text-sm text-gray-900">
+                            {newsletter.sentAt
+                              ? new Date(newsletter.sentAt).toLocaleDateString('fr-FR')
+                              : newsletter.createdAt
+                              ? new Date(newsletter.createdAt).toLocaleDateString('fr-FR')
+                              : '-'}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                        <div className="flex space-x-2">
+                          <button
+                            onClick={() => navigate(`/admin/newsletters/edit/${newsletter._id}`)}
+                            className="text-success-600 hover:text-success-900 p-1 rounded hover:bg-success-50 transition-colors"
+                            title="Modifier"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </button>
+                          {newsletter.status === 'sent' && (
                             <button
                               onClick={() => handleResend(newsletter._id)}
-                              className="text-orange-600 hover:text-orange-900 p-1.5 rounded hover:bg-orange-50 transition-colors"
+                              className="text-orange-600 hover:text-orange-900 p-1 rounded hover:bg-orange-50 transition-colors"
                               title="Renvoyer"
                             >
                               <RotateCw className="h-4 w-4" />
                             </button>
-                            {newsletter.archived ? (
-                              <button
-                                onClick={() => handleUnarchive(newsletter._id)}
-                                className="text-blue-600 hover:text-blue-900 p-1.5 rounded hover:bg-blue-50 transition-colors"
-                                title="Désarchiver"
-                              >
-                                <ArchiveRestore className="h-4 w-4" />
-                              </button>
-                            ) : (
-                              <button
-                                onClick={() => handleArchive(newsletter._id)}
-                                className="text-gray-600 hover:text-gray-900 p-1.5 rounded hover:bg-gray-50 transition-colors"
-                                title="Archiver"
-                              >
-                                <Archive className="h-4 w-4" />
-                              </button>
-                            )}
-                          </>
-                        )}
-                        {newsletter.status !== 'sent' && (
-                          <button
-                            onClick={() => handleDelete(newsletter._id)}
-                            className="text-danger-600 hover:text-danger-900 p-1.5 rounded hover:bg-danger-50 transition-colors"
-                            title="Supprimer"
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex flex-wrap items-center gap-3 text-xs sm:text-sm">
-                      <div className="flex items-center gap-1">
-                        {getStatusBadge(newsletter.status)}
-                        {newsletter.archived && (
-                          <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-200 text-gray-700">
-                            Archivée
-                          </span>
-                        )}
-                      </div>
-                      <div className="flex items-center text-gray-600">
-                        <Users className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                        <span>{newsletter.stats?.totalRecipients || 0} destinataires</span>
-                      </div>
-                      <div className="flex items-center text-gray-600">
-                        <Calendar className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
-                        <span>
-                          {newsletter.status === 'scheduled' && newsletter.scheduledAt
-                            ? new Date(newsletter.scheduledAt).toLocaleString('fr-FR', { dateStyle: 'short', timeStyle: 'short' })
-                            : newsletter.sentAt
-                            ? new Date(newsletter.sentAt).toLocaleDateString('fr-FR')
-                            : newsletter.createdAt
-                            ? new Date(newsletter.createdAt).toLocaleDateString('fr-FR')
-                            : '-'}
-                        </span>
-                      </div>
-                      {newsletter.status === 'scheduled' && newsletter.scheduledAt && (
-                        <span className="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
-                          Programmée
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </>
-          )}
-          
-          {/* Pagination */}
-          {pagination.pages > 1 && (
-            <Pagination
-              currentPage={pagination.page}
-              totalPages={pagination.pages}
-              totalItems={pagination.total}
-              itemsPerPage={pagination.limit}
-              onPageChange={(page) => setPagination(prev => ({ ...prev, page }))}
-            />
+                          )}
+                          {newsletter.status !== 'sent' && (
+                            <button
+                              onClick={() => handleDelete(newsletter._id)}
+                              className="text-danger-600 hover:text-danger-900 p-1 rounded hover:bg-danger-50 transition-colors"
+                              title="Supprimer"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           )}
         </div>
       </div>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save, Eye, Send, Users, Mail, X, Upload, Image as ImageIcon, Trash2, Calendar } from 'lucide-react';
+import { ArrowLeft, Save, Eye, Send, Users, Mail, X, Upload, Image as ImageIcon, Trash2 } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import SimpleTextEditor from '../../components/admin/SimpleTextEditor';
 import toast from 'react-hot-toast';
@@ -29,7 +29,6 @@ const NewsletterEditPage = () => {
     content: '',
     imageUrl: '',
     status: 'draft',
-    scheduledAt: '',
     recipients: {
       type: 'all',
       tags: [],
@@ -43,7 +42,7 @@ const NewsletterEditPage = () => {
   const [previewHTML, setPreviewHTML] = useState('');
   const [recipientCount, setRecipientCount] = useState(0);
   const [customEmailInput, setCustomEmailInput] = useState('');
-  const [showPreview, setShowPreview] = useState(false); // Aperçu dans une popup
+  const [showPreview, setShowPreview] = useState(true); // Aperçu visible par défaut
   const [uploadingImage, setUploadingImage] = useState(false);
   const [emailSuggestions, setEmailSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -132,7 +131,6 @@ const NewsletterEditPage = () => {
           content: newsletter.content || '',
           imageUrl: newsletter.imageUrl || '',
           status: newsletter.status || 'draft',
-          scheduledAt: newsletter.scheduledAt ? new Date(new Date(newsletter.scheduledAt).getTime() - new Date(newsletter.scheduledAt).getTimezoneOffset() * 60000).toISOString().slice(0, 16) : '',
           recipients: newsletter.recipients || {
             type: 'all',
             tags: [],
@@ -475,73 +473,6 @@ const NewsletterEditPage = () => {
 
   const handleSend = async () => {
     const isResend = formData.status === 'sent';
-    const isScheduled = formData.scheduledAt && typeof formData.scheduledAt === 'string' && formData.scheduledAt.trim() !== '';
-    
-    // Si une date est programmée, programmer la newsletter au lieu de l'envoyer immédiatement
-    if (isScheduled && !isResend) {
-      const scheduledDate = new Date(formData.scheduledAt);
-      
-      // Vérifier que la date est valide
-      if (isNaN(scheduledDate.getTime())) {
-        toast.error('Date de programmation invalide');
-        return;
-      }
-
-      // Vérifier que la date est dans le futur
-      if (scheduledDate <= new Date()) {
-        toast.error('La date de programmation doit être dans le futur');
-        return;
-      }
-
-      const confirmMessage = `Êtes-vous sûr de vouloir programmer cette newsletter pour le ${scheduledDate.toLocaleString('fr-FR', { dateStyle: 'full', timeStyle: 'short' })} ? Elle sera envoyée à ${recipientCount} destinataires.`;
-      
-      if (!window.confirm(confirmMessage)) {
-        return;
-      }
-
-      try {
-        setSaving(true);
-        const token = localStorage.getItem('adminToken');
-        let newsletterId = id;
-
-        // Sauvegarder d'abord si c'est un nouveau brouillon
-        if (!isEdit) {
-          const saveResponse = await axios.post(`${API_BASE_URL}/newsletters/admin/create`, formData, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          
-          if (!saveResponse.data.success || !saveResponse.data.newsletter?._id) {
-            throw new Error('Erreur lors de la création de la newsletter');
-          }
-          
-          newsletterId = saveResponse.data.newsletter._id;
-        } else {
-          // Mettre à jour avec la programmation
-          const updateResponse = await axios.put(`${API_BASE_URL}/newsletters/admin/${newsletterId}`, formData, {
-            headers: { Authorization: `Bearer ${token}` }
-          });
-          
-          if (!updateResponse.data.success) {
-            throw new Error('Erreur lors de la mise à jour de la newsletter');
-          }
-        }
-
-        toast.success(`Newsletter programmée pour le ${scheduledDate.toLocaleString('fr-FR', { dateStyle: 'full', timeStyle: 'short' })}`);
-        
-        // Attendre un peu avant de naviguer pour que le toast s'affiche
-        setTimeout(() => {
-          navigate('/admin/newsletters');
-        }, 500);
-      } catch (error) {
-        console.error('Erreur lors de la programmation:', error);
-        toast.error(error.response?.data?.message || error.message || 'Erreur lors de la programmation');
-      } finally {
-        setSaving(false);
-      }
-      return;
-    }
-
-    // Envoi immédiat (pas de programmation)
     const confirmMessage = isResend 
       ? `Êtes-vous sûr de vouloir RENVOYER cette newsletter à ${recipientCount} destinataires ?`
       : `Êtes-vous sûr de vouloir envoyer cette newsletter à ${recipientCount} destinataires ?`;
@@ -560,11 +491,6 @@ const NewsletterEditPage = () => {
         const saveResponse = await axios.post(`${API_BASE_URL}/newsletters/admin/create`, formData, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        
-        if (!saveResponse.data.success || !saveResponse.data.newsletter?._id) {
-          throw new Error('Erreur lors de la création de la newsletter');
-        }
-        
         newsletterId = saveResponse.data.newsletter._id;
       }
 
@@ -577,15 +503,11 @@ const NewsletterEditPage = () => {
           ? `Newsletter renvoyée à ${response.data.stats.sent} destinataires`
           : `Newsletter envoyée à ${response.data.stats.sent} destinataires`;
         toast.success(message);
-        
-        // Attendre un peu avant de naviguer pour que le toast s'affiche
-        setTimeout(() => {
-          navigate('/admin/newsletters');
-        }, 500);
+        navigate('/admin/newsletters');
       }
     } catch (error) {
       console.error('Erreur lors de l\'envoi:', error);
-      toast.error(error.response?.data?.message || error.message || 'Erreur lors de l\'envoi');
+      toast.error(error.response?.data?.message || 'Erreur lors de l\'envoi');
     } finally {
       setSaving(false);
     }
@@ -907,9 +829,10 @@ const NewsletterEditPage = () => {
 
           <div className="flex flex-wrap items-center gap-2 sm:gap-2">
             <button
-              onClick={() => setShowPreview(true)}
-              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm text-sm sm:text-base"
-              title="Afficher l'aperçu"
+              onClick={() => setShowPreview(!showPreview)}
+              disabled={showPreview}
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
+              title={showPreview ? "L'aperçu est déjà visible" : "Afficher l'aperçu"}
             >
               <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
               <span className="hidden sm:inline">Aperçu</span>
@@ -923,39 +846,31 @@ const NewsletterEditPage = () => {
               <span className="hidden sm:inline">{saving ? 'Enregistrement...' : 'Enregistrer'}</span>
               <span className="sm:hidden">{saving ? '...' : 'Sauver'}</span>
             </button>
-            <button
-              onClick={handleSend}
-              disabled={saving || recipientCount === 0}
-              className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg transition-colors disabled:opacity-50 shadow-sm text-sm sm:text-base ${
-                formData.status === 'sent' 
-                  ? 'bg-orange-600 hover:bg-orange-700 text-white' 
-                  : formData.scheduledAt && formData.scheduledAt.trim() !== ''
-                  ? 'bg-purple-600 hover:bg-purple-700 text-white'
-                  : 'bg-green-600 hover:bg-green-700 text-white'
-              }`}
-            >
-              <Send className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="hidden sm:inline">
-                {formData.status === 'sent' 
-                  ? 'Renvoyer' 
-                  : formData.scheduledAt && formData.scheduledAt.trim() !== ''
-                  ? 'Programmer'
-                  : 'Envoyer'}
-              </span>
-              <span className="sm:hidden">
-                {formData.status === 'sent' 
-                  ? 'Renvoyer' 
-                  : formData.scheduledAt && formData.scheduledAt.trim() !== ''
-                  ? 'Programmer'
-                  : 'Envoyer'}
-              </span>
-            </button>
+            {isEdit && (
+              <button
+                onClick={handleSend}
+                disabled={saving || recipientCount === 0}
+                className={`flex items-center gap-2 px-3 sm:px-4 py-2 rounded-lg transition-colors disabled:opacity-50 shadow-sm text-sm sm:text-base ${
+                  formData.status === 'sent' 
+                    ? 'bg-orange-600 hover:bg-orange-700 text-white' 
+                    : 'bg-green-600 hover:bg-green-700 text-white'
+                }`}
+              >
+                <Send className="w-4 h-4 sm:w-5 sm:h-5" />
+                <span className="hidden sm:inline">
+                  {formData.status === 'sent' ? 'Renvoyer' : 'Envoyer'}
+                </span>
+                <span className="sm:hidden">
+                  {formData.status === 'sent' ? 'Renvoyer' : 'Envoyer'}
+                </span>
+              </button>
+            )}
           </div>
         </div>
 
-        <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-3">
+        <div className={`grid gap-4 sm:gap-6 grid-cols-1 ${showPreview ? 'lg:grid-cols-2' : 'lg:grid-cols-3'}`}>
           {/* Formulaire principal */}
-          <div className="space-y-4 sm:space-y-6 lg:col-span-2">
+          <div className={`space-y-4 sm:space-y-6 ${showPreview ? 'lg:col-span-1' : 'lg:col-span-2'}`}>
             {/* Sujet */}
             <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-4 sm:p-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -1060,11 +975,45 @@ const NewsletterEditPage = () => {
                 placeholder="Rédigez le contenu de votre newsletter..."
               />
             </div>
-
           </div>
 
-          {/* Panneau latéral - Destinataires */}
-          <div className="space-y-4 sm:space-y-6 lg:col-span-1">
+          {/* Aperçu en temps réel */}
+          {showPreview && (
+            <div className="space-y-4 sm:space-y-6 lg:col-span-1">
+              <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-3 sm:p-4 h-full flex flex-col min-h-[400px] sm:min-h-[600px]">
+                <div className="flex justify-between items-center mb-3 flex-shrink-0">
+                  <h3 className="text-sm sm:text-base font-semibold text-gray-900">Aperçu en temps réel</h3>
+                  <button
+                    onClick={() => setShowPreview(false)}
+                    className="p-1 hover:bg-gray-100 rounded transition-colors flex-shrink-0"
+                    title="Fermer l'aperçu"
+                    aria-label="Fermer l'aperçu"
+                  >
+                    <X className="w-4 h-4 text-gray-500" />
+                  </button>
+                </div>
+                <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50 flex-1 flex flex-col min-h-0">
+                  <div className="flex-1 overflow-y-auto overflow-x-auto" style={{ maxHeight: 'calc(100vh - 250px)' }}>
+                    <div className="p-2 sm:p-4">
+                      <div 
+                        className="bg-white w-full max-w-full"
+                        style={{ 
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                          overflow: 'hidden',
+                          margin: '0 auto'
+                        }}
+                        dangerouslySetInnerHTML={{ __html: generatePreview }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Panneau latéral - Destinataires (s'affiche à la place de l'aperçu quand il est fermé) */}
+          {!showPreview && (
+            <div className="space-y-4 sm:space-y-6 lg:col-span-1">
             {/* Destinataires */}
             <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-4 sm:p-6">
               <div className="flex items-center gap-2 mb-4">
@@ -1279,40 +1228,6 @@ const NewsletterEditPage = () => {
               </div>
             </div>
 
-            {/* Programmation */}
-            <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-4 sm:p-6">
-              <div className="flex items-center gap-2 mb-4">
-                <Calendar className="w-5 h-5 text-primary-600" />
-                <h3 className="text-lg font-semibold text-gray-900">Programmation</h3>
-              </div>
-              <div className="space-y-3">
-                <label className="block text-sm font-medium text-gray-700">
-                  Programmer l'envoi (optionnel)
-                </label>
-                <input
-                  type="datetime-local"
-                  value={formData.scheduledAt}
-                  onChange={(e) => setFormData({ ...formData, scheduledAt: e.target.value })}
-                  min={new Date().toISOString().slice(0, 16)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-                />
-                <p className="text-xs text-gray-500">
-                  {formData.scheduledAt 
-                    ? `La newsletter sera envoyée le ${new Date(formData.scheduledAt).toLocaleString('fr-FR', { dateStyle: 'full', timeStyle: 'short' })}`
-                    : 'Laissez vide pour envoyer immédiatement ou enregistrer comme brouillon'}
-                </p>
-                {formData.scheduledAt && (
-                  <button
-                    type="button"
-                    onClick={() => setFormData({ ...formData, scheduledAt: '' })}
-                    className="w-full mt-2 px-3 py-2 text-sm text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-colors"
-                  >
-                    Annuler la programmation
-                  </button>
-                )}
-              </div>
-            </div>
-
             {/* Aide */}
             <div className="bg-blue-50 rounded-xl border border-blue-100 p-4 sm:p-6">
               <h3 className="text-sm font-semibold text-blue-900 mb-2">💡 Conseils</h3>
@@ -1324,58 +1239,8 @@ const NewsletterEditPage = () => {
               </ul>
             </div>
           </div>
+          )}
         </div>
-
-        {/* Modal d'aperçu */}
-        {showPreview && (
-          <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-            {/* Overlay */}
-            <div 
-              className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
-              onClick={() => setShowPreview(false)}
-            ></div>
-
-            {/* Modal */}
-            <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
-              <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all w-full max-w-4xl max-h-[90vh] flex flex-col">
-                {/* Header */}
-                <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50 flex-shrink-0">
-                  <h3 className="text-lg font-semibold text-gray-900">Aperçu en temps réel</h3>
-                  <button
-                    onClick={() => setShowPreview(false)}
-                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                    title="Fermer l'aperçu"
-                    aria-label="Fermer l'aperçu"
-                  >
-                    <X className="w-5 h-5 text-gray-500" />
-                  </button>
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 overflow-y-auto overflow-x-auto bg-gray-50 p-4 sm:p-6">
-                  <div 
-                    className="bg-white w-full max-w-full mx-auto"
-                    style={{ 
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                      overflow: 'hidden'
-                    }}
-                    dangerouslySetInnerHTML={{ __html: generatePreview }}
-                  />
-                </div>
-
-                {/* Footer */}
-                <div className="flex justify-end gap-2 px-6 py-4 border-t border-gray-200 bg-gray-50 flex-shrink-0">
-                  <button
-                    onClick={() => setShowPreview(false)}
-                    className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm sm:text-base"
-                  >
-                    Fermer
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
       </div>
     </AdminLayout>
   );

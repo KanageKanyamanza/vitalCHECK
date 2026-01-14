@@ -159,29 +159,12 @@ router.post('/unsubscribe/:token', async (req, res) => {
 // Obtenir toutes les newsletters
 router.get('/admin/list', authenticateAdmin, async (req, res) => {
   try {
-    const { page = 1, limit = 10, status, archiveFilter = 'non-archived', search } = req.query;
+    const { page = 1, limit = 10, status } = req.query;
     const skip = (page - 1) * limit;
 
     const query = {};
     if (status) {
       query.status = status;
-    }
-    // Filtrer selon le statut d'archivage
-    if (archiveFilter === 'archived') {
-      // Afficher uniquement les archivées
-      query.archived = true;
-    } else if (archiveFilter === 'non-archived') {
-      // Afficher uniquement les non archivées (par défaut)
-      query.archived = { $ne: true };
-    }
-    // Si archiveFilter === 'all', on n'ajoute pas de filtre sur archived
-
-    // Recherche par texte (sujet ou previewText)
-    if (search) {
-      query.$or = [
-        { subject: { $regex: search, $options: 'i' } },
-        { previewText: { $regex: search, $options: 'i' } }
-      ];
     }
 
     const newsletters = await Newsletter.find(query)
@@ -404,8 +387,8 @@ router.post('/admin/create', authenticateAdmin, [
       previewText,
       imageUrl,
       recipients: recipients || { type: 'all' },
-      scheduledAt: (scheduledAt && scheduledAt.trim() !== '') ? new Date(scheduledAt) : null,
-      status: (scheduledAt && scheduledAt.trim() !== '') ? 'scheduled' : 'draft',
+      scheduledAt: scheduledAt ? new Date(scheduledAt) : null,
+      status: scheduledAt ? 'scheduled' : 'draft',
       createdBy: req.admin._id
     });
 
@@ -463,17 +446,9 @@ router.put('/admin/:id', authenticateAdmin, [
     if (previewText !== undefined) newsletter.previewText = previewText;
     if (imageUrl !== undefined) newsletter.imageUrl = imageUrl;
     if (recipients) newsletter.recipients = recipients;
-    if (scheduledAt !== undefined) {
-      if (scheduledAt && scheduledAt.trim() !== '') {
-        newsletter.scheduledAt = new Date(scheduledAt);
-        newsletter.status = 'scheduled';
-      } else {
-        // Annuler la programmation si scheduledAt est vide
-        newsletter.scheduledAt = null;
-        if (newsletter.status === 'scheduled') {
-          newsletter.status = 'draft';
-        }
-      }
+    if (scheduledAt) {
+      newsletter.scheduledAt = new Date(scheduledAt);
+      newsletter.status = 'scheduled';
     }
 
     await newsletter.save();
@@ -551,14 +526,6 @@ router.post('/admin/:id/send', authenticateAdmin, async (req, res) => {
       return res.status(404).json({
         success: false,
         message: 'Newsletter non trouvée'
-      });
-    }
-
-    // Vérifier si la newsletter est programmée
-    if (newsletter.status === 'scheduled' && newsletter.scheduledAt && newsletter.scheduledAt > new Date()) {
-      return res.status(400).json({
-        success: false,
-        message: `Cette newsletter est programmée pour le ${newsletter.scheduledAt.toLocaleString('fr-FR', { dateStyle: 'full', timeStyle: 'short' })}. Elle sera envoyée automatiquement à cette date.`
       });
     }
 
@@ -830,66 +797,6 @@ router.post('/admin/send-direct', authenticateAdmin, [
     res.status(500).json({
       success: false,
       message: 'Erreur lors de l\'envoi de la newsletter'
-    });
-  }
-});
-
-// Archiver une newsletter
-router.post('/admin/:id/archive', authenticateAdmin, async (req, res) => {
-  try {
-    const newsletter = await Newsletter.findById(req.params.id);
-
-    if (!newsletter) {
-      return res.status(404).json({
-        success: false,
-        message: 'Newsletter non trouvée'
-      });
-    }
-
-    newsletter.archived = true;
-    newsletter.archivedAt = new Date();
-    await newsletter.save();
-
-    res.json({
-      success: true,
-      message: 'Newsletter archivée avec succès',
-      newsletter
-    });
-  } catch (error) {
-    console.error('Erreur lors de l\'archivage de la newsletter:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors de l\'archivage de la newsletter'
-    });
-  }
-});
-
-// Désarchiver une newsletter
-router.post('/admin/:id/unarchive', authenticateAdmin, async (req, res) => {
-  try {
-    const newsletter = await Newsletter.findById(req.params.id);
-
-    if (!newsletter) {
-      return res.status(404).json({
-        success: false,
-        message: 'Newsletter non trouvée'
-      });
-    }
-
-    newsletter.archived = false;
-    newsletter.archivedAt = null;
-    await newsletter.save();
-
-    res.json({
-      success: true,
-      message: 'Newsletter désarchivée avec succès',
-      newsletter
-    });
-  } catch (error) {
-    console.error('Erreur lors du désarchivage de la newsletter:', error);
-    res.status(500).json({
-      success: false,
-      message: 'Erreur lors du désarchivage de la newsletter'
     });
   }
 });

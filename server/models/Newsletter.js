@@ -86,13 +86,6 @@ const newsletterSchema = new mongoose.Schema({
   metadata: {
     type: mongoose.Schema.Types.Mixed
   },
-  archived: {
-    type: Boolean,
-    default: false
-  },
-  archivedAt: {
-    type: Date
-  },
   createdAt: {
     type: Date,
     default: Date.now
@@ -108,9 +101,6 @@ newsletterSchema.index({ status: 1 });
 newsletterSchema.index({ createdAt: -1 });
 newsletterSchema.index({ sentAt: -1 });
 newsletterSchema.index({ createdBy: 1 });
-newsletterSchema.index({ archived: 1 });
-newsletterSchema.index({ scheduledAt: 1 });
-newsletterSchema.index({ status: 1, scheduledAt: 1 });
 
 // Mettre à jour updatedAt avant de sauvegarder
 newsletterSchema.pre('save', function(next) {
