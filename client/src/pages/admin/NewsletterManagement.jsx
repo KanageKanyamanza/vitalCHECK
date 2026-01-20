@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Plus, Mail, Eye, Send, Trash2, Calendar, Users, FileText, Search, RotateCw } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
+import Pagination from '../../components/admin/Pagination';
 import toast from 'react-hot-toast';
 import axios from 'axios';
 
@@ -21,6 +22,12 @@ const NewsletterManagement = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [pagination, setPagination] = useState({
+    page: 1,
+    limit: 10,
+    total: 0,
+    pages: 1
+  });
   const [stats, setStats] = useState({
     total: 0,
     active: 0,
@@ -30,17 +37,40 @@ const NewsletterManagement = () => {
   useEffect(() => {
     fetchNewsletters();
     fetchSubscriberStats();
-  }, []);
+  }, [pagination.page, statusFilter, searchTerm]);
 
   const fetchNewsletters = async () => {
     try {
+      setLoading(true);
       const token = localStorage.getItem('adminToken');
+      const params = {
+        page: pagination.page,
+        limit: pagination.limit,
+        ...(statusFilter && { status: statusFilter })
+      };
+
       const response = await axios.get(`${API_BASE_URL}/newsletters/admin/list`, {
-        headers: { Authorization: `Bearer ${token}` }
+        headers: { Authorization: `Bearer ${token}` },
+        params
       });
 
       if (response.data.success) {
-        setNewsletters(response.data.newsletters);
+        // Filtrer côté client pour la recherche
+        let filteredNewsletters = response.data.newsletters;
+        if (searchTerm) {
+          filteredNewsletters = filteredNewsletters.filter(newsletter => 
+            newsletter.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            (newsletter.previewText && newsletter.previewText.toLowerCase().includes(searchTerm.toLowerCase()))
+          );
+        }
+        setNewsletters(filteredNewsletters);
+        if (response.data.pagination) {
+          setPagination(prev => ({
+            ...prev,
+            total: response.data.pagination.total,
+            pages: response.data.pagination.pages
+          }));
+        }
       }
     } catch (error) {
       console.error('Erreur lors de la récupération des newsletters:', error);
@@ -175,7 +205,7 @@ const NewsletterManagement = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Newsletters</p>
-                <p className="text-2xl font-bold text-gray-900 mt-1">{newsletters.length}</p>
+                <p className="text-2xl font-bold text-gray-900 mt-1">{pagination.total || newsletters.length}</p>
               </div>
               <div className="p-3 bg-primary-50 rounded-lg">
                 <FileText className="w-6 h-6 text-primary-600" />
@@ -237,7 +267,10 @@ const NewsletterManagement = () => {
                   type="text"
                   placeholder="Rechercher par sujet..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setPagination(prev => ({ ...prev, page: 1 }));
+                  }}
                   className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
                 />
               </div>
@@ -249,7 +282,10 @@ const NewsletterManagement = () => {
               </label>
               <select
                 value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
+                onChange={(e) => {
+                  setStatusFilter(e.target.value);
+                  setPagination(prev => ({ ...prev, page: 1 }));
+                }}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
               >
                 <option value="">Tous les statuts</option>
@@ -266,6 +302,7 @@ const NewsletterManagement = () => {
                 onClick={() => {
                   setSearchTerm('');
                   setStatusFilter('');
+                  setPagination(prev => ({ ...prev, page: 1 }));
                 }}
                 className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
               >
@@ -315,15 +352,7 @@ const NewsletterManagement = () => {
                   </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
-                  {newsletters
-                    .filter(newsletter => {
-                      const matchesSearch = !searchTerm || 
-                        newsletter.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                        (newsletter.previewText && newsletter.previewText.toLowerCase().includes(searchTerm.toLowerCase()));
-                      const matchesStatus = !statusFilter || newsletter.status === statusFilter;
-                      return matchesSearch && matchesStatus;
-                    })
-                    .map((newsletter) => (
+                  {newsletters.map((newsletter) => (
                     <tr key={newsletter._id} className="hover:bg-gray-50 transition-colors">
                       <td className="px-6 py-4">
                         <div>
@@ -392,6 +421,17 @@ const NewsletterManagement = () => {
                 </tbody>
               </table>
             </div>
+          )}
+          
+          {/* Pagination */}
+          {pagination.pages > 1 && (
+            <Pagination
+              currentPage={pagination.page}
+              totalPages={pagination.pages}
+              totalItems={pagination.total}
+              itemsPerPage={pagination.limit}
+              onPageChange={(page) => setPagination(prev => ({ ...prev, page }))}
+            />
           )}
         </div>
       </div>

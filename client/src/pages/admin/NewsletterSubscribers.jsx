@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Mail, Users, Search, Download, CheckCircle, XCircle, Calendar, Filter, ChevronLeft, ChevronRight, Send } from 'lucide-react';
+import { Mail, Users, Search, Download, CheckCircle, XCircle, Calendar, Filter, ChevronLeft, ChevronRight, Send, FileText } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import toast from 'react-hot-toast';
 import axios from 'axios';
@@ -185,6 +185,13 @@ const NewsletterSubscribers = () => {
             <p className="text-gray-600 mt-1">Gérez les abonnés à votre newsletter</p>
           </div>
           <div className="flex gap-2">
+            <button
+              onClick={() => navigate('/admin/newsletters')}
+              className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors shadow-sm"
+            >
+              <FileText className="w-5 h-5" />
+              Voir les Newsletters
+            </button>
             {selectedSubscribers.length > 0 && (
               <button
                 onClick={handleSendToSelected}
@@ -196,7 +203,7 @@ const NewsletterSubscribers = () => {
             )}
             <button
               onClick={exportToCSV}
-              className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors shadow-sm"
+              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
             >
               <Download className="w-5 h-5" />
               Exporter CSV

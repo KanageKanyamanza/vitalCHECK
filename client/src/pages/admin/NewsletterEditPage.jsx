@@ -42,7 +42,7 @@ const NewsletterEditPage = () => {
   const [previewHTML, setPreviewHTML] = useState('');
   const [recipientCount, setRecipientCount] = useState(0);
   const [customEmailInput, setCustomEmailInput] = useState('');
-  const [showPreview, setShowPreview] = useState(true); // Aperçu visible par défaut
+  const [showPreview, setShowPreview] = useState(false); // Aperçu en popup par défaut
   const [uploadingImage, setUploadingImage] = useState(false);
   const [emailSuggestions, setEmailSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -829,10 +829,9 @@ const NewsletterEditPage = () => {
 
           <div className="flex flex-wrap items-center gap-2 sm:gap-2">
             <button
-              onClick={() => setShowPreview(!showPreview)}
-              disabled={showPreview}
-              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base"
-              title={showPreview ? "L'aperçu est déjà visible" : "Afficher l'aperçu"}
+              onClick={() => setShowPreview(true)}
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm text-sm sm:text-base"
+              title="Afficher l'aperçu en popup"
             >
               <Eye className="w-4 h-4 sm:w-5 sm:h-5" />
               <span className="hidden sm:inline">Aperçu</span>
@@ -868,9 +867,9 @@ const NewsletterEditPage = () => {
           </div>
         </div>
 
-        <div className={`grid gap-4 sm:gap-6 grid-cols-1 ${showPreview ? 'lg:grid-cols-2' : 'lg:grid-cols-3'}`}>
+        <div className="grid gap-4 sm:gap-6 grid-cols-1 lg:grid-cols-3">
           {/* Formulaire principal */}
-          <div className={`space-y-4 sm:space-y-6 ${showPreview ? 'lg:col-span-1' : 'lg:col-span-2'}`}>
+          <div className="space-y-4 sm:space-y-6 lg:col-span-2">
             {/* Sujet */}
             <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-4 sm:p-6">
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -977,43 +976,8 @@ const NewsletterEditPage = () => {
             </div>
           </div>
 
-          {/* Aperçu en temps réel */}
-          {showPreview && (
-            <div className="space-y-4 sm:space-y-6 lg:col-span-1">
-              <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-3 sm:p-4 h-full flex flex-col min-h-[400px] sm:min-h-[600px]">
-                <div className="flex justify-between items-center mb-3 flex-shrink-0">
-                  <h3 className="text-sm sm:text-base font-semibold text-gray-900">Aperçu en temps réel</h3>
-                  <button
-                    onClick={() => setShowPreview(false)}
-                    className="p-1 hover:bg-gray-100 rounded transition-colors flex-shrink-0"
-                    title="Fermer l'aperçu"
-                    aria-label="Fermer l'aperçu"
-                  >
-                    <X className="w-4 h-4 text-gray-500" />
-                  </button>
-                </div>
-                <div className="border border-gray-200 rounded-lg overflow-hidden bg-gray-50 flex-1 flex flex-col min-h-0">
-                  <div className="flex-1 overflow-y-auto overflow-x-auto" style={{ maxHeight: 'calc(100vh - 250px)' }}>
-                    <div className="p-2 sm:p-4">
-                      <div 
-                        className="bg-white w-full max-w-full"
-                        style={{ 
-                          boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-                          overflow: 'hidden',
-                          margin: '0 auto'
-                        }}
-                        dangerouslySetInnerHTML={{ __html: generatePreview }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Panneau latéral - Destinataires (s'affiche à la place de l'aperçu quand il est fermé) */}
-          {!showPreview && (
-            <div className="space-y-4 sm:space-y-6 lg:col-span-1">
+          {/* Panneau latéral - Destinataires */}
+          <div className="space-y-4 sm:space-y-6 lg:col-span-1">
             {/* Destinataires */}
             <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-4 sm:p-6">
               <div className="flex items-center gap-2 mb-4">
@@ -1239,8 +1203,58 @@ const NewsletterEditPage = () => {
               </ul>
             </div>
           </div>
-          )}
         </div>
+
+        {/* Modal d'aperçu en popup */}
+        {showPreview && (
+          <div className="fixed inset-0 z-50 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+            {/* Overlay */}
+            <div 
+              className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity"
+              onClick={() => setShowPreview(false)}
+            ></div>
+
+            {/* Modal */}
+            <div className="flex min-h-full items-center justify-center p-4 text-center sm:p-0">
+              <div className="relative transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all w-full max-w-4xl max-h-[90vh] flex flex-col">
+                {/* Header */}
+                <div className="flex justify-between items-center px-6 py-4 border-b border-gray-200 bg-gray-50 flex-shrink-0">
+                  <h3 className="text-lg font-semibold text-gray-900">Aperçu de la Newsletter</h3>
+                  <button
+                    onClick={() => setShowPreview(false)}
+                    className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                    title="Fermer l'aperçu"
+                    aria-label="Fermer l'aperçu"
+                  >
+                    <X className="w-5 h-5 text-gray-500" />
+                  </button>
+                </div>
+
+                {/* Content */}
+                <div className="flex-1 overflow-y-auto overflow-x-auto bg-gray-50 p-4 sm:p-6">
+                  <div 
+                    className="bg-white w-full max-w-full mx-auto"
+                    style={{ 
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+                      overflow: 'hidden'
+                    }}
+                    dangerouslySetInnerHTML={{ __html: generatePreview }}
+                  />
+                </div>
+
+                {/* Footer */}
+                <div className="flex justify-end gap-2 px-6 py-4 border-t border-gray-200 bg-gray-50 flex-shrink-0">
+                  <button
+                    onClick={() => setShowPreview(false)}
+                    className="px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-colors text-sm sm:text-base"
+                  >
+                    Fermer
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </AdminLayout>
   );
