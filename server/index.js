@@ -156,6 +156,14 @@ const connectDB = async () => {
 			console.warn("⚠️  Erreur lors de l'initialisation admin:", err.message);
 		}
 
+		// Démarrer le scheduler de newsletters
+		try {
+			const newsletterScheduler = require('./utils/newsletterScheduler');
+			newsletterScheduler.start();
+		} catch (err) {
+			console.warn("⚠️  Erreur lors du démarrage du scheduler de newsletters:", err.message);
+		}
+
 		const PORT = process.env.PORT || 5000;
 		app.listen(PORT, () => {
 			console.log(`🚀 Server running on port ${PORT}`);
