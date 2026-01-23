@@ -5,7 +5,7 @@ import { toast } from "react-hot-toast";
 const getApiBaseUrl = () => {
 	// En production, utiliser l'URL du serveur backend
 	if (import.meta.env.PROD) {
-		return "https://ubb-enterprise-health-check.onrender.com/api";
+		return "https://vitalcheck-brtv.onrender.com/api";
 	}
 	// En développement, utiliser l'URL locale ou celle définie dans .env
 	return import.meta.env.VITE_API_URL || "http://localhost:5000/api";
@@ -29,7 +29,7 @@ api.interceptors.request.use(
 	},
 	(error) => {
 		return Promise.reject(error);
-	}
+	},
 );
 
 // Instance Axios pour les requêtes admin
@@ -52,7 +52,7 @@ adminApi.interceptors.request.use(
 	},
 	(error) => {
 		return Promise.reject(error);
-	}
+	},
 );
 
 // Intercepteur de réponse pour gérer les erreurs
@@ -118,7 +118,7 @@ const setupResponseInterceptor = (instance, isAdmin = false) => {
 			}
 
 			return Promise.reject(error);
-		}
+		},
 	);
 };
 
@@ -268,8 +268,10 @@ export const adminApiService = {
 		adminApi.get("/admin/payments/export", { responseType: "blob" }),
 
 	// Chatbot
-	getChatbotStats: (days = 30) => adminApi.get(`/admin/chatbot/stats?days=${days}`),
-	getChatbotAnalytics: (days = 30) => adminApi.get(`/admin/chatbot/analytics?days=${days}`),
+	getChatbotStats: (days = 30) =>
+		adminApi.get(`/admin/chatbot/stats?days=${days}`),
+	getChatbotAnalytics: (days = 30) =>
+		adminApi.get(`/admin/chatbot/analytics?days=${days}`),
 	getUnansweredQuestions: (params = {}) => {
 		const queryParams = new URLSearchParams(params);
 		return adminApi.get(`/admin/chatbot/unanswered?${queryParams}`);
@@ -278,19 +280,25 @@ export const adminApiService = {
 		const queryParams = new URLSearchParams(params);
 		return adminApi.get(`/admin/chatbot/interactions?${queryParams}`);
 	},
-	answerQuestion: (id, data) => adminApi.post(`/admin/chatbot/answer/${id}`, data),
+	answerQuestion: (id, data) =>
+		adminApi.post(`/admin/chatbot/answer/${id}`, data),
 	ignoreQuestion: (id) => adminApi.post(`/admin/chatbot/ignore/${id}`),
-	updateFeedback: (id, feedback) => adminApi.post(`/admin/chatbot/feedback/${id}`, { feedback }),
+	updateFeedback: (id, feedback) =>
+		adminApi.post(`/admin/chatbot/feedback/${id}`, { feedback }),
 
 	// Gestion des réponses personnalisées
 	getChatbotResponses: (params = {}) => {
 		const queryParams = new URLSearchParams(params);
 		return adminApi.get(`/admin/chatbot/responses?${queryParams}`);
 	},
-	createChatbotResponse: (data) => adminApi.post("/admin/chatbot/responses", data),
-	updateChatbotResponse: (id, data) => adminApi.put(`/admin/chatbot/responses/${id}`, data),
-	deleteChatbotResponse: (id) => adminApi.delete(`/admin/chatbot/responses/${id}`),
-	getChatbotResponsesStats: () => adminApi.get("/admin/chatbot/responses/stats"),
+	createChatbotResponse: (data) =>
+		adminApi.post("/admin/chatbot/responses", data),
+	updateChatbotResponse: (id, data) =>
+		adminApi.put(`/admin/chatbot/responses/${id}`, data),
+	deleteChatbotResponse: (id) =>
+		adminApi.delete(`/admin/chatbot/responses/${id}`),
+	getChatbotResponsesStats: () =>
+		adminApi.get("/admin/chatbot/responses/stats"),
 };
 
 // Fonction utilitaire pour gérer les erreurs de rate limiting

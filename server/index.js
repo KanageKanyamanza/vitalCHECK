@@ -26,7 +26,7 @@ app.use(
 				connectSrc: ["'self'"],
 			},
 		},
-	})
+	}),
 );
 app.use(
 	cors({
@@ -40,7 +40,8 @@ app.use(
 			const allowedOrigins = [
 				"http://localhost:5173",
 				"http://localhost:5174",
-				"https://ubb-enterprise-health-check.vercel.app",
+				"https://vital-check-lac.vercel.app",
+				"https://vitalcheck-brtv.onrender.com",
 				"https://www.checkmyenterprise.com",
 				"https://checkmyenterprise.com",
 			];
@@ -67,7 +68,7 @@ app.use(
 		// Ajouter des headers supplémentaires pour éviter les problèmes
 		optionsSuccessStatus: 200, // Pour les navigateurs legacy
 		preflightContinue: false,
-	})
+	}),
 );
 
 // Rate limiting désactivé pour permettre un trafic illimité en production
@@ -135,7 +136,9 @@ app.use("*", (req, res) => {
 
 // Database connection with improved error handling
 const connectDB = async () => {
-	const mongoURI = process.env.MONGODB_URI || "mongodb://localhost:27017/vitalCHECK-health-check";
+	const mongoURI =
+		process.env.MONGODB_URI ||
+		"mongodb://localhost:27017/vitalCHECK-health-check";
 
 	// Options de connexion améliorées
 	const mongooseOptions = {
@@ -163,17 +166,25 @@ const connectDB = async () => {
 		console.error("❌ MongoDB connection error:", error.message);
 
 		// En production, MongoDB est obligatoire
-		if (process.env.NODE_ENV === 'production') {
-			console.error("❌ Production mode: MongoDB est requis. Arrêt du serveur.");
+		if (process.env.NODE_ENV === "production") {
+			console.error(
+				"❌ Production mode: MongoDB est requis. Arrêt du serveur.",
+			);
 			process.exit(1);
 		}
 
 		// En développement, démarrer quand même avec avertissements
 		console.warn("⚠️  Mode développement: Le serveur démarre sans MongoDB.");
 		console.warn("💡 Solutions:");
-		console.warn("   1. Démarrer MongoDB local: net start MongoDB (Windows) ou mongod");
-		console.warn("   2. Utiliser MongoDB Atlas: Configurez MONGODB_URI dans .env");
-		console.warn("   3. Continuer sans MongoDB: Certaines fonctionnalités ne seront pas disponibles");
+		console.warn(
+			"   1. Démarrer MongoDB local: net start MongoDB (Windows) ou mongod",
+		);
+		console.warn(
+			"   2. Utiliser MongoDB Atlas: Configurez MONGODB_URI dans .env",
+		);
+		console.warn(
+			"   3. Continuer sans MongoDB: Certaines fonctionnalités ne seront pas disponibles",
+		);
 
 		const PORT = process.env.PORT || 5000;
 		app.listen(PORT, () => {
@@ -183,19 +194,19 @@ const connectDB = async () => {
 };
 
 // Gestion des événements de connexion
-mongoose.connection.on('error', (err) => {
-	if (process.env.NODE_ENV === 'production') {
-		console.error('❌ MongoDB connection error:', err);
+mongoose.connection.on("error", (err) => {
+	if (process.env.NODE_ENV === "production") {
+		console.error("❌ MongoDB connection error:", err);
 	} else {
-		console.warn('⚠️  MongoDB connection error:', err.message);
+		console.warn("⚠️  MongoDB connection error:", err.message);
 	}
 });
 
-mongoose.connection.on('disconnected', () => {
-	if (process.env.NODE_ENV === 'production') {
-		console.error('❌ MongoDB disconnected');
+mongoose.connection.on("disconnected", () => {
+	if (process.env.NODE_ENV === "production") {
+		console.error("❌ MongoDB disconnected");
 	} else {
-		console.warn('⚠️  MongoDB disconnected');
+		console.warn("⚠️  MongoDB disconnected");
 	}
 });
 
