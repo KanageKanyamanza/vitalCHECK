@@ -19,7 +19,7 @@ import { useAssessment } from "../../context/AssessmentContext";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+import { API_BASE_URL as API_URL } from "../../services/api";
 
 const ClientDashboardPage = () => {
 	const { t } = useTranslation();
@@ -47,7 +47,7 @@ const ClientDashboardPage = () => {
 		total: payments.length,
 		active: payments.filter((p) => p.status === "pending").length,
 		completed: payments.filter(
-			(p) => p.status === "completed" || p.status === "processed"
+			(p) => p.status === "completed" || p.status === "processed",
 		).length,
 		failed: payments.filter((p) => p.status === "failed").length,
 		totalAmount: payments.reduce((sum, p) => sum + (p.amount || 0), 0),
@@ -76,14 +76,14 @@ const ClientDashboardPage = () => {
 			// Load assessments
 			const assessmentsResponse = await axios.get(
 				`${API_URL}/assessments/user/${user.id}`,
-				{ headers: { Authorization: `Bearer ${token}` } }
+				{ headers: { Authorization: `Bearer ${token}` } },
 			);
 			setAssessments(assessmentsResponse.data.assessments || []);
 
 			// Load payments
 			const paymentsResponse = await axios.get(
 				`${API_URL}/client-auth/payments`,
-				{ headers: { Authorization: `Bearer ${token}` } }
+				{ headers: { Authorization: `Bearer ${token}` } },
 			);
 			setPayments(paymentsResponse.data.payments || []);
 		} catch (error) {
@@ -122,33 +122,36 @@ const ClientDashboardPage = () => {
 	const handleDownloadReport = async (assessmentId) => {
 		setDownloadingReport(assessmentId);
 		try {
-			const token = localStorage.getItem('clientToken');
-			const response = await axios.get(`${API_URL}/reports/download/${assessmentId}`, {
-				headers: {
-					'Authorization': `Bearer ${token}`
+			const token = localStorage.getItem("clientToken");
+			const response = await axios.get(
+				`${API_URL}/reports/download/${assessmentId}`,
+				{
+					headers: {
+						Authorization: `Bearer ${token}`,
+					},
+					responseType: "blob",
 				},
-				responseType: 'blob'
-			});
+			);
 
 			// Créer un blob URL et déclencher le téléchargement
-			const blob = new Blob([response.data], { type: 'application/pdf' });
+			const blob = new Blob([response.data], { type: "application/pdf" });
 			const url = window.URL.createObjectURL(blob);
-			const link = document.createElement('a');
+			const link = document.createElement("a");
 			link.href = url;
-			
+
 			// Générer un nom de fichier avec la date
-			const date = new Date().toISOString().split('T')[0];
+			const date = new Date().toISOString().split("T")[0];
 			link.download = `vitalCHECK-Report-${date}.pdf`;
-			
+
 			document.body.appendChild(link);
 			link.click();
 			document.body.removeChild(link);
 			window.URL.revokeObjectURL(url);
-			
-			toast.success('Rapport téléchargé avec succès !');
+
+			toast.success("Rapport téléchargé avec succès !");
 		} catch (error) {
-			console.error('Erreur lors du téléchargement:', error);
-			toast.error('Erreur lors du téléchargement du rapport');
+			console.error("Erreur lors du téléchargement:", error);
+			toast.error("Erreur lors du téléchargement du rapport");
 		} finally {
 			setDownloadingReport(null);
 		}
@@ -246,9 +249,9 @@ const ClientDashboardPage = () => {
 								{badge.label}
 							</div>
 							<p className="text-sm text-gray-600">
-								{user?.subscription?.status === "active"
-									? t("clientDashboard.subscription.active")
-									: t("clientDashboard.subscription.inactive")}
+								{user?.subscription?.status === "active" ?
+									t("clientDashboard.subscription.active")
+								:	t("clientDashboard.subscription.inactive")}
 							</p>
 							{user?.subscription?.plan !== "free" && (
 								<button
@@ -330,7 +333,7 @@ const ClientDashboardPage = () => {
 							</h2>
 						</div>
 						<div className="p-6">
-							{assessments.length === 0 ? (
+							{assessments.length === 0 ?
 								<div className="text-center py-12">
 									<FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
 									<p className="text-gray-500 mb-4">
@@ -343,8 +346,7 @@ const ClientDashboardPage = () => {
 										{t("clientDashboard.history.startFirst")}
 									</button>
 								</div>
-							) : (
-								<div className="space-y-4">
+							:	<div className="space-y-4">
 									{assessments.map((assessment) => (
 										<div
 											key={assessment._id}
@@ -355,14 +357,14 @@ const ClientDashboardPage = () => {
 													<h3 className="font-semibold text-gray-900 mb-2">
 														{t("clientDashboard.history.evaluation")} -{" "}
 														{new Date(
-															assessment.completedAt || assessment.startedAt
+															assessment.completedAt || assessment.startedAt,
 														).toLocaleDateString("fr-FR")}
 													</h3>
 													<div className="flex flex-wrap gap-3 text-sm">
 														<span className="text-gray-600">
 															<Calendar className="w-4 h-4 inline mr-1" />
 															{new Date(
-																assessment.completedAt || assessment.startedAt
+																assessment.completedAt || assessment.startedAt,
 															).toLocaleDateString("fr-FR")}
 														</span>
 														<span className="font-semibold text-primary-600">
@@ -386,29 +388,28 @@ const ClientDashboardPage = () => {
 														disabled={downloadingReport === assessment._id}
 														className="flex items-center px-4 py-2 text-green-600 border border-green-600 hover:bg-green-50 rounded-lg transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
 													>
-														{downloadingReport === assessment._id ? (
+														{downloadingReport === assessment._id ?
 															<>
 																<div className="w-4 h-4 border-2 border-green-600 border-t-transparent rounded-full animate-spin mr-2" />
 																{t("clientDashboard.history.downloading")}
 															</>
-														) : (
-															<>
+														:	<>
 																<Download className="w-4 h-4 mr-2" />
 																{t("clientDashboard.history.downloadPDF")}
 															</>
-														)}
+														}
 													</button>
 												</div>
 											</div>
 										</div>
 									))}
 								</div>
-							)}
+							}
 						</div>
 					</motion.div>
 
 					{/* Payments History */}
-					{payments.length > 0 ? (
+					{payments.length > 0 ?
 						<motion.div
 							initial={{ opacity: 0, y: 20 }}
 							animate={{ opacity: 1, y: 0 }}
@@ -427,9 +428,9 @@ const ClientDashboardPage = () => {
 										<button
 											onClick={() => setPaymentFilter("all")}
 											className={`px-3 whitespace-nowrap py-1 text-sm rounded-full transition-colors ${
-												paymentFilter === "all"
-													? "bg-blue-100 text-blue-800"
-													: "bg-gray-100 text-gray-600 hover:bg-gray-200"
+												paymentFilter === "all" ?
+													"bg-blue-100 text-blue-800"
+												:	"bg-gray-100 text-gray-600 hover:bg-gray-200"
 											}`}
 										>
 											{t("clientDashboard.paymentsHistory.all")} (
@@ -438,9 +439,9 @@ const ClientDashboardPage = () => {
 										<button
 											onClick={() => setPaymentFilter("active")}
 											className={`px-3 whitespace-nowrap py-1 text-sm rounded-full transition-colors ${
-												paymentFilter === "active"
-													? "bg-yellow-100 text-yellow-800"
-													: "bg-gray-100 text-gray-600 hover:bg-gray-200"
+												paymentFilter === "active" ?
+													"bg-yellow-100 text-yellow-800"
+												:	"bg-gray-100 text-gray-600 hover:bg-gray-200"
 											}`}
 										>
 											{t("clientDashboard.paymentsHistory.active")} (
@@ -449,9 +450,9 @@ const ClientDashboardPage = () => {
 										<button
 											onClick={() => setPaymentFilter("completed")}
 											className={`px-3 whitespace-nowrap py-1 text-sm rounded-full transition-colors ${
-												paymentFilter === "completed"
-													? "bg-green-100 text-green-800"
-													: "bg-gray-100 text-gray-600 hover:bg-gray-200"
+												paymentFilter === "completed" ?
+													"bg-green-100 text-green-800"
+												:	"bg-gray-100 text-gray-600 hover:bg-gray-200"
 											}`}
 										>
 											{t("clientDashboard.paymentsHistory.completed")} (
@@ -516,12 +517,12 @@ const ClientDashboardPage = () => {
 											</tr>
 										</thead>
 										<tbody className="divide-y divide-gray-200">
-											{filteredPayments.length > 0 ? (
+											{filteredPayments.length > 0 ?
 												filteredPayments.map((payment) => (
 													<tr key={payment._id} className="hover:bg-gray-50">
 														<td className="px-4 py-3 text-sm text-gray-900">
 															{new Date(payment.createdAt).toLocaleDateString(
-																"fr-FR"
+																"fr-FR",
 															)}
 														</td>
 														<td className="px-4 py-3 text-sm font-medium text-gray-900">
@@ -533,28 +534,29 @@ const ClientDashboardPage = () => {
 														<td className="px-4 py-3">
 															<span
 																className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-																	payment.status === "completed" ||
-																	payment.status === "processed"
-																		? "bg-green-100 text-green-800"
-																		: payment.status === "pending"
-																		? "bg-yellow-100 text-yellow-800"
-																		: "bg-red-100 text-red-800"
+																	(
+																		payment.status === "completed" ||
+																		payment.status === "processed"
+																	) ?
+																		"bg-green-100 text-green-800"
+																	: payment.status === "pending" ?
+																		"bg-yellow-100 text-yellow-800"
+																	:	"bg-red-100 text-red-800"
 																}`}
 															>
-																{payment.status === "completed" ||
-																payment.status === "processed"
-																	? t(
-																			"clientDashboard.paymentsHistory.completed"
-																	  )
-																	: payment.status === "pending"
-																	? t("clientDashboard.paymentsHistory.pending")
-																	: t("clientDashboard.paymentsHistory.failed")}
+																{(
+																	payment.status === "completed" ||
+																	payment.status === "processed"
+																) ?
+																	t("clientDashboard.paymentsHistory.completed")
+																: payment.status === "pending" ?
+																	t("clientDashboard.paymentsHistory.pending")
+																:	t("clientDashboard.paymentsHistory.failed")}
 															</span>
 														</td>
 													</tr>
 												))
-											) : (
-												<tr>
+											:	<tr>
 													<td
 														colSpan="4"
 														className="px-4 py-8 text-center text-gray-500"
@@ -562,14 +564,13 @@ const ClientDashboardPage = () => {
 														{t("clientDashboard.paymentsHistory.noPayments")}
 													</td>
 												</tr>
-											)}
+											}
 										</tbody>
 									</table>
 								</div>
 							</div>
 						</motion.div>
-					) : (
-						<motion.div
+					:	<motion.div
 							initial={{ opacity: 0, y: 20 }}
 							animate={{ opacity: 1, y: 0 }}
 							transition={{ delay: 0.4 }}
@@ -591,7 +592,7 @@ const ClientDashboardPage = () => {
 								</button>
 							</div>
 						</motion.div>
-					)}
+					}
 				</div>
 			</main>
 		</div>

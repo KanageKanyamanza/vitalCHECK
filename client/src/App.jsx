@@ -11,7 +11,6 @@ import { toastColors } from "./utils/colors";
 import { usePWAUpdate } from "./hooks/usePWAUpdate";
 import { usePushNotifications } from "./hooks/usePushNotifications";
 import { useClientAuth } from "./context/ClientAuthContext";
-import UpdateNotification from "./components/ui/UpdateNotification";
 
 function AppContent() {
 	// Vérifier si l'utilisateur a déjà vu la splash screen
@@ -20,7 +19,7 @@ function AppContent() {
 		return !hasSeenSplash; // Afficher la splash screen seulement si l'utilisateur ne l'a jamais vue
 	});
 
-	const { updateAvailable, updateApp, checkForUpdate } = usePWAUpdate();
+	usePWAUpdate();
 	const { user } = useClientAuth();
 	const { setAppBadge } = usePushNotifications(user?._id);
 	const location = useLocation();
@@ -36,22 +35,10 @@ function AppContent() {
 		localStorage.setItem("hasSeenSplash", "true");
 	};
 
-	const handleUpdateDismiss = () => {
-		// Optionnel : masquer la notification temporairement
-		// Vous pouvez implémenter une logique pour ne pas la montrer pendant X minutes
-	};
-
 	return (
 		<div className="min-h-screen bg-gray-50">
 			{/* Analytics et Performance Monitoring */}
 			<PerformanceAnalytics />
-
-			{/* Notification de mise à jour PWA */}
-			<UpdateNotification
-				isVisible={updateAvailable}
-				onUpdate={updateApp}
-				onDismiss={handleUpdateDismiss}
-			/>
 
 			{showSplash && <SplashScreen onLoadingComplete={handleSplashComplete} />}
 
