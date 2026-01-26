@@ -15,8 +15,9 @@ export const usePWAUpdate = () => {
           if (newWorker) {
             newWorker.addEventListener('statechange', () => {
               if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                // Nouvelle version disponible
-                setUpdateAvailable(true)
+                // Nouvelle version disponible - déclencher la mise à jour automatique
+                console.log('Automated PWA Update: Skip waiting and reloading...')
+                newWorker.postMessage({ type: 'SKIP_WAITING' })
               }
             })
           }

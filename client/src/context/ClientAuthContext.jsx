@@ -1,19 +1,19 @@
-import React, { createContext, useContext, useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
-import axios from 'axios'
-import toast from 'react-hot-toast'
+import React, { createContext, useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import toast from "react-hot-toast";
 
-const ClientAuthContext = createContext()
+const ClientAuthContext = createContext();
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+import { API_BASE_URL as API_URL } from "../services/api";
 
 export const useClientAuth = () => {
-  const context = useContext(ClientAuthContext)
-  if (!context) {
-    throw new Error('useClientAuth must be used within ClientAuthProvider')
-  }
-  return context
-}
+	const context = useContext(ClientAuthContext);
+	if (!context) {
+		throw new Error("useClientAuth must be used within ClientAuthProvider");
+	}
+	return context;
+};
 
 export const ClientAuthProvider = ({ children }) => {
   const [user, setUser] = useState(null)

@@ -11,7 +11,7 @@ const getApiBaseUrl = () => {
 	return import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 };
 
-const API_BASE_URL = getApiBaseUrl();
+export const API_BASE_URL = getApiBaseUrl();
 
 // Instance Axios principale
 const api = axios.create({

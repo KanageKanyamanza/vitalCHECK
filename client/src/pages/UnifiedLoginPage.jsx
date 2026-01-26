@@ -1,13 +1,22 @@
-import React, { useState, useEffect } from 'react'
-import { useNavigate, Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import { useTranslation } from 'react-i18next'
-import { Lock, Mail, Eye, EyeOff, LogIn, ArrowRight, Shield, Users } from 'lucide-react'
-import axios from 'axios'
-import toast from 'react-hot-toast'
-import { useClientAuth } from '../context/ClientAuthContext'
+import React, { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { useTranslation } from "react-i18next";
+import {
+	Lock,
+	Mail,
+	Eye,
+	EyeOff,
+	LogIn,
+	ArrowRight,
+	Shield,
+	Users,
+} from "lucide-react";
+import axios from "axios";
+import toast from "react-hot-toast";
+import { useClientAuth } from "../context/ClientAuthContext";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
+import { API_BASE_URL as API_URL } from "../services/api";
 
 const UnifiedLoginPage = () => {
   const { t } = useTranslation()
