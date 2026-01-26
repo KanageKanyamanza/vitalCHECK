@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import {
@@ -7,10 +7,13 @@ import {
 	MapPin,
 	Linkedin,
 	Instagram,
-	Youtube
+	Youtube,
+	Send,
+	CheckCircle
 } from "lucide-react";
 import logoIcon from "/android-icon-96x96.png";
 import { InstallPWAButton, UserGuideButton } from "../ui";
+import toast from "react-hot-toast";
 // import useSmoothScroll from "../../hooks/useSmoothScroll";
 
 const Footer = () => {
@@ -19,6 +22,67 @@ const Footer = () => {
 	// const { scrollToTop, scrollToElement } = useSmoothScroll();
 
 	const currentYear = new Date().getFullYear();
+	
+	// État pour la newsletter
+	const [email, setEmail] = useState("");
+	const [isSubscribing, setIsSubscribing] = useState(false);
+	const [isSubscribed, setIsSubscribed] = useState(false);
+
+	// Validation de l'email
+	const isValidEmail = (email) => {
+		return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+	};
+
+	// Gérer l'abonnement à la newsletter
+	const handleNewsletterSubmit = async (e) => {
+		e.preventDefault();
+		
+		if (!email.trim()) {
+			toast.error(t("footer.newsletter.invalidEmail"));
+			return;
+		}
+
+		if (!isValidEmail(email)) {
+			toast.error(t("footer.newsletter.invalidEmail"));
+			return;
+		}
+
+		setIsSubscribing(true);
+		
+		try {
+			const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+			const response = await fetch(`${API_BASE_URL}/newsletters/subscribe`, {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					email: email.trim(),
+					source: 'footer'
+				})
+			});
+
+			const data = await response.json();
+
+			if (data.success) {
+				setIsSubscribed(true);
+				toast.success(t("footer.newsletter.success"));
+				setEmail("");
+				
+				// Réinitialiser après 3 secondes
+				setTimeout(() => {
+					setIsSubscribed(false);
+				}, 3000);
+			} else {
+				toast.error(data.message || t("footer.newsletter.error"));
+			}
+		} catch (error) {
+			console.error("Erreur lors de l'abonnement:", error);
+			toast.error(t("footer.newsletter.error"));
+		} finally {
+			setIsSubscribing(false);
+		}
+	};
 
 	// Icône TikTok personnalisée
 	const TikTokIcon = ({ className }) => (
@@ -91,6 +155,66 @@ const Footer = () => {
 	return (
 		<footer className="bg-primary-600 text-white">
 			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-1">
+				{/* Section Newsletter - En haut du footer */}
+				<div className="mb-16 pb-12 border-b border-primary-500">
+					<div className="max-w-4xl mx-auto">
+						<div className="text-center mb-8">
+							<h3 className="text-3xl md:text-4xl font-bold mb-3">
+								{t("footer.newsletter.title")}
+							</h3>
+							<p className="text-primary-100 text-base md:text-lg mb-2">
+								{t("footer.newsletter.subtitle")}
+							</p>
+							<p className="text-primary-200 text-sm md:text-base">
+								{t("footer.newsletter.description")}
+							</p>
+						</div>
+						
+						{/* Formulaire Newsletter */}
+						<form onSubmit={handleNewsletterSubmit} className="max-w-2xl mx-auto">
+							<div className="flex flex-col sm:flex-row gap-4">
+								<div className="flex-1">
+									<input
+										type="email"
+										value={email}
+										onChange={(e) => setEmail(e.target.value)}
+										placeholder={t("footer.newsletter.emailPlaceholder")}
+										disabled={isSubscribing || isSubscribed}
+										className="w-full px-6 py-4 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-lg"
+									/>
+								</div>
+								<button
+									type="submit"
+									disabled={isSubscribing || isSubscribed || !email.trim()}
+									className={`px-8 py-4 rounded-lg font-semibold text-base transition-all duration-200 flex items-center justify-center gap-2 ${
+										isSubscribed
+											? "bg-green-500 text-white cursor-default"
+											: "bg-accent-500 hover:bg-accent-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+									}`}
+								>
+									{isSubscribed ? (
+										<>
+											<CheckCircle className="w-5 h-5" />
+											{t("footer.newsletter.success")}
+										</>
+									) : isSubscribing ? (
+										<>
+											<div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+											{t("footer.newsletter.subscribing")}
+										</>
+									) : (
+										<>
+											<Send className="w-5 h-5" />
+											{t("footer.newsletter.subscribe")}
+										</>
+									)}
+								</button>
+							</div>
+						</form>
+					</div>
+				</div>
+
+				{/* Contenu principal du footer */}
 				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
 					{/* Logo et Description */}
 					<div className="lg:col-span-2">

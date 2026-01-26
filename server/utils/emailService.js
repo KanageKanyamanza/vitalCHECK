@@ -640,6 +640,44 @@ const sendSubscriptionUpgradeEmail = async (to, name, planName, planId) => {
   return sendEmail(mailOptions);
 };
 
+// Send password reset email
+const sendPasswordResetEmail = async (to, name, resetToken) => {
+  const resetUrl = `${process.env.CLIENT_URL || 'https://checkmyenterprise.com'}/reset-password/${resetToken}`;
+  
+  const mailOptions = {
+    from: `"vitalCHECK" <${process.env.EMAIL_USER}>`,
+    to,
+    subject: 'Réinitialisation de votre mot de passe - vitalCHECK',
+    html: createUnifiedEmailTemplate({
+      language: 'fr',
+      title: 'Réinitialisation de mot de passe',
+      subtitle: `Bonjour <strong>${name}</strong>, vous avez demandé à réinitialiser votre mot de passe.`,
+      content: `
+        <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.5; color: #4a5568;">
+          Cliquez sur le bouton ci-dessous pour réinitialiser votre mot de passe. Ce lien est valide pendant <strong>1 heure</strong>.
+        </p>
+        
+        <div style="background: #fef3c7; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #f59e0b;">
+          <p style="margin: 0; color: #92400e; font-size: 14px;">
+            <strong>⚠️ Sécurité :</strong> Si vous n'avez pas demandé cette réinitialisation, ignorez cet email. Votre mot de passe ne sera pas modifié.
+          </p>
+        </div>
+      `,
+      buttons: [
+        {
+          text: 'Réinitialiser mon mot de passe',
+          url: resetUrl,
+          primary: true,
+          icon: '🔒'
+        }
+      ],
+      note: 'Ce lien expirera dans 1 heure. Pour des raisons de sécurité, ne partagez jamais ce lien avec personne.'
+    })
+  };
+
+  return sendEmail(mailOptions);
+};
+
 module.exports = {
   sendEmail,
   testEmailConfig,
@@ -651,6 +689,7 @@ module.exports = {
   sendAccountCreatedAfterAssessment,
   sendAssessmentCompletedExistingUser,
   sendSubscriptionUpgradeEmail,
+  sendPasswordResetEmail,
   emailService: {
     sendContactConfirmation,
     sendContactNotification,
@@ -659,6 +698,7 @@ module.exports = {
     sendAccountCreatedEmail,
     sendAccountCreatedAfterAssessment,
     sendAssessmentCompletedExistingUser,
-    sendSubscriptionUpgradeEmail
+    sendSubscriptionUpgradeEmail,
+    sendPasswordResetEmail
   }
 };

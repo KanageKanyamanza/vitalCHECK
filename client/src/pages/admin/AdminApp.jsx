@@ -17,6 +17,8 @@ import SettingsPage from './SettingsPage';
 import PDFManagementPage from './PDFManagementPage';
 import PaymentManagement from './PaymentManagement';
 import ChatbotManagement from './ChatbotManagement';
+import NewsletterManagement from './NewsletterManagement';
+import NewsletterEditPage from './NewsletterEditPage';
 
 const AdminApp = () => {
   const isAuthenticated = () => {
@@ -137,6 +139,24 @@ const AdminApp = () => {
         path="/chatbot" 
         element={
           isAuthenticated() ? <ChatbotManagement /> : <Navigate to="/login" replace />
+        } 
+      />
+      <Route 
+        path="/newsletters" 
+        element={
+          isAuthenticated() ? <NewsletterManagement /> : <Navigate to="/login" replace />
+        } 
+      />
+      <Route 
+        path="/newsletters/create" 
+        element={
+          isAuthenticated() ? <NewsletterEditPage /> : <Navigate to="/login" replace />
+        } 
+      />
+      <Route 
+        path="/newsletters/edit/:id" 
+        element={
+          isAuthenticated() ? <NewsletterEditPage /> : <Navigate to="/login" replace />
         } 
       />
       <Route 

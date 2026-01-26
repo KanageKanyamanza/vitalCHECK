@@ -16,180 +16,191 @@ export const useClientAuth = () => {
 };
 
 export const ClientAuthProvider = ({ children }) => {
-	const [user, setUser] = useState(null);
-	const [loading, setLoading] = useState(true);
-	const [token, setToken] = useState(localStorage.getItem("clientToken"));
+  const [user, setUser] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [token, setToken] = useState(localStorage.getItem('clientToken'))
 
-	// Configure axios with token
-	useEffect(() => {
-		if (token) {
-			axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-		} else {
-			delete axios.defaults.headers.common["Authorization"];
-		}
-	}, [token]);
+  // Configure axios with token
+  useEffect(() => {
+    if (token) {
+      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
+    } else {
+      delete axios.defaults.headers.common['Authorization']
+    }
+  }, [token])
 
-	// Load user on mount
-	useEffect(() => {
-		if (token) {
-			loadUser();
-		} else {
-			setLoading(false);
-		}
-	}, [token]);
+  // Load user on mount
+  useEffect(() => {
+    if (token) {
+      loadUser()
+    } else {
+      setLoading(false)
+    }
+  }, [token])
 
-	const loadUser = async () => {
-		try {
-			const response = await axios.get(`${API_URL}/unified-auth/me`, {
-				headers: { Authorization: `Bearer ${token}` },
-			});
-			setUser(response.data.user);
-		} catch (error) {
-			console.error("Error loading user:", error);
-			// Si le token est invalide, le supprimer
-			if (error.response?.status === 401) {
-				logout();
-			}
-		} finally {
-			setLoading(false);
-		}
-	};
+  const loadUser = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/unified-auth/me`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      setUser(response.data.user)
+    } catch (error) {
+      console.error('Error loading user:', error)
+      // Si le token est invalide, le supprimer
+      if (error.response?.status === 401) {
+        logout()
+      }
+    } finally {
+      setLoading(false)
+    }
+  }
 
-	const register = async (userData) => {
-		try {
-			const response = await axios.post(
-				`${API_URL}/client-auth/register`,
-				userData,
-			);
+  const register = async (userData) => {
+    try {
+      const response = await axios.post(`${API_URL}/client-auth/register`, userData)
+      
+      const { token: newToken, user: newUser } = response.data
+      
+      localStorage.setItem('clientToken', newToken)
+      setToken(newToken)
+      setUser(newUser)
+      
+      toast.success('Compte créé avec succès!')
+      return { success: true, user: newUser }
+    } catch (error) {
+      const message = error.response?.data?.message || 'Erreur lors de la création du compte'
+      toast.error(message)
+      return { success: false, error: message }
+    }
+  }
 
-			const { token: newToken, user: newUser } = response.data;
+  const login = async (email, password) => {
+    try {
+      const response = await axios.post(`${API_URL}/client-auth/login`, {
+        email,
+        password
+      })
+      
+      const { token: newToken, user: newUser } = response.data
+      
+      localStorage.setItem('clientToken', newToken)
+      setToken(newToken)
+      setUser(newUser)
+      
+      toast.success('Connexion réussie!')
+      return { success: true, user: newUser }
+    } catch (error) {
+      const message = error.response?.data?.message || 'Erreur lors de la connexion'
+      toast.error(message)
+      return { success: false, error: message }
+    }
+  }
 
-			localStorage.setItem("clientToken", newToken);
-			setToken(newToken);
-			setUser(newUser);
+  // Fonction pour nettoyer les données du chatbot
+  const clearChatbotData = (userId) => {
+    if (userId) {
+      // Nettoyer les données pour l'utilisateur spécifique
+      localStorage.removeItem(`chatbot_messages_${userId}`)
+      localStorage.removeItem(`chatbot_visitor_info_${userId}`)
+      localStorage.removeItem(`chatbot_collecting_info_${userId}`)
+    }
+    // Nettoyer aussi les données visiteur (pour les utilisateurs non connectés)
+    localStorage.removeItem('chatbot_messages_visitor')
+    localStorage.removeItem('chatbot_visitor_info_visitor')
+    localStorage.removeItem('chatbot_collecting_info_visitor')
+  }
 
-			toast.success("Compte créé avec succès!");
-			return { success: true, user: newUser };
-		} catch (error) {
-			const message =
-				error.response?.data?.message || "Erreur lors de la création du compte";
-			toast.error(message);
-			return { success: false, error: message };
-		}
-	};
+  const logout = () => {
+    // Nettoyer les données du chatbot avant de déconnecter
+    if (user?._id || user?.id) {
+      clearChatbotData(user._id || user.id)
+    }
+    clearChatbotData() // Nettoyer aussi les données visiteur
+    
+    localStorage.removeItem('clientToken')
+    setToken(null)
+    setUser(null)
+    toast.success('Déconnexion réussie')
+  }
 
-	const login = async (email, password) => {
-		try {
-			const response = await axios.post(`${API_URL}/client-auth/login`, {
-				email,
-				password,
-			});
+  const updateProfile = async (profileData) => {
+    try {
+      const response = await axios.put(`${API_URL}/client-auth/profile`, profileData, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      
+      setUser(response.data.user)
+      toast.success('Profil mis à jour avec succès!')
+      return { success: true }
+    } catch (error) {
+      const message = error.response?.data?.message || 'Erreur lors de la mise à jour'
+      toast.error(message)
+      return { success: false, error: message }
+    }
+  }
 
-			const { token: newToken, user: newUser } = response.data;
+  const changePassword = async (currentPassword, newPassword) => {
+    try {
+      await axios.put(`${API_URL}/client-auth/change-password`, {
+        currentPassword,
+        newPassword
+      }, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      
+      toast.success('Mot de passe modifié avec succès!')
+      return { success: true }
+    } catch (error) {
+      const message = error.response?.data?.message || 'Erreur lors du changement de mot de passe'
+      toast.error(message)
+      return { success: false, error: message }
+    }
+  }
 
-			localStorage.setItem("clientToken", newToken);
-			setToken(newToken);
-			setUser(newUser);
+  const forgotPassword = async (email) => {
+    try {
+      await axios.post(`${API_URL}/client-auth/forgot-password`, { email })
+      toast.success('Si cet email existe, un lien de réinitialisation a été envoyé.')
+      return { success: true }
+    } catch (error) {
+      const message = error.response?.data?.message || 'Erreur lors de la demande de réinitialisation'
+      toast.error(message)
+      return { success: false, error: message }
+    }
+  }
 
-			toast.success("Connexion réussie!");
-			return { success: true, user: newUser };
-		} catch (error) {
-			const message =
-				error.response?.data?.message || "Erreur lors de la connexion";
-			toast.error(message);
-			return { success: false, error: message };
-		}
-	};
+  const resetPassword = async (token, password) => {
+    try {
+      await axios.post(`${API_URL}/client-auth/reset-password/${token}`, { password })
+      toast.success('Mot de passe réinitialisé avec succès!')
+      return { success: true }
+    } catch (error) {
+      const message = error.response?.data?.message || 'Erreur lors de la réinitialisation'
+      toast.error(message)
+      return { success: false, error: message }
+    }
+  }
 
-	// Fonction pour nettoyer les données du chatbot
-	const clearChatbotData = (userId) => {
-		if (userId) {
-			// Nettoyer les données pour l'utilisateur spécifique
-			localStorage.removeItem(`chatbot_messages_${userId}`);
-			localStorage.removeItem(`chatbot_visitor_info_${userId}`);
-			localStorage.removeItem(`chatbot_collecting_info_${userId}`);
-		}
-		// Nettoyer aussi les données visiteur (pour les utilisateurs non connectés)
-		localStorage.removeItem("chatbot_messages_visitor");
-		localStorage.removeItem("chatbot_visitor_info_visitor");
-		localStorage.removeItem("chatbot_collecting_info_visitor");
-	};
+  const value = {
+    user,
+    loading,
+    isAuthenticated: !!user,
+    register,
+    login,
+    logout,
+    updateProfile,
+    changePassword,
+    forgotPassword,
+    resetPassword,
+    refreshUser: loadUser,
+    setToken,
+    setUser
+  }
 
-	const logout = () => {
-		// Nettoyer les données du chatbot avant de déconnecter
-		if (user?._id || user?.id) {
-			clearChatbotData(user._id || user.id);
-		}
-		clearChatbotData(); // Nettoyer aussi les données visiteur
+  return (
+    <ClientAuthContext.Provider value={value}>
+      {children}
+    </ClientAuthContext.Provider>
+  )
+}
 
-		localStorage.removeItem("clientToken");
-		setToken(null);
-		setUser(null);
-		toast.success("Déconnexion réussie");
-	};
-
-	const updateProfile = async (profileData) => {
-		try {
-			const response = await axios.put(
-				`${API_URL}/client-auth/profile`,
-				profileData,
-				{
-					headers: { Authorization: `Bearer ${token}` },
-				},
-			);
-
-			setUser(response.data.user);
-			toast.success("Profil mis à jour avec succès!");
-			return { success: true };
-		} catch (error) {
-			const message =
-				error.response?.data?.message || "Erreur lors de la mise à jour";
-			toast.error(message);
-			return { success: false, error: message };
-		}
-	};
-
-	const changePassword = async (currentPassword, newPassword) => {
-		try {
-			await axios.put(
-				`${API_URL}/client-auth/change-password`,
-				{
-					currentPassword,
-					newPassword,
-				},
-				{
-					headers: { Authorization: `Bearer ${token}` },
-				},
-			);
-
-			toast.success("Mot de passe modifié avec succès!");
-			return { success: true };
-		} catch (error) {
-			const message =
-				error.response?.data?.message ||
-				"Erreur lors du changement de mot de passe";
-			toast.error(message);
-			return { success: false, error: message };
-		}
-	};
-
-	const value = {
-		user,
-		loading,
-		isAuthenticated: !!user,
-		register,
-		login,
-		logout,
-		updateProfile,
-		changePassword,
-		refreshUser: loadUser,
-		setToken,
-		setUser,
-	};
-
-	return (
-		<ClientAuthContext.Provider value={value}>
-			{children}
-		</ClientAuthContext.Provider>
-	);
-};

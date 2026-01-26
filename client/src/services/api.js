@@ -25,6 +25,11 @@ const api = axios.create({
 // Intercepteur de requête pour l'API publique
 api.interceptors.request.use(
 	(config) => {
+		// Ajouter le token client s'il existe (pour les utilisateurs connectés)
+		const clientToken = localStorage.getItem('clientToken');
+		if (clientToken) {
+			config.headers.Authorization = `Bearer ${clientToken}`;
+		}
 		return config;
 	},
 	(error) => {
@@ -361,8 +366,23 @@ export const blogApiService = {
 		});
 	},
 
+	// Vérifier si l'utilisateur a déjà liké un blog
+	checkLikeStatus: async (id, visitorId) => {
+		const { getOrCreateVisitorId } = await import('../utils/visitorId');
+		const vId = visitorId || getOrCreateVisitorId();
+		return api.get(`/blogs/${id}/like/status`, {
+			params: { visitorId: vId }
+		});
+	},
+
 	// Liker un blog
-	likeBlog: (id) => api.post(`/blogs/${id}/like`),
+	likeBlog: async (id, visitorId) => {
+		const { getOrCreateVisitorId } = await import('../utils/visitorId');
+		const vId = visitorId || getOrCreateVisitorId();
+		return api.post(`/blogs/${id}/like`, {
+			visitorId: vId
+		});
+	},
 
 	// Tracker une visite
 	trackVisit: (visitId, data) =>
@@ -384,10 +404,23 @@ export const blogApiService = {
 	},
 
 	// Vérifier si un visiteur existe par IP
-	checkVisitorByIP: () => api.get("/blog-visitors/check"),
+	checkVisitorByIP: async (visitorId) => {
+		const { getOrCreateVisitorId } = await import('../utils/visitorId');
+		const vId = visitorId || getOrCreateVisitorId();
+		return api.get("/blog-visitors/check", {
+			params: { visitorId: vId }
+		});
+	},
 
 	// Soumettre le formulaire de visiteur
-	submitVisitorForm: (data) => api.post("/blog-visitors/submit", data),
+	submitVisitorForm: async (data) => {
+		const { getOrCreateVisitorId } = await import('../utils/visitorId');
+		const visitorId = data.visitorId || getOrCreateVisitorId();
+		return api.post("/blog-visitors/submit", {
+			...data,
+			visitorId
+		});
+	},
 };
 
 // Services admin pour les blogs

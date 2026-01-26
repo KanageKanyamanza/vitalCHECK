@@ -274,7 +274,18 @@
     "openHours": "Open Hours",
     "allRightsReserved": "All rights reserved",
     "terms": "Terms of Service",
-    "userGuide": "User Guide"
+    "userGuide": "User Guide",
+    "newsletter": {
+      "title": "Newsletter",
+      "subtitle": "Stay informed",
+      "description": "Get our latest news, tips and insights delivered straight to your inbox.",
+      "emailPlaceholder": "Your email address",
+      "subscribe": "Subscribe",
+      "subscribing": "Subscribing...",
+      "success": "Thank you for subscribing!",
+      "error": "An error occurred. Please try again.",
+      "invalidEmail": "Please enter a valid email address"
+    }
   },
   "privacy": {
     "title": "Privacy Policy",
@@ -655,7 +666,9 @@
     "loading": "Loading...",
     "error": "Error loading blogs",
     "likeError": "Error liking article",
+    "alreadyLiked": "You have already liked this article",
     "likeSuccess": "Thank you for your like!",
+    "unlikeSuccess": "Like removed",
     "shareSuccess": "Link copied to clipboard",
     "articleNotFound": "Article not found",
     "author": "Author",
@@ -671,6 +684,7 @@
     "noResults": "No articles found",
     "actions": "Actions",
     "likeArticle": "I like this article",
+    "unlikeArticle": "I no longer like this article",
     "thankYou": "Thank you!",
     "relatedArticles": "Related articles",
     "types": {
@@ -1204,6 +1218,8 @@
     "maximize": "Maximize",
     "error": "Sorry, an error occurred. Check your connection or try again later.",
     "notUnderstood": "I didn't understand. Can you rephrase?",
-    "questionsAbout": "You can ask me questions about:"
+    "questionsAbout": "You can ask me questions about:",
+    "introGreeting": "Hello! 👋",
+    "introMessage": "I'm the vitalCHECK assistant! Ask me your questions, I'm here to help you! 😊"
   }
 }

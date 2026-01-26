@@ -23,6 +23,7 @@ import { blogApiService } from '../services/api'
 import toast from 'react-hot-toast'
 import { normalizeTags } from '../utils/tagUtils'
 import { autoTranslateTag } from '../utils/autoTranslateTags'
+import { getOrCreateVisitorId } from '../utils/visitorId'
 
 const BlogPage = () => {
   const navigate = useNavigate()
@@ -72,6 +73,14 @@ const BlogPage = () => {
       }
 
       const response = await blogApiService.getBlogs(params)
+      // Debug: vérifier la structure des données
+      if (response.data.data && response.data.data.length > 0) {
+        console.log('📝 [BLOG PAGE] Premier blog:', {
+          id: response.data.data[0]._id,
+          title: response.data.data[0].title,
+          featuredImage: response.data.data[0].featuredImage
+        })
+      }
       setBlogs(response.data.data)
       setTotalPages(response.data.pagination.pages)
     } catch (error) {
@@ -116,18 +125,27 @@ const BlogPage = () => {
     return () => clearTimeout(timer)
   }, [searchTerm])
 
-  // Gérer le like
+  // Gérer le like/unlike (toggle)
   const handleLike = async (blogId) => {
     try {
-      await blogApiService.likeBlog(blogId)
-      setBlogs(blogs.map(blog => 
-        blog._id === blogId 
-          ? { ...blog, likes: blog.likes + 1 }
-          : blog
-      ))
-      toast.success(t('blog.likeSuccess'))
+      const visitorId = getOrCreateVisitorId()
+      const response = await blogApiService.likeBlog(blogId, visitorId)
+      
+      if (response.data.success) {
+        setBlogs(blogs.map(blog => 
+          blog._id === blogId 
+            ? { ...blog, likes: response.data.data.likes }
+            : blog
+        ))
+        
+        if (response.data.data.hasLiked) {
+          toast.success(t('blog.likeSuccess'))
+        } else {
+          toast.success(t('blog.unlikeSuccess'))
+        }
+      }
     } catch (error) {
-      console.error('Error liking blog:', error)
+      console.error('Error toggling like:', error)
       toast.error(t('blog.likeError'))
     }
   }
@@ -298,12 +316,16 @@ const BlogPage = () => {
                     onClick={() => handleBlogClick(blog)}
                   >
                     {/* Image */}
-                    {blog.featuredImage?.url && (
+                    {blog.featuredImage && blog.featuredImage.url && blog.featuredImage.url.trim() !== '' && (
                       <div className="aspect-w-16 aspect-h-9 rounded-t-lg overflow-hidden">
                         <img
                           src={blog.featuredImage.url}
                           alt={blog.featuredImage.alt || blog.title}
                           className="w-full h-48 object-cover"
+                          onError={(e) => {
+                            console.error('❌ [BLOG PAGE] Erreur de chargement de l\'image:', blog.featuredImage.url)
+                            e.target.style.display = 'none'
+                          }}
                         />
                       </div>
                     )}

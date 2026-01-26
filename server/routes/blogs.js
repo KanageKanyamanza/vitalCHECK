@@ -3,8 +3,11 @@ const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const Blog = require('../models/Blog');
 const BlogVisit = require('../models/BlogVisit');
+const BlogLike = require('../models/BlogLike');
 const Admin = require('../models/Admin');
+const User = require('../models/User');
 const { analyzeDevice, extractReferrerDomain, extractUTMParameters, generateSessionId, isBounce } = require('../utils/deviceAnalyzer');
+const { getClientIP } = require('../utils/visitorUtils');
 const axios = require('axios');
 const fetch = require('node-fetch');
 const router = express.Router();
@@ -310,6 +313,9 @@ router.get('/', async (req, res) => {
         excerpt: localizedContent.excerpt,
         metaTitle: localizedContent.metaTitle,
         metaDescription: localizedContent.metaDescription,
+        // Préserver featuredImage et images
+        featuredImage: blogObj.featuredImage,
+        images: blogObj.images,
         // Exclure le contenu complet pour la liste
         content: undefined
       };
@@ -467,7 +473,10 @@ router.get('/:slug', async (req, res) => {
           excerpt: localizedContent.excerpt,
           content: localizedContent.content,
           metaTitle: localizedContent.metaTitle,
-          metaDescription: localizedContent.metaDescription
+          metaDescription: localizedContent.metaDescription,
+          // Préserver featuredImage et images
+          featuredImage: blogObj.featuredImage,
+          images: blogObj.images
         },
         language,
         visitId: visit._id
@@ -477,9 +486,24 @@ router.get('/:slug', async (req, res) => {
       console.error('❌ [TRACKING] Erreur lors du tracking:', trackingError);
       console.error('❌ [TRACKING] Stack trace:', trackingError.stack);
       // Ne pas faire échouer la requête si le tracking échoue
+      const blogObj = blog.toObject();
+      const localizedContent = blog.getLocalizedContent(language);
+      
       res.json({
         success: true,
-        data: blog
+        data: {
+          ...blogObj,
+          title: localizedContent.title,
+          slug: localizedContent.slug,
+          excerpt: localizedContent.excerpt,
+          content: localizedContent.content,
+          metaTitle: localizedContent.metaTitle,
+          metaDescription: localizedContent.metaDescription,
+          // Préserver featuredImage et images
+          featuredImage: blogObj.featuredImage,
+          images: blogObj.images
+        },
+        language
       });
     }
 
@@ -492,7 +516,87 @@ router.get('/:slug', async (req, res) => {
   }
 });
 
-// POST /blogs/:id/like - Liker un blog
+// GET /blogs/:id/like/status - Vérifier si l'utilisateur a déjà liké
+// Comportement: Chaque navigateur (visitorId) est traité indépendamment
+router.get('/:id/like/status', async (req, res) => {
+  try {
+    const blog = await Blog.findById(req.params.id);
+    
+    if (!blog) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Blog non trouvé' 
+      });
+    }
+
+    // Récupérer l'utilisateur si connecté
+    let userId = null;
+    try {
+      const token = req.header('Authorization')?.replace('Bearer ', '');
+      if (token) {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.userId) {
+          userId = decoded.userId;
+        }
+      }
+    } catch (error) {
+      // Token invalide ou absent, continuer sans userId
+    }
+
+    // Récupérer le visitorId depuis les query params (GET request)
+    const visitorId = req.query.visitorId;
+
+    // Vérifier si l'utilisateur a déjà liké
+    // Si l'utilisateur est connecté ET qu'un visitorId est fourni, vérifier les deux
+    // Cela permet de détecter si un visiteur a liké avant de se connecter
+    let hasLiked = false;
+    
+    if (userId) {
+      // Utilisateur connecté: vérifier d'abord par userId
+      let existingLike = await BlogLike.findOne({ blog: req.params.id, userId });
+      
+      // Si pas de like trouvé par userId ET qu'un visitorId est fourni, vérifier aussi par visitorId
+      // Cela permet de détecter si l'utilisateur a liké avant de se connecter
+      if (!existingLike && visitorId) {
+        existingLike = await BlogLike.findOne({ blog: req.params.id, visitorId });
+        
+        // Si un like existe avec le visitorId, le migrer vers le userId
+        if (existingLike) {
+          existingLike.userId = userId;
+          // Garder le visitorId pour l'historique (les index sparse permettent cela)
+          await existingLike.save();
+        }
+      }
+      
+      hasLiked = !!existingLike;
+    } else if (visitorId) {
+      // Utilisateur non connecté: vérifier par visitorId (navigateur spécifique)
+      // Chaque navigateur a son propre visitorId, donc chaque navigateur peut liker indépendamment
+      const existingLike = await BlogLike.findOne({ blog: req.params.id, visitorId });
+      hasLiked = !!existingLike;
+    }
+    // Si ni userId ni visitorId, hasLiked reste false
+
+    res.json({
+      success: true,
+      data: { hasLiked }
+    });
+
+  } catch (error) {
+    console.error('Check like status error:', error);
+    res.status(500).json({ 
+      success: false, 
+      message: 'Erreur lors de la vérification du like' 
+    });
+  }
+});
+
+// POST /blogs/:id/like - Toggle like/unlike d'un blog
+// Comportement:
+// - Chaque navigateur (visitorId) est traité indépendamment
+// - Un navigateur peut liker une seule fois par article
+// - Un navigateur peut retirer son like (unlike)
+// - Les likes d'un navigateur n'affectent pas les autres navigateurs
 router.post('/:id/like', async (req, res) => {
   try {
     const blog = await Blog.findById(req.params.id);
@@ -504,15 +608,139 @@ router.post('/:id/like', async (req, res) => {
       });
     }
 
-    await blog.incrementLikes();
+    // Récupérer l'utilisateur si connecté
+    let userId = null;
+    try {
+      const token = req.header('Authorization')?.replace('Bearer ', '');
+      if (token) {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.userId) {
+          userId = decoded.userId;
+        }
+      }
+    } catch (error) {
+      // Token invalide ou absent, continuer sans userId
+    }
 
-    res.json({
-      success: true,
-      data: { likes: blog.likes }
-    });
+    // Récupérer le visitorId depuis le body
+    const visitorId = req.body.visitorId;
+    
+    // Validation: pour les utilisateurs non connectés, visitorId est requis
+    if (!userId && !visitorId) {
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Identifiant visiteur requis pour les utilisateurs non connectés' 
+      });
+    }
+    
+    // Récupérer l'adresse IP du client (pour tracking/analytics, pas pour la contrainte)
+    const ipAddress = getClientIP(req);
+
+    // Vérifier si l'utilisateur a déjà liké
+    let existingLike = null;
+    if (userId) {
+      // Utilisateur connecté: vérifier d'abord par userId
+      existingLike = await BlogLike.findOne({ blog: req.params.id, userId });
+      
+      // Si pas de like trouvé par userId ET qu'un visitorId est fourni, vérifier aussi par visitorId
+      // Cela permet de détecter si l'utilisateur a liké avant de se connecter
+      if (!existingLike && visitorId) {
+        existingLike = await BlogLike.findOne({ blog: req.params.id, visitorId });
+        
+        // Si un like existe avec le visitorId, le migrer vers le userId
+        if (existingLike) {
+          existingLike.userId = userId;
+          // Garder le visitorId pour l'historique (les index sparse permettent cela)
+          await existingLike.save();
+        }
+      }
+    } else if (visitorId) {
+      // Utilisateur non connecté: vérifier par visitorId (navigateur spécifique)
+      // Chaque navigateur a son propre visitorId, donc chaque navigateur peut liker indépendamment
+      existingLike = await BlogLike.findOne({ blog: req.params.id, visitorId });
+    }
+
+    if (existingLike) {
+      // L'utilisateur a déjà liké, on retire le like (unlike)
+      await BlogLike.findByIdAndDelete(existingLike._id);
+      
+      // Décrémenter le compteur de likes
+      await blog.decrementLikes();
+      
+      // Récupérer le blog mis à jour
+      const updatedBlog = await Blog.findById(req.params.id);
+
+      res.json({
+        success: true,
+        data: { 
+          likes: updatedBlog.likes,
+          hasLiked: false
+        }
+      });
+    } else {
+      // L'utilisateur n'a pas encore liké, on ajoute le like
+      const blogLike = new BlogLike({
+        blog: req.params.id,
+        userId: userId || null,
+        visitorId: visitorId || null,
+        ipAddress: ipAddress || null
+      });
+
+      await blogLike.save();
+
+      // Incrémenter le compteur de likes
+      await blog.incrementLikes();
+
+      // Récupérer le blog mis à jour
+      const updatedBlog = await Blog.findById(req.params.id);
+
+      res.json({
+        success: true,
+        data: { 
+          likes: updatedBlog.likes,
+          hasLiked: true
+        }
+      });
+    }
 
   } catch (error) {
     console.error('Like blog error:', error);
+    
+    // Gérer les erreurs de duplication (index unique)
+    // Cela peut arriver en cas de requête simultanée
+    if (error.code === 11000) {
+      // Vérifier à nouveau l'état actuel
+      try {
+        const blog = await Blog.findById(req.params.id);
+        let existingLike = null;
+        
+        if (req.body.visitorId) {
+          existingLike = await BlogLike.findOne({ 
+            blog: req.params.id, 
+            visitorId: req.body.visitorId 
+          });
+        }
+        
+        if (existingLike) {
+          // Le like existe déjà, retourner l'état actuel
+          return res.json({
+            success: true,
+            data: { 
+              likes: blog.likes,
+              hasLiked: true
+            }
+          });
+        }
+      } catch (checkError) {
+        // Ignorer l'erreur de vérification
+      }
+      
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Vous avez déjà aimé cet article' 
+      });
+    }
+
     res.status(500).json({ 
       success: false, 
       message: 'Erreur lors du like' 
@@ -721,14 +949,71 @@ router.put('/admin/blogs/:id', authenticateAdmin, [
       });
     }
 
+    // Préparer les données de mise à jour
+    const updateData = {};
+    
+    // Fonction pour nettoyer les valeurs vides (ne pas envoyer de chaînes vides)
+    const cleanValue = (value) => {
+      if (typeof value === 'string' && value.trim() === '') {
+        return undefined; // Ne pas inclure les chaînes vides
+      }
+      if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+        // Pour les objets bilingues (metaTitle, metaDescription, title, etc.)
+        if (value.hasOwnProperty('fr') || value.hasOwnProperty('en')) {
+          const cleaned = {};
+          if (value.fr !== undefined && value.fr !== null && String(value.fr).trim() !== '') {
+            cleaned.fr = String(value.fr).trim();
+          }
+          if (value.en !== undefined && value.en !== null && String(value.en).trim() !== '') {
+            cleaned.en = String(value.en).trim();
+          }
+          return Object.keys(cleaned).length > 0 ? cleaned : undefined;
+        }
+        // Pour les autres objets (featuredImage, caseStudy, etc.), les garder tels quels
+        return value;
+      }
+      return value;
+    };
+
+    // Copier uniquement les champs fournis et non vides
+    const fieldsToUpdate = [
+      'title', 'slug', 'excerpt', 'content', 'type', 'category', 
+      'tags', 'status', 'featuredImage', 'images', 'caseStudy', 
+      'tutorial', 'testimonial', 'metaTitle', 'metaDescription'
+    ];
+
+    fieldsToUpdate.forEach(field => {
+      if (req.body[field] !== undefined) {
+        // Traitement spécial pour featuredImage
+        if (field === 'featuredImage') {
+          const featuredImage = req.body.featuredImage;
+          // Si featuredImage est un objet avec une URL vide, ne pas l'inclure
+          if (featuredImage && typeof featuredImage === 'object' && (!featuredImage.url || featuredImage.url.trim() === '')) {
+            // Ne pas inclure featuredImage si l'URL est vide
+            return;
+          }
+          // Sinon, inclure featuredImage tel quel
+          if (featuredImage && typeof featuredImage === 'object') {
+            updateData[field] = featuredImage;
+          }
+          return;
+        }
+        
+        const cleaned = cleanValue(req.body[field]);
+        if (cleaned !== undefined) {
+          updateData[field] = cleaned;
+        }
+      }
+    });
+
     // Générer les slugs si les titres ont changé
-    if (req.body.title) {
-      if (!req.body.slug) {
-        req.body.slug = {};
+    if (updateData.title) {
+      if (!updateData.slug) {
+        updateData.slug = blog.slug || {};
       }
       
-      if (req.body.title.fr && req.body.title.fr !== blog.title.fr && !req.body.slug.fr) {
-        req.body.slug.fr = req.body.title.fr
+      if (updateData.title.fr && updateData.title.fr !== blog.title?.fr && !updateData.slug.fr) {
+        updateData.slug.fr = updateData.title.fr
           .toLowerCase()
           .replace(/[^a-z0-9\s-]/g, '')
           .replace(/\s+/g, '-')
@@ -736,8 +1021,8 @@ router.put('/admin/blogs/:id', authenticateAdmin, [
           .trim('-');
       }
       
-      if (req.body.title.en && req.body.title.en !== blog.title.en && !req.body.slug.en) {
-        req.body.slug.en = req.body.title.en
+      if (updateData.title.en && updateData.title.en !== blog.title?.en && !updateData.slug.en) {
+        updateData.slug.en = updateData.title.en
           .toLowerCase()
           .replace(/[^a-z0-9\s-]/g, '')
           .replace(/\s+/g, '-')
@@ -746,20 +1031,52 @@ router.put('/admin/blogs/:id', authenticateAdmin, [
       }
     }
 
-    Object.assign(blog, req.body);
-    await blog.save();
+    // Gérer publishedAt si le statut passe à published
+    if (updateData.status === 'published' && blog.status !== 'published') {
+      updateData.publishedAt = new Date();
+    }
+
+    // Utiliser findByIdAndUpdate avec $set pour ne pas écraser les champs non fournis
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      req.params.id,
+      { $set: updateData },
+      { new: true, runValidators: true }
+    );
+
+    if (!updatedBlog) {
+      return res.status(404).json({ 
+        success: false, 
+        message: 'Blog non trouvé après mise à jour' 
+      });
+    }
 
     res.json({
       success: true,
-      data: blog,
+      data: updatedBlog,
       message: 'Blog mis à jour avec succès'
     });
 
   } catch (error) {
     console.error('Update blog error:', error);
+    
+    // Logger l'erreur de validation complète
+    if (error.name === 'ValidationError') {
+      const validationErrors = Object.values(error.errors).map(err => ({
+        field: err.path,
+        message: err.message
+      }));
+      console.error('Validation errors:', validationErrors);
+      return res.status(400).json({ 
+        success: false, 
+        message: 'Erreur de validation',
+        errors: validationErrors
+      });
+    }
+    
     res.status(500).json({ 
       success: false, 
-      message: 'Erreur lors de la mise à jour du blog' 
+      message: 'Erreur lors de la mise à jour du blog',
+      error: process.env.NODE_ENV === 'development' ? error.message : undefined
     });
   }
 });

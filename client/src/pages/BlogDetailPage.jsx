@@ -26,6 +26,7 @@ import toast from 'react-hot-toast'
 import { normalizeTags } from '../utils/tagUtils'
 import { autoTranslateTag } from '../utils/autoTranslateTags'
 import { parseMarkdown } from '../utils/markdownParser'
+import { getOrCreateVisitorId } from '../utils/visitorId'
 
 const BlogDetailPage = () => {
   const { slug } = useParams()
@@ -149,6 +150,20 @@ const BlogDetailPage = () => {
       
       setBlog(response.data.data)
       
+      // Vérifier si l'utilisateur a déjà liké cet article (seulement en mode normal)
+      if (!isPreviewMode && response.data.data._id) {
+        try {
+          const visitorId = getOrCreateVisitorId()
+          const likeStatusResponse = await blogApiService.checkLikeStatus(response.data.data._id, visitorId)
+          if (likeStatusResponse.data.success && likeStatusResponse.data.data.hasLiked) {
+            setLiked(true)
+          }
+        } catch (error) {
+          console.error('Error checking like status:', error)
+          // Ne pas afficher d'erreur, juste continuer
+        }
+      }
+      
       // Charger des blogs similaires (seulement en mode normal)
       if (!isPreviewMode) {
         const relatedResponse = await blogApiService.getBlogs({
@@ -193,17 +208,25 @@ const BlogDetailPage = () => {
     }
   }, [i18n])
 
-  // Gérer le like
+  // Gérer le like/unlike (toggle)
   const handleLike = async () => {
-    if (liked) return
-    
     try {
-      await blogApiService.likeBlog(blog._id)
-      setBlog({ ...blog, likes: blog.likes + 1 })
-      setLiked(true)
-      toast.success(t('blog.likeSuccess'))
+      const visitorId = getOrCreateVisitorId()
+      const response = await blogApiService.likeBlog(blog._id, visitorId)
+      
+      if (response.data.success) {
+        const newLikedState = response.data.data.hasLiked
+        setBlog({ ...blog, likes: response.data.data.likes })
+        setLiked(newLikedState)
+        
+        if (newLikedState) {
+          toast.success(t('blog.likeSuccess'))
+        } else {
+          toast.success(t('blog.unlikeSuccess'))
+        }
+      }
     } catch (error) {
-      console.error('Error liking blog:', error)
+      console.error('Error toggling like:', error)
       toast.error(t('blog.likeError'))
     }
   }
@@ -436,14 +459,13 @@ const BlogDetailPage = () => {
               <div className="flex items-center space-x-3">
                 <button
                   onClick={handleLike}
-                  disabled={liked}
                   className={`flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors ${
                     liked 
-                      ? 'text-red-600 bg-red-100' 
+                      ? 'text-red-600 bg-red-100 hover:bg-red-200' 
                       : 'text-gray-500 hover:text-red-600 hover:bg-red-50'
                   }`}
                 >
-                  <Heart className="h-4 w-4 mr-1" />
+                  <Heart className={`h-4 w-4 mr-1 ${liked ? 'fill-current' : ''}`} />
                   {blog.likes}
                 </button>
                 
@@ -536,11 +558,14 @@ const BlogDetailPage = () => {
                   <div className="space-y-3">
                     <button
                       onClick={handleLike}
-                      disabled={liked}
-                      className="w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className={`w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium transition-colors ${
+                        liked 
+                          ? 'text-red-600 bg-red-100 hover:bg-red-200' 
+                          : 'text-white bg-primary-600 hover:bg-primary-700'
+                      }`}
                     >
-                      <Heart className="h-4 w-4 mr-2" />
-                      {liked ? t('blog.thankYou') : t('blog.likeArticle')}
+                      <Heart className={`h-4 w-4 mr-2 ${liked ? 'fill-current' : ''}`} />
+                      {liked ? t('blog.unlikeArticle') : t('blog.likeArticle')}
                     </button>
                     
                     <button
