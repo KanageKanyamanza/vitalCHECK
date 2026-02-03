@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Rapport d'Activité - Janvier 2026</title>
+		<style>
+			body {
+				font-family: "Calibri", "Arial", sans-serif;
+				line-height: 1.6;
+				color: #333;
+				background-color: #f4f4f4;
+				margin: 0;
+				padding: 20px;
+			}
+			.page {
+				background-color: #fff;
+				width: 21cm;
+				min-height: 29.7cm;
+				margin: 0 auto;
+				padding: 2.5cm;
+				box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+				box-sizing: border-box;
+			}
+			h1 {
+				color: #2e74b5; /* Word Blue */
+				font-size: 24pt;
+				margin-bottom: 20px;
+				border-bottom: 2px solid #2e74b5;
+				padding-bottom: 10px;
+			}
+			h2 {
+				color: #2e74b5;
+				font-size: 16pt;
+				margin-top: 30px;
+				margin-bottom: 15px;
+				border-bottom: 1px solid #ddd;
+			}
+			h3 {
+				color: #1f4e78;
+				font-size: 13pt;
+				margin-top: 20px;
+				margin-bottom: 10px;
+			}
+			p {
+				font-size: 11pt;
+				margin-bottom: 10px;
+				text-align: justify;
+			}
+			ul {
+				list-style-type: disc;
+				margin-left: 20px;
+				font-size: 11pt;
+			}
+			li {
+				margin-bottom: 8px;
+			}
+			.header-info {
+				display: flex;
+				justify-content: space-between;
+				color: #666;
+				font-size: 10pt;
+				margin-bottom: 40px;
+				border-bottom: 1px solid #ccc;
+				padding-bottom: 10px;
+			}
+			.footer {
+				margin-top: 50px;
+				font-size: 9pt;
+				color: #999;
+				text-align: center;
+				border-top: 1px solid #eee;
+				padding-top: 10px;
+			}
+			.highlight {
+				color: #c00000; /* Red highlight for important items */
+				font-weight: bold;
+				background-color: #fffdd0;
+				padding: 2px 5px;
+				border-radius: 3px;
+			}
+			@media print {
+				body {
+					background: none;
+					margin: 0;
+					padding: 0;
+				}
+				.page {
+					width: 100%;
+					box-shadow: none;
+					margin: 0;
+					padding: 2cm 1cm;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div class="page">
+			<div class="header-info">
+				<div><strong>Projet :</strong> VitalCheck</div>
+				<div><strong>Période :</strong> Janvier 2026</div>
+			</div>
+
+			<h1>Rapport Mensuel d'Avancement</h1>
+
+			<p>
+				Ce document récapitule les activités de développement effectuées sur le
+				mois de janvier 2026 pour le projet <strong>VitalCheck</strong>, en se
+				basant sur l'historique des modifications (logs Git).
+			</p>
+
+			<h2>1. Réussites et Réalisations (Achievements)</h2>
+			<p>
+				Le développement s'est concentré sur la stabilisation de
+				l'infrastructure, l'amélioration du SEO et l'engagement utilisateur.
+			</p>
+
+			<h3>Infrastructure et Déploiement</h3>
+			<ul>
+				<li>
+					<strong>Mise à jour des URLs de Production :</strong> Configuration et
+					alignement des URLs pour les environnements de production (Render et
+					Vercel) afin d'assurer la connectivité API.
+				</li>
+				<li>
+					<strong>Automatisation PWA :</strong> Mise en place de mises à jour
+					automatiques pour la Progressive Web App (PWA).
+				</li>
+			</ul>
+
+			<h3>Fonctionnalités Utilisateur et Engagement</h3>
+			<ul>
+				<li>
+					<strong>Système de Feedback :</strong> Implémentation des
+					fonctionnalités "J'aime" (Like) et "Je n'aime pas" (Dislike) sur les
+					contenus.
+				</li>
+				<li>
+					<strong>Chatbot :</strong> Intégration de la messagerie avec le
+					chatbot (Message Chatbot).
+				</li>
+				<li>
+					<strong>Communication :</strong> Mise en place et déploiement de la
+					fonctionnalité de <strong>Newsletter</strong>.
+				</li>
+				<li>
+					<strong>Authentification :</strong> Finalisation et correction du
+					processus de réinitialisation de mot de passe (Reset Password).
+				</li>
+			</ul>
+
+			<h3>Optimisation SEO</h3>
+			<ul>
+				<li>
+					<strong>Correctifs SEO :</strong> Optimisation des balises Titres,
+					Descriptions et gestion des Images pour le référencement naturel.
+				</li>
+			</ul>
+
+			<h2>2. Défis et Corrections (Challenges)</h2>
+			<p>
+				Plusieurs itérations ont été nécessaires pour stabiliser certaines
+				fonctionnalités critiques :
+			</p>
+			<ul>
+				<li>
+					<strong>Débogage SEO & Images :</strong> Plusieurs passes correctives
+					ont été requises pour fixer les bugs liés à l'affichage des images et
+					aux métadonnées SEO (Title/Description).
+				</li>
+				<li>
+					<strong>Gestion des Likes :</strong> Correction de bugs spécifiques
+					identifiés sur la fonctionnalité de "Like".
+				</li>
+				<li>
+					<strong>Synchronisation des Environnements :</strong> Ajustements
+					nécessaires pour aligner le code avec les URLs changeantes des
+					services de déploiement (Render/Vercel).
+				</li>
+			</ul>
+
+			<h2>3. Perspectives et Corrections Futures</h2>
+			<p>
+				Pour le mois à venir, l'accent sera mis sur l'amélioration des outils de
+				communication interne et la consolidation des acquis.
+			</p>
+			<ul>
+				<li>
+					<span class="highlight"
+						>Priorité Absolue : Mise en place de la messagerie interne.</span
+					>
+					Cette fonctionnalité est essentielle pour centraliser les échanges au
+					sein de l'application et sécuriser les communications.
+				</li>
+				<li>
+					<strong>Monitoring SEO :</strong> Suivi de l'impact des corrections
+					SEO mises en place en janvier.
+				</li>
+				<li>
+					<strong>Expérience Utilisateur :</strong> Poursuite des optimisations
+					sur le chatbot et les interactions utilisateur (feedback).
+				</li>
+			</ul>
+
+			<div class="footer">
+				Généré le 31 Janvier 2026 | Rapport Git Log VitalCheck
+			</div>
+		</div>
+	</body>
+</html>
