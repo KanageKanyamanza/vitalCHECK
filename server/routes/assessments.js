@@ -21,6 +21,45 @@ const {
 const { sendPushNotification, notifyAdmins } = require("../utils/pushService");
 const router = express.Router();
 
+// Helper to resolve questions based on sector
+const getQuestionsForSector = (data, sector) => {
+	// If data has pillars directly, it's the flat structure (e.g. English)
+	if (data && data.pillars && Array.isArray(data.pillars)) return data;
+
+	// Otherwise it's the sector-based structure
+	const normalizedSector = (sector || "other").toLowerCase();
+	const sectorMap = {
+		tech: "technology",
+		technologie: "technology",
+		technologies: "technology",
+		health: "healthcare",
+		santé: "healthcare",
+		sante: "healthcare",
+		manufacturing: "manufacturing",
+		manufacture: "manufacturing",
+		agriculture: "agriculture",
+		education: "education",
+		éducation: "education",
+		finance: "finance",
+		services: "services",
+		commerce: "commerce",
+		trade: "commerce",
+		other: "other",
+		autre: "other",
+		general: "other",
+	};
+
+	const key = sectorMap[normalizedSector] || normalizedSector;
+
+	// Return sector data, or fallback to 'other', or fallback to first available key
+	const sectorData =
+		data[key] ||
+		data["other"] ||
+		(Object.keys(data).length > 0 ? data[Object.keys(data)[0]] : null);
+
+	return sectorData;
+};
+
 // Get supported languages
 router.get("/languages", (req, res) => {
 	try {
@@ -85,7 +124,7 @@ router.post(
 				if (!draftAssessment.resumeToken) {
 					draftAssessment.resumeToken = generateResumeToken(
 						userId,
-						draftAssessment._id
+						draftAssessment._id,
 					);
 					await draftAssessment.save();
 					// console.log('🔑 [DRAFT] ResumeToken généré pour draft existant');
@@ -104,12 +143,24 @@ router.post(
 				});
 			}
 
-			// Get total questions count
-			const selectedQuestions =
-				language === "fr" ? questionsDataFR : questionsData;
+			// Get questions based on user sector
+			const baseData = language === "fr" ? questionsDataFR : questionsData;
+			const selectedQuestions = getQuestionsForSector(baseData, user.sector);
+
+			if (!selectedQuestions || !selectedQuestions.pillars) {
+				console.error(
+					"❌ [DRAFT] Impossible de trouver les questions pour le secteur:",
+					user.sector,
+				);
+				return res.status(500).json({
+					success: false,
+					message: "Questions configuration error for this sector",
+				});
+			}
+
 			const totalQuestions = selectedQuestions.pillars.reduce(
 				(total, pillar) => total + pillar.questions.length,
-				0
+				0,
 			);
 
 			// console.log('🆕 [DRAFT] Création d\'un nouveau draft pour:', user.companyName);
@@ -153,7 +204,7 @@ router.post(
 				message: "Server error during draft creation",
 			});
 		}
-	}
+	},
 );
 
 // Resume assessment by token
@@ -161,7 +212,7 @@ router.get("/resume/:token", async (req, res) => {
 	try {
 		console.log(
 			"🔄 [RESUME] Tentative de reprise avec token:",
-			req.params.token
+			req.params.token,
 		);
 
 		const { token } = req.params;
@@ -182,7 +233,7 @@ router.get("/resume/:token", async (req, res) => {
 		if (!assessment) {
 			console.log(
 				"❌ [RESUME] Évaluation non trouvée ou terminée pour token:",
-				token
+				token,
 			);
 			return res.status(404).json({
 				success: false,
@@ -218,24 +269,37 @@ router.get("/resume/:token", async (req, res) => {
 // Get questions
 router.get("/questions", (req, res) => {
 	try {
-		const { lang = "en" } = req.query;
+		const { lang = "en", sector } = req.query;
 
-		// Select questions based on language
-		let selectedQuestions = questionsData; // Default to English
+		// Select base data based on language
+		const baseData = lang === "fr" ? questionsDataFR : questionsData;
 
-		switch (lang) {
-			case "fr":
-				selectedQuestions = questionsDataFR;
-				break;
-			// Add more languages here as needed
-			default:
-				selectedQuestions = questionsData;
+		console.log(
+			`🔍 [API] Fetching questions. Lang: ${lang}, Sector param: '${sector}'`,
+		);
+		if (baseData) {
+			console.log(
+				`🔍 [API] Available sectors: ${Object.keys(baseData).join(", ")}`,
+			);
+		}
+
+		// Get questions for specific sector
+		const selectedQuestions = getQuestionsForSector(baseData, sector);
+
+		console.log(`🔍 [API] Selected questions found: ${!!selectedQuestions}`);
+
+		if (!selectedQuestions) {
+			return res.status(404).json({
+				success: false,
+				message: "Questions not found for the specified parameters",
+			});
 		}
 
 		res.json({
 			success: true,
 			data: selectedQuestions,
 			language: lang,
+			sector: sector || "default",
 		});
 	} catch (error) {
 		console.error("Get questions error:", error);
@@ -302,7 +366,7 @@ router.put(
 					answer.questionId &&
 					answer.answer !== undefined &&
 					answer.answer !== null &&
-					typeof answer.answer === "number"
+					typeof answer.answer === "number",
 			);
 
 			// console.log('📊 [PROGRESS] Réponses valides filtrées:', {
@@ -337,7 +401,7 @@ router.put(
 				message: "Server error during progress save",
 			});
 		}
-	}
+	},
 );
 
 // Submit assessment
@@ -400,26 +464,27 @@ router.post(
 				});
 			}
 
-			// Select questions based on language for scoring
-			let selectedQuestions = questionsData;
-			switch (language) {
-				case "fr":
-					selectedQuestions = questionsDataFR;
-					break;
-				default:
-					selectedQuestions = questionsData;
+			// Select questions based on language and sector for scoring
+			const baseData = language === "fr" ? questionsDataFR : questionsData;
+			const selectedQuestions = getQuestionsForSector(baseData, user.sector);
+
+			if (!selectedQuestions) {
+				return res.status(500).json({
+					success: false,
+					message: "Server error: Questions not found for scoring",
+				});
 			}
 
 			// Calculate scores
 			const { pillarScores, overallScore, overallStatus } = calculateScores(
 				answers,
-				selectedQuestions
+				selectedQuestions,
 			);
 
 			// Generate recommendations
 			const recommendations = generateRecommendations(
 				pillarScores,
-				selectedQuestions
+				selectedQuestions,
 			);
 
 			let assessment;
@@ -538,7 +603,7 @@ router.post(
 			} catch (notificationError) {
 				console.error(
 					"Erreur lors de la création de la notification:",
-					notificationError
+					notificationError,
 				);
 				// Ne pas faire échouer la soumission pour une erreur de notification
 			}
@@ -553,13 +618,13 @@ router.post(
 
 				if (deletedDrafts.deletedCount > 0) {
 					console.log(
-						`🧹 [CLEANUP] ${deletedDrafts.deletedCount} brouillon(s) supprimé(s) pour ${user.companyName}`
+						`🧹 [CLEANUP] ${deletedDrafts.deletedCount} brouillon(s) supprimé(s) pour ${user.companyName}`,
 					);
 				}
 			} catch (cleanupError) {
 				console.error(
 					"❌ Erreur lors du nettoyage des brouillons:",
-					cleanupError
+					cleanupError,
 				);
 				// Ne pas faire échouer la soumission pour une erreur de nettoyage
 			}
@@ -581,7 +646,7 @@ router.post(
 				message: "Server error during assessment submission",
 			});
 		}
-	}
+	},
 );
 
 // Get user's assessments
@@ -608,7 +673,7 @@ router.get("/user/:userId", async (req, res) => {
 router.get("/:assessmentId", async (req, res) => {
 	try {
 		const assessment = await Assessment.findById(
-			req.params.assessmentId
+			req.params.assessmentId,
 		).populate("user", "companyName email sector companySize");
 
 		if (!assessment) {

@@ -8,7 +8,7 @@ const getApiBaseUrl = () => {
 		return "https://vitalcheck-brtv.onrender.com/api";
 	}
 	// En développement, utiliser l'URL locale ou celle définie dans .env
-	return import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+	return import.meta.env.VITE_API_URL || "http://localhost:5003/api";
 };
 
 export const API_BASE_URL = getApiBaseUrl();
@@ -26,7 +26,7 @@ const api = axios.create({
 api.interceptors.request.use(
 	(config) => {
 		// Ajouter le token client s'il existe (pour les utilisateurs connectés)
-		const clientToken = localStorage.getItem('clientToken');
+		const clientToken = localStorage.getItem("clientToken");
 		if (clientToken) {
 			config.headers.Authorization = `Bearer ${clientToken}`;
 		}
@@ -138,7 +138,10 @@ export const publicApi = {
 	getUser: (email) => api.get(`/auth/user/${email}`),
 
 	// Assessments
-	getQuestions: (lang = "fr") => api.get(`/assessments/questions?lang=${lang}`),
+	getQuestions: (lang = "fr", sector) => {
+		const sectorParam = sector ? `&sector=${encodeURIComponent(sector)}` : "";
+		return api.get(`/assessments/questions?lang=${lang}${sectorParam}`);
+	},
 	submitAssessment: (data) => api.post("/assessments/submit", data),
 	getUserAssessments: (userId) => api.get(`/assessments/user/${userId}`),
 	getAssessment: (assessmentId) => api.get(`/assessments/${assessmentId}`),
@@ -368,19 +371,19 @@ export const blogApiService = {
 
 	// Vérifier si l'utilisateur a déjà liké un blog
 	checkLikeStatus: async (id, visitorId) => {
-		const { getOrCreateVisitorId } = await import('../utils/visitorId');
+		const { getOrCreateVisitorId } = await import("../utils/visitorId");
 		const vId = visitorId || getOrCreateVisitorId();
 		return api.get(`/blogs/${id}/like/status`, {
-			params: { visitorId: vId }
+			params: { visitorId: vId },
 		});
 	},
 
 	// Liker un blog
 	likeBlog: async (id, visitorId) => {
-		const { getOrCreateVisitorId } = await import('../utils/visitorId');
+		const { getOrCreateVisitorId } = await import("../utils/visitorId");
 		const vId = visitorId || getOrCreateVisitorId();
 		return api.post(`/blogs/${id}/like`, {
-			visitorId: vId
+			visitorId: vId,
 		});
 	},
 
@@ -405,20 +408,20 @@ export const blogApiService = {
 
 	// Vérifier si un visiteur existe par IP
 	checkVisitorByIP: async (visitorId) => {
-		const { getOrCreateVisitorId } = await import('../utils/visitorId');
+		const { getOrCreateVisitorId } = await import("../utils/visitorId");
 		const vId = visitorId || getOrCreateVisitorId();
 		return api.get("/blog-visitors/check", {
-			params: { visitorId: vId }
+			params: { visitorId: vId },
 		});
 	},
 
 	// Soumettre le formulaire de visiteur
 	submitVisitorForm: async (data) => {
-		const { getOrCreateVisitorId } = await import('../utils/visitorId');
+		const { getOrCreateVisitorId } = await import("../utils/visitorId");
 		const visitorId = data.visitorId || getOrCreateVisitorId();
 		return api.post("/blog-visitors/submit", {
 			...data,
-			visitorId
+			visitorId,
 		});
 	},
 };

@@ -18,7 +18,7 @@ export const registerSW = () => {
 									console.log(
 										"Nouvelle version détectée, rechargement automatique...",
 									);
-									window.location.reload();
+									// window.location.reload();
 								}
 							});
 						}

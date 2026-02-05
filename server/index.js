@@ -145,7 +145,7 @@ const connectDB = async () => {
 	const mongooseOptions = {
 		serverSelectionTimeoutMS: 5000, // Timeout après 5 secondes
 		socketTimeoutMS: 45000,
-		bufferCommands: false, // Désactiver le buffering mongoose
+		bufferCommands: true, // Activer le buffering mongoose pour éviter les erreurs au démarrage
 	};
 
 	try {
@@ -159,7 +159,7 @@ const connectDB = async () => {
 			console.warn("⚠️  Erreur lors de l'initialisation admin:", err.message);
 		}
 
-		const PORT = process.env.PORT || 5000;
+		const PORT = process.env.PORT || 5003;
 		app.listen(PORT, () => {
 			console.log(`🚀 Server running on port ${PORT}`);
 		});
@@ -187,7 +187,7 @@ const connectDB = async () => {
 			"   3. Continuer sans MongoDB: Certaines fonctionnalités ne seront pas disponibles",
 		);
 
-		const PORT = process.env.PORT || 5000;
+		const PORT = process.env.PORT || 5003;
 		app.listen(PORT, () => {
 			console.log(`🚀 Server running on port ${PORT} (sans MongoDB)`);
 		});
