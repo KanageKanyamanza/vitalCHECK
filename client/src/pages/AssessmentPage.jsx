@@ -182,7 +182,14 @@ const AssessmentPage = () => {
 			return;
 		}
 
-		if (answers.length !== getTotalQuestions()) {
+		// Filtrer les réponses pour ne garder que celles qui correspondent aux questions actuelles
+		const validAnswers = answers.filter((a) =>
+			questions?.pillars?.some((p) =>
+				p.questions.some((q) => q.id === a.questionId),
+			),
+		);
+
+		if (validAnswers.length !== getTotalQuestions()) {
 			toast.error("Veuillez répondre à toutes les questions");
 			return;
 		}
@@ -207,7 +214,7 @@ const AssessmentPage = () => {
 			// Étape 4: Soumission réelle
 			const response = await assessmentAPI.submitAssessment({
 				userId: user.id,
-				answers,
+				answers: validAnswers,
 				language,
 				submissionId, // Ajouter l'ID de soumission pour éviter les doublons
 			});
@@ -401,8 +408,14 @@ const AssessmentPage = () => {
 					<div className="flex items-center space-x-2 text-sm text-gray-500">
 						<CheckCircle className="w-4 h-4" />
 						<span>
-							{answers.length} / {getTotalQuestions()}{" "}
-							{t("assessment.responses")}
+							{questions?.pillars ?
+								answers.filter((a) =>
+									questions.pillars.some((p) =>
+										p.questions.some((q) => q.id === a.questionId),
+									),
+								).length
+							:	0}{" "}
+							/ {getTotalQuestions()} {t("assessment.responses")}
 						</span>
 					</div>
 
