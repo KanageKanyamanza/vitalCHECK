@@ -9,7 +9,7 @@ import {
 	Instagram,
 	Youtube,
 	Send,
-	CheckCircle
+	CheckCircle,
 } from "lucide-react";
 import logoIcon from "/android-icon-96x96.png";
 import { InstallPWAButton, UserGuideButton } from "../ui";
@@ -22,7 +22,7 @@ const Footer = () => {
 	// const { scrollToTop, scrollToElement } = useSmoothScroll();
 
 	const currentYear = new Date().getFullYear();
-	
+
 	// État pour la newsletter
 	const [email, setEmail] = useState("");
 	const [isSubscribing, setIsSubscribing] = useState(false);
@@ -36,7 +36,7 @@ const Footer = () => {
 	// Gérer l'abonnement à la newsletter
 	const handleNewsletterSubmit = async (e) => {
 		e.preventDefault();
-		
+
 		if (!email.trim()) {
 			toast.error(t("footer.newsletter.invalidEmail"));
 			return;
@@ -48,18 +48,19 @@ const Footer = () => {
 		}
 
 		setIsSubscribing(true);
-		
+
 		try {
-			const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+			const API_BASE_URL =
+				import.meta.env.VITE_API_URL || "http://localhost:5003/api";
 			const response = await fetch(`${API_BASE_URL}/newsletters/subscribe`, {
-				method: 'POST',
+				method: "POST",
 				headers: {
-					'Content-Type': 'application/json',
+					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
 					email: email.trim(),
-					source: 'footer'
-				})
+					source: "footer",
+				}),
 			});
 
 			const data = await response.json();
@@ -68,7 +69,7 @@ const Footer = () => {
 				setIsSubscribed(true);
 				toast.success(t("footer.newsletter.success"));
 				setEmail("");
-				
+
 				// Réinitialiser après 3 secondes
 				setTimeout(() => {
 					setIsSubscribed(false);
@@ -124,8 +125,11 @@ const Footer = () => {
 
 	const handleScrollToSection = (sectionId) => {
 		window.scrollTo({
-			top: sectionId === 'terms' ? 0 : sectionId === 'privacy' ? 0 : document.getElementById(sectionId).offsetTop,
-			behavior: 'smooth'
+			top:
+				sectionId === "terms" ? 0
+				: sectionId === "privacy" ? 0
+				: document.getElementById(sectionId).offsetTop,
+			behavior: "smooth",
 		});
 	};
 
@@ -139,16 +143,16 @@ const Footer = () => {
 					// Calculer la position avec un offset pour laisser de l'espace au-dessus
 					const elementPosition = element.offsetTop;
 					const offsetPosition = elementPosition - 100; // 100px d'offset pour voir le titre
-					
+
 					window.scrollTo({
 						top: offsetPosition,
-						behavior: 'smooth'
+						behavior: "smooth",
 					});
 				}
 			}, 100);
 		} else {
 			// Ramener au top de la page si pas de section spécifique
-			window.scrollTo({ top: 0, behavior: 'smooth' });
+			window.scrollTo({ top: 0, behavior: "smooth" });
 		}
 	};
 
@@ -169,9 +173,12 @@ const Footer = () => {
 								{t("footer.newsletter.description")}
 							</p>
 						</div>
-						
+
 						{/* Formulaire Newsletter */}
-						<form onSubmit={handleNewsletterSubmit} className="max-w-2xl mx-auto">
+						<form
+							onSubmit={handleNewsletterSubmit}
+							className="max-w-2xl mx-auto"
+						>
 							<div className="flex flex-col sm:flex-row gap-4">
 								<div className="flex-1">
 									<input
@@ -187,27 +194,26 @@ const Footer = () => {
 									type="submit"
 									disabled={isSubscribing || isSubscribed || !email.trim()}
 									className={`px-8 py-4 rounded-lg font-semibold text-base transition-all duration-200 flex items-center justify-center gap-2 ${
-										isSubscribed
-											? "bg-green-500 text-white cursor-default"
-											: "bg-accent-500 hover:bg-accent-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
+										isSubscribed ?
+											"bg-green-500 text-white cursor-default"
+										:	"bg-accent-500 hover:bg-accent-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
 									}`}
 								>
-									{isSubscribed ? (
+									{isSubscribed ?
 										<>
 											<CheckCircle className="w-5 h-5" />
 											{t("footer.newsletter.success")}
 										</>
-									) : isSubscribing ? (
+									: isSubscribing ?
 										<>
 											<div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
 											{t("footer.newsletter.subscribing")}
 										</>
-									) : (
-										<>
+									:	<>
 											<Send className="w-5 h-5" />
 											{t("footer.newsletter.subscribe")}
 										</>
-									)}
+									}
 								</button>
 							</div>
 						</form>
@@ -261,21 +267,24 @@ const Footer = () => {
 						<ul className="space-y-3">
 							{quickLinks.map((link, index) => (
 								<li key={index}>
-									{(link.href && typeof link.href === 'string' && link.href.startsWith("/")) ? (
+									{(
+										link.href &&
+										typeof link.href === "string" &&
+										link.href.startsWith("/")
+									) ?
 										<button
 											onClick={() => handleNavigation(link.href, link.scrollTo)}
 											className="text-white hover:text-gray-800 transition-colors duration-200 text-left"
 										>
 											{link.label}
 										</button>
-									) : (
-										<button
+									:	<button
 											onClick={() => handleScrollToSection(link.scrollTo)}
 											className="text-white hover:text-gray-800 transition-colors duration-200 text-left"
 										>
 											{link.label}
 										</button>
-									)}
+									}
 								</li>
 							))}
 							{/* Guide d'utilisation */}
@@ -321,13 +330,13 @@ const Footer = () => {
 						</p>
 						<div className="flex items-center space-x-6 mt-4 md:mt-0">
 							<button
-								onClick={() => handleNavigation('/terms')}
+								onClick={() => handleNavigation("/terms")}
 								className="text-white hover:text-gray-800 text-sm transition-colors duration-200"
 							>
 								{t("footer.terms")}
 							</button>
 							<button
-								onClick={() => handleNavigation('/privacy')}
+								onClick={() => handleNavigation("/privacy")}
 								className="text-white hover:text-gray-800 text-sm transition-colors duration-200"
 							>
 								{t("footer.privacy")}

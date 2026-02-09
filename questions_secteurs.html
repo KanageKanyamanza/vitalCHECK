@@ -1,0 +1,1144 @@
+<!doctype html>
+<html lang="fr">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>VitalCheck - Audit par Secteur d'Activité</title>
+		<style>
+			body {
+				font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+				line-height: 1.5;
+				color: #333;
+				max-width: 1200px;
+				margin: 0 auto;
+				padding: 20px;
+				background-color: #f9f9f9;
+			}
+			@media print {
+				body {
+					background-color: #fff;
+					padding: 0;
+				}
+				.no-print {
+					display: none;
+				}
+				.page-break {
+					page-break-before: always;
+				}
+				.sector-section {
+					break-inside: avoid;
+					border-top: 3px solid #000 !important;
+					box-shadow: none !important;
+				}
+			}
+			header {
+				text-align: center;
+				margin-bottom: 30px;
+				border-bottom: 3px solid #0056b3;
+				padding-bottom: 20px;
+			}
+			h1 {
+				color: #0056b3;
+				margin-bottom: 5px;
+			}
+			.subtitle {
+				color: #666;
+				font-size: 1.1em;
+			}
+
+			.sector-section {
+				background: #fff;
+				padding: 25px;
+				margin-bottom: 40px;
+				border-radius: 8px;
+				box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+				border-top: 5px solid #0056b3;
+			}
+			.sector-title {
+				font-size: 1.6em;
+				margin-bottom: 15px;
+				padding-bottom: 10px;
+				border-bottom: 1px solid #eee;
+				color: #2c3e50;
+				display: flex;
+				align-items: center;
+			}
+			.sector-title::before {
+				content: "";
+				display: inline-block;
+				width: 10px;
+				height: 10px;
+				background-color: currentColor;
+				margin-right: 10px;
+				border-radius: 50%;
+			}
+
+			/* Color Coding for Sectors */
+			.tech {
+				border-color: #3498db;
+			}
+			.tech .sector-title {
+				color: #3498db;
+			}
+			.commerce {
+				border-color: #e67e22;
+			}
+			.commerce .sector-title {
+				color: #e67e22;
+			}
+			.services {
+				border-color: #9b59b6;
+			}
+			.services .sector-title {
+				color: #9b59b6;
+			}
+			.manufacture {
+				border-color: #7f8c8d;
+			}
+			.manufacture .sector-title {
+				color: #7f8c8d;
+			}
+			.agriculture {
+				border-color: #27ae60;
+			}
+			.agriculture .sector-title {
+				color: #27ae60;
+			}
+			.sante {
+				border-color: #e74c3c;
+			}
+			.sante .sector-title {
+				color: #e74c3c;
+			}
+			.education {
+				border-color: #f1c40f;
+			}
+			.education .sector-title {
+				color: #f1c40f;
+				text-shadow: 0px 0px 1px #999;
+			}
+			.finance {
+				border-color: #2c3e50;
+			}
+			.finance .sector-title {
+				color: #2c3e50;
+			}
+			.autre {
+				border-color: #95a5a6;
+			}
+			.autre .sector-title {
+				color: #95a5a6;
+			}
+
+			.pillar-grid {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr); /* 3 columns for density */
+				gap: 15px;
+			}
+			@media (max-width: 900px) {
+				.pillar-grid {
+					grid-template-columns: repeat(2, 1fr);
+				}
+			}
+			@media (max-width: 600px) {
+				.pillar-grid {
+					grid-template-columns: 1fr;
+				}
+			}
+
+			.pillar-card {
+				border: 1px solid #eee;
+				padding: 12px;
+				border-radius: 6px;
+				background: #fdfdfd;
+				font-size: 0.95em;
+			}
+			.pillar-head {
+				font-weight: bold;
+				color: #444;
+				margin-bottom: 8px;
+				font-size: 1em;
+				border-bottom: 1px solid #e1e4e8;
+				padding-bottom: 4px;
+				text-transform: uppercase;
+				letter-spacing: 0.5px;
+			}
+			.question-item {
+				margin-bottom: 8px;
+				padding-left: 12px;
+				position: relative;
+				line-height: 1.4;
+			}
+			.question-item::before {
+				content: "•";
+				position: absolute;
+				left: 0;
+				color: #0056b3;
+				font-weight: bold;
+			}
+			.download-hint {
+				background-color: #e3f2fd;
+				padding: 10px;
+				text-align: center;
+				border-radius: 4px;
+				margin-bottom: 20px;
+				border: 1px solid #bbdefb;
+				color: #0d47a1;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="no-print download-hint">
+			<strong>Note :</strong> Utilisez Ctrl+P (ou Cmd+P) pour enregistrer cette
+			page en <strong>PDF</strong>.
+		</div>
+
+		<header>
+			<h1>VitalCheck - Questions d'Audit par Secteur</h1>
+			<div class="subtitle">
+				Cadre d'évaluation personnalisé selon les 9 Piliers de Performance
+			</div>
+		</header>
+
+		<!-- 1. TECHNOLOGIE -->
+		<div class="sector-section tech">
+			<h2 class="sector-title">1. Technologie</h2>
+			<div class="pillar-grid">
+				<div class="pillar-card">
+					<div class="pillar-head">1. Finance</div>
+					<div class="question-item">
+						Suivez-vous les métriques SaaS clés (MRR, Churn, CAC, LTV) de
+						manière mensuelle ?
+					</div>
+					<div class="question-item">
+						Avez-vous optimisé vos dépenses d'infrastructure cloud (AWS/Azure)
+						pour éviter le gaspillage ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">2. Opérations</div>
+					<div class="question-item">
+						Utilisez-vous des méthodes agiles (Scrum/Kanban) pour gérer vos
+						cycles de développement ?
+					</div>
+					<div class="question-item">
+						Vos processus de déploiement (CI/CD) sont-ils automatisés pour
+						réduire les erreurs humaines ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">3. Ventes</div>
+					<div class="question-item">
+						Votre site web convertit-il efficacement les visiteurs en
+						utilisateurs d'essai ou démos ?
+					</div>
+					<div class="question-item">
+						Avez-vous une stratégie de "Lead Nurturing" automatisée pour les
+						prospects froids ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">4. RH</div>
+					<div class="question-item">
+						Comment gérez-vous la rétention des développeurs face à la forte
+						concurrence du marché ?
+					</div>
+					<div class="question-item">
+						Favorisez-vous la formation continue sur les nouvelles technologies ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">5. Stratégie</div>
+					<div class="question-item">
+						Votre roadmap produit est-elle alignée avec les retours utilisateurs
+						et la vision long terme ?
+					</div>
+					<div class="question-item">
+						Avez-vous protégé votre propriété intellectuelle (code, brevets,
+						marques) ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">6. Technologie</div>
+					<div class="question-item">
+						Gérez-vous activement votre dette technique pour éviter le
+						ralentissement du développement ?
+					</div>
+					<div class="question-item">
+						Votre architecture est-elle scalable pour supporter une croissance
+						rapide (x10) ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">7. Risques</div>
+					<div class="question-item">
+						Des tests de pénétration et audits de sécurité sont-ils réalisés
+						régulièrement ?
+					</div>
+					<div class="question-item">
+						Avez-vous un plan de reprise d'activité (PRA) en cas de panne
+						majeure des serveurs ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">8. Branding</div>
+					<div class="question-item">
+						Votre UI/UX Design est-il moderne et reflète-t-il la qualité
+						technologique de votre solution ?
+					</div>
+					<div class="question-item">
+						Êtes-vous perçu comme un leader d'opinion (Thought Leader) dans
+						votre niche tech ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">9. Export</div>
+					<div class="question-item">
+						Votre logiciel est-il localisé (i18n) pour supporter facilement
+						plusieurs langues/devises ?
+					</div>
+					<div class="question-item">
+						Avez-vous vérifié la conformité RGPD/GDPR pour les données des
+						utilisateurs européens ?
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="page-break"></div>
+
+		<!-- 2. COMMERCE -->
+		<div class="sector-section commerce">
+			<h2 class="sector-title">2. Commerce</h2>
+			<div class="pillar-grid">
+				<div class="pillar-card">
+					<div class="pillar-head">1. Finance</div>
+					<div class="question-item">
+						Surveillez-vous quotidiennement la marge par produit et le taux de
+						rotation des stocks ?
+					</div>
+					<div class="question-item">
+						Avez-vous un plan de trésorerie pour financer les gros achats de
+						stock saisonniers ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">2. Opérations</div>
+					<div class="question-item">
+						Votre gestion des stocks est-elle connectée en temps réel à vos
+						points de vente (physique/web) ?
+					</div>
+					<div class="question-item">
+						Avez-vous optimisé votre processus de traitement des retours et du
+						SAV ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">3. Ventes</div>
+					<div class="question-item">
+						Utilisez-vous un programme de fidélité pour augmenter le panier
+						moyen et la fréquence d'achat ?
+					</div>
+					<div class="question-item">
+						Analysez-vous le trafic en magasin/site pour optimiser les taux de
+						conversion ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">4. RH</div>
+					<div class="question-item">
+						Vos vendeurs sont-ils formés et incentivés sur les ventes
+						additionnelles (cross-selling) ?
+					</div>
+					<div class="question-item">
+						Comment gérez-vous la flexibilité des plannings lors des pics
+						d'activité (soldes, fêtes) ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">5. Stratégie</div>
+					<div class="question-item">
+						Avez-vous une stratégie omnicanale claire unifiant l'expérience
+						client physique et digitale ?
+					</div>
+					<div class="question-item">
+						Surveillez-vous activement les prix et l'assortiment de la
+						concurrence directe ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">6. Technologie</div>
+					<div class="question-item">
+						Utilisez-vous un CRM pour segmenter votre base client et
+						personnaliser les offres ?
+					</div>
+					<div class="question-item">
+						Votre site e-commerce est-il optimisé pour le mobile (m-commerce) ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">7. Risques</div>
+					<div class="question-item">
+						Quelles mesures avez-vous contre la démarque inconnue (vol
+						interne/externe) ?
+					</div>
+					<div class="question-item">
+						Vos fournisseurs sont-ils diversifiés pour éviter les ruptures
+						d'approvisionnement ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">8. Branding</div>
+					<div class="question-item">
+						L'expérience d'unboxing ou en magasin est-elle "instagrammable" ou
+						mémorable ?
+					</div>
+					<div class="question-item">
+						Les avis clients sont-ils visibles et gérés activement pour rassurer
+						les prospects ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">9. Export</div>
+					<div class="question-item">
+						Avez-vous résolu les défis logistiques et douaniers pour
+						l'expédition internationale ?
+					</div>
+					<div class="question-item">
+						Vendez-vous sur des marketplaces internationales (Amazon, etc.) pour
+						tester de nouveaux marchés ?
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="page-break"></div>
+
+		<!-- 3. SERVICES -->
+		<div class="sector-section services">
+			<h2 class="sector-title">3. Services</h2>
+			<div class="pillar-grid">
+				<div class="pillar-card">
+					<div class="pillar-head">1. Finance</div>
+					<div class="question-item">
+						Calculez-vous la rentabilité réelle par mission/projet (heures
+						vendues vs heures passées) ?
+					</div>
+					<div class="question-item">
+						Avez-vous automatisé la facturation récurrente (abonnements) pour
+						sécuriser le cash-flow ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">2. Opérations</div>
+					<div class="question-item">
+						Vos processus d'onboarding client sont-ils standardisés pour
+						garantir une qualité constante ?
+					</div>
+					<div class="question-item">
+						Utilisez-vous un outil de gestion de projet partagé pour le suivi
+						des livrables ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">3. Ventes</div>
+					<div class="question-item">
+						Avez-vous une stratégie de recommandation active pour générer du
+						bouche-à-oreille qualifié ?
+					</div>
+					<div class="question-item">
+						Votre proposition de valeur est-elle clairement différenciée des
+						concurrents généralistes ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">4. RH</div>
+					<div class="question-item">
+						Comment partagez-vous la connaissance en interne pour ne pas
+						dépendre d'un seul expert ?
+					</div>
+					<div class="question-item">
+						Vos collaborateurs sont-ils formés à la relation client en plus de
+						leur expertise technique ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">5. Stratégie</div>
+					<div class="question-item">
+						Cherchez-vous à "produitiser" vos services pour les rendre plus
+						scalables ?
+					</div>
+					<div class="question-item">
+						Avez-vous défini votre client idéal (Avatar) pour refuser les
+						projets non rentables ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">6. Technologie</div>
+					<div class="question-item">
+						Utilisez-vous des outils collaboratifs sécurisés pour échanger des
+						documents sensibles ?
+					</div>
+					<div class="question-item">
+						Votre CRM permet-il de suivre tout l'historique des interactions
+						avec chaque client ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">7. Risques</div>
+					<div class="question-item">
+						Avez-vous une assurance Responsabilité Civile Professionnelle
+						adaptée à vos enjeux ?
+					</div>
+					<div class="question-item">
+						Vos contrats clients limitent-ils bien votre responsabilité et
+						définissent-ils le périmètre ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">8. Branding</div>
+					<div class="question-item">
+						Votre personal branding (dirigeants/experts) renforce-t-il la
+						crédibilité de l'entreprise ?
+					</div>
+					<div class="question-item">
+						Publiez-vous des études de cas ou des livres blancs pour prouver
+						votre expertise ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">9. Export</div>
+					<div class="question-item">
+						Êtes-vous capables de délivrer vos services 100% à distance et en
+						anglais ?
+					</div>
+					<div class="question-item">
+						Avez-vous étudié la fiscalité des services (TVA, retenue à la
+						source) à l'international ?
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="page-break"></div>
+
+		<!-- 4. MANUFACTURE -->
+		<div class="sector-section manufacture">
+			<h2 class="sector-title">4. Manufacture</h2>
+			<div class="pillar-grid">
+				<div class="pillar-card">
+					<div class="pillar-head">1. Finance</div>
+					<div class="question-item">
+						Connaissez-vous le coût de revient industriel exact de chaque unité
+						produite ?
+					</div>
+					<div class="question-item">
+						Avez-vous calculé le seuil de rentabilité de vos équipements majeurs
+						?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">2. Opérations</div>
+					<div class="question-item">
+						Avez-vous une démarche d'amélioration continue (Lean, Kaizen) pour
+						réduire les déchets ?
+					</div>
+					<div class="question-item">
+						La maintenance préventive de vos machines est-elle planifiée et
+						respectée ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">3. Ventes</div>
+					<div class="question-item">
+						Votre carnet de commandes offre-t-il une visibilité suffisante sur
+						la production à venir ?
+					</div>
+					<div class="question-item">
+						Travaillez-vous avec des distributeurs ou en vente directe aux
+						industriels/consommateurs ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">4. RH</div>
+					<div class="question-item">
+						La sécurité au travail (EPI, formations) est-elle votre priorité
+						absolue ?
+					</div>
+					<div class="question-item">
+						Avez-vous des plans de polyvalence pour pallier l'absence
+						d'opérateurs clés ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">5. Stratégie</div>
+					<div class="question-item">
+						Avez-vous sécurisé vos approvisionnements stratégiques (double
+						sourcing) ?
+					</div>
+					<div class="question-item">
+						Investissez-vous dans la modernisation de l'outil industriel
+						(Industrie 4.0) ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">6. Technologie</div>
+					<div class="question-item">
+						Utilisez-vous un ERP/GPAO pour piloter la production et les stocks
+						en temps réel ?
+					</div>
+					<div class="question-item">
+						Avez-vous digitalisé les fiches de suivi de production (zéro papier)
+						?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">7. Risques</div>
+					<div class="question-item">
+						Vos installations sont-elles aux normes environnementales et
+						incendie ?
+					</div>
+					<div class="question-item">
+						Avez-vous un plan de continuité en cas de rupture de la chaîne
+						logistique ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">8. Branding</div>
+					<div class="question-item">
+						Le design industriel de vos produits est-il un facteur de
+						différenciation ?
+					</div>
+					<div class="question-item">
+						Communiquez-vous sur la qualité de fabrication et l'origine (Made
+						in...) ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">9. Export</div>
+					<div class="question-item">
+						Vos produits respectent-ils les normes techniques (CE, UL, ISO) des
+						pays cibles ?
+					</div>
+					<div class="question-item">
+						Avez-vous un réseau de partenaires locaux pour le SAV et la
+						maintenance à l'export ?
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="page-break"></div>
+
+		<!-- 5. AGRICULTURE -->
+		<div class="sector-section agriculture">
+			<h2 class="sector-title">5. Agriculture</h2>
+			<div class="pillar-grid">
+				<div class="pillar-card">
+					<div class="pillar-head">1. Finance</div>
+					<div class="question-item">
+						Avez-vous une trésorerie suffisante pour couvrir les cycles longs
+						entre semence et récolte ?
+					</div>
+					<div class="question-item">
+						Analysez-vous la rentabilité par hectare ou par type de
+						culture/élevage ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">2. Opérations</div>
+					<div class="question-item">
+						Optimisez-vous l'utilisation des intrants (eau, engrais) pour
+						réduire les coûts et l'impact ?
+					</div>
+					<div class="question-item">
+						Avez-vous mécanisé les tâches les plus pénibles et répétitives ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">3. Ventes</div>
+					<div class="question-item">
+						Vendez-vous au prix du marché mondial ou valorisez-vous votre
+						production (circuit court, transformé) ?
+					</div>
+					<div class="question-item">
+						Avez-vous sécurisé des contrats de vente avant la récolte ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">4. RH</div>
+					<div class="question-item">
+						Comment gérez-vous le recrutement et le logement des travailleurs
+						saisonniers ?
+					</div>
+					<div class="question-item">
+						La formation à la sécurité et à l'utilisation du matériel est-elle
+						systématique ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">5. Stratégie</div>
+					<div class="question-item">
+						Envisagez-vous une diversification (tourisme, énergie,
+						transformation) pour sécuriser vos revenus ?
+					</div>
+					<div class="question-item">
+						Pradiquez-vous une agriculture durable pour préserver la valeur de
+						vos terres à long terme ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">6. Technologie</div>
+					<div class="question-item">
+						Utilisez-vous l'agriculture de précision (drones, capteurs, GPS) ?
+					</div>
+					<div class="question-item">
+						Avez-vous des logiciels de gestion de parcelles ou de troupeau ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">7. Risques</div>
+					<div class="question-item">
+						Êtes-vous assuré contre les aléas climatiques et les pertes de
+						récolte ?
+					</div>
+					<div class="question-item">
+						Avez-vous un plan de biosécurité pour protéger vos cultures/élevages
+						des maladies ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">8. Branding</div>
+					<div class="question-item">
+						Avez-vous des labels de qualité (Bio, AOC, équitable) valorisables
+						auprès du consommateur ?
+					</div>
+					<div class="question-item">
+						Racontez-vous "l'histoire" de vos produits pour créer un lien
+						émotionnel ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">9. Export</div>
+					<div class="question-item">
+						Vos produits répondent-ils aux normes phytosanitaires strictes de
+						l'export ?
+					</div>
+					<div class="question-item">
+						Avez-vous la capacité logistique (chaîne du froid) pour exporter des
+						produits frais ?
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="page-break"></div>
+
+		<!-- 6. SANTÉ -->
+		<div class="sector-section sante">
+			<h2 class="sector-title">6. Santé</h2>
+			<div class="pillar-grid">
+				<div class="pillar-card">
+					<div class="pillar-head">1. Finance</div>
+					<div class="question-item">
+						Avez-vous optimisé la gestion des remboursements tiers-payant et
+						assurances ?
+					</div>
+					<div class="question-item">
+						Avez-vous un plan d'amortissement clair pour les équipements
+						médicaux coûteux ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">2. Opérations</div>
+					<div class="question-item">
+						Le parcours patient est-il fluidifié pour réduire les temps
+						d'attente ?
+					</div>
+					<div class="question-item">
+						Vos protocoles d'hygiène et de stérilisation sont-ils audités
+						régulièrement ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">3. Ventes (Patientèle)</div>
+					<div class="question-item">
+						Utilisez-vous des plateformes de prise de rendez-vous en ligne pour
+						acquérir des patients ?
+					</div>
+					<div class="question-item">
+						Mesurez-vous la satisfaction patient (NPS) après les consultations ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">4. RH</div>
+					<div class="question-item">
+						Comment prévenez-vous le burn-out et assurez-vous le bien-être de
+						votre personnel soignant ?
+					</div>
+					<div class="question-item">
+						La formation médicale continue est-elle encouragée et financée ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">5. Stratégie</div>
+					<div class="question-item">
+						Avez-vous développé des spécialités ou des pôles d'excellence
+						reconnus ?
+					</div>
+					<div class="question-item">
+						Collaborez-vous avec d'autres structures pour compléter votre offre
+						de soins ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">6. Technologie</div>
+					<div class="question-item">
+						Votre dossier patient informatisé est-il interopérable et sécurisé ?
+					</div>
+					<div class="question-item">
+						Proposez-vous de la téléconsultation pour les suivis simples ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">7. Risques</div>
+					<div class="question-item">
+						La confidentialité des données de santé (RGPD/HIPAA) est-elle
+						strictement garantie ?
+					</div>
+					<div class="question-item">
+						Êtes-vous couvert par une RCP médicale adaptée à tous vos actes
+						pratiqués ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">8. Branding</div>
+					<div class="question-item">
+						Votre établissement inspire-t-il confiance, propreté et
+						professionnalisme dès l'accueil ?
+					</div>
+					<div class="question-item">
+						Gérez-vous votre e-réputation (avis Google, forums santé) ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">9. Export</div>
+					<div class="question-item">
+						Accueillez-vous une patientèle internationale (tourisme médical) ?
+					</div>
+					<div class="question-item">
+						Vos praticiens parlent-ils plusieurs langues pour faciliter la prise
+						en charge ?
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="page-break"></div>
+
+		<!-- 7. ÉDUCATION -->
+		<div class="sector-section education">
+			<h2 class="sector-title">7. Éducation</h2>
+			<div class="pillar-grid">
+				<div class="pillar-card">
+					<div class="pillar-head">1. Finance</div>
+					<div class="question-item">
+						Avez-vous diversifié vos sources de revenus (frais scolarité,
+						subventions, formation continue) ?
+					</div>
+					<div class="question-item">
+						Suivez-vous le coût d'acquisition par étudiant et sa valeur sur la
+						durée (LTV) ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">2. Opérations</div>
+					<div class="question-item">
+						L'organisation des emplois du temps et des salles est-elle optimisée
+						?
+					</div>
+					<div class="question-item">
+						Avez-vous des processus de suivi pédagogique pour limiter le
+						décrochage scolaire ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">3. Ventes (Admissions)</div>
+					<div class="question-item">
+						Participez-vous activement aux salons et journées portes ouvertes
+						(physiques/virtuels) ?
+					</div>
+					<div class="question-item">
+						Votre réseau d'anciens élèves (Alumni) est-il mobilisé pour attirer
+						de nouveaux étudiants ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">4. RH</div>
+					<div class="question-item">
+						Comment évaluez-vous la qualité pédagogique de vos enseignants ?
+					</div>
+					<div class="question-item">
+						Le personnel administratif est-il formé à l'accueil et au service
+						aux étudiants ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">5. Stratégie</div>
+					<div class="question-item">
+						Vos programmes sont-ils régulièrement mis à jour pour coller aux
+						besoins du marché du travail ?
+					</div>
+					<div class="question-item">
+						Avez-vous des partenariats stratégiques avec des entreprises ou
+						d'autres écoles ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">6. Technologie</div>
+					<div class="question-item">
+						Disposez-vous d'une plateforme d'E-learning (LMS) performante et
+						riche en contenu ?
+					</div>
+					<div class="question-item">
+						Les équipements informatiques mis à disposition des étudiants
+						sont-ils à jour ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">7. Risques</div>
+					<div class="question-item">
+						Avez-vous une politique stricte contre le harcèlement et pour la
+						sécurité des élèves ?
+					</div>
+					<div class="question-item">
+						La protection des données personnelles des mineurs/étudiants
+						est-elle assurée ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">8. Branding</div>
+					<div class="question-item">
+						Votre établissement est-il accrédité ou reconnu par les classements
+						officiels ?
+					</div>
+					<div class="question-item">
+						Communiquez-vous sur les taux de réussite et d'insertion
+						professionnelle ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">9. Export</div>
+					<div class="question-item">
+						Avez-vous des programmes d'échange internationaux ou des doubles
+						diplômes ?
+					</div>
+					<div class="question-item">
+						Vos formations sont-elles accessibles aux étudiants étrangers (cours
+						en anglais, visas) ?
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="page-break"></div>
+
+		<!-- 8. FINANCE -->
+		<div class="sector-section finance">
+			<h2 class="sector-title">8. Finance</h2>
+			<div class="pillar-grid">
+				<div class="pillar-card">
+					<div class="pillar-head">1. Finance</div>
+					<div class="question-item">
+						Vos ratios de liquidité et de solvabilité sont-ils conformes aux
+						normes réglementaires ?
+					</div>
+					<div class="question-item">
+						Avez-vous une stratégie de placement rentable pour vos fonds propres
+						?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">2. Opérations</div>
+					<div class="question-item">
+						Vos processus de KYC (Know Your Customer) sont-ils efficaces sans
+						être trop lourds ?
+					</div>
+					<div class="question-item">
+						Le temps de traitement des opérations clients est-il compétitif ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">3. Ventes</div>
+					<div class="question-item">
+						Vos conseillers ont-ils une approche proactive pour proposer des
+						produits adaptés ?
+					</div>
+					<div class="question-item">
+						La satisfaction client est-elle votre premier levier de fidélisation
+						?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">4. RH</div>
+					<div class="question-item">
+						Vos équipes sont-elles formées à l'éthique et à la conformité
+						financière ?
+					</div>
+					<div class="question-item">
+						Comment attirez-vous les talents face à la concurrence des Fintechs
+						?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">5. Stratégie</div>
+					<div class="question-item">
+						Avez-vous intégré la transformation digitale pour ne pas être
+						ubérisé ?
+					</div>
+					<div class="question-item">
+						Ciblez-vous des niches spécifiques ou restez-vous généraliste ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">6. Technologie</div>
+					<div class="question-item">
+						Utilisez-vous l'IA ou le Big Data pour la détection de fraude ou le
+						scoring ?
+					</div>
+					<div class="question-item">
+						Vos applications mobiles offrent-elles une expérience utilisateur
+						fluide ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">7. Risques</div>
+					<div class="question-item">
+						Votre gestion des risques (crédit, marché, opérationnel) est-elle
+						auditée régulièrement ?
+					</div>
+					<div class="question-item">
+						Les mesures de cybersécurité sont-elles maximales pour protéger les
+						avoirs clients ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">8. Branding</div>
+					<div class="question-item">
+						Votre marque inspire-t-elle la stabilité et la sécurité ?
+					</div>
+					<div class="question-item">
+						La transparence des frais est-elle un atout de votre communication ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">9. Export</div>
+					<div class="question-item">
+						Disposez-vous des licences pour opérer sur d'autres marchés
+						financiers ?
+					</div>
+					<div class="question-item">
+						Êtes-vous connecté aux réseaux de paiement internationaux (SWIFT,
+						SEPA, etc.) ?
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="page-break"></div>
+
+		<!-- 9. AUTRE -->
+		<div class="sector-section autre">
+			<h2 class="sector-title">9. Autre / Généraliste</h2>
+			<div class="pillar-grid">
+				<div class="pillar-card">
+					<div class="pillar-head">1. Finance</div>
+					<div class="question-item">
+						Avez-vous un tableau de bord mensuel avec vos indicateurs clés (CA,
+						Marge, Trésorerie) ?
+					</div>
+					<div class="question-item">
+						Séparez-vous strictement les finances de l'entreprise et les
+						finances personnelles ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">2. Opérations</div>
+					<div class="question-item">
+						Vos processus clés sont-ils écrits pour pouvoir être délégués si
+						besoin ?
+					</div>
+					<div class="question-item">
+						Cherchez-vous régulièrement à éliminer les tâches à faible valeur
+						ajoutée ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">3. Ventes</div>
+					<div class="question-item">
+						Connaissez-vous précisément qui est votre "client idéal" ?
+					</div>
+					<div class="question-item">
+						Avez-vous un système pour relancer systématiquement les devis non
+						signés ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">4. RH</div>
+					<div class="question-item">
+						Vos attentes envers vos employés/partenaires sont-elles claires et
+						écrites ?
+					</div>
+					<div class="question-item">
+						Prenez-vous du temps pour la formation et la montée en compétence ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">5. Stratégie</div>
+					<div class="question-item">
+						Avez-vous des objectifs clairs à 1 an, 3 ans et 5 ans ?
+					</div>
+					<div class="question-item">
+						Prenez-vous du recul régulièrement pour travailler SUR l'entreprise
+						et non DANS l'entreprise ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">6. Technologie</div>
+					<div class="question-item">
+						Utilisez-vous les outils numériques de base pour gagner du temps
+						(cloud, agenda partagé) ?
+					</div>
+					<div class="question-item">
+						Vos données importantes sont-elles sauvegardées automatiquement ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">7. Risques</div>
+					<div class="question-item">
+						Avez-vous identifié les 3 plus gros risques qui pourraient tuer
+						votre activité ?
+					</div>
+					<div class="question-item">
+						Êtes-vous en conformité avec les obligations légales de base de
+						votre activité ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">8. Branding</div>
+					<div class="question-item">
+						Votre image professionnelle est-elle cohérente sur tous vos supports
+						(cartes, web, devis) ?
+					</div>
+					<div class="question-item">
+						Demandez-vous systématiquement des témoignages aux clients
+						satisfaits ?
+					</div>
+				</div>
+				<div class="pillar-card">
+					<div class="pillar-head">9. Export</div>
+					<div class="question-item">
+						Votre activité a-t-elle un potentiel hors de votre zone géographique
+						locale ?
+					</div>
+					<div class="question-item">
+						Avez-vous identifié les barrières (langue, culture, loi) à
+						l'expansion géographique ?
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>
