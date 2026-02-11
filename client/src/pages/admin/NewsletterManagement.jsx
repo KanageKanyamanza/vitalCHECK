@@ -378,13 +378,25 @@ const NewsletterManagement = () => {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center">
                           <Calendar className="h-4 w-4 text-gray-400 mr-2" />
-                          <span className="text-sm text-gray-900">
-                            {newsletter.sentAt
-                              ? new Date(newsletter.sentAt).toLocaleDateString('fr-FR')
-                              : newsletter.createdAt
-                              ? new Date(newsletter.createdAt).toLocaleDateString('fr-FR')
-                              : '-'}
-                          </span>
+                          <div className="flex flex-col">
+                            <span className="text-sm text-gray-900">
+                              {newsletter.status === 'scheduled' && newsletter.scheduledAt
+                                ? new Date(newsletter.scheduledAt).toLocaleDateString('fr-FR')
+                                : newsletter.sentAt
+                                ? new Date(newsletter.sentAt).toLocaleDateString('fr-FR')
+                                : newsletter.createdAt
+                                ? new Date(newsletter.createdAt).toLocaleDateString('fr-FR')
+                                : '-'}
+                            </span>
+                            {newsletter.status === 'scheduled' && newsletter.scheduledAt && (
+                              <span className="text-xs text-gray-500">
+                                Programmée à {new Date(newsletter.scheduledAt).toLocaleTimeString('fr-FR', {
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

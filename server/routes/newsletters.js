@@ -12,6 +12,57 @@ const NewsletterEmail = require('../utils/newsletterEmail');
 const { getTrackingPixelResponse } = require('../utils/trackingPixel');
 const router = express.Router();
 
+// Utilitaire: retourner les destinataires d'une newsletter (réutilisé pour l'envoi programmé)
+async function getSubscribersForNewsletter(newsletter) {
+  let subscribers = [];
+
+  if (!newsletter?.recipients?.type) return subscribers;
+
+  if (newsletter.recipients.type === 'all') {
+    subscribers = await NewsletterSubscriber.find({ isActive: true });
+  } else if (newsletter.recipients.type === 'active') {
+    subscribers = await NewsletterSubscriber.find({ isActive: true });
+  } else if (
+    newsletter.recipients.type === 'tags' &&
+    newsletter.recipients.tags &&
+    newsletter.recipients.tags.length > 0
+  ) {
+    subscribers = await NewsletterSubscriber.find({
+      isActive: true,
+      tags: { $in: newsletter.recipients.tags }
+    });
+  } else if (
+    newsletter.recipients.type === 'custom' &&
+    newsletter.recipients.customEmails &&
+    newsletter.recipients.customEmails.length > 0
+  ) {
+    const customEmails = newsletter.recipients.customEmails;
+
+    // Récupérer les abonnés existants (même inactifs, on les inclut quand même)
+    subscribers = await NewsletterSubscriber.find({
+      email: { $in: customEmails.map(e => e.toLowerCase()) }
+    });
+
+    // Si certains emails ne sont pas des abonnés, les ajouter quand même
+    const existingEmails = new Set(subscribers.map(s => s.email.toLowerCase()));
+    const missingEmails = customEmails.filter(e => !existingEmails.has(e.toLowerCase()));
+
+    if (missingEmails.length > 0) {
+      missingEmails.forEach(email => {
+        subscribers.push({
+          email: email.toLowerCase(),
+          isActive: true,
+          _id: null, // Pas un vrai document MongoDB
+          generateUnsubscribeToken: function() {},
+          save: async function() { return this; }
+        });
+      });
+    }
+  }
+
+  return subscribers;
+}
+
 // Middleware d'authentification admin
 const authenticateAdmin = async (req, res, next) => {
   try {
@@ -446,7 +497,16 @@ router.put('/admin/:id', authenticateAdmin, [
     if (previewText !== undefined) newsletter.previewText = previewText;
     if (imageUrl !== undefined) newsletter.imageUrl = imageUrl;
     if (recipients) newsletter.recipients = recipients;
-    if (scheduledAt) {
+
+    // Gestion de la programmation:
+    // - scheduledAt string/date => programmé
+    // - scheduledAt null/''      => annuler la programmation (retour en draft si pas envoyé)
+    if (scheduledAt === null || scheduledAt === '') {
+      newsletter.scheduledAt = null;
+      if (newsletter.status !== 'sent') {
+        newsletter.status = 'draft';
+      }
+    } else if (scheduledAt) {
       newsletter.scheduledAt = new Date(scheduledAt);
       newsletter.status = 'scheduled';
     }
@@ -463,6 +523,119 @@ router.put('/admin/:id', authenticateAdmin, [
     res.status(500).json({
       success: false,
       message: 'Erreur lors de la mise à jour de la newsletter'
+    });
+  }
+});
+
+// ========== ENVOI PROGRAMMÉ ==========
+// Route admin: envoyer toutes les newsletters programmées arrivées à échéance
+router.post('/admin/send-scheduled', authenticateAdmin, async (req, res) => {
+  try {
+    const now = new Date();
+
+    const scheduledNewsletters = await Newsletter.find({
+      status: 'scheduled',
+      scheduledAt: { $lte: now }
+    });
+
+    if (scheduledNewsletters.length === 0) {
+      return res.json({
+        success: true,
+        message: 'Aucune newsletter programmée à envoyer pour le moment',
+        processed: 0,
+        results: []
+      });
+    }
+
+    const results = [];
+
+    for (const newsletter of scheduledNewsletters) {
+      try {
+        if (newsletter.status === 'sending') {
+          results.push({ id: newsletter._id, subject: newsletter.subject, status: 'skipped_sending' });
+          continue;
+        }
+
+        const subscribers = await getSubscribersForNewsletter(newsletter);
+        const totalRecipients = subscribers.length;
+
+        if (totalRecipients === 0) {
+          results.push({ id: newsletter._id, subject: newsletter.subject, status: 'error', error: 'Aucun destinataire trouvé' });
+          continue;
+        }
+
+        newsletter.status = 'sending';
+        newsletter.stats.totalRecipients = totalRecipients;
+        await newsletter.save();
+
+        let jobsAdded = 0;
+
+        for (const subscriber of subscribers) {
+          const email = subscriber.email || subscriber.emailAddress;
+          if (!email) continue;
+
+          const subscriberId = subscriber._id ? subscriber._id.toString() : null;
+
+          const emailContent = NewsletterEmail.sendNewsletter({
+            to: email,
+            subject: newsletter.subject,
+            htmlContent: newsletter.content,
+            imageUrl: newsletter.imageUrl,
+            newsletterId: newsletter._id.toString(),
+            subscriberId: subscriberId,
+            subscriberEmail: email,
+            previewText: newsletter.previewText
+          });
+
+          emailQueueService.addToQueue({
+            to: email,
+            subject: newsletter.subject,
+            html: emailContent.html,
+            text: emailContent.text,
+            metadata: {
+              newsletterId: newsletter._id.toString(),
+              subscriberId: subscriberId,
+              emailType: 'newsletter'
+            }
+          });
+
+          jobsAdded++;
+        }
+
+        newsletter.status = 'sent';
+        newsletter.sentAt = new Date();
+        newsletter.stats.sent = jobsAdded;
+        await newsletter.save();
+
+        results.push({
+          id: newsletter._id,
+          subject: newsletter.subject,
+          status: 'sent',
+          totalRecipients,
+          queued: jobsAdded
+        });
+      } catch (err) {
+        console.error('❌ [NEWSLETTER SEND SCHEDULED] Erreur pour', newsletter?._id, err);
+        results.push({
+          id: newsletter._id,
+          subject: newsletter.subject,
+          status: 'error',
+          error: err.message
+        });
+      }
+    }
+
+    res.json({
+      success: true,
+      message: 'Traitement des newsletters programmées terminé',
+      processed: results.length,
+      results
+    });
+  } catch (error) {
+    console.error('❌ [NEWSLETTER SEND SCHEDULED] Erreur globale:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur lors de l\'envoi des newsletters programmées'
     });
   }
 });

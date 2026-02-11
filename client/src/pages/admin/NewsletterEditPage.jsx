@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ArrowLeft, Save, Eye, Send, Users, Mail, X, Upload, Image as ImageIcon, Trash2 } from 'lucide-react';
+import { ArrowLeft, Save, Eye, Send, Users, Mail, X, Upload, Trash2, Calendar } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import SimpleTextEditor from '../../components/admin/SimpleTextEditor';
 import toast from 'react-hot-toast';
@@ -28,6 +28,7 @@ const NewsletterEditPage = () => {
     previewText: '',
     content: '',
     imageUrl: '',
+    scheduledAt: '',
     status: 'draft',
     recipients: {
       type: 'all',
@@ -125,11 +126,21 @@ const NewsletterEditPage = () => {
 
       if (response.data.success) {
         const newsletter = response.data.newsletter;
+        // datetime-local attend une date "locale" (sans timezone).
+        // On convertit donc la date UTC stockée en "local ISO" pour éviter les décalages visuels.
+        const scheduledAtValue = newsletter.scheduledAt
+          ? (() => {
+              const d = new Date(newsletter.scheduledAt);
+              const local = new Date(d.getTime() - d.getTimezoneOffset() * 60000);
+              return local.toISOString().slice(0, 16);
+            })()
+          : '';
         setFormData({
           subject: newsletter.subject || '',
           previewText: newsletter.previewText || '',
           content: newsletter.content || '',
           imageUrl: newsletter.imageUrl || '',
+          scheduledAt: scheduledAtValue,
           status: newsletter.status || 'draft',
           recipients: newsletter.recipients || {
             type: 'all',
@@ -488,7 +499,12 @@ const NewsletterEditPage = () => {
 
       // Sauvegarder d'abord si c'est un nouveau brouillon
       if (!isEdit) {
-        const saveResponse = await axios.post(`${API_BASE_URL}/newsletters/admin/create`, formData, {
+        // Pour un envoi immédiat, on ignore une éventuelle date de programmation
+        const payload = {
+          ...formData,
+          scheduledAt: null
+        };
+        const saveResponse = await axios.post(`${API_BASE_URL}/newsletters/admin/create`, payload, {
           headers: { Authorization: `Bearer ${token}` }
         });
         newsletterId = saveResponse.data.newsletter._id;
@@ -508,6 +524,79 @@ const NewsletterEditPage = () => {
     } catch (error) {
       console.error('Erreur lors de l\'envoi:', error);
       toast.error(error.response?.data?.message || 'Erreur lors de l\'envoi');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const handleSchedule = async () => {
+    if (!formData.subject.trim()) {
+      toast.error('Le sujet est requis');
+      return;
+    }
+
+    if (!formData.content.trim()) {
+      toast.error('Le contenu est requis');
+      return;
+    }
+
+    if (!formData.scheduledAt) {
+      toast.error('Veuillez choisir une date et une heure d’envoi');
+      return;
+    }
+
+    const scheduledDate = new Date(formData.scheduledAt);
+    const now = new Date();
+
+    if (Number.isNaN(scheduledDate.getTime())) {
+      toast.error('Date de programmation invalide');
+      return;
+    }
+
+    if (scheduledDate <= now) {
+      toast.error('Veuillez choisir une date ultérieure pour la programmation');
+      return;
+    }
+
+    try {
+      setSaving(true);
+      const token = localStorage.getItem('adminToken');
+      const scheduledAtISO = scheduledDate.toISOString();
+
+      if (isEdit) {
+        await axios.put(
+          `${API_BASE_URL}/newsletters/admin/${id}`,
+          {
+            ...formData,
+            // Envoyer en ISO avec timezone pour éviter les décalages serveur (UTC vs local)
+            scheduledAt: scheduledAtISO
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        );
+        toast.success('Newsletter programmée avec succès');
+      } else {
+        const response = await axios.post(
+          `${API_BASE_URL}/newsletters/admin/create`,
+          {
+            ...formData,
+            scheduledAt: scheduledAtISO
+          },
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        );
+
+        if (response.data.success) {
+          toast.success('Newsletter programmée avec succès');
+        }
+      }
+
+      navigate('/admin/newsletters');
+    } catch (error) {
+      console.error('Erreur lors de la programmation:', error);
+      toast.error(error.response?.data?.message || 'Erreur lors de la programmation de la newsletter');
     } finally {
       setSaving(false);
     }
@@ -844,6 +933,15 @@ const NewsletterEditPage = () => {
               <Save className="w-4 h-4 sm:w-5 sm:h-5" />
               <span className="hidden sm:inline">{saving ? 'Enregistrement...' : 'Enregistrer'}</span>
               <span className="sm:hidden">{saving ? '...' : 'Sauver'}</span>
+            </button>
+            <button
+              onClick={handleSchedule}
+              disabled={saving || recipientCount === 0}
+              className="flex items-center gap-2 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 shadow-sm text-sm sm:text-base"
+            >
+              <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
+              <span className="hidden sm:inline">{saving ? 'Programmation...' : 'Programmer'}</span>
+              <span className="sm:hidden">{saving ? '...' : 'Prog.'}</span>
             </button>
             {isEdit && (
               <button
@@ -1189,6 +1287,47 @@ const NewsletterEditPage = () => {
                     </span>
                   </div>
                 </div>
+              </div>
+            </div>
+
+            {/* Programmation */}
+            <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-4 sm:p-6">
+              <div className="flex items-center gap-2 mb-4">
+                <Calendar className="w-5 h-5 text-primary-600" />
+                <h3 className="text-lg font-semibold text-gray-900">Programmation</h3>
+              </div>
+
+              <div className="space-y-3">
+                <p className="text-sm text-gray-600">
+                  Choisissez une date ultérieure pour envoyer automatiquement cette newsletter, ou laissez vide pour un envoi immédiat.
+                </p>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Date et heure d’envoi
+                  </label>
+                  <input
+                    type="datetime-local"
+                    value={formData.scheduledAt}
+                    onChange={(e) =>
+                      setFormData((prev) => ({
+                        ...prev,
+                        scheduledAt: e.target.value
+                      }))
+                    }
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500 text-sm"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">
+                    Fuseau horaire basé sur l’horloge de votre navigateur.
+                  </p>
+                </div>
+
+                {formData.scheduledAt && (
+                  <div className="mt-2 rounded-lg bg-blue-50 border border-blue-100 px-3 py-2 text-xs text-blue-800">
+                    La newsletter sera marquée comme <span className="font-semibold">programmée</span> pour le{' '}
+                    {new Date(formData.scheduledAt).toLocaleString('fr-FR')}.
+                  </div>
+                )}
               </div>
             </div>
 
