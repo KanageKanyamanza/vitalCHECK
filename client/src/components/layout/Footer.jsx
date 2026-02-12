@@ -16,6 +16,8 @@ import { InstallPWAButton, UserGuideButton } from "../ui";
 import toast from "react-hot-toast";
 // import useSmoothScroll from "../../hooks/useSmoothScroll";
 
+import { API_BASE_URL } from "../../services/api";
+
 const Footer = () => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
@@ -50,8 +52,6 @@ const Footer = () => {
 		setIsSubscribing(true);
 
 		try {
-			const API_BASE_URL =
-				import.meta.env.VITE_API_URL || "http://localhost:5003/api";
 			const response = await fetch(`${API_BASE_URL}/newsletters/subscribe`, {
 				method: "POST",
 				headers: {
@@ -258,17 +258,17 @@ const Footer = () => {
 							))}
 						</div>
 						<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 text-white/80 text-xs">
-						<div className="flex flex-col mb-4 md:mb-0">
-							<span className="font-semibold text-white">
-								{t("company.name")}
-							</span>
-							<div className="flex flex-wrap gap-x-4">
-								<span>{t("company.address")}</span>
-								<span>{t("company.rccm")}</span>
-								<span>{t("company.ninea")}</span>
+							<div className="flex flex-col mb-4 md:mb-0">
+								<span className="font-semibold text-white">
+									{t("company.name")}
+								</span>
+								<div className="flex flex-wrap gap-x-4">
+									<span>{t("company.address")}</span>
+									<span>{t("company.rccm")}</span>
+									<span>{t("company.ninea")}</span>
+								</div>
 							</div>
 						</div>
-					</div>
 					</div>
 
 					{/* Liens Rapides */}

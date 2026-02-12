@@ -12,7 +12,7 @@ import {
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5003/api";
+import { API_BASE_URL } from "../services/api";
 
 const ResetPasswordPage = () => {
 	const { token } = useParams();
@@ -50,7 +50,7 @@ const ResetPasswordPage = () => {
 		setLoading(true);
 
 		try {
-			await axios.post(`${API_URL}/client-auth/reset-password/${token}`, {
+			await axios.post(`${API_BASE_URL}/client-auth/reset-password/${token}`, {
 				password: formData.password,
 			});
 			setSuccess(true);
