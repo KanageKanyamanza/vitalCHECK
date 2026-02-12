@@ -19,6 +19,7 @@ import PaymentManagement from './PaymentManagement';
 import ChatbotManagement from './ChatbotManagement';
 import NewsletterManagement from './NewsletterManagement';
 import NewsletterEditPage from './NewsletterEditPage';
+import NewsletterSubscribers from './NewsletterSubscribers';
 
 const AdminApp = () => {
   const isAuthenticated = () => {
@@ -157,6 +158,12 @@ const AdminApp = () => {
         path="/newsletters/edit/:id" 
         element={
           isAuthenticated() ? <NewsletterEditPage /> : <Navigate to="/login" replace />
+        } 
+      />
+      <Route 
+        path="/newsletters/subscribers" 
+        element={
+          isAuthenticated() ? <NewsletterSubscribers /> : <Navigate to="/login" replace />
         } 
       />
       <Route 
