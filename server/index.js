@@ -5,6 +5,7 @@ const helmet = require("helmet");
 const cookieParser = require("cookie-parser");
 // Rate limiting désactivé - express-rate-limit retiré
 const { initAdmin } = require("./scripts/init-admin");
+const { startNewsletterScheduler } = require("./utils/newsletterScheduler");
 require("dotenv").config();
 
 const app = express();
@@ -163,6 +164,11 @@ const connectDB = async () => {
 		app.listen(PORT, () => {
 			console.log(`🚀 Server running on port ${PORT}`);
 		});
+
+		// Scheduler interne (optionnel) pour newsletters programmées
+		const schedulerEnabled = String(process.env.ENABLE_NEWSLETTER_SCHEDULER || '').toLowerCase() === 'true';
+		const intervalMs = Number(process.env.NEWSLETTER_SCHEDULER_INTERVAL_MS || 60_000);
+		startNewsletterScheduler({ enabled: schedulerEnabled, intervalMs, logger: console });
 	} catch (error) {
 		console.error("❌ MongoDB connection error:", error.message);
 

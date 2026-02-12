@@ -10,8 +10,10 @@ import {
 	Users,
 	FileText,
 	Search,
+	RotateCw,
 } from "lucide-react";
 import AdminLayout from "../../components/admin/AdminLayout";
+import Pagination from "../../components/admin/Pagination";
 import toast from "react-hot-toast";
 import axios from "axios";
 
@@ -31,6 +33,12 @@ const NewsletterManagement = () => {
 	const [loading, setLoading] = useState(true);
 	const [searchTerm, setSearchTerm] = useState("");
 	const [statusFilter, setStatusFilter] = useState("");
+	const [pagination, setPagination] = useState({
+		page: 1,
+		limit: 10,
+		total: 0,
+		pages: 1,
+	});
 	const [stats, setStats] = useState({
 		total: 0,
 		active: 0,
@@ -40,20 +48,49 @@ const NewsletterManagement = () => {
 	useEffect(() => {
 		fetchNewsletters();
 		fetchSubscriberStats();
-	}, []);
+	}, [pagination.page, statusFilter, searchTerm]);
 
 	const fetchNewsletters = async () => {
 		try {
+			setLoading(true);
 			const token = localStorage.getItem("adminToken");
+			const params = {
+				page: pagination.page,
+				limit: pagination.limit,
+				...(statusFilter && { status: statusFilter }),
+			};
+
 			const response = await axios.get(
 				`${API_BASE_URL}/newsletters/admin/list`,
 				{
 					headers: { Authorization: `Bearer ${token}` },
+					params,
 				},
 			);
 
 			if (response.data.success) {
-				setNewsletters(response.data.newsletters);
+				// Filtrer côté client pour la recherche
+				let filteredNewsletters = response.data.newsletters;
+				if (searchTerm) {
+					filteredNewsletters = filteredNewsletters.filter(
+						(newsletter) =>
+							newsletter.subject
+								.toLowerCase()
+								.includes(searchTerm.toLowerCase()) ||
+							(newsletter.previewText &&
+								newsletter.previewText
+									.toLowerCase()
+									.includes(searchTerm.toLowerCase())),
+					);
+				}
+				setNewsletters(filteredNewsletters);
+				if (response.data.pagination) {
+					setPagination((prev) => ({
+						...prev,
+						total: response.data.pagination.total,
+						pages: response.data.pagination.pages,
+					}));
+				}
 			}
 		} catch (error) {
 			console.error("Erreur lors de la récupération des newsletters:", error);
@@ -107,6 +144,35 @@ const NewsletterManagement = () => {
 		}
 	};
 
+	const handleResend = async (id) => {
+		if (
+			!window.confirm("Êtes-vous sûr de vouloir renvoyer cette newsletter ?")
+		) {
+			return;
+		}
+
+		try {
+			const token = localStorage.getItem("adminToken");
+			const response = await axios.post(
+				`${API_BASE_URL}/newsletters/admin/${id}/send`,
+				{},
+				{
+					headers: { Authorization: `Bearer ${token}` },
+				},
+			);
+
+			if (response.data.success) {
+				toast.success(
+					`Newsletter renvoyée à ${response.data.stats.sent} destinataires`,
+				);
+				fetchNewsletters();
+			}
+		} catch (error) {
+			console.error("Erreur lors du renvoi:", error);
+			toast.error(error.response?.data?.message || "Erreur lors du renvoi");
+		}
+	};
+
 	const getStatusBadge = (status) => {
 		const badges = {
 			draft: "bg-gray-100 text-gray-800",
@@ -154,13 +220,22 @@ const NewsletterManagement = () => {
 						</h1>
 						<p className="text-gray-600 mt-1">Créez et gérez vos newsletters</p>
 					</div>
-					<button
-						onClick={() => navigate("/admin/newsletters/create")}
-						className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors shadow-sm"
-					>
-						<Plus className="w-5 h-5" />
-						Nouvelle Newsletter
-					</button>
+					<div className="flex gap-2">
+						<button
+							onClick={() => navigate("/admin/newsletters/subscribers")}
+							className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors shadow-sm"
+						>
+							<Users className="w-5 h-5" />
+							Voir les Abonnés
+						</button>
+						<button
+							onClick={() => navigate("/admin/newsletters/create")}
+							className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors shadow-sm"
+						>
+							<Plus className="w-5 h-5" />
+							Nouvelle Newsletter
+						</button>
+					</div>
 				</div>
 
 				{/* Stats Cards */}
@@ -172,7 +247,7 @@ const NewsletterManagement = () => {
 									Total Newsletters
 								</p>
 								<p className="text-2xl font-bold text-gray-900 mt-1">
-									{newsletters.length}
+									{pagination.total || newsletters.length}
 								</p>
 							</div>
 							<div className="p-3 bg-primary-50 rounded-lg">
@@ -239,7 +314,10 @@ const NewsletterManagement = () => {
 									type="text"
 									placeholder="Rechercher par sujet..."
 									value={searchTerm}
-									onChange={(e) => setSearchTerm(e.target.value)}
+									onChange={(e) => {
+										setSearchTerm(e.target.value);
+										setPagination((prev) => ({ ...prev, page: 1 }));
+									}}
 									className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
 								/>
 							</div>
@@ -251,7 +329,10 @@ const NewsletterManagement = () => {
 							</label>
 							<select
 								value={statusFilter}
-								onChange={(e) => setStatusFilter(e.target.value)}
+								onChange={(e) => {
+									setStatusFilter(e.target.value);
+									setPagination((prev) => ({ ...prev, page: 1 }));
+								}}
 								className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
 							>
 								<option value="">Tous les statuts</option>
@@ -268,6 +349,7 @@ const NewsletterManagement = () => {
 								onClick={() => {
 									setSearchTerm("");
 									setStatusFilter("");
+									setPagination((prev) => ({ ...prev, page: 1 }));
 								}}
 								className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors"
 							>
@@ -320,54 +402,47 @@ const NewsletterManagement = () => {
 									</tr>
 								</thead>
 								<tbody className="bg-white divide-y divide-gray-200">
-									{newsletters
-										.filter((newsletter) => {
-											const matchesSearch =
-												!searchTerm ||
-												newsletter.subject
-													.toLowerCase()
-													.includes(searchTerm.toLowerCase()) ||
-												(newsletter.previewText &&
-													newsletter.previewText
-														.toLowerCase()
-														.includes(searchTerm.toLowerCase()));
-											const matchesStatus =
-												!statusFilter || newsletter.status === statusFilter;
-											return matchesSearch && matchesStatus;
-										})
-										.map((newsletter) => (
-											<tr
-												key={newsletter._id}
-												className="hover:bg-gray-50 transition-colors"
-											>
-												<td className="px-6 py-4">
-													<div>
-														<div className="text-sm font-medium text-gray-900">
-															{newsletter.subject}
+									{newsletters.map((newsletter) => (
+										<tr
+											key={newsletter._id}
+											className="hover:bg-gray-50 transition-colors"
+										>
+											<td className="px-6 py-4">
+												<div>
+													<div className="text-sm font-medium text-gray-900">
+														{newsletter.subject}
+													</div>
+													{newsletter.previewText && (
+														<div className="text-sm text-gray-500 truncate max-w-md mt-1">
+															{newsletter.previewText}
 														</div>
-														{newsletter.previewText && (
-															<div className="text-sm text-gray-500 truncate max-w-md mt-1">
-																{newsletter.previewText}
-															</div>
-														)}
-													</div>
-												</td>
-												<td className="px-6 py-4 whitespace-nowrap">
-													{getStatusBadge(newsletter.status)}
-												</td>
-												<td className="px-6 py-4 whitespace-nowrap">
-													<div className="flex items-center">
-														<Users className="h-4 w-4 text-gray-400 mr-2" />
+													)}
+												</div>
+											</td>
+											<td className="px-6 py-4 whitespace-nowrap">
+												{getStatusBadge(newsletter.status)}
+											</td>
+											<td className="px-6 py-4 whitespace-nowrap">
+												<div className="flex items-center">
+													<Users className="h-4 w-4 text-gray-400 mr-2" />
+													<span className="text-sm text-gray-900">
+														{newsletter.stats?.totalRecipients || 0}
+													</span>
+												</div>
+											</td>
+											<td className="px-6 py-4 whitespace-nowrap">
+												<div className="flex items-center">
+													<Calendar className="h-4 w-4 text-gray-400 mr-2" />
+													<div className="flex flex-col">
 														<span className="text-sm text-gray-900">
-															{newsletter.stats?.totalRecipients || 0}
-														</span>
-													</div>
-												</td>
-												<td className="px-6 py-4 whitespace-nowrap">
-													<div className="flex items-center">
-														<Calendar className="h-4 w-4 text-gray-400 mr-2" />
-														<span className="text-sm text-gray-900">
-															{newsletter.sentAt ?
+															{(
+																newsletter.status === "scheduled" &&
+																newsletter.scheduledAt
+															) ?
+																new Date(
+																	newsletter.scheduledAt,
+																).toLocaleDateString("fr-FR")
+															: newsletter.sentAt ?
 																new Date(newsletter.sentAt).toLocaleDateString(
 																	"fr-FR",
 																)
@@ -377,38 +452,73 @@ const NewsletterManagement = () => {
 																).toLocaleDateString("fr-FR")
 															:	"-"}
 														</span>
+														{newsletter.status === "scheduled" &&
+															newsletter.scheduledAt && (
+																<span className="text-xs text-gray-500">
+																	Programmée à{" "}
+																	{new Date(
+																		newsletter.scheduledAt,
+																	).toLocaleTimeString("fr-FR", {
+																		hour: "2-digit",
+																		minute: "2-digit",
+																	})}
+																</span>
+															)}
 													</div>
-												</td>
-												<td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-													<div className="flex space-x-2">
+												</div>
+											</td>
+											<td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+												<div className="flex space-x-2">
+													<button
+														onClick={() =>
+															navigate(
+																`/admin/newsletters/edit/${newsletter._id}`,
+															)
+														}
+														className="text-success-600 hover:text-success-900 p-1 rounded hover:bg-success-50 transition-colors"
+														title="Modifier"
+													>
+														<Eye className="h-4 w-4" />
+													</button>
+													{newsletter.status === "sent" && (
 														<button
-															onClick={() =>
-																navigate(
-																	`/admin/newsletters/edit/${newsletter._id}`,
-																)
-															}
-															className="text-success-600 hover:text-success-900 p-1 rounded hover:bg-success-50 transition-colors"
-															title="Modifier"
+															onClick={() => handleResend(newsletter._id)}
+															className="text-orange-600 hover:text-orange-900 p-1 rounded hover:bg-orange-50 transition-colors"
+															title="Renvoyer"
 														>
-															<Eye className="h-4 w-4" />
+															<RotateCw className="h-4 w-4" />
 														</button>
-														{newsletter.status !== "sent" && (
-															<button
-																onClick={() => handleDelete(newsletter._id)}
-																className="text-danger-600 hover:text-danger-900 p-1 rounded hover:bg-danger-50 transition-colors"
-																title="Supprimer"
-															>
-																<Trash2 className="h-4 w-4" />
-															</button>
-														)}
-													</div>
-												</td>
-											</tr>
-										))}
+													)}
+													{newsletter.status !== "sent" && (
+														<button
+															onClick={() => handleDelete(newsletter._id)}
+															className="text-danger-600 hover:text-danger-900 p-1 rounded hover:bg-danger-50 transition-colors"
+															title="Supprimer"
+														>
+															<Trash2 className="h-4 w-4" />
+														</button>
+													)}
+												</div>
+											</td>
+										</tr>
+									))}
 								</tbody>
 							</table>
 						</div>
 					}
+
+					{/* Pagination */}
+					{pagination.pages > 1 && (
+						<Pagination
+							currentPage={pagination.page}
+							totalPages={pagination.pages}
+							totalItems={pagination.total}
+							itemsPerPage={pagination.limit}
+							onPageChange={(page) =>
+								setPagination((prev) => ({ ...prev, page }))
+							}
+						/>
+					)}
 				</div>
 			</div>
 		</AdminLayout>
