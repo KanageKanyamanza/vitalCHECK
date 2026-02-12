@@ -122,7 +122,7 @@ const Navbar = () => {
 								/>
 							</div>
 							<div className="flex ms-1 ">
-								<span className="text-[11px] sm:text-md md:text-lg font-display  text-primary-500 font-bold uppercase">
+								<span className="text-[11px] sm:text-md md:text-lg font-display  text-primary-500 font-bold">
 									vitalCHECK
 								</span>
 							</div>
