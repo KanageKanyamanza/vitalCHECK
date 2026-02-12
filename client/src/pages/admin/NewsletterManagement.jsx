@@ -16,16 +16,7 @@ import AdminLayout from "../../components/admin/AdminLayout";
 import Pagination from "../../components/admin/Pagination";
 import toast from "react-hot-toast";
 import axios from "axios";
-
-// Configuration de l'URL de l'API
-const getApiBaseUrl = () => {
-	if (import.meta.env.PROD) {
-		return "https://ubb-enterprise-health-check.onrender.com/api";
-	}
-	return import.meta.env.VITE_API_URL || "http://localhost:5003/api";
-};
-
-const API_BASE_URL = getApiBaseUrl();
+import { API_BASE_URL } from "../../services/api";
 
 const NewsletterManagement = () => {
 	const navigate = useNavigate();

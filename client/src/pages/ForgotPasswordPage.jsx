@@ -5,7 +5,7 @@ import { Mail, ArrowLeft, CheckCircle } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5003/api";
+import { API_BASE_URL } from "../services/api";
 
 const ForgotPasswordPage = () => {
 	const navigate = useNavigate();
@@ -18,7 +18,9 @@ const ForgotPasswordPage = () => {
 		setLoading(true);
 
 		try {
-			await axios.post(`${API_URL}/client-auth/forgot-password`, { email });
+			await axios.post(`${API_BASE_URL}/client-auth/forgot-password`, {
+				email,
+			});
 			setEmailSent(true);
 			toast.success("Email de réinitialisation envoyé !");
 		} catch (error) {
