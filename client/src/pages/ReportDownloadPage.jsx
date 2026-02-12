@@ -229,6 +229,17 @@ const ReportDownloadPage = () => {
 								{t("reportDownload.downloadHint")}
 							</p>
 						</div>
+
+						{/* Legal Footer */}
+						<div className="text-center mt-8 pt-8 border-t border-gray-100">
+							<p className="text-xs text-gray-400 font-semibold">
+								{t("company.name")}
+							</p>
+							<p className="text-[10px] text-gray-400">
+								{t("company.address")} | {t("company.rccm")} |{" "}
+								{t("company.ninea")}
+							</p>
+						</div>
 					</div>
 
 					{/* Footer */}

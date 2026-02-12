@@ -1,1283 +1,1289 @@
 {
-  "common": {
-    "loading": "Chargement...",
-    "processing": "Traitement...",
-    "error": "Erreur",
-    "success": "Succès",
-    "next": "Suivant",
-    "previous": "Précédent",
-    "finish": "Terminer",
-    "back": "Retour",
-    "continue": "Continuer",
-    "start": "Commencer",
-    "submit": "Soumettre",
-    "cancel": "Annuler",
-    "save": "Enregistrer",
-    "edit": "Modifier",
-    "delete": "Supprimer",
-    "close": "Fermer",
-    "yes": "Oui",
-    "no": "Non",
-    "optional": "(optionnel)",
-    "goHome": "Retour à l'accueil",
-    "userGuide": "Guide d'utilisation",
-    "downloadGuide": "Télécharger le guide",
-    "downloading": "Téléchargement...",
-    "downloadUserGuide": "Télécharger le guide d'utilisation en PDF"
-  },
-  "navigation": {
-    "home": "Accueil",
-    "about": "À Propos",
-    "assessment": "Évaluation",
-    "results": "Résultats",
-    "contact": "Contact",
-    "pricing": "Tarifs",
-    "newAssessment": "Nouvelle Évaluation",
-    "blog": "Blog",
-    "userGuide": "Guide",
-    "login": "Connexion",
-    "dashboard": "Dashboard"
-  },
-  "results": {
-    "title": "vitalCHECK Enterprise Health Check – Résultats",
-    "newAssessment": "Nouvelle évaluation",
-    "overallScore": "Section A – Score Global",
-    "pillarBreakdown": "Section B – Répartition par Piliers (Graphique Radar)",
-    "pillarBreakdownDesc": "Graphique radar avec 6 axes : Finance, Opérations, Ventes & Marketing, Personnel & RH, Stratégie & Gouvernance, Technologie. Chaque pilier est codé par couleur (Rouge / Ambre / Vert).",
-    "quickInsights": "Section C – Aperçus Rapides (Freemium)",
-    "quickInsightsDesc": "2–3 conseils automatisés génériques pour vous aider à améliorer la santé de votre entreprise.",
-    "getFullReport": "Obtenir le Rapport Complet",
-    "getFullReportDesc": "Débloquez des insights détaillés, des benchmarks et une consultation d'expert",
-    "generateReport": "Générer le Rapport",
-    "reportGenerated": "Rapport généré et envoyé par email !",
-    "reportError": "Erreur lors de la génération du rapport",
-    "downloadReport": "Télécharger le PDF",
-    "downloadSuccess": "Rapport téléchargé avec succès !",
-    "downloadError": "Erreur lors du téléchargement du rapport",
-    "pillarResults": "Résultats par Pilier",
-    "pillarDetails": "Détail des Piliers",
-    "keyRecommendations": "Recommandations Clés",
-    "priority": "Priorité",
-    "improvement": "Amélioration",
-    "optimization": "Optimisation",
-    "freeReport": "Rapport Gratuit",
-    "freeReportDesc": "Recevez votre rapport détaillé par email avec des recommandations personnalisées.",
-    "generateReportBtn": "Générer le rapport",
-    "reportSent": "Rapport envoyé",
-    "reportSuccessTitle": "Rapport généré avec succès !",
-    "reportSuccessDesc": "Votre rapport vitalCHECK Enterprise Health Check a été généré et envoyé par email.",
-    "reportSentTo": "Envoyé à",
-    "stayOnResults": "Rester sur les résultats",
-    "reportNote": "Vous pouvez maintenant passer au premium pour des insights plus approfondis ou retourner à l'accueil pour une nouvelle évaluation.",
-    "premiumReport": "Rapport Premium",
-    "premiumReportDesc": "Analyse approfondie, benchmarking sectoriel et consultation avec nos experts.",
-    "unlockPremium": "Débloquer Premium",
-    "nextSteps": "Prochaines Étapes",
-    "sector": "Secteur",
-    "size": "Taille",
-    "date": "Date",
-    "zones": {
-      "red": "Zone Rouge",
-      "amber": "Zone Ambre", 
-      "green": "Zone Verte"
-    },
-    "status": {
-      "excellent": "Excellent",
-      "good": "Bon",
-      "average": "Moyen",
-      "amber": "Ambre",
-      "poor": "Faible",
-      "critical": "Critique"
-    },
-    "scoreMessages": {
-      "developing": "Votre entreprise se développe mais a besoin de renforcement dans certains domaines.",
-      "excellent": "Excellente performance ! Votre entreprise est en excellente santé.",
-      "critical": "Attention ! Votre entreprise nécessite une attention immédiate dans plusieurs domaines."
-    },
-    "premiumReport2": {
-      "title": "Rapport Premium Disponible",
-      "description": "Pour des recommandations plus détaillées, un plan d'action personnalisé et un benchmarking sectoriel, consultez notre rapport premium."
-    },
-    "consultationModal": {
-      "title": "Consultation Premium vitalCHECK",
-      "unlockText": "Débloquez votre rapport premium avec :",
-      "features": {
-        "detailedAnalysis": "Analyse détaillée par pilier",
-        "sectorBenchmarking": "Benchmarking sectoriel",
-        "actionPlan": "Plan d'action personnalisé",
-        "expertConsultation": "Consultation avec nos experts"
-      },
-      "contactText": "Choisissez le plan Premium pour accéder à toutes ces fonctionnalités.",
-      "close": "Fermer",
-      "contactUs": "Choisir Premium"
-    },
-    "reportProgress": {
-      "title": "Génération de votre rapport",
-      "subtitle": "Création de votre rapport personnalisé...",
-      "steps": {
-        "preparing": {
-          "title": "Préparation du rapport",
-          "description": "Organisation de vos données..."
-        },
-        "generating": {
-          "title": "Génération PDF",
-          "description": "Création de votre rapport PDF..."
-        },
-        "sending": {
-          "title": "Envoi par email",
-          "description": "Envoi de votre rapport..."
-        },
-        "complete": {
-          "title": "Rapport envoyé !",
-          "description": "Vérifiez votre boîte email"
-        }
-      },
-      "error": {
-        "title": "Erreur de génération",
-        "message": "Une erreur est survenue lors de la génération du rapport.",
-        "retry": "Réessayer",
-        "close": "Fermer"
-      },
-      "status": {
-        "failed": "Échec",
-        "inProgress": "En cours...",
-        "completed": "Terminé"
-      }
-    },
-    "submissionProgress": {
-      "title": "Traitement de votre évaluation",
-      "subtitle": "Veuillez patienter pendant que nous analysons vos réponses...",
-      "steps": {
-        "validating": {
-          "title": "Validation des données",
-          "description": "Vérification de vos réponses..."
-        },
-        "calculating": {
-          "title": "Calcul des scores",
-          "description": "Analyse de vos réponses et calcul des scores..."
-        },
-        "generating": {
-          "title": "Génération du rapport",
-          "description": "Création de votre rapport personnalisé..."
-        },
-        "saving": {
-          "title": "Sauvegarde",
-          "description": "Enregistrement de votre évaluation..."
-        },
-        "complete": {
-          "title": "Terminé !",
-          "description": "Votre évaluation est prête !"
-        }
-      },
-      "error": {
-        "title": "Erreur de traitement",
-        "message": "Une erreur est survenue lors du traitement de votre évaluation.",
-        "retry": "Réessayer",
-        "reload": "Recharger la page"
-      },
-      "stepCounter": "Étape {current} sur {total}"
-    },
-    "successModal": {
-      "title": "Rapport généré avec succès !",
-      "message": "Votre rapport détaillé a été généré et envoyé par email. Vous pouvez également le télécharger directement.",
-      "continue": "Continuer",
-      "backToHome": "Retour à l'accueil"
-    }
-  },
-  "landing": {
-    "title1": "vitalCHECK",
-    "title2": "Enterprise Health Check",
-    "subtitle1": "Votre entreprise est-elle prête à grandir ?",
-    "subtitle2": "Effectuez cette évaluation <span class='text-green-500 font-bold uppercase'>GRATUITE</span> de 10 minutes et découvrez le score de santé de votre entreprise",
-    "badge": "Gratuit • Résultats instantanés",
-    "features": {
-      "title": "Ce que vous obtiendrez :",
-      "complete": "Évaluation Complète",
-      "completeDesc": "Analysez 9 piliers clés de votre entreprise",
-      "personalized": "Recommandations Personnalisées",
-      "personalizedDesc": "Obtenez des conseils adaptés à votre situation",
-      "detailed": "Rapport Détaillé",
-      "detailedDesc": "Recevez un rapport PDF complet par email"
-    },
-    "form": {
-      "title": "Commencez votre évaluation gratuite",
-      "companyName": "Nom de l'entreprise",
-      "companyNamePlaceholder": "Ex: Mon Entreprise SARL",
-      "sector": "Secteur / Industrie",
-      "sectorPlaceholder": "Sélectionnez votre secteur",
-      "companySize": "Taille de l'entreprise",
-      "companySizePlaceholder": "Sélectionnez la taille",
-      "email": "Email de contact",
-      "emailPlaceholder": "votre@email.com",
-      "phone": "Numéro de téléphone",
-      "phonePlaceholder": "+221 XXX XXX XXX",
-      "startButton": "Commencer ici",
-      "startButtonShort": "Commencer ici",
-      "startAssessment": "Commencer l'évaluation",
-      "language": "Langue",
-      "languagePlaceholder": "Sélectionnez la langue"
-    },
-    "sectors": {
-      "technology": "Technologie",
-      "commerce": "Commerce",
-      "services": "Services",
-      "manufacturing": "Manufacture",
-      "construction": "Construction",
-      "health": "Santé",
-      "healthcare": "Santé",
-      "agriculture": "Agriculture",
-      "education": "Éducation",
-      "finance": "Finance",
-      "other": "Autre"
-    },
-    "sizes": {
-      "micro": "Micro (1-9 employés)",
-      "sme": "PME (10-49 employés)",
-      "large-sme": "Grande PME (50+ employés)"
-    }
-  },
-  "assessment": {
-    "title": "Évaluation de Santé d'Entreprise",
-    "progress": "Progression",
-    "question": "Question",
-    "of": "de",
-    "responses": "réponses",
-    "complete": "Terminé",
-    "pleaseAnswerAll": "Veuillez répondre à toutes les questions",
-    "completedSuccessfully": "Évaluation terminée avec succès !",
-    "submissionError": "Erreur lors de la soumission de l'évaluation"
-  },
-  "resume": {
-    "title": "Évaluation vitalCHECK - Reprise",
-    "loading": "Reprise de l'évaluation en cours...",
-    "error": "Erreur de reprise",
-    "errorMessage": "Impossible de reprendre l'évaluation",
-    "success": "Évaluation reprise avec succès !",
-    "questionNotFound": "Question introuvable",
-    "questionNotFoundMessage": "La question demandée n'existe pas.",
-    "loadingQuestions": "Chargement des questions...",
-    "resumeNote": "Évaluation reprise",
-    "backToHome": "Retour à l'accueil"
-  },
-  "languages": {
-    "en": "English",
-    "fr": "Français"
-  },
-  "footer": {
-    "description": "vitalCHECK aide les entreprises africaines à évaluer leur santé organisationnelle et à développer des stratégies de croissance durables.",
-    "quickLinks": "Liens Rapides",
-    "about": "À Propos",
-    "services": "Services",
-    "contact": "Contact",
-    "privacy": "Confidentialité",
-    "location": "Dakar, Sénégal",
-    "openHours": "Heures d'ouverture",
-    "allRightsReserved": "Tous droits réservés",
-    "terms": "Conditions d'utilisation",
-    "userGuide": "Guide d'utilisation",
-    "newsletter": {
-      "title": "Newsletter",
-      "subtitle": "Restez informé",
-      "description": "Recevez nos dernières actualités, conseils et insights directement dans votre boîte mail.",
-      "emailPlaceholder": "Votre adresse email",
-      "subscribe": "S'abonner",
-      "subscribing": "Abonnement...",
-      "success": "Merci pour votre abonnement !",
-      "error": "Une erreur est survenue. Veuillez réessayer.",
-      "invalidEmail": "Veuillez entrer une adresse email valide"
-    }
-  },
-  "privacy": {
-    "title": "Politique de Confidentialité",
-    "lastUpdated": "Dernière mise à jour",
-    "introduction": {
-      "title": "Introduction",
-      "content": "vitalCHECK s'engage à protéger votre vie privée et vos données personnelles conformément aux lois sénégalaises et africaines en vigueur, notamment la Loi n° 2008-12 du 25 janvier 2008 sur la protection des données à caractère personnel au Sénégal."
-    },
-    "dataCollection": {
-      "title": "Collecte des Données",
-      "personalData": {
-        "title": "Données Personnelles",
-        "items": {
-          "name": "Nom de l'entreprise",
-          "email": "Adresse email",
-          "company": "Informations sur l'entreprise",
-          "sector": "Secteur d'activité",
-          "size": "Taille de l'entreprise"
-        }
-      },
-      "assessmentData": {
-        "title": "Données d'Évaluation",
-        "content": "Nous collectons vos réponses aux questionnaires d'évaluation pour générer des rapports personnalisés et des recommandations adaptées à votre entreprise."
-      }
-    },
-    "dataUsage": {
-      "title": "Utilisation des Données",
-      "items": {
-        "assessment": "Génération de rapports d'évaluation personnalisés",
-        "reports": "Création de recommandations adaptées à votre secteur",
-        "communication": "Envoi de rapports et communications pertinentes",
-        "improvement": "Amélioration continue de nos services"
-      }
-    },
-    "dataProtection": {
-      "title": "Protection des Données",
-      "content": "Nous mettons en œuvre des mesures de sécurité appropriées pour protéger vos données contre l'accès non autorisé, la modification, la divulgation ou la destruction.",
-      "measures": {
-        "encryption": "Chiffrement des données sensibles",
-        "access": "Contrôle d'accès strict",
-        "backup": "Sauvegarde sécurisée des données",
-        "monitoring": "Surveillance continue des systèmes"
-      }
-    },
-    "dataSharing": {
-      "title": "Partage des Données",
-      "content": "Nous ne vendons, ne louons ni ne partageons vos données personnelles avec des tiers, sauf dans les cas suivants :",
-      "exceptions": {
-        "legal": "Obligation légale ou demande des autorités compétentes",
-        "consent": "Avec votre consentement explicite",
-        "aggregated": "Données agrégées et anonymisées pour des analyses statistiques"
-      }
-    },
-    "userRights": {
-      "title": "Droits des Utilisateurs",
-      "content": "Conformément à la législation sénégalaise, vous disposez des droits suivants :",
-      "rights": {
-        "access": "Droit d'accès à vos données personnelles",
-        "rectification": "Droit de rectification des données inexactes",
-        "erasure": "Droit à l'effacement de vos données",
-        "portability": "Droit à la portabilité de vos données",
-        "objection": "Droit d'opposition au traitement de vos données"
-      }
-    },
-    "cookies": {
-      "title": "Cookies",
-      "content": "Nous utilisons des cookies pour améliorer votre expérience utilisateur et analyser l'utilisation de notre site. Vous pouvez désactiver les cookies dans les paramètres de votre navigateur."
-    },
-    "internationalTransfers": {
-      "title": "Transferts Internationaux",
-      "content": "Vos données peuvent être transférées vers des serveurs situés en dehors du Sénégal. Nous nous assurons que ces transferts respectent les standards de protection des données internationaux."
-    },
-    "contact": {
-      "title": "Contact",
-      "content": "Pour toute question concernant cette politique de confidentialité ou pour exercer vos droits, contactez-nous :"
-    },
-    "updates": {
-      "title": "Modifications",
-      "content": "Nous nous réservons le droit de modifier cette politique de confidentialité. Les modifications seront publiées sur cette page avec une nouvelle date de mise à jour."
-    }
-  },
-  "terms": {
-    "title": "Conditions d'Utilisation",
-    "lastUpdated": "Dernière mise à jour",
-    "introduction": {
-      "title": "Introduction",
-      "content": "Ces conditions d'utilisation régissent votre utilisation de la plateforme vitalCHECK Enterprise Health Check. En utilisant nos services, vous acceptez d'être lié par ces conditions."
-    },
-    "acceptance": {
-      "title": "Acceptation des Conditions",
-      "content": "En accédant et en utilisant notre plateforme, vous confirmez que vous avez lu, compris et accepté ces conditions d'utilisation dans leur intégralité."
-    },
-    "serviceDescription": {
-      "title": "Description du Service",
-      "content": "vitalCHECK Enterprise Health Check est une plateforme d'évaluation de la santé organisationnelle des entreprises africaines. Nos services incluent :",
-      "features": {
-        "assessment": "Évaluation en ligne de la santé de votre entreprise",
-        "reports": "Génération de rapports détaillés et personnalisés",
-        "consultation": "Services de consultation et d'accompagnement",
-        "support": "Support technique et assistance utilisateur"
-      }
-    },
-    "userObligations": {
-      "title": "Obligations de l'Utilisateur",
-      "content": "En utilisant nos services, vous vous engagez à :",
-      "obligations": {
-        "accuracy": "Fournir des informations exactes et à jour",
-        "authorization": "Avoir l'autorisation de représenter votre entreprise",
-        "compliance": "Respecter toutes les lois et réglementations applicables",
-        "responsibility": "Assumer la responsabilité de vos actions sur la plateforme"
-      }
-    },
-    "intellectualProperty": {
-      "title": "Propriété Intellectuelle",
-      "content": "Tous les contenus, marques et technologies de la plateforme vitalCHECK sont protégés par les droits de propriété intellectuelle.",
-      "rights": {
-        "vitalCHECK": "vitalCHECK détient tous les droits sur la plateforme et ses contenus",
-        "user": "Vous conservez les droits sur vos données et contenus",
-        "license": "Vous accordez à vitalCHECK une licence limitée pour traiter vos données"
-      }
-    },
-    "paymentTerms": {
-      "title": "Conditions de Paiement",
-      "content": "Nos services sont proposés selon les modalités suivantes :",
-      "conditions": {
-        "free": "Évaluation de base gratuite",
-        "premium": "Services premium payants selon nos tarifs en vigueur",
-        "refund": "Politique de remboursement selon les conditions contractuelles",
-        "currency": "Paiements acceptés en FCFA, EUR, USD et GBP"
-      }
-    },
-    "limitationLiability": {
-      "title": "Limitation de Responsabilité",
-      "content": "Dans les limites autorisées par la loi sénégalaise, vitalCHECK décline toute responsabilité pour :",
-      "limitations": {
-        "advice": "Les conseils générés par notre plateforme sont informatifs uniquement",
-        "accuracy": "L'exactitude des données fournies par les utilisateurs",
-        "damages": "Les dommages indirects ou consécutifs",
-        "force": "Les cas de force majeure ou événements imprévisibles"
-      }
-    },
-    "governingLaw": {
-      "title": "Droit Applicable",
-      "content": "Ces conditions sont régies par le droit sénégalais. Tout litige sera soumis à la compétence exclusive des tribunaux de Dakar, Sénégal."
-    },
-    "disputeResolution": {
-      "title": "Résolution des Litiges",
-      "content": "En cas de litige, nous privilégions la résolution amiable selon les étapes suivantes :",
-      "steps": {
-        "negotiation": "Négociation directe entre les parties",
-        "mediation": "Médiation par un tiers neutre",
-        "arbitration": "Arbitrage selon les règles de l'OHADA",
-        "courts": "Recours aux tribunaux compétents en dernier ressort"
-      }
-    },
-    "termination": {
-      "title": "Résiliation",
-      "content": "Vous pouvez résilier votre compte à tout moment. vitalCHECK se réserve le droit de suspendre ou résilier votre accès en cas de violation de ces conditions."
-    },
-    "contact": {
-      "title": "Contact",
-      "content": "Pour toute question concernant ces conditions d'utilisation, contactez-nous :"
-    },
-    "updates": {
-      "title": "Modifications",
-      "content": "Nous nous réservons le droit de modifier ces conditions. Les modifications seront notifiées aux utilisateurs et publiées sur cette page."
-    }
-  },
-  "premium": {
-    "upgradeTitle": "Passez au Premium",
-    "upgradeSubtitle": "Débloquez des insights approfondis et une consultation d'expert",
-    "upgradeNow": "Passer au Premium",
-    "teamAnalysis": "Analyse d'équipe",
-    "teamAnalysisDesc": "Évaluation des compétences et de la performance de votre équipe",
-    "actionPlan": "Plan d'action personnalisé",
-    "actionPlanDesc": "Roadmap détaillée avec priorités et échéances",
-    "advancedAnalytics": "Analytics avancés",
-    "advancedAnalyticsDesc": "Benchmarking sectoriel et tendances de marché"
-  },
-  "pwa": {
-    "installButton": {
-      "text": "Installer l'app",
-      "ariaLabel": "Installer l'application vitalCHECK Enterprise Health Check"
-    },
-    "updateAvailable": {
-      "title": "Mise à jour disponible",
-      "message": "Une nouvelle version de l'application est disponible.",
-      "update": "Mettre à jour",
-      "dismiss": "Plus tard"
-    }
-  },
-  "contact": {
-    "title": "Contactez-nous",
-    "subtitle": "Nous sommes là pour vous aider à améliorer la santé de votre entreprise. N'hésitez pas à nous contacter pour toute question.",
-    "info": {
-      "title": "Nos Informations",
-      "address": {
-        "title": "Adresse",
-        "value": "Dakar, Sénégal"
-      },
-      "phone": {
-        "title": "Téléphone",
-        "value": "🇸🇳 +221 771970713 | 🇸🇳 +221 774536704"
-      },
-      "email": {
-        "title": "Email",
-        "value": "info@checkmyenterprise.com"
-      },
-      "hours": {
-        "title": "Heures d'ouverture",
-        "value": "Lun - Ven: 8h00 - 18h00"
-      }
-    },
-    "why": {
-      "title": "Pourquoi nous contacter ?",
-      "description": "Nos experts peuvent vous accompagner dans l'évaluation de votre entreprise et vous proposer des solutions personnalisées.",
-      "startAssessment": "Commencer l'évaluation"
-    },
-    "form": {
-      "title": "Envoyez-nous un message",
-      "name": "Nom complet",
-      "namePlaceholder": "Votre nom complet",
-      "email": "Adresse email",
-      "emailPlaceholder": "votre@email.com",
-      "company": "Entreprise",
-      "companyPlaceholder": "Nom de votre entreprise",
-      "phone": "Téléphone",
-      "phonePlaceholder": "+237 XXX XXX XXX",
-      "inquiryType": "Type de demande",
-      "inquiryTypePlaceholder": "Sélectionnez le type de demande",
-      "subject": "Sujet",
-      "subjectPlaceholder": "Résumé de votre demande",
-      "message": "Message",
-      "messagePlaceholder": "Décrivez votre demande en détail...",
-      "send": "Envoyer le message",
-      "sending": "Envoi en cours...",
-      "successMessage": "Message envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.",
-      "errorMessage": "Erreur lors de l'envoi du message. Veuillez réessayer.",
-      "privacy": "En envoyant ce formulaire, vous acceptez que nous utilisions vos informations pour vous répondre. Nous ne partagerons jamais vos données avec des tiers.",
-      "inquiryTypes": {
-        "general": "Demande générale",
-        "assessment": "Questions sur l'évaluation",
-        "premium": "Services premium",
-        "technical": "Support technique",
-        "partnership": "Partenariat",
-        "other": "Autre"
-      }
-    }
-  },
-  "about": {
-    "title": "À Propos de vitalCHECK",
-    "subtitle": "Aider les PME à diagnostiquer, grandir et se digitaliser",
-    "mission": {
-      "title": "Notre Mission",
-      "content": "Donner aux PME les moyens d'effectuer des diagnostics experts, des stratégies pratiques et une transformation digitale pour qu'elles deviennent plus résilientes, plus visibles et plus compétitives dans les marchés en évolution rapide d'aujourd'hui."
-    },
-    "vision": {
-      "title": "Notre Vision",
-      "content": "vitalCHECK joue son rôle incontournable dans le processus transformateur d'un monde où les PME africaines et mondiales sont financièrement stables, technologiquement équipées et prêtes à grandir au-delà des frontières."
-    },
-    "values": {
-      "title": "Nos Valeurs",
-      "subtitle": "Nous sommes guidés par des principes qui définissent notre travail :",
-      "integrity": {
-        "title": "Intégrité & Transparence",
-        "description": "Construire la confiance par l'honnêteté."
-      },
-      "excellence": {
-        "title": "Excellence",
-        "description": "Visant les plus hauts standards dans chaque projet."
-      },
-      "courage": {
-        "title": "Courage & Leadership",
-        "description": "Prendre des décisions audacieuses et guider les autres à faire de même."
-      },
-      "solidarity": {
-        "title": "Solidarité & Générosité (Ubuntu)",
-        "description": "Partager les connaissances et créer de la valeur pour les communautés."
-      },
-      "pragmatism": {
-        "title": "Pragmatisme & Réalisme",
-        "description": "Livrer des solutions qui fonctionnent réellement."
-      }
-    },
-    "story": {
-      "title": "Notre Histoire",
-      "content1": "vitalCHECK est né de la conviction que trop de PME échouent non pas par manque de potentiel, mais parce qu'elles manquent du bon soutien.",
-      "example": {
-        "title": "Un exemple concret",
-        "content": "Notre travail avec STM, une entreprise au bord de la faillite, Grâce au diagnostic, aux conseils stratégiques et à la mise en œuvre, nous les avons aidés à se stabiliser, se restructurer et retrouver la confiance.",
-        "result": "En conséquence directe, leurs revenus ont augmenté et ils ont doublé nos honoraires de conseil en reconnaissance de l'impact mesurable."
-      },
-      "content2": "Cette expérience a renforcé notre mission : être aux côtés des entrepreneurs quand ils ont le plus besoin de clarté, les aidant à transformer les revers en croissance."
-    },
-    "services": {
-      "title": "Ce que nous faisons",
-      "subtitle": "Nous soutenons les PME dans trois domaines interconnectés :",
-      "healthCheck": {
-        "title": "Enterprise Health Check (gratuit et premium)",
-        "description": "Un outil de diagnostic pour évaluer la santé financière et opérationnelle."
-      },
-      "visibility": {
-        "title": "Services de Visibilité & Croissance",
-        "description": "Stratégies et campagnes pour étendre la présence de marque et attirer des clients."
-      },
-      "development": {
-        "title": "Développement d'Applications Sur Mesure",
-        "description": "Construire des outils numériques personnalisés qui améliorent l'efficacité et créent de nouveaux flux de revenus."
-      }
-    },
-    "impact": {
-      "title": "Notre Impact",
-      "stabilized": "Aidés les PME à se stabiliser pendant les crises financières.",
-      "export": "Soutenu les entreprises orientées export pour repenser leurs stratégies et ouvrir de nouveaux marchés.",
-      "digital": "Développement de nouveaux outils numériques pour rendre les diagnostics d'entreprise largement accessibles."
-    },
-    "cta": {
-      "title": "Prêt à faire grandir votre entreprise ?",
-      "subtitle": "Construisons ensemble votre prochain chapitre.",
-      "startAssessment": "Commencer l'évaluation gratuite",
-      "contactUs": "Nous contacter"
-    }
-  },
-  "analytics": {
-    "title": "Analytics du Blog",
-    "subtitle": "Statistiques détaillées des visites et du comportement des utilisateurs",
-    "refresh": "Actualiser",
-    "exportCsv": "Exporter CSV",
-    "totalViews": "Total des vues",
-    "uniqueVisitors": "Visiteurs uniques",
-    "totalVisits": "Total des visites",
-    "totalLikes": "Total des likes",
-    "deviceBreakdown": "Répartition par appareil",
-    "topCountries": "Top 10 des pays",
-    "filters": "Filtres",
-    "blog": "Blog",
-    "allBlogs": "Tous les blogs",
-    "allCountries": "Tous les pays",
-    "startDate": "Date de début",
-    "endDate": "Date de fin",
-    "country": "Pays",
-    "device": "Appareil",
-    "allDevices": "Tous les appareils",
-    "resetFilters": "Réinitialiser les filtres",
-    "desktop": "Desktop",
-    "mobile": "Mobile",
-    "tablet": "Tablet",
-    "recentVisits": "Visites récentes",
-    "date": "Date",
-    "article": "Article",
-    "location": "Localisation",
-    "duration": "Durée",
-    "scroll": "Scroll",
-    "referrer": "Référent",
-    "direct": "Direct",
-    "bounce": "Rebond",
-    "yes": "Oui",
-    "no": "Non",
-    "showing": "Affichage de",
-    "to": "à",
-    "of": "sur",
-    "results": "résultats",
-    "previous": "Précédent",
-    "next": "Suivant",
-    "visits": "visites",
-    "seconds": "s",
-    "minutes": "m",
-    "hours": "h"
-  },
-  "blog": {
-    "title": "Blog vitalCHECK Enterprise Health Check",
-    "subtitle": "Découvrez nos articles, études de cas et conseils pour améliorer la santé de votre entreprise",
-    "searchPlaceholder": "Rechercher un article...",
-    "backToHome": "Retour à l'accueil",
-    "backToBlog": "Retour au blog",
-    "noArticles": "Aucun article trouvé",
-    "noArticlesDesc": "Aucun article ne correspond à vos critères de recherche.",
-    "loading": "Chargement...",
-    "error": "Erreur lors du chargement des blogs",
-    "likeError": "Erreur lors du like",
-    "alreadyLiked": "Vous avez déjà aimé cet article",
-    "unlikeSuccess": "Like retiré",
-    "images": {
-      "title": "Images du blog",
-      "uploadTitle": "Ajouter des images",
-      "uploadDescription": "Glissez-déposez vos images ici ou cliquez pour sélectionner",
-      "uploadHint": "PNG, JPG, GIF, WebP jusqu'à 5MB. Maximum 10 images.",
-      "position": "Position",
-      "positionTop": "En haut",
-      "positionMiddle": "Au milieu", 
-      "positionBottom": "En bas",
-      "positionInline": "Dans le texte",
-      "positionContentStart": "Début du contenu",
-      "positionContentEnd": "Fin du contenu",
-      "altText": "Texte alternatif",
-      "altTextPlaceholder": "Description de l'image",
-      "caption": "Légende",
-      "captionPlaceholder": "Légende de l'image",
-      "uploadSuccess": "image(s) uploadée(s) avec succès",
-      "uploadError": "Erreur lors de l'upload des images",
-      "deleteSuccess": "Image supprimée",
-      "deleteError": "Erreur lors de la suppression",
-      "viewLarge": "Voir en grand",
-      "delete": "Supprimer",
-      "maxImages": "Maximum 10 images autorisées",
-      "invalidFile": "n'est pas une image valide",
-      "fileTooLarge": "est trop volumineux (max 5MB)",
-      "uploading": "Upload en cours...",
-      "mainImages": "Images principales",
-      "galleryImages": "Galerie d'images",
-      "additionalImages": "Images supplémentaires"
-    },
-    "editor": {
-      "title": "Éditeur de texte",
-      "placeholder": "Commencez à écrire...",
-      "toolbar": {
-        "undo": "Annuler",
-        "redo": "Refaire",
-        "heading1": "Titre 1",
-        "heading2": "Titre 2", 
-        "heading3": "Titre 3",
-        "bold": "Gras",
-        "italic": "Italique",
-        "underline": "Souligné",
-        "strikethrough": "Barré",
-        "alignLeft": "Aligner à gauche",
-        "alignCenter": "Centrer",
-        "alignRight": "Aligner à droite",
-        "alignJustify": "Justifier",
-        "bulletList": "Liste à puces",
-        "orderedList": "Liste numérotée",
-        "quote": "Citation",
-        "addLink": "Ajouter un lien",
-        "removeLink": "Supprimer le lien",
-        "addImage": "Ajouter une image"
-      },
-      "help": "Conseils : Utilisez les boutons ci-dessus pour formater votre texte. Vous pouvez créer des titres, des listes, des citations et ajouter des liens ou images.",
-      "imageUrl": "URL de l'image",
-      "linkUrl": "URL du lien"
-    },
-    "likeSuccess": "Merci pour votre like !",
-    "shareSuccess": "Lien copié dans le presse-papiers",
-    "articleNotFound": "Article non trouvé",
-    "author": "Auteur",
-    "unknownAuthor": "Auteur inconnu",
-    "readMore": "Lire la suite",
-    "readTime": "min de lecture",
-    "publishedOn": "Publié le",
-    "by": "par",
-    "views": "vues",
-    "likes": "likes",
-    "share": "Partager",
-    "search": "Rechercher dans le blog...",
-    "modal": {
-      "title": "Voulez-vous des insights plus intelligents comme celui-ci chaque semaine ?",
-      "description": "Abonnez-vous GRATUITEMENT pour continuer la lecture",
-      "firstName": "Prénom",
-      "lastName": "Nom de famille", 
-      "email": "Email",
-      "country": "Pays",
-      "firstNamePlaceholder": "Votre prénom",
-      "lastNamePlaceholder": "Votre nom de famille",
-      "emailPlaceholder": "votre@email.com",
-      "countryPlaceholder": "Votre pays",
-      "submit": "Envoyer",
-      "submitting": "Envoi...",
-      "welcomeBack": "Bon retour !",
-      "welcomeBackMessage": "Merci de votre retour, {firstName} {lastName} !",
-      "welcomeBackDesc": "Nous sommes ravis de vous revoir. Profitez bien de votre lecture !",
-      "continueReading": "Continuer la lecture",
-      "successMessage": "Merci pour vos informations ! Bonne lecture !",
-      "returningSuccessMessage": "Merci de votre retour ! Bonne lecture !",
-      "errorMessage": "Une erreur est survenue. Veuillez réessayer.",
-      "privacyMessage": "Vos informations sont sécurisées et ne seront pas partagées.",
-      "validation": {
-        "firstNameRequired": "Le prénom est requis",
-        "lastNameRequired": "Le nom de famille est requis",
-        "emailRequired": "L'email est requis",
-        "emailInvalid": "Veuillez entrer un email valide",
-        "countryRequired": "Le pays est requis"
-      }
-    },
-    "noResults": "Aucun article trouvé",
-    "actions": "Actions",
-    "likeArticle": "J'aime cet article",
-    "unlikeArticle": "Je n'aime plus cet article",
-    "thankYou": "Merci !",
-    "relatedArticles": "Articles similaires",
-    "types": {
-      "all": "Tous les types",
-      "article": "Articles",
-      "etude-cas": "Études de cas",
-      "tutoriel": "Tutoriels",
-      "actualite": "Actualités",
-      "temoignage": "Témoignages"
-    },
-    "categories": {
-      "all": "Toutes les catégories",
-      "strategie": "Stratégie",
-      "technologie": "Technologie",
-      "finance": "Finance",
-      "ressources-humaines": "Ressources Humaines",
-      "marketing": "Marketing",
-      "operations": "Opérations",
-      "gouvernance": "Gouvernance"
-    },
-    "tagsLabel": "Tags",
-    "tags": {
-      "diagnostic": "Diagnostic",
-      "entreprise": "Entreprise",
-      "santé": "Santé",
-      "management": "Management",
-      "trésorerie": "Trésorerie",
-      "finance": "Finance",
-      "gestion": "Gestion",
-      "témoignage": "Témoignage",
-      "croissance": "Croissance",
-      "chiffre d'affaires": "Chiffre d'affaires",
-      "south africa": "Afrique du Sud",
-      "packaged food": "Aliments emballés",
-      "african markets": "Marchés africains",
-      "food industry": "Industrie alimentaire",
-      "supply chain": "Chaîne d'approvisionnement",
-      "retail": "Commerce de détail",
-      "business development": "Développement commercial",
-      "africa": "Afrique",
-      "food value chain": "Chaîne de valeur alimentaire",
-      "supermarket sector": "Secteur de la grande distribution",
-      "productivité": "Productivité",
-      "étude de cas": "Étude de cas",
-      "pme": "PME",
-      "services": "Services"
-    },
-    "filters": {
-      "all": "Tous",
-      "type": "Type",
-      "category": "Catégorie",
-      "sortBy": "Trier par",
-      "sortOptions": {
-        "publishedAt": "Date de publication",
-        "views": "Nombre de vues",
-        "likes": "Nombre de likes",
-        "title": "Titre"
-      }
-    },
-    "admin": {
-      "title": "Gestion du Blog",
-      "createNew": "Créer un nouvel article",
-      "edit": "Modifier l'article",
-      "delete": "Supprimer l'article",
-      "publish": "Publier",
-      "unpublish": "Dépublier",
-      "draft": "Brouillon",
-      "published": "Publié",
-      "archived": "Archivé",
-      "languageSelector": {
-        "title": "Changer de langue"
-      },
-      "form": {
-        "titleFr": "Titre (Français)",
-        "titleEn": "Titre (Anglais)",
-        "excerptFr": "Résumé (Français)",
-        "excerptEn": "Résumé (Anglais)",
-        "contentFr": "Contenu (Français)",
-        "contentEn": "Contenu (Anglais)",
-        "metaTitleFr": "Titre SEO (Français)",
-        "metaTitleEn": "Titre SEO (Anglais)",
-        "metaDescriptionFr": "Description SEO (Français)",
-        "metaDescriptionEn": "Description SEO (Anglais)",
-        "type": "Type d'article",
-        "category": "Catégorie",
-        "tags": "Tags (séparés par des virgules)",
-        "featuredImage": "Image mise en avant",
-        "status": "Statut",
-        "save": "Enregistrer",
-        "saveAndPublish": "Enregistrer et publier",
-        "cancel": "Annuler"
-      },
-      "messages": {
-        "created": "Article créé avec succès",
-        "updated": "Article mis à jour avec succès",
-        "deleted": "Article supprimé avec succès",
-        "published": "Article publié avec succès",
-        "unpublished": "Article dépublié avec succès"
-      }
-    }
-  },
-  "reportDownload": {
-    "title": "Votre Rapport vitalCHECK",
-    "subtitle": "Téléchargez votre rapport d'évaluation complet",
-    "overallScore": "Score Global",
-    "assessmentDate": "Date d'évaluation",
-    "reportGenerated": "Rapport généré le",
-    "downloadButton": "Télécharger le Rapport PDF",
-    "downloading": "Téléchargement en cours...",
-    "downloadHint": "Le PDF sera téléchargé automatiquement dans votre navigateur",
-    "needHelp": "Besoin d'aide ? Contactez-nous",
-    "error": "Erreur",
-    "notFound": "Rapport introuvable ou indisponible"
-  },
-  "admin": {
-    "pdfManagement": {
-      "title": "Gestion des PDFs",
-      "subtitle": "Gérez tous les rapports PDF générés et renvoyez-les aux utilisateurs",
-      "searchPlaceholder": "Rechercher par entreprise ou email...",
-      "totalPDFs": "Total PDFs",
-      "noPDFs": "Aucun PDF trouvé",
-      "download": "Télécharger",
-      "resend": "Renvoyer",
-      "showing": "Affichage de",
-      "of": "sur",
-      "table": {
-        "company": "Entreprise",
-        "email": "Email",
-        "score": "Score",
-        "status": "Statut",
-        "date": "Date",
-        "actions": "Actions"
-      }
-    }
-  },
-  "clientAuth": {
-    "login": {
-      "title": "Connexion Client",
-      "subtitle": "Accédez à votre tableau de bord vitalCHECK",
-      "email": "Adresse email",
-      "emailPlaceholder": "votre@email.com",
-      "password": "Mot de passe",
-      "passwordPlaceholder": "Votre mot de passe",
-      "submit": "Se connecter",
-      "noAccount": "Pas encore de compte ?",
-      "createAccount": "Créer un compte",
-      "backToHome": "Retour à l'accueil",
-      "hint": "Vous avez reçu vos identifiants par email après votre paiement"
-    },
-    "register": {
-      "title": "Créer un Compte",
-      "subtitle": "Créez votre compte vitalCHECK pour accéder à tous vos services",
-      "firstName": "Prénom",
-      "firstNamePlaceholder": "Votre prénom",
-      "lastName": "Nom",
-      "lastNamePlaceholder": "Votre nom",
-      "email": "Email",
-      "emailPlaceholder": "votre@email.com",
-      "password": "Mot de passe",
-      "passwordPlaceholder": "Minimum 6 caractères",
-      "confirmPassword": "Confirmer le mot de passe",
-      "confirmPasswordPlaceholder": "Retapez votre mot de passe",
-      "companyName": "Nom de l'entreprise",
-      "companyNamePlaceholder": "Ex: Mon Entreprise SARL",
-      "sector": "Secteur",
-      "sectorPlaceholder": "Sélectionnez votre secteur",
-      "companySize": "Taille de l'entreprise",
-      "companySizePlaceholder": "Sélectionnez la taille",
-      "phone": "Téléphone",
-      "phonePlaceholder": "+221 XXX XXX XXX",
-      "submit": "Créer mon compte",
-      "hasAccount": "Vous avez déjà un compte ?",
-      "login": "Se connecter",
-      "backToHome": "Retour à l'accueil",
-      "errors": {
-        "firstNameRequired": "Le prénom est requis",
-        "lastNameRequired": "Le nom est requis",
-        "emailRequired": "L'email est requis",
-        "passwordRequired": "Le mot de passe est requis",
-        "passwordTooShort": "Le mot de passe doit contenir au moins 6 caractères",
-        "passwordMismatch": "Les mots de passe ne correspondent pas",
-        "companyNameRequired": "Le nom de l'entreprise est requis",
-        "sectorRequired": "Le secteur est requis",
-        "companySizeRequired": "La taille de l'entreprise est requise"
-      }
-    }
-  },
-  "clientDashboard": {
-    "welcome": "Bienvenue",
-    "settings": "Paramètres",
-    "logout": "Déconnexion",
-    "subscription": {
-      "title": "Abonnement",
-      "active": "Actif",
-      "inactive": "Inactif",
-      "manage": "Gérer mon abonnement"
-    },
-    "assessments": {
-      "title": "Évaluations",
-      "total": "Évaluations réalisées",
-      "new": "Nouvelle évaluation"
-    },
-    "payments": {
-      "title": "Paiements",
-      "total": "Paiements effectués"
-    },
-    "history": {
-      "title": "Historique des Évaluations",
-      "noAssessments": "Vous n'avez pas encore d'évaluation",
-      "startFirst": "Commencer ma première évaluation",
-      "evaluation": "Évaluation",
-      "score": "Score",
-      "viewReport": "Voir le rapport",
-      "downloadPDF": "Télécharger PDF",
-      "downloading": "Téléchargement..."
-    },
-    "paymentsHistory": {
-      "title": "Historique des Paiements",
-      "date": "Date",
-      "plan": "Plan",
-      "amount": "Montant",
-      "status": "Statut",
-      "completed": "Complété",
-      "pending": "En attente",
-      "failed": "Échoué",
-      "all": "Tous",
-      "active": "En attente",
-      "filterAll": "Tous les paiements",
-      "filterActive": "Paiements en attente",
-      "filterCompleted": "Paiements terminés",
-      "noPayments": "Aucun paiement trouvé pour ce filtre",
-      "stats": {
-        "total": "Total Paiements",
-        "active": "En Attente",
-        "completed": "Terminés",
-        "totalAmount": "Montant Total"
-      }
-    }
-  },
-  "clientProfile": {
-    "title": "Mon Profil",
-    "tabs": {
-      "profile": "Profil",
-      "subscription": "Abonnement",
-      "security": "Sécurité"
-    },
-    "firstName": "Prénom",
-    "lastName": "Nom",
-    "email": "Email",
-    "emailNote": "L'email ne peut pas être modifié",
-    "companyName": "Nom de l'entreprise",
-    "sector": "Secteur",
-    "companySize": "Taille",
-    "phone": "Téléphone",
-    "saveChanges": "Enregistrer les modifications",
-    "currentPlan": "Plan Actuel",
-    "statusActive": "Actif",
-    "statusInactive": "Inactif",
-    "upgradePlan": "Changer de plan",
-    "subscriptionDetails": "Détails de l'abonnement",
-    "startDate": "Date de début",
-    "endDate": "Date de fin",
-    "currentPassword": "Mot de passe actuel",
-    "newPassword": "Nouveau mot de passe",
-    "confirmNewPassword": "Confirmer le nouveau mot de passe",
-    "passwordHint": "Minimum 6 caractères",
-    "changePassword": "Changer le mot de passe",
-    "errors": {
-      "passwordMismatch": "Les mots de passe ne correspondent pas",
-      "passwordTooShort": "Le mot de passe doit contenir au moins 6 caractères"
-    }
-  },
-  "socialShare": {
-    "title": "Partager cette page :",
-    "shareOn": "Partager sur",
-    "copyLink": "Copier le lien",
-    "copied": "Lien copié !",
-    "linkCopied": "Lien copié dans le presse-papiers"
-  },
-  "payment": {
-    "success": "Paiement réussi ! Merci pour votre achat.",
-    "error": "Erreur de paiement. Veuillez réessayer.",
-    "processing": "Traitement du paiement...",
-    "payWith": "Payer avec PayPal ou carte bancaire",
-    "or": "ou"
-  },
-  "checkout": {
-    "title": "Paiement",
-    "backToPricing": "Retour aux tarifs",
-    "orderSummary": "Récapitulatif de la commande",
-    "price": "Prix",
-    "or": "ou",
-    "monthly": "par mois",
-    "annual": "par an",
-    "oneTime": "Paiement unique",
-    "annualPrice": "Prix annuel",
-    "selectPaymentMethod": "Sélectionnez le mode de paiement",
-    "paypal": "PayPal ou carte bancaire",
-    "paypalDescription": "Payez en toute sécurité avec Carte bancaire ou PayPal",
-    "bankTransfer": "Virement bancaire / Nous contacter",
-    "bankTransferDescription": "Payez par virement bancaire ou contactez-nous pour d'autres options",
-    "contactUsForPayment": "Contactez-nous pour organiser un paiement par virement bancaire ou discuter d'autres options de paiement.",
-    "contactUs": "Nous contacter",
-    "securePayment": "🔒 Paiement sécurisé protégé par cryptage SSL",
-    "invalidPlan": "Plan invalide sélectionné. Redirection..."
-  },
-  "paymentSuccess": {
-    "title": "Paiement Réussi !",
-    "subtitle": "Merci pour votre achat. Votre paiement a été traité avec succès.",
-    "orderDetails": "Détails de la commande",
-    "orderId": "ID de commande",
-    "plan": "Plan",
-    "status": "Statut",
-    "completed": "Terminé",
-    "nextSteps": "Et Maintenant ?",
-    "confirmationEmail": "Vous recevrez sous peu un email de confirmation avec le récapitulatif de votre paiement.",
-    "accessInfo": "Nos experts vous contacteront sous 24h pour organiser vos services.",
-    "support": "Tous vos livrables vous seront envoyés directement par email.",
-    "backToHome": "Retour à l'accueil",
-    "contactSupport": "Contacter le Support",
-    "needHelp": "Besoin d'aide ?"
-  },
-  "pricing": {
-    "title": "Tarifs vitalCHECK",
-    "subtitle": "Choisissez le plan qui correspond à vos besoins d'évaluation et d'amélioration continue",
-    "heroFeatures": {
-      "freeEvaluation": "Évaluation gratuite disponible",
-      "noCommitment": "Sans engagement",
-      "supportIncluded": "Support inclus"
-    },
-    "plans": {
-      "free": {
-        "name": "GRATUIT",
-        "subtitle": "Freemium d'Accès",
-        "price": "0",
-        "currency": "FCFA",
-        "period": "",
-        "description": "Découverte et préqualification",
-        "button": "Commencer gratuitement"
-      },
-      "standard": {
-        "name": "STANDARD",
-        "subtitle": "Abonnement PME classique",
-        "price": "10 000",
-        "currency": "FCFA",
-        "period": "/mois",
-        "annualPrice": "100 000",
-        "annualPeriod": "/an",
-        "description": "Amélioration continue et suivi",
-        "button": "Sélectionner",
-        "popular": "Plus populaire"
-      },
-      "premium": {
-        "name": "PREMIUM",
-        "subtitle": "Accompagnement & Décision",
-        "price": "25 000",
-        "currency": "FCFA",
-        "period": "/mois",
-        "annualPrice": "250 000",
-        "annualPeriod": "/an",
-        "oneShotPrice": "199 €",
-        "oneShotFCFA": "130 000 FCFA",
-        "description": "Consulting et financement",
-        "button": "Sélectionner"
-      },
-      "diagnostic": {
-        "name": "SERVICE DE DIAGNOSTIC",
-        "subtitle": "Revitalisation Complète d'Entreprise",
-        "price": "1 000 $",
-        "alternativePrice": "550 000 FCFA",
-        "description": "Le Service de Diagnostic est un cadre complet de revitalisation d'entreprise. Il comprend une évaluation commerciale complète, un rapport écrit et présenté, et un ensemble de recommandations de croissance pratiques et transformatrices.",
-        "includes": "Chaque engagement se termine par un plan d'action stratégique suivi de trois mois de mise en œuvre guidée.",
-        "retainer": "À la fin de l'intervention, les clients paient une commission de performance égale à 1,5% de l'augmentation des ventes générée par le programme, payable sur une période de 12 mois.",
-        "button": "Demander le Service de Diagnostic",
-        "special": "Pack Spécial"
-      }
-    },
-    "enterpriseRecommendations": {
-      "title": "Quelle solution pour votre entreprise ?",
-      "subtitle": "Découvrez nos recommandations selon le type et la taille de votre organisation",
-      "recommended": "Recommandé",
-      "tableHeaders": {
-        "enterpriseType": "Type d'entreprise",
-        "recommendedPlan": "Plan recommandé",
-        "description": "Description"
-      }
-    },
-    "support": {
-      "title": "Support et accompagnement",
-      "tableHeaders": {
-        "supportType": "Type de support"
-      },
-      "subtitle": "Notre équipe est là pour vous accompagner à chaque étape",
-      "email": {
-        "title": "Support Email",
-        "description": "Disponible pour tous les plans",
-        "responseTime": "Réponse sous 24h"
-      },
-      "whatsapp": {
-        "title": "Support WhatsApp",
-        "description": "Plans Standard et Premium",
-        "responseTime": "Réponse prioritaire"
-      },
-      "phone": {
-        "title": "Support Téléphonique",
-        "description": "Plan Premium uniquement",
-        "responseTime": "Support dédié"
-      }
-    },
-    "cta": {
-      "title": "Prêt à améliorer votre entreprise ?",
-      "subtitle": "Commencez par une évaluation gratuite et découvrez les points d'amélioration de votre organisation",
-      "startFree": "Commencer l'évaluation gratuite",
-      "contactUs": "Nous contacter"
-    },
-    "common": {
-      "twoMonthsFree": "(2 mois offerts)",
-      "or": "ou"
-    },
-    "featuresComparison": {
-      "title": "Comparaison des fonctionnalités",
-      "subtitle": "Découvrez en détail ce qui est inclus dans chaque plan",
-      "featuresLabel": "Fonctionnalités"
-    },
-    "features": {
-      "accessEvaluation": "Accès évaluation",
-      "globalScorePillars": "Score global + piliers",
-      "basicPdfReport": "Rapport PDF basique",
-      "personalizedRecommendations": "Recommandations personnalisées",
-      "multipleEvaluations": "Évaluations multiples",
-      "historyTracking": "Historique & suivi",
-      "comparativeAnalysis": "Analyse comparative (benchmark)",
-      "expertConsultation": "Consultation avec expert UBB",
-      "dashboardAdvancedExport": "Tableau de bord et export avancé",
-      "evaluatedCompanyBadge": "Badge \"Entreprise évaluée\"",
-      "emailSupport": "Support email",
-      "whatsappPhoneSupport": "Support WhatsApp / Téléphone",
-      "multipleUsers": "Utilisateurs multiples (équipe)"
-    },
-    "enterpriseTypes": {
-      "tpePmeUnstructured": "TPE / PME non structurées",
-      "cooperativesIndividual": "Coopératives / Entrepreneurs individuels",
-      "structuredPme": "PME structurées",
-      "accountingCoaches": "Cabinets comptables / Coachs business",
-      "growthExportPme": "PME de croissance / Export",
-      "financingEntrepreneurs": "Entrepreneurs cherchant financement",
-      "incubationPrograms": "Programmes d'incubation / ONG"
-    },
-    "enterpriseDescriptions": {
-      "tpePmeUnstructured": "Découverte du diagnostic et sensibilisation",
-      "cooperativesIndividual": "Première approche de l'évaluation",
-      "structuredPme": "Suivi régulier et amélioration continue",
-      "accountingCoaches": "Outil d'accompagnement client",
-      "growthExportPme": "Stratégie avancée et financement",
-      "financingEntrepreneurs": "Dossier de financement complet",
-      "incubationPrograms": "Accompagnement structuré"
-    },
-    "supportTypes": {
-      "emailSupport": "Support Email",
-      "whatsappSupport": "Support WhatsApp",
-      "phoneSupport": "Support Téléphonique"
-    },
-    "supportDescriptions": {
-      "emailSupport": "Réponse sous 24h",
-      "whatsappSupport": "Réponse prioritaire",
-      "phoneSupport": "Support dédié"
-    }
-  },
-  "chatbot": {
-    "initialMessage": "Bonjour ! 👋 Je suis l'assistant de vitalCHECK. Comment puis-je vous aider ?",
-    "welcomeMessage": "Bonjour ! 👋 Je suis l'assistant de vitalCHECK. Pour mieux vous aider, pouvez-vous me donner votre prénom ?",
-    "askName": "Veuillez entrer votre prénom",
-    "askEmail": "Email (facultatif) - vous pouvez ignorer cette étape",
-    "namePlaceholder": "Donnez votre nom",
-    "emailPlaceholder": "Donnez votre email ou ignorer",
-    "emailRequest": "Merci {{name}} ! Souhaitez-vous partager votre email pour que nous puissions vous recontacter si nécessaire ? (facultatif - vous pouvez taper \"passer\" ou simplement votre question)",
-    "readyMessage": "Parfait {{name}} ! 👋 Je suis l'assistant de vitalCHECK. Comment puis-je vous aider ?",
-    "ignore": "Ignorer",
-    "topics": {
-      "evaluation": "L'évaluation",
-      "pricing": "Les tarifs",
-      "report": "Votre rapport",
-      "account": "Votre compte"
-    },
-    "suggestion": "Ou tapez votre question directement !",
-    "popularTopics": "Sujets populaires :",
-    "topicsList": {
-      "assessment": "Évaluation",
-      "pricing": "Tarifs",
-      "contact": "Contact",
-      "blog": "Blog"
-    },
-    "assistantName": "Assistant vitalCHECK",
-    "online": "En ligne",
-    "instantResponse": "Réponse instantanée",
-    "typing": "L'assistant écrit...",
-    "placeholder": "Tapez votre message...",
-    "send": "Envoyer",
-    "openChat": "Ouvrir le chat",
-    "close": "Fermer",
-    "minimize": "Minimiser",
-    "maximize": "Agrandir",
-    "error": "Désolé, une erreur est survenue. Vérifiez votre connexion ou réessayez plus tard.",
-    "notUnderstood": "Je n'ai pas bien compris. Pouvez-vous reformuler ?",
-    "questionsAbout": "Vous pouvez me poser des questions sur :",
-    "introGreeting": "Salut ! 👋",
-    "introMessage": "Je suis l'assistant vitalCHECK ! Posez-moi vos questions, je suis là pour vous aider ! 😊"
-  }
+	"common": {
+		"loading": "Chargement...",
+		"processing": "Traitement...",
+		"error": "Erreur",
+		"success": "Succès",
+		"next": "Suivant",
+		"previous": "Précédent",
+		"finish": "Terminer",
+		"back": "Retour",
+		"continue": "Continuer",
+		"start": "Commencer",
+		"submit": "Soumettre",
+		"cancel": "Annuler",
+		"save": "Enregistrer",
+		"edit": "Modifier",
+		"delete": "Supprimer",
+		"close": "Fermer",
+		"yes": "Oui",
+		"no": "Non",
+		"optional": "(optionnel)",
+		"goHome": "Retour à l'accueil",
+		"userGuide": "Guide d'utilisation",
+		"downloadGuide": "Télécharger le guide",
+		"downloading": "Téléchargement...",
+		"downloadUserGuide": "Télécharger le guide d'utilisation en PDF"
+	},
+	"navigation": {
+		"home": "Accueil",
+		"about": "À Propos",
+		"assessment": "Évaluation",
+		"results": "Résultats",
+		"contact": "Contact",
+		"pricing": "Tarifs",
+		"newAssessment": "Nouvelle Évaluation",
+		"blog": "Blog",
+		"userGuide": "Guide",
+		"login": "Connexion",
+		"dashboard": "Dashboard"
+	},
+	"results": {
+		"title": "vitalCHECK Enterprise Health Check – Résultats",
+		"newAssessment": "Nouvelle évaluation",
+		"overallScore": "Section A – Score Global",
+		"pillarBreakdown": "Section B – Répartition par Piliers (Graphique Radar)",
+		"pillarBreakdownDesc": "Graphique radar avec 6 axes : Finance, Opérations, Ventes & Marketing, Personnel & RH, Stratégie & Gouvernance, Technologie. Chaque pilier est codé par couleur (Rouge / Ambre / Vert).",
+		"quickInsights": "Section C – Aperçus Rapides (Freemium)",
+		"quickInsightsDesc": "2–3 conseils automatisés génériques pour vous aider à améliorer la santé de votre entreprise.",
+		"getFullReport": "Obtenir le Rapport Complet",
+		"getFullReportDesc": "Débloquez des insights détaillés, des benchmarks et une consultation d'expert",
+		"generateReport": "Générer le Rapport",
+		"reportGenerated": "Rapport généré et envoyé par email !",
+		"reportError": "Erreur lors de la génération du rapport",
+		"downloadReport": "Télécharger le PDF",
+		"downloadSuccess": "Rapport téléchargé avec succès !",
+		"downloadError": "Erreur lors du téléchargement du rapport",
+		"pillarResults": "Résultats par Pilier",
+		"pillarDetails": "Détail des Piliers",
+		"keyRecommendations": "Recommandations Clés",
+		"priority": "Priorité",
+		"improvement": "Amélioration",
+		"optimization": "Optimisation",
+		"freeReport": "Rapport Gratuit",
+		"freeReportDesc": "Recevez votre rapport détaillé par email avec des recommandations personnalisées.",
+		"generateReportBtn": "Générer le rapport",
+		"reportSent": "Rapport envoyé",
+		"reportSuccessTitle": "Rapport généré avec succès !",
+		"reportSuccessDesc": "Votre rapport vitalCHECK Enterprise Health Check a été généré et envoyé par email.",
+		"reportSentTo": "Envoyé à",
+		"stayOnResults": "Rester sur les résultats",
+		"reportNote": "Vous pouvez maintenant passer au premium pour des insights plus approfondis ou retourner à l'accueil pour une nouvelle évaluation.",
+		"premiumReport": "Rapport Premium",
+		"premiumReportDesc": "Analyse approfondie, benchmarking sectoriel et consultation avec nos experts.",
+		"unlockPremium": "Débloquer Premium",
+		"nextSteps": "Prochaines Étapes",
+		"sector": "Secteur",
+		"size": "Taille",
+		"date": "Date",
+		"zones": {
+			"red": "Zone Rouge",
+			"amber": "Zone Ambre",
+			"green": "Zone Verte"
+		},
+		"status": {
+			"excellent": "Excellent",
+			"good": "Bon",
+			"average": "Moyen",
+			"amber": "Ambre",
+			"poor": "Faible",
+			"critical": "Critique"
+		},
+		"scoreMessages": {
+			"developing": "Votre entreprise se développe mais a besoin de renforcement dans certains domaines.",
+			"excellent": "Excellente performance ! Votre entreprise est en excellente santé.",
+			"critical": "Attention ! Votre entreprise nécessite une attention immédiate dans plusieurs domaines."
+		},
+		"premiumReport2": {
+			"title": "Rapport Premium Disponible",
+			"description": "Pour des recommandations plus détaillées, un plan d'action personnalisé et un benchmarking sectoriel, consultez notre rapport premium."
+		},
+		"consultationModal": {
+			"title": "Consultation Premium vitalCHECK",
+			"unlockText": "Débloquez votre rapport premium avec :",
+			"features": {
+				"detailedAnalysis": "Analyse détaillée par pilier",
+				"sectorBenchmarking": "Benchmarking sectoriel",
+				"actionPlan": "Plan d'action personnalisé",
+				"expertConsultation": "Consultation avec nos experts"
+			},
+			"contactText": "Choisissez le plan Premium pour accéder à toutes ces fonctionnalités.",
+			"close": "Fermer",
+			"contactUs": "Choisir Premium"
+		},
+		"reportProgress": {
+			"title": "Génération de votre rapport",
+			"subtitle": "Création de votre rapport personnalisé...",
+			"steps": {
+				"preparing": {
+					"title": "Préparation du rapport",
+					"description": "Organisation de vos données..."
+				},
+				"generating": {
+					"title": "Génération PDF",
+					"description": "Création de votre rapport PDF..."
+				},
+				"sending": {
+					"title": "Envoi par email",
+					"description": "Envoi de votre rapport..."
+				},
+				"complete": {
+					"title": "Rapport envoyé !",
+					"description": "Vérifiez votre boîte email"
+				}
+			},
+			"error": {
+				"title": "Erreur de génération",
+				"message": "Une erreur est survenue lors de la génération du rapport.",
+				"retry": "Réessayer",
+				"close": "Fermer"
+			},
+			"status": {
+				"failed": "Échec",
+				"inProgress": "En cours...",
+				"completed": "Terminé"
+			}
+		},
+		"submissionProgress": {
+			"title": "Traitement de votre évaluation",
+			"subtitle": "Veuillez patienter pendant que nous analysons vos réponses...",
+			"steps": {
+				"validating": {
+					"title": "Validation des données",
+					"description": "Vérification de vos réponses..."
+				},
+				"calculating": {
+					"title": "Calcul des scores",
+					"description": "Analyse de vos réponses et calcul des scores..."
+				},
+				"generating": {
+					"title": "Génération du rapport",
+					"description": "Création de votre rapport personnalisé..."
+				},
+				"saving": {
+					"title": "Sauvegarde",
+					"description": "Enregistrement de votre évaluation..."
+				},
+				"complete": {
+					"title": "Terminé !",
+					"description": "Votre évaluation est prête !"
+				}
+			},
+			"error": {
+				"title": "Erreur de traitement",
+				"message": "Une erreur est survenue lors du traitement de votre évaluation.",
+				"retry": "Réessayer",
+				"reload": "Recharger la page"
+			},
+			"stepCounter": "Étape {current} sur {total}"
+		},
+		"successModal": {
+			"title": "Rapport généré avec succès !",
+			"message": "Votre rapport détaillé a été généré et envoyé par email. Vous pouvez également le télécharger directement.",
+			"continue": "Continuer",
+			"backToHome": "Retour à l'accueil"
+		}
+	},
+	"landing": {
+		"title1": "vitalCHECK",
+		"title2": "Enterprise Health Check",
+		"subtitle1": "Votre entreprise est-elle prête à grandir ?",
+		"subtitle2": "Effectuez cette évaluation <span class='text-green-500 font-bold uppercase'>GRATUITE</span> de 10 minutes et découvrez le score de santé de votre entreprise",
+		"badge": "Gratuit • Résultats instantanés",
+		"features": {
+			"title": "Ce que vous obtiendrez :",
+			"complete": "Évaluation Complète",
+			"completeDesc": "Analysez 9 piliers clés de votre entreprise",
+			"personalized": "Recommandations Personnalisées",
+			"personalizedDesc": "Obtenez des conseils adaptés à votre situation",
+			"detailed": "Rapport Détaillé",
+			"detailedDesc": "Recevez un rapport PDF complet par email"
+		},
+		"form": {
+			"title": "Commencez votre évaluation gratuite",
+			"companyName": "Nom de l'entreprise",
+			"companyNamePlaceholder": "Ex: Mon Entreprise SARL",
+			"sector": "Secteur / Industrie",
+			"sectorPlaceholder": "Sélectionnez votre secteur",
+			"companySize": "Taille de l'entreprise",
+			"companySizePlaceholder": "Sélectionnez la taille",
+			"email": "Email de contact",
+			"emailPlaceholder": "votre@email.com",
+			"phone": "Numéro de téléphone",
+			"phonePlaceholder": "+221 XXX XXX XXX",
+			"startButton": "Commencer ici",
+			"startButtonShort": "Commencer ici",
+			"startAssessment": "Commencer l'évaluation",
+			"language": "Langue",
+			"languagePlaceholder": "Sélectionnez la langue"
+		},
+		"sectors": {
+			"technology": "Technologie",
+			"commerce": "Commerce",
+			"services": "Services",
+			"manufacturing": "Manufacture",
+			"construction": "Construction",
+			"health": "Santé",
+			"healthcare": "Santé",
+			"agriculture": "Agriculture",
+			"education": "Éducation",
+			"finance": "Finance",
+			"other": "Autre"
+		},
+		"sizes": {
+			"micro": "Micro (1-9 employés)",
+			"sme": "PME (10-49 employés)",
+			"large-sme": "Grande PME (50+ employés)"
+		}
+	},
+	"assessment": {
+		"title": "Évaluation de Santé d'Entreprise",
+		"progress": "Progression",
+		"question": "Question",
+		"of": "de",
+		"responses": "réponses",
+		"complete": "Terminé",
+		"pleaseAnswerAll": "Veuillez répondre à toutes les questions",
+		"completedSuccessfully": "Évaluation terminée avec succès !",
+		"submissionError": "Erreur lors de la soumission de l'évaluation"
+	},
+	"resume": {
+		"title": "Évaluation vitalCHECK - Reprise",
+		"loading": "Reprise de l'évaluation en cours...",
+		"error": "Erreur de reprise",
+		"errorMessage": "Impossible de reprendre l'évaluation",
+		"success": "Évaluation reprise avec succès !",
+		"questionNotFound": "Question introuvable",
+		"questionNotFoundMessage": "La question demandée n'existe pas.",
+		"loadingQuestions": "Chargement des questions...",
+		"resumeNote": "Évaluation reprise",
+		"backToHome": "Retour à l'accueil"
+	},
+	"languages": {
+		"en": "English",
+		"fr": "Français"
+	},
+	"footer": {
+		"description": "vitalCHECK aide les entreprises africaines à évaluer leur santé organisationnelle et à développer des stratégies de croissance durables.",
+		"quickLinks": "Liens Rapides",
+		"about": "À Propos",
+		"services": "Services",
+		"contact": "Contact",
+		"privacy": "Confidentialité",
+		"location": "Dakar, Sénégal",
+		"openHours": "Heures d'ouverture",
+		"allRightsReserved": "Tous droits réservés",
+		"terms": "Conditions d'utilisation",
+		"userGuide": "Guide d'utilisation",
+		"newsletter": {
+			"title": "Newsletter",
+			"subtitle": "Restez informé",
+			"description": "Recevez nos dernières actualités, conseils et insights directement dans votre boîte mail.",
+			"emailPlaceholder": "Votre adresse email",
+			"subscribe": "S'abonner",
+			"subscribing": "Abonnement...",
+			"success": "Merci pour votre abonnement !",
+			"error": "Une erreur est survenue. Veuillez réessayer.",
+			"invalidEmail": "Veuillez entrer une adresse email valide"
+		}
+	},
+	"privacy": {
+		"title": "Politique de Confidentialité",
+		"lastUpdated": "Dernière mise à jour",
+		"introduction": {
+			"title": "Introduction",
+			"content": "vitalCHECK s'engage à protéger votre vie privée et vos données personnelles conformément aux lois sénégalaises et africaines en vigueur, notamment la Loi n° 2008-12 du 25 janvier 2008 sur la protection des données à caractère personnel au Sénégal."
+		},
+		"dataCollection": {
+			"title": "Collecte des Données",
+			"personalData": {
+				"title": "Données Personnelles",
+				"items": {
+					"name": "Nom de l'entreprise",
+					"email": "Adresse email",
+					"company": "Informations sur l'entreprise",
+					"sector": "Secteur d'activité",
+					"size": "Taille de l'entreprise"
+				}
+			},
+			"assessmentData": {
+				"title": "Données d'Évaluation",
+				"content": "Nous collectons vos réponses aux questionnaires d'évaluation pour générer des rapports personnalisés et des recommandations adaptées à votre entreprise."
+			}
+		},
+		"dataUsage": {
+			"title": "Utilisation des Données",
+			"items": {
+				"assessment": "Génération de rapports d'évaluation personnalisés",
+				"reports": "Création de recommandations adaptées à votre secteur",
+				"communication": "Envoi de rapports et communications pertinentes",
+				"improvement": "Amélioration continue de nos services"
+			}
+		},
+		"dataProtection": {
+			"title": "Protection des Données",
+			"content": "Nous mettons en œuvre des mesures de sécurité appropriées pour protéger vos données contre l'accès non autorisé, la modification, la divulgation ou la destruction.",
+			"measures": {
+				"encryption": "Chiffrement des données sensibles",
+				"access": "Contrôle d'accès strict",
+				"backup": "Sauvegarde sécurisée des données",
+				"monitoring": "Surveillance continue des systèmes"
+			}
+		},
+		"dataSharing": {
+			"title": "Partage des Données",
+			"content": "Nous ne vendons, ne louons ni ne partageons vos données personnelles avec des tiers, sauf dans les cas suivants :",
+			"exceptions": {
+				"legal": "Obligation légale ou demande des autorités compétentes",
+				"consent": "Avec votre consentement explicite",
+				"aggregated": "Données agrégées et anonymisées pour des analyses statistiques"
+			}
+		},
+		"userRights": {
+			"title": "Droits des Utilisateurs",
+			"content": "Conformément à la législation sénégalaise, vous disposez des droits suivants :",
+			"rights": {
+				"access": "Droit d'accès à vos données personnelles",
+				"rectification": "Droit de rectification des données inexactes",
+				"erasure": "Droit à l'effacement de vos données",
+				"portability": "Droit à la portabilité de vos données",
+				"objection": "Droit d'opposition au traitement de vos données"
+			}
+		},
+		"cookies": {
+			"title": "Cookies",
+			"content": "Nous utilisons des cookies pour améliorer votre expérience utilisateur et analyser l'utilisation de notre site. Vous pouvez désactiver les cookies dans les paramètres de votre navigateur."
+		},
+		"internationalTransfers": {
+			"title": "Transferts Internationaux",
+			"content": "Vos données peuvent être transférées vers des serveurs situés en dehors du Sénégal. Nous nous assurons que ces transferts respectent les standards de protection des données internationaux."
+		},
+		"contact": {
+			"title": "Contact",
+			"content": "Pour toute question concernant cette politique de confidentialité ou pour exercer vos droits, contactez-nous :"
+		},
+		"updates": {
+			"title": "Modifications",
+			"content": "Nous nous réservons le droit de modifier cette politique de confidentialité. Les modifications seront publiées sur cette page avec une nouvelle date de mise à jour."
+		}
+	},
+	"terms": {
+		"title": "Conditions d'Utilisation",
+		"lastUpdated": "Dernière mise à jour",
+		"introduction": {
+			"title": "Introduction",
+			"content": "Ces conditions d'utilisation régissent votre utilisation de la plateforme vitalCHECK Enterprise Health Check. En utilisant nos services, vous acceptez d'être lié par ces conditions."
+		},
+		"acceptance": {
+			"title": "Acceptation des Conditions",
+			"content": "En accédant et en utilisant notre plateforme, vous confirmez que vous avez lu, compris et accepté ces conditions d'utilisation dans leur intégralité."
+		},
+		"serviceDescription": {
+			"title": "Description du Service",
+			"content": "vitalCHECK Enterprise Health Check est une plateforme d'évaluation de la santé organisationnelle des entreprises africaines. Nos services incluent :",
+			"features": {
+				"assessment": "Évaluation en ligne de la santé de votre entreprise",
+				"reports": "Génération de rapports détaillés et personnalisés",
+				"consultation": "Services de consultation et d'accompagnement",
+				"support": "Support technique et assistance utilisateur"
+			}
+		},
+		"userObligations": {
+			"title": "Obligations de l'Utilisateur",
+			"content": "En utilisant nos services, vous vous engagez à :",
+			"obligations": {
+				"accuracy": "Fournir des informations exactes et à jour",
+				"authorization": "Avoir l'autorisation de représenter votre entreprise",
+				"compliance": "Respecter toutes les lois et réglementations applicables",
+				"responsibility": "Assumer la responsabilité de vos actions sur la plateforme"
+			}
+		},
+		"intellectualProperty": {
+			"title": "Propriété Intellectuelle",
+			"content": "Tous les contenus, marques et technologies de la plateforme vitalCHECK sont protégés par les droits de propriété intellectuelle.",
+			"rights": {
+				"vitalCHECK": "vitalCHECK détient tous les droits sur la plateforme et ses contenus",
+				"user": "Vous conservez les droits sur vos données et contenus",
+				"license": "Vous accordez à vitalCHECK une licence limitée pour traiter vos données"
+			}
+		},
+		"paymentTerms": {
+			"title": "Conditions de Paiement",
+			"content": "Nos services sont proposés selon les modalités suivantes :",
+			"conditions": {
+				"free": "Évaluation de base gratuite",
+				"premium": "Services premium payants selon nos tarifs en vigueur",
+				"refund": "Politique de remboursement selon les conditions contractuelles",
+				"currency": "Paiements acceptés en FCFA, EUR, USD et GBP"
+			}
+		},
+		"limitationLiability": {
+			"title": "Limitation de Responsabilité",
+			"content": "Dans les limites autorisées par la loi sénégalaise, vitalCHECK décline toute responsabilité pour :",
+			"limitations": {
+				"advice": "Les conseils générés par notre plateforme sont informatifs uniquement",
+				"accuracy": "L'exactitude des données fournies par les utilisateurs",
+				"damages": "Les dommages indirects ou consécutifs",
+				"force": "Les cas de force majeure ou événements imprévisibles"
+			}
+		},
+		"governingLaw": {
+			"title": "Droit Applicable",
+			"content": "Ces conditions sont régies par le droit sénégalais. Tout litige sera soumis à la compétence exclusive des tribunaux de Dakar, Sénégal."
+		},
+		"disputeResolution": {
+			"title": "Résolution des Litiges",
+			"content": "En cas de litige, nous privilégions la résolution amiable selon les étapes suivantes :",
+			"steps": {
+				"negotiation": "Négociation directe entre les parties",
+				"mediation": "Médiation par un tiers neutre",
+				"arbitration": "Arbitrage selon les règles de l'OHADA",
+				"courts": "Recours aux tribunaux compétents en dernier ressort"
+			}
+		},
+		"termination": {
+			"title": "Résiliation",
+			"content": "Vous pouvez résilier votre compte à tout moment. vitalCHECK se réserve le droit de suspendre ou résilier votre accès en cas de violation de ces conditions."
+		},
+		"contact": {
+			"title": "Contact",
+			"content": "Pour toute question concernant ces conditions d'utilisation, contactez-nous :"
+		},
+		"updates": {
+			"title": "Modifications",
+			"content": "Nous nous réservons le droit de modifier ces conditions. Les modifications seront notifiées aux utilisateurs et publiées sur cette page."
+		}
+	},
+	"premium": {
+		"upgradeTitle": "Passez au Premium",
+		"upgradeSubtitle": "Débloquez des insights approfondis et une consultation d'expert",
+		"upgradeNow": "Passer au Premium",
+		"teamAnalysis": "Analyse d'équipe",
+		"teamAnalysisDesc": "Évaluation des compétences et de la performance de votre équipe",
+		"actionPlan": "Plan d'action personnalisé",
+		"actionPlanDesc": "Roadmap détaillée avec priorités et échéances",
+		"advancedAnalytics": "Analytics avancés",
+		"advancedAnalyticsDesc": "Benchmarking sectoriel et tendances de marché"
+	},
+	"pwa": {
+		"installButton": {
+			"text": "Installer l'app",
+			"ariaLabel": "Installer l'application vitalCHECK Enterprise Health Check"
+		},
+		"updateAvailable": {
+			"title": "Mise à jour disponible",
+			"message": "Une nouvelle version de l'application est disponible.",
+			"update": "Mettre à jour",
+			"dismiss": "Plus tard"
+		}
+	},
+	"contact": {
+		"title": "Contactez-nous",
+		"subtitle": "Nous sommes là pour vous aider à améliorer la santé de votre entreprise. N'hésitez pas à nous contacter pour toute question.",
+		"info": {
+			"title": "Nos Informations",
+			"address": {
+				"title": "Adresse",
+				"value": "Dakar, Sénégal"
+			},
+			"phone": {
+				"title": "Téléphone",
+				"value": "🇸🇳 +221 771970713 | 🇸🇳 +221 774536704"
+			},
+			"email": {
+				"title": "Email",
+				"value": "info@checkmyenterprise.com"
+			},
+			"hours": {
+				"title": "Heures d'ouverture",
+				"value": "Lun - Ven: 8h00 - 18h00"
+			}
+		},
+		"why": {
+			"title": "Pourquoi nous contacter ?",
+			"description": "Nos experts peuvent vous accompagner dans l'évaluation de votre entreprise et vous proposer des solutions personnalisées.",
+			"startAssessment": "Commencer l'évaluation"
+		},
+		"form": {
+			"title": "Envoyez-nous un message",
+			"name": "Nom complet",
+			"namePlaceholder": "Votre nom complet",
+			"email": "Adresse email",
+			"emailPlaceholder": "votre@email.com",
+			"company": "Entreprise",
+			"companyPlaceholder": "Nom de votre entreprise",
+			"phone": "Téléphone",
+			"phonePlaceholder": "+237 XXX XXX XXX",
+			"inquiryType": "Type de demande",
+			"inquiryTypePlaceholder": "Sélectionnez le type de demande",
+			"subject": "Sujet",
+			"subjectPlaceholder": "Résumé de votre demande",
+			"message": "Message",
+			"messagePlaceholder": "Décrivez votre demande en détail...",
+			"send": "Envoyer le message",
+			"sending": "Envoi en cours...",
+			"successMessage": "Message envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.",
+			"errorMessage": "Erreur lors de l'envoi du message. Veuillez réessayer.",
+			"privacy": "En envoyant ce formulaire, vous acceptez que nous utilisions vos informations pour vous répondre. Nous ne partagerons jamais vos données avec des tiers.",
+			"inquiryTypes": {
+				"general": "Demande générale",
+				"assessment": "Questions sur l'évaluation",
+				"premium": "Services premium",
+				"technical": "Support technique",
+				"partnership": "Partenariat",
+				"other": "Autre"
+			}
+		}
+	},
+	"about": {
+		"title": "À Propos de vitalCHECK",
+		"subtitle": "Aider les PME à diagnostiquer, grandir et se digitaliser",
+		"mission": {
+			"title": "Notre Mission",
+			"content": "Donner aux PME les moyens d'effectuer des diagnostics experts, des stratégies pratiques et une transformation digitale pour qu'elles deviennent plus résilientes, plus visibles et plus compétitives dans les marchés en évolution rapide d'aujourd'hui."
+		},
+		"vision": {
+			"title": "Notre Vision",
+			"content": "vitalCHECK joue son rôle incontournable dans le processus transformateur d'un monde où les PME africaines et mondiales sont financièrement stables, technologiquement équipées et prêtes à grandir au-delà des frontières."
+		},
+		"values": {
+			"title": "Nos Valeurs",
+			"subtitle": "Nous sommes guidés par des principes qui définissent notre travail :",
+			"integrity": {
+				"title": "Intégrité & Transparence",
+				"description": "Construire la confiance par l'honnêteté."
+			},
+			"excellence": {
+				"title": "Excellence",
+				"description": "Visant les plus hauts standards dans chaque projet."
+			},
+			"courage": {
+				"title": "Courage & Leadership",
+				"description": "Prendre des décisions audacieuses et guider les autres à faire de même."
+			},
+			"solidarity": {
+				"title": "Solidarité & Générosité (Ubuntu)",
+				"description": "Partager les connaissances et créer de la valeur pour les communautés."
+			},
+			"pragmatism": {
+				"title": "Pragmatisme & Réalisme",
+				"description": "Livrer des solutions qui fonctionnent réellement."
+			}
+		},
+		"story": {
+			"title": "Notre Histoire",
+			"content1": "vitalCHECK est né de la conviction que trop de PME échouent non pas par manque de potentiel, mais parce qu'elles manquent du bon soutien.",
+			"example": {
+				"title": "Un exemple concret",
+				"content": "Notre travail avec STM, une entreprise au bord de la faillite, Grâce au diagnostic, aux conseils stratégiques et à la mise en œuvre, nous les avons aidés à se stabiliser, se restructurer et retrouver la confiance.",
+				"result": "En conséquence directe, leurs revenus ont augmenté et ils ont doublé nos honoraires de conseil en reconnaissance de l'impact mesurable."
+			},
+			"content2": "Cette expérience a renforcé notre mission : être aux côtés des entrepreneurs quand ils ont le plus besoin de clarté, les aidant à transformer les revers en croissance."
+		},
+		"services": {
+			"title": "Ce que nous faisons",
+			"subtitle": "Nous soutenons les PME dans trois domaines interconnectés :",
+			"healthCheck": {
+				"title": "Enterprise Health Check (gratuit et premium)",
+				"description": "Un outil de diagnostic pour évaluer la santé financière et opérationnelle."
+			},
+			"visibility": {
+				"title": "Services de Visibilité & Croissance",
+				"description": "Stratégies et campagnes pour étendre la présence de marque et attirer des clients."
+			},
+			"development": {
+				"title": "Développement d'Applications Sur Mesure",
+				"description": "Construire des outils numériques personnalisés qui améliorent l'efficacité et créent de nouveaux flux de revenus."
+			}
+		},
+		"impact": {
+			"title": "Notre Impact",
+			"stabilized": "Aidés les PME à se stabiliser pendant les crises financières.",
+			"export": "Soutenu les entreprises orientées export pour repenser leurs stratégies et ouvrir de nouveaux marchés.",
+			"digital": "Développement de nouveaux outils numériques pour rendre les diagnostics d'entreprise largement accessibles."
+		},
+		"cta": {
+			"title": "Prêt à faire grandir votre entreprise ?",
+			"subtitle": "Construisons ensemble votre prochain chapitre.",
+			"startAssessment": "Commencer l'évaluation gratuite",
+			"contactUs": "Nous contacter"
+		}
+	},
+	"analytics": {
+		"title": "Analytics du Blog",
+		"subtitle": "Statistiques détaillées des visites et du comportement des utilisateurs",
+		"refresh": "Actualiser",
+		"exportCsv": "Exporter CSV",
+		"totalViews": "Total des vues",
+		"uniqueVisitors": "Visiteurs uniques",
+		"totalVisits": "Total des visites",
+		"totalLikes": "Total des likes",
+		"deviceBreakdown": "Répartition par appareil",
+		"topCountries": "Top 10 des pays",
+		"filters": "Filtres",
+		"blog": "Blog",
+		"allBlogs": "Tous les blogs",
+		"allCountries": "Tous les pays",
+		"startDate": "Date de début",
+		"endDate": "Date de fin",
+		"country": "Pays",
+		"device": "Appareil",
+		"allDevices": "Tous les appareils",
+		"resetFilters": "Réinitialiser les filtres",
+		"desktop": "Desktop",
+		"mobile": "Mobile",
+		"tablet": "Tablet",
+		"recentVisits": "Visites récentes",
+		"date": "Date",
+		"article": "Article",
+		"location": "Localisation",
+		"duration": "Durée",
+		"scroll": "Scroll",
+		"referrer": "Référent",
+		"direct": "Direct",
+		"bounce": "Rebond",
+		"yes": "Oui",
+		"no": "Non",
+		"showing": "Affichage de",
+		"to": "à",
+		"of": "sur",
+		"results": "résultats",
+		"previous": "Précédent",
+		"next": "Suivant",
+		"visits": "visites",
+		"seconds": "s",
+		"minutes": "m",
+		"hours": "h"
+	},
+	"blog": {
+		"title": "Blog vitalCHECK Enterprise Health Check",
+		"subtitle": "Découvrez nos articles, études de cas et conseils pour améliorer la santé de votre entreprise",
+		"searchPlaceholder": "Rechercher un article...",
+		"backToHome": "Retour à l'accueil",
+		"backToBlog": "Retour au blog",
+		"noArticles": "Aucun article trouvé",
+		"noArticlesDesc": "Aucun article ne correspond à vos critères de recherche.",
+		"loading": "Chargement...",
+		"error": "Erreur lors du chargement des blogs",
+		"likeError": "Erreur lors du like",
+		"alreadyLiked": "Vous avez déjà aimé cet article",
+		"unlikeSuccess": "Like retiré",
+		"images": {
+			"title": "Images du blog",
+			"uploadTitle": "Ajouter des images",
+			"uploadDescription": "Glissez-déposez vos images ici ou cliquez pour sélectionner",
+			"uploadHint": "PNG, JPG, GIF, WebP jusqu'à 5MB. Maximum 10 images.",
+			"position": "Position",
+			"positionTop": "En haut",
+			"positionMiddle": "Au milieu",
+			"positionBottom": "En bas",
+			"positionInline": "Dans le texte",
+			"positionContentStart": "Début du contenu",
+			"positionContentEnd": "Fin du contenu",
+			"altText": "Texte alternatif",
+			"altTextPlaceholder": "Description de l'image",
+			"caption": "Légende",
+			"captionPlaceholder": "Légende de l'image",
+			"uploadSuccess": "image(s) uploadée(s) avec succès",
+			"uploadError": "Erreur lors de l'upload des images",
+			"deleteSuccess": "Image supprimée",
+			"deleteError": "Erreur lors de la suppression",
+			"viewLarge": "Voir en grand",
+			"delete": "Supprimer",
+			"maxImages": "Maximum 10 images autorisées",
+			"invalidFile": "n'est pas une image valide",
+			"fileTooLarge": "est trop volumineux (max 5MB)",
+			"uploading": "Upload en cours...",
+			"mainImages": "Images principales",
+			"galleryImages": "Galerie d'images",
+			"additionalImages": "Images supplémentaires"
+		},
+		"editor": {
+			"title": "Éditeur de texte",
+			"placeholder": "Commencez à écrire...",
+			"toolbar": {
+				"undo": "Annuler",
+				"redo": "Refaire",
+				"heading1": "Titre 1",
+				"heading2": "Titre 2",
+				"heading3": "Titre 3",
+				"bold": "Gras",
+				"italic": "Italique",
+				"underline": "Souligné",
+				"strikethrough": "Barré",
+				"alignLeft": "Aligner à gauche",
+				"alignCenter": "Centrer",
+				"alignRight": "Aligner à droite",
+				"alignJustify": "Justifier",
+				"bulletList": "Liste à puces",
+				"orderedList": "Liste numérotée",
+				"quote": "Citation",
+				"addLink": "Ajouter un lien",
+				"removeLink": "Supprimer le lien",
+				"addImage": "Ajouter une image"
+			},
+			"help": "Conseils : Utilisez les boutons ci-dessus pour formater votre texte. Vous pouvez créer des titres, des listes, des citations et ajouter des liens ou images.",
+			"imageUrl": "URL de l'image",
+			"linkUrl": "URL du lien"
+		},
+		"likeSuccess": "Merci pour votre like !",
+		"shareSuccess": "Lien copié dans le presse-papiers",
+		"articleNotFound": "Article non trouvé",
+		"author": "Auteur",
+		"unknownAuthor": "Auteur inconnu",
+		"readMore": "Lire la suite",
+		"readTime": "min de lecture",
+		"publishedOn": "Publié le",
+		"by": "par",
+		"views": "vues",
+		"likes": "likes",
+		"share": "Partager",
+		"search": "Rechercher dans le blog...",
+		"modal": {
+			"title": "Voulez-vous des insights plus intelligents comme celui-ci chaque semaine ?",
+			"description": "Abonnez-vous GRATUITEMENT pour continuer la lecture",
+			"firstName": "Prénom",
+			"lastName": "Nom de famille",
+			"email": "Email",
+			"country": "Pays",
+			"firstNamePlaceholder": "Votre prénom",
+			"lastNamePlaceholder": "Votre nom de famille",
+			"emailPlaceholder": "votre@email.com",
+			"countryPlaceholder": "Votre pays",
+			"submit": "Envoyer",
+			"submitting": "Envoi...",
+			"welcomeBack": "Bon retour !",
+			"welcomeBackMessage": "Merci de votre retour, {firstName} {lastName} !",
+			"welcomeBackDesc": "Nous sommes ravis de vous revoir. Profitez bien de votre lecture !",
+			"continueReading": "Continuer la lecture",
+			"successMessage": "Merci pour vos informations ! Bonne lecture !",
+			"returningSuccessMessage": "Merci de votre retour ! Bonne lecture !",
+			"errorMessage": "Une erreur est survenue. Veuillez réessayer.",
+			"privacyMessage": "Vos informations sont sécurisées et ne seront pas partagées.",
+			"validation": {
+				"firstNameRequired": "Le prénom est requis",
+				"lastNameRequired": "Le nom de famille est requis",
+				"emailRequired": "L'email est requis",
+				"emailInvalid": "Veuillez entrer un email valide",
+				"countryRequired": "Le pays est requis"
+			}
+		},
+		"noResults": "Aucun article trouvé",
+		"actions": "Actions",
+		"likeArticle": "J'aime cet article",
+		"unlikeArticle": "Je n'aime plus cet article",
+		"thankYou": "Merci !",
+		"relatedArticles": "Articles similaires",
+		"types": {
+			"all": "Tous les types",
+			"article": "Articles",
+			"etude-cas": "Études de cas",
+			"tutoriel": "Tutoriels",
+			"actualite": "Actualités",
+			"temoignage": "Témoignages"
+		},
+		"categories": {
+			"all": "Toutes les catégories",
+			"strategie": "Stratégie",
+			"technologie": "Technologie",
+			"finance": "Finance",
+			"ressources-humaines": "Ressources Humaines",
+			"marketing": "Marketing",
+			"operations": "Opérations",
+			"gouvernance": "Gouvernance"
+		},
+		"tagsLabel": "Tags",
+		"tags": {
+			"diagnostic": "Diagnostic",
+			"entreprise": "Entreprise",
+			"santé": "Santé",
+			"management": "Management",
+			"trésorerie": "Trésorerie",
+			"finance": "Finance",
+			"gestion": "Gestion",
+			"témoignage": "Témoignage",
+			"croissance": "Croissance",
+			"chiffre d'affaires": "Chiffre d'affaires",
+			"south africa": "Afrique du Sud",
+			"packaged food": "Aliments emballés",
+			"african markets": "Marchés africains",
+			"food industry": "Industrie alimentaire",
+			"supply chain": "Chaîne d'approvisionnement",
+			"retail": "Commerce de détail",
+			"business development": "Développement commercial",
+			"africa": "Afrique",
+			"food value chain": "Chaîne de valeur alimentaire",
+			"supermarket sector": "Secteur de la grande distribution",
+			"productivité": "Productivité",
+			"étude de cas": "Étude de cas",
+			"pme": "PME",
+			"services": "Services"
+		},
+		"filters": {
+			"all": "Tous",
+			"type": "Type",
+			"category": "Catégorie",
+			"sortBy": "Trier par",
+			"sortOptions": {
+				"publishedAt": "Date de publication",
+				"views": "Nombre de vues",
+				"likes": "Nombre de likes",
+				"title": "Titre"
+			}
+		},
+		"admin": {
+			"title": "Gestion du Blog",
+			"createNew": "Créer un nouvel article",
+			"edit": "Modifier l'article",
+			"delete": "Supprimer l'article",
+			"publish": "Publier",
+			"unpublish": "Dépublier",
+			"draft": "Brouillon",
+			"published": "Publié",
+			"archived": "Archivé",
+			"languageSelector": {
+				"title": "Changer de langue"
+			},
+			"form": {
+				"titleFr": "Titre (Français)",
+				"titleEn": "Titre (Anglais)",
+				"excerptFr": "Résumé (Français)",
+				"excerptEn": "Résumé (Anglais)",
+				"contentFr": "Contenu (Français)",
+				"contentEn": "Contenu (Anglais)",
+				"metaTitleFr": "Titre SEO (Français)",
+				"metaTitleEn": "Titre SEO (Anglais)",
+				"metaDescriptionFr": "Description SEO (Français)",
+				"metaDescriptionEn": "Description SEO (Anglais)",
+				"type": "Type d'article",
+				"category": "Catégorie",
+				"tags": "Tags (séparés par des virgules)",
+				"featuredImage": "Image mise en avant",
+				"status": "Statut",
+				"save": "Enregistrer",
+				"saveAndPublish": "Enregistrer et publier",
+				"cancel": "Annuler"
+			},
+			"messages": {
+				"created": "Article créé avec succès",
+				"updated": "Article mis à jour avec succès",
+				"deleted": "Article supprimé avec succès",
+				"published": "Article publié avec succès",
+				"unpublished": "Article dépublié avec succès"
+			}
+		}
+	},
+	"reportDownload": {
+		"title": "Votre Rapport vitalCHECK",
+		"subtitle": "Téléchargez votre rapport d'évaluation complet",
+		"overallScore": "Score Global",
+		"assessmentDate": "Date d'évaluation",
+		"reportGenerated": "Rapport généré le",
+		"downloadButton": "Télécharger le Rapport PDF",
+		"downloading": "Téléchargement en cours...",
+		"downloadHint": "Le PDF sera téléchargé automatiquement dans votre navigateur",
+		"needHelp": "Besoin d'aide ? Contactez-nous",
+		"error": "Erreur",
+		"notFound": "Rapport introuvable ou indisponible"
+	},
+	"admin": {
+		"pdfManagement": {
+			"title": "Gestion des PDFs",
+			"subtitle": "Gérez tous les rapports PDF générés et renvoyez-les aux utilisateurs",
+			"searchPlaceholder": "Rechercher par entreprise ou email...",
+			"totalPDFs": "Total PDFs",
+			"noPDFs": "Aucun PDF trouvé",
+			"download": "Télécharger",
+			"resend": "Renvoyer",
+			"showing": "Affichage de",
+			"of": "sur",
+			"table": {
+				"company": "Entreprise",
+				"email": "Email",
+				"score": "Score",
+				"status": "Statut",
+				"date": "Date",
+				"actions": "Actions"
+			}
+		}
+	},
+	"clientAuth": {
+		"login": {
+			"title": "Connexion Client",
+			"subtitle": "Accédez à votre tableau de bord vitalCHECK",
+			"email": "Adresse email",
+			"emailPlaceholder": "votre@email.com",
+			"password": "Mot de passe",
+			"passwordPlaceholder": "Votre mot de passe",
+			"submit": "Se connecter",
+			"noAccount": "Pas encore de compte ?",
+			"createAccount": "Créer un compte",
+			"backToHome": "Retour à l'accueil",
+			"hint": "Vous avez reçu vos identifiants par email après votre paiement"
+		},
+		"register": {
+			"title": "Créer un Compte",
+			"subtitle": "Créez votre compte vitalCHECK pour accéder à tous vos services",
+			"firstName": "Prénom",
+			"firstNamePlaceholder": "Votre prénom",
+			"lastName": "Nom",
+			"lastNamePlaceholder": "Votre nom",
+			"email": "Email",
+			"emailPlaceholder": "votre@email.com",
+			"password": "Mot de passe",
+			"passwordPlaceholder": "Minimum 6 caractères",
+			"confirmPassword": "Confirmer le mot de passe",
+			"confirmPasswordPlaceholder": "Retapez votre mot de passe",
+			"companyName": "Nom de l'entreprise",
+			"companyNamePlaceholder": "Ex: Mon Entreprise SARL",
+			"sector": "Secteur",
+			"sectorPlaceholder": "Sélectionnez votre secteur",
+			"companySize": "Taille de l'entreprise",
+			"companySizePlaceholder": "Sélectionnez la taille",
+			"phone": "Téléphone",
+			"phonePlaceholder": "+221 XXX XXX XXX",
+			"submit": "Créer mon compte",
+			"hasAccount": "Vous avez déjà un compte ?",
+			"login": "Se connecter",
+			"backToHome": "Retour à l'accueil",
+			"errors": {
+				"firstNameRequired": "Le prénom est requis",
+				"lastNameRequired": "Le nom est requis",
+				"emailRequired": "L'email est requis",
+				"passwordRequired": "Le mot de passe est requis",
+				"passwordTooShort": "Le mot de passe doit contenir au moins 6 caractères",
+				"passwordMismatch": "Les mots de passe ne correspondent pas",
+				"companyNameRequired": "Le nom de l'entreprise est requis",
+				"sectorRequired": "Le secteur est requis",
+				"companySizeRequired": "La taille de l'entreprise est requise"
+			}
+		}
+	},
+	"clientDashboard": {
+		"welcome": "Bienvenue",
+		"settings": "Paramètres",
+		"logout": "Déconnexion",
+		"subscription": {
+			"title": "Abonnement",
+			"active": "Actif",
+			"inactive": "Inactif",
+			"manage": "Gérer mon abonnement"
+		},
+		"assessments": {
+			"title": "Évaluations",
+			"total": "Évaluations réalisées",
+			"new": "Nouvelle évaluation"
+		},
+		"payments": {
+			"title": "Paiements",
+			"total": "Paiements effectués"
+		},
+		"history": {
+			"title": "Historique des Évaluations",
+			"noAssessments": "Vous n'avez pas encore d'évaluation",
+			"startFirst": "Commencer ma première évaluation",
+			"evaluation": "Évaluation",
+			"score": "Score",
+			"viewReport": "Voir le rapport",
+			"downloadPDF": "Télécharger PDF",
+			"downloading": "Téléchargement..."
+		},
+		"paymentsHistory": {
+			"title": "Historique des Paiements",
+			"date": "Date",
+			"plan": "Plan",
+			"amount": "Montant",
+			"status": "Statut",
+			"completed": "Complété",
+			"pending": "En attente",
+			"failed": "Échoué",
+			"all": "Tous",
+			"active": "En attente",
+			"filterAll": "Tous les paiements",
+			"filterActive": "Paiements en attente",
+			"filterCompleted": "Paiements terminés",
+			"noPayments": "Aucun paiement trouvé pour ce filtre",
+			"stats": {
+				"total": "Total Paiements",
+				"active": "En Attente",
+				"completed": "Terminés",
+				"totalAmount": "Montant Total"
+			}
+		}
+	},
+	"clientProfile": {
+		"title": "Mon Profil",
+		"tabs": {
+			"profile": "Profil",
+			"subscription": "Abonnement",
+			"security": "Sécurité"
+		},
+		"firstName": "Prénom",
+		"lastName": "Nom",
+		"email": "Email",
+		"emailNote": "L'email ne peut pas être modifié",
+		"companyName": "Nom de l'entreprise",
+		"sector": "Secteur",
+		"companySize": "Taille",
+		"phone": "Téléphone",
+		"saveChanges": "Enregistrer les modifications",
+		"currentPlan": "Plan Actuel",
+		"statusActive": "Actif",
+		"statusInactive": "Inactif",
+		"upgradePlan": "Changer de plan",
+		"subscriptionDetails": "Détails de l'abonnement",
+		"startDate": "Date de début",
+		"endDate": "Date de fin",
+		"currentPassword": "Mot de passe actuel",
+		"newPassword": "Nouveau mot de passe",
+		"confirmNewPassword": "Confirmer le nouveau mot de passe",
+		"passwordHint": "Minimum 6 caractères",
+		"changePassword": "Changer le mot de passe",
+		"errors": {
+			"passwordMismatch": "Les mots de passe ne correspondent pas",
+			"passwordTooShort": "Le mot de passe doit contenir au moins 6 caractères"
+		}
+	},
+	"socialShare": {
+		"title": "Partager cette page :",
+		"shareOn": "Partager sur",
+		"copyLink": "Copier le lien",
+		"copied": "Lien copié !",
+		"linkCopied": "Lien copié dans le presse-papiers"
+	},
+	"payment": {
+		"success": "Paiement réussi ! Merci pour votre achat.",
+		"error": "Erreur de paiement. Veuillez réessayer.",
+		"processing": "Traitement du paiement...",
+		"payWith": "Payer avec PayPal ou carte bancaire",
+		"or": "ou"
+	},
+	"checkout": {
+		"title": "Paiement",
+		"backToPricing": "Retour aux tarifs",
+		"orderSummary": "Récapitulatif de la commande",
+		"price": "Prix",
+		"or": "ou",
+		"monthly": "par mois",
+		"annual": "par an",
+		"oneTime": "Paiement unique",
+		"annualPrice": "Prix annuel",
+		"selectPaymentMethod": "Sélectionnez le mode de paiement",
+		"paypal": "PayPal ou carte bancaire",
+		"paypalDescription": "Payez en toute sécurité avec Carte bancaire ou PayPal",
+		"bankTransfer": "Virement bancaire / Nous contacter",
+		"bankTransferDescription": "Payez par virement bancaire ou contactez-nous pour d'autres options",
+		"contactUsForPayment": "Contactez-nous pour organiser un paiement par virement bancaire ou discuter d'autres options de paiement.",
+		"contactUs": "Nous contacter",
+		"securePayment": "🔒 Paiement sécurisé protégé par cryptage SSL",
+		"invalidPlan": "Plan invalide sélectionné. Redirection..."
+	},
+	"paymentSuccess": {
+		"title": "Paiement Réussi !",
+		"subtitle": "Merci pour votre achat. Votre paiement a été traité avec succès.",
+		"orderDetails": "Détails de la commande",
+		"orderId": "ID de commande",
+		"plan": "Plan",
+		"status": "Statut",
+		"completed": "Terminé",
+		"nextSteps": "Et Maintenant ?",
+		"confirmationEmail": "Vous recevrez sous peu un email de confirmation avec le récapitulatif de votre paiement.",
+		"accessInfo": "Nos experts vous contacteront sous 24h pour organiser vos services.",
+		"support": "Tous vos livrables vous seront envoyés directement par email.",
+		"backToHome": "Retour à l'accueil",
+		"contactSupport": "Contacter le Support",
+		"needHelp": "Besoin d'aide ?"
+	},
+	"pricing": {
+		"title": "Tarifs vitalCHECK",
+		"subtitle": "Choisissez le plan qui correspond à vos besoins d'évaluation et d'amélioration continue",
+		"heroFeatures": {
+			"freeEvaluation": "Évaluation gratuite disponible",
+			"noCommitment": "Sans engagement",
+			"supportIncluded": "Support inclus"
+		},
+		"plans": {
+			"free": {
+				"name": "GRATUIT",
+				"subtitle": "Freemium d'Accès",
+				"price": "0",
+				"currency": "FCFA",
+				"period": "",
+				"description": "Découverte et préqualification",
+				"button": "Commencer gratuitement"
+			},
+			"standard": {
+				"name": "STANDARD",
+				"subtitle": "Abonnement PME classique",
+				"price": "10 000",
+				"currency": "FCFA",
+				"period": "/mois",
+				"annualPrice": "100 000",
+				"annualPeriod": "/an",
+				"description": "Amélioration continue et suivi",
+				"button": "Sélectionner",
+				"popular": "Plus populaire"
+			},
+			"premium": {
+				"name": "PREMIUM",
+				"subtitle": "Accompagnement & Décision",
+				"price": "25 000",
+				"currency": "FCFA",
+				"period": "/mois",
+				"annualPrice": "250 000",
+				"annualPeriod": "/an",
+				"oneShotPrice": "199 €",
+				"oneShotFCFA": "130 000 FCFA",
+				"description": "Consulting et financement",
+				"button": "Sélectionner"
+			},
+			"diagnostic": {
+				"name": "SERVICE DE DIAGNOSTIC",
+				"subtitle": "Revitalisation Complète d'Entreprise",
+				"price": "1 000 $",
+				"alternativePrice": "550 000 FCFA",
+				"description": "Le Service de Diagnostic est un cadre complet de revitalisation d'entreprise. Il comprend une évaluation commerciale complète, un rapport écrit et présenté, et un ensemble de recommandations de croissance pratiques et transformatrices.",
+				"includes": "Chaque engagement se termine par un plan d'action stratégique suivi de trois mois de mise en œuvre guidée.",
+				"retainer": "À la fin de l'intervention, les clients paient une commission de performance égale à 1,5% de l'augmentation des ventes générée par le programme, payable sur une période de 12 mois.",
+				"button": "Demander le Service de Diagnostic",
+				"special": "Pack Spécial"
+			}
+		},
+		"enterpriseRecommendations": {
+			"title": "Quelle solution pour votre entreprise ?",
+			"subtitle": "Découvrez nos recommandations selon le type et la taille de votre organisation",
+			"recommended": "Recommandé",
+			"tableHeaders": {
+				"enterpriseType": "Type d'entreprise",
+				"recommendedPlan": "Plan recommandé",
+				"description": "Description"
+			}
+		},
+		"support": {
+			"title": "Support et accompagnement",
+			"tableHeaders": {
+				"supportType": "Type de support"
+			},
+			"subtitle": "Notre équipe est là pour vous accompagner à chaque étape",
+			"email": {
+				"title": "Support Email",
+				"description": "Disponible pour tous les plans",
+				"responseTime": "Réponse sous 24h"
+			},
+			"whatsapp": {
+				"title": "Support WhatsApp",
+				"description": "Plans Standard et Premium",
+				"responseTime": "Réponse prioritaire"
+			},
+			"phone": {
+				"title": "Support Téléphonique",
+				"description": "Plan Premium uniquement",
+				"responseTime": "Support dédié"
+			}
+		},
+		"cta": {
+			"title": "Prêt à améliorer votre entreprise ?",
+			"subtitle": "Commencez par une évaluation gratuite et découvrez les points d'amélioration de votre organisation",
+			"startFree": "Commencer l'évaluation gratuite",
+			"contactUs": "Nous contacter"
+		},
+		"common": {
+			"twoMonthsFree": "(2 mois offerts)",
+			"or": "ou"
+		},
+		"featuresComparison": {
+			"title": "Comparaison des fonctionnalités",
+			"subtitle": "Découvrez en détail ce qui est inclus dans chaque plan",
+			"featuresLabel": "Fonctionnalités"
+		},
+		"features": {
+			"accessEvaluation": "Accès évaluation",
+			"globalScorePillars": "Score global + piliers",
+			"basicPdfReport": "Rapport PDF basique",
+			"personalizedRecommendations": "Recommandations personnalisées",
+			"multipleEvaluations": "Évaluations multiples",
+			"historyTracking": "Historique & suivi",
+			"comparativeAnalysis": "Analyse comparative (benchmark)",
+			"expertConsultation": "Consultation avec expert UBB",
+			"dashboardAdvancedExport": "Tableau de bord et export avancé",
+			"evaluatedCompanyBadge": "Badge \"Entreprise évaluée\"",
+			"emailSupport": "Support email",
+			"whatsappPhoneSupport": "Support WhatsApp / Téléphone",
+			"multipleUsers": "Utilisateurs multiples (équipe)"
+		},
+		"enterpriseTypes": {
+			"tpePmeUnstructured": "TPE / PME non structurées",
+			"cooperativesIndividual": "Coopératives / Entrepreneurs individuels",
+			"structuredPme": "PME structurées",
+			"accountingCoaches": "Cabinets comptables / Coachs business",
+			"growthExportPme": "PME de croissance / Export",
+			"financingEntrepreneurs": "Entrepreneurs cherchant financement",
+			"incubationPrograms": "Programmes d'incubation / ONG"
+		},
+		"enterpriseDescriptions": {
+			"tpePmeUnstructured": "Découverte du diagnostic et sensibilisation",
+			"cooperativesIndividual": "Première approche de l'évaluation",
+			"structuredPme": "Suivi régulier et amélioration continue",
+			"accountingCoaches": "Outil d'accompagnement client",
+			"growthExportPme": "Stratégie avancée et financement",
+			"financingEntrepreneurs": "Dossier de financement complet",
+			"incubationPrograms": "Accompagnement structuré"
+		},
+		"supportTypes": {
+			"emailSupport": "Support Email",
+			"whatsappSupport": "Support WhatsApp",
+			"phoneSupport": "Support Téléphonique"
+		},
+		"supportDescriptions": {
+			"emailSupport": "Réponse sous 24h",
+			"whatsappSupport": "Réponse prioritaire",
+			"phoneSupport": "Support dédié"
+		}
+	},
+	"chatbot": {
+		"initialMessage": "Bonjour ! 👋 Je suis l'assistant de vitalCHECK. Comment puis-je vous aider ?",
+		"welcomeMessage": "Bonjour ! 👋 Je suis l'assistant de vitalCHECK. Pour mieux vous aider, pouvez-vous me donner votre prénom ?",
+		"askName": "Veuillez entrer votre prénom",
+		"askEmail": "Email (facultatif) - vous pouvez ignorer cette étape",
+		"namePlaceholder": "Donnez votre nom",
+		"emailPlaceholder": "Donnez votre email ou ignorer",
+		"emailRequest": "Merci {{name}} ! Souhaitez-vous partager votre email pour que nous puissions vous recontacter si nécessaire ? (facultatif - vous pouvez taper \"passer\" ou simplement votre question)",
+		"readyMessage": "Parfait {{name}} ! 👋 Je suis l'assistant de vitalCHECK. Comment puis-je vous aider ?",
+		"ignore": "Ignorer",
+		"topics": {
+			"evaluation": "L'évaluation",
+			"pricing": "Les tarifs",
+			"report": "Votre rapport",
+			"account": "Votre compte"
+		},
+		"suggestion": "Ou tapez votre question directement !",
+		"popularTopics": "Sujets populaires :",
+		"topicsList": {
+			"assessment": "Évaluation",
+			"pricing": "Tarifs",
+			"contact": "Contact",
+			"blog": "Blog"
+		},
+		"assistantName": "Assistant vitalCHECK",
+		"online": "En ligne",
+		"instantResponse": "Réponse instantanée",
+		"typing": "L'assistant écrit...",
+		"placeholder": "Tapez votre message...",
+		"send": "Envoyer",
+		"openChat": "Ouvrir le chat",
+		"close": "Fermer",
+		"minimize": "Minimiser",
+		"maximize": "Agrandir",
+		"error": "Désolé, une erreur est survenue. Vérifiez votre connexion ou réessayez plus tard.",
+		"notUnderstood": "Je n'ai pas bien compris. Pouvez-vous reformuler ?",
+		"questionsAbout": "Vous pouvez me poser des questions sur :",
+		"introGreeting": "Salut ! 👋",
+		"introMessage": "Je suis l'assistant vitalCHECK ! Posez-moi vos questions, je suis là pour vous aider ! 😊"
+	},
+	"company": {
+		"name": "UBUNTU BUSINESS BUILDERS (UBB) – SARL",
+		"address": "Dakar, Sénégal",
+		"rccm": "RCCM : SN.DKR.2026.B.1650",
+		"ninea": "NINEA : 012753069"
+	}
 }
