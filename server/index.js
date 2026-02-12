@@ -104,6 +104,11 @@ app.use("/api", require("./routes/ping"));
 // Routes SEO
 app.use("/", require("./routes/sitemap"));
 
+// Basic root route
+app.get("/", (req, res) => {
+	res.json({ message: "Welcome to vitalCHECK API" });
+});
+
 // Health check endpoint
 app.get("/api/health", (req, res) => {
 	res.json({ status: "OK", message: "vitalCHECK Health Check API is running" });
@@ -166,9 +171,17 @@ const connectDB = async () => {
 		});
 
 		// Scheduler interne (optionnel) pour newsletters programmées
-		const schedulerEnabled = String(process.env.ENABLE_NEWSLETTER_SCHEDULER || '').toLowerCase() === 'true';
-		const intervalMs = Number(process.env.NEWSLETTER_SCHEDULER_INTERVAL_MS || 60_000);
-		startNewsletterScheduler({ enabled: schedulerEnabled, intervalMs, logger: console });
+		const schedulerEnabled =
+			String(process.env.ENABLE_NEWSLETTER_SCHEDULER || "").toLowerCase() ===
+			"true";
+		const intervalMs = Number(
+			process.env.NEWSLETTER_SCHEDULER_INTERVAL_MS || 60_000,
+		);
+		startNewsletterScheduler({
+			enabled: schedulerEnabled,
+			intervalMs,
+			logger: console,
+		});
 	} catch (error) {
 		console.error("❌ MongoDB connection error:", error.message);
 
