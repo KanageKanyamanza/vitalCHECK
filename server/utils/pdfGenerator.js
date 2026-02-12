@@ -1,150 +1,169 @@
-const htmlPdf = require('html-pdf-node');
-const path = require('path');
+const htmlPdf = require("html-pdf-node");
+const path = require("path");
 
 // Configuration pour html-pdf-node
 const pdfOptions = {
-  format: 'A4',
-  margin: {
-    top: '20mm',
-    right: '15mm',
-    bottom: '20mm',
-    left: '15mm'
-  },
-  printBackground: true,
-  displayHeaderFooter: false,
-  preferCSSPageSize: true
+	format: "A4",
+	margin: {
+		top: "20mm",
+		right: "15mm",
+		bottom: "20mm",
+		left: "15mm",
+	},
+	printBackground: true,
+	displayHeaderFooter: false,
+	preferCSSPageSize: true,
 };
 
 // Configuration pour Render.com et autres environnements
 const launchOptions = {
-  args: [
-    '--no-sandbox',
-    '--disable-setuid-sandbox',
-    '--disable-dev-shm-usage',
-    '--disable-gpu',
-    '--single-process',
-    '--no-zygote',
-    '--disable-setuid-sandbox'
-  ]
+	args: [
+		"--no-sandbox",
+		"--disable-setuid-sandbox",
+		"--disable-dev-shm-usage",
+		"--disable-gpu",
+		"--single-process",
+		"--no-zygote",
+		"--disable-setuid-sandbox",
+	],
 };
 
 // Fonction principale de génération PDF
 async function generatePDFReport(assessment) {
-  try {
-    const { user, overallScore, overallStatus, pillarScores, completedAt, language = 'fr' } = assessment;
-    
-    // Générer le contenu HTML
-    const htmlContent = generateHTMLContent(assessment);
-    
-    // Options pour html-pdf-node
-    const options = {
-      ...pdfOptions,
-      args: launchOptions.args
-    };
-    
-    // Créer le fichier HTML temporaire
-    const file = {
-      content: htmlContent
-    };
-    
-    // Générer le PDF
-    const pdfBuffer = await htmlPdf.generatePdf(file, options);
-    
-    return pdfBuffer;
-    
-  } catch (error) {
-    console.error('PDF generation error:', error);
-    throw error;
-  }
+	try {
+		const {
+			user,
+			overallScore,
+			overallStatus,
+			pillarScores,
+			completedAt,
+			language = "fr",
+		} = assessment;
+
+		// Générer le contenu HTML
+		const htmlContent = generateHTMLContent(assessment);
+
+		// Options pour html-pdf-node
+		const options = {
+			...pdfOptions,
+			args: launchOptions.args,
+		};
+
+		// Créer le fichier HTML temporaire
+		const file = {
+			content: htmlContent,
+		};
+
+		// Générer le PDF
+		const pdfBuffer = await htmlPdf.generatePdf(file, options);
+
+		return pdfBuffer;
+	} catch (error) {
+		console.error("PDF generation error:", error);
+		throw error;
+	}
 }
 
 // Fonction de génération simple (fallback)
 async function generateSimplePDFReport(assessment) {
-  try {
-    const { user, overallScore, overallStatus, pillarScores, completedAt, language = 'fr' } = assessment;
-    
-    // HTML simplifié sans dépendances externes
-    const htmlContent = generateSimpleHTMLContent(assessment);
-    
-    const options = {
-      format: 'A4',
-      margin: '10mm',
-      printBackground: true,
-      args: launchOptions.args
-    };
-    
-    const file = {
-      content: htmlContent
-    };
-    
-    const pdfBuffer = await htmlPdf.generatePdf(file, options);
-    
-    return pdfBuffer;
-    
-  } catch (error) {
-    console.error('Simple PDF generation error:', error);
-    throw error;
-  }
+	try {
+		const {
+			user,
+			overallScore,
+			overallStatus,
+			pillarScores,
+			completedAt,
+			language = "fr",
+		} = assessment;
+
+		// HTML simplifié sans dépendances externes
+		const htmlContent = generateSimpleHTMLContent(assessment);
+
+		const options = {
+			format: "A4",
+			margin: "10mm",
+			printBackground: true,
+			args: launchOptions.args,
+		};
+
+		const file = {
+			content: htmlContent,
+		};
+
+		const pdfBuffer = await htmlPdf.generatePdf(file, options);
+
+		return pdfBuffer;
+	} catch (error) {
+		console.error("Simple PDF generation error:", error);
+		throw error;
+	}
 }
 
 // Génération du contenu HTML (version complète) - Design comme l'email
 function generateHTMLContent(assessment) {
-  const { user, overallScore, overallStatus, pillarScores, completedAt, language = 'fr' } = assessment;
-  
-  const statusColors = {
-    red: '#EF4444',
-    amber: '#F59E0B',
-    green: '#10B981'
-  };
-  
-  const templates = {
-    en: {
-      statusTexts: {
-        red: 'Critical Attention Required',
-        amber: 'Needs Improvement',
-        green: 'Healthy & Well-Positioned'
-      },
-      title: 'vitalCHECK Enterprise Health Check',
-      subtitle: 'Professional Business Assessment Report',
-      companyName: 'Company',
-      sector: 'Sector',
-      companySize: 'Company Size',
-      assessmentDate: 'Assessment Date',
-      overallScore: 'Overall Health Score',
-      pillarScores: 'Pillar Breakdown',
-      recommendations: 'Recommendations',
-      generatedOn: 'Generated on',
-      contact: 'Contact Information',
-      email: 'Email',
-      phone: 'Phone'
-    },
-    fr: {
-      statusTexts: {
-        red: 'Attention critique requise',
-        amber: 'Nécessite des améliorations',
-        green: 'En bonne santé et bien positionnée'
-      },
-      title: 'vitalCHECK Enterprise Health Check',
-      subtitle: 'Rapport d\'Évaluation Professionnelle d\'Entreprise',
-      companyName: 'Entreprise',
-      sector: 'Secteur',
-      companySize: 'Taille',
-      assessmentDate: 'Date d\'Évaluation',
-      overallScore: 'Score de Santé Global',
-      pillarScores: 'Répartition par Piliers',
-      recommendations: 'Recommandations',
-      generatedOn: 'Généré le',
-      contact: 'Informations de Contact',
-      email: 'Email',
-      phone: 'Téléphone'
-    }
-  };
-  
-  const t = templates[language] || templates.fr;
-  const overallText = t.statusTexts[overallStatus];
-  const overallColor = statusColors[overallStatus];
-  
-  return `
+	const {
+		user,
+		overallScore,
+		overallStatus,
+		pillarScores,
+		completedAt,
+		language = "fr",
+	} = assessment;
+
+	const statusColors = {
+		red: "#EF4444",
+		amber: "#F59E0B",
+		green: "#10B981",
+	};
+
+	const templates = {
+		en: {
+			statusTexts: {
+				red: "Critical Attention Required",
+				amber: "Needs Improvement",
+				green: "Healthy & Well-Positioned",
+			},
+			title: "vitalCHECK Enterprise Health Check",
+			subtitle: "Professional Business Assessment Report",
+			companyName: "Company",
+			sector: "Sector",
+			companySize: "Company Size",
+			assessmentDate: "Assessment Date",
+			overallScore: "Overall Health Score",
+			pillarScores: "Pillar Breakdown",
+			recommendations: "Recommendations",
+			generatedOn: "Generated on",
+			contact: "Contact Information",
+			email: "Email",
+			phone: "Phone",
+		},
+		fr: {
+			statusTexts: {
+				red: "Attention critique requise",
+				amber: "Nécessite des améliorations",
+				green: "En bonne santé et bien positionnée",
+			},
+			title: "vitalCHECK Enterprise Health Check",
+			subtitle: "Rapport d'Évaluation Professionnelle d'Entreprise",
+			companyName: "Entreprise",
+			sector: "Secteur",
+			companySize: "Taille",
+			assessmentDate: "Date d'Évaluation",
+			overallScore: "Score de Santé Global",
+			pillarScores: "Répartition par Piliers",
+			recommendations: "Recommandations",
+			generatedOn: "Généré le",
+			contact: "Informations de Contact",
+			email: "Email",
+			phone: "Téléphone",
+		},
+	};
+
+	const t = templates[language] || templates.fr;
+	const overallText = t.statusTexts[overallStatus];
+	const overallColor = statusColors[overallStatus];
+
+	return `
     <!DOCTYPE html>
     <html>
     <head>
@@ -437,7 +456,7 @@ function generateHTMLContent(assessment) {
              <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="vitalCHECK Logo" class="logo" />
            </div>
            <h1>Enterprise Health Check</h1>
-           <p>${language === 'fr' ? 'Rapport d\'Évaluation Professionnelle d\'Entreprise' : 'Professional Business Assessment Report'}</p>
+           <p>${language === "fr" ? "Rapport d'Évaluation Professionnelle d'Entreprise" : "Professional Business Assessment Report"}</p>
          </div>
        </div>
       
@@ -448,7 +467,7 @@ function generateHTMLContent(assessment) {
       </div>
       
       <div class="company-details">
-        <h3>${language === 'fr' ? 'Détails de l\'Évaluation' : 'Assessment Details'}</h3>
+        <h3>${language === "fr" ? "Détails de l'Évaluation" : "Assessment Details"}</h3>
         <div class="company-grid">
           <div class="company-item">
             <div class="company-label">${t.companyName}</div>
@@ -464,7 +483,7 @@ function generateHTMLContent(assessment) {
           </div>
           <div class="company-item">
             <div class="company-label">${t.assessmentDate}</div>
-            <div class="company-value">${new Date(completedAt).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US')}</div>
+            <div class="company-value">${new Date(completedAt).toLocaleDateString(language === "fr" ? "fr-FR" : "en-US")}</div>
           </div>
         </div>
       </div>
@@ -473,44 +492,53 @@ function generateHTMLContent(assessment) {
       <table class="pillars-table">
         <thead>
           <tr>
-            <th>${language === 'fr' ? 'Pilier' : 'Pillar'}</th>
-            <th>${language === 'fr' ? 'Score' : 'Score'}</th>
-            <th>${language === 'fr' ? 'Statut' : 'Status'}</th>
+            <th>${language === "fr" ? "Pilier" : "Pillar"}</th>
+            <th>${language === "fr" ? "Score" : "Score"}</th>
+            <th>${language === "fr" ? "Statut" : "Status"}</th>
           </tr>
         </thead>
         <tbody>
-          ${pillarScores.map(pillar => `
+          ${pillarScores
+						.map(
+							(pillar) => `
             <tr>
               <td>${pillar.pillarName}</td>
               <td>${pillar.score}/100</td>
               <td><span class="status-badge status-${pillar.status}">${t.statusTexts[pillar.status]}</span></td>
             </tr>
-          `).join('')}
+          `,
+						)
+						.join("")}
         </tbody>
       </table>
       
        <div class="recommendations">
          <h3>${t.recommendations}</h3>
          <ul>
-           ${pillarScores.filter(p => p.recommendations && p.recommendations.length > 0)
-             .flatMap(p => p.recommendations.slice(0, 2))
-             .map(rec => `<li>${rec}</li>`).join('')}
+           ${pillarScores
+							.filter((p) => p.recommendations && p.recommendations.length > 0)
+							.flatMap((p) => p.recommendations.slice(0, 2))
+							.map((rec) => `<li>${rec}</li>`)
+							.join("")}
          </ul>
        </div>
        
        <!-- Section premium teaser -->
        <div class="premium-teaser">
-         <h3>${language === 'fr' ? 'Débloquez Votre Rapport Complet de Santé d\'Entreprise' : 'Unlock Your Full Enterprise Health Report'}</h3>
-         <p>${language === 'fr' ? 'Obtenez des insights détaillés, des recommandations personnalisées, un benchmarking par rapport aux pairs, et un appel de consultation avec nos experts.' : 'Get detailed insights, tailored recommendations, benchmarking against peers, and a consultation call with our experts.'}</p>
+         <h3>${language === "fr" ? "Débloquez Votre Rapport Complet de Santé d'Entreprise" : "Unlock Your Full Enterprise Health Report"}</h3>
+         <p>${language === "fr" ? "Obtenez des insights détaillés, des recommandations personnalisées, un benchmarking par rapport aux pairs, et un appel de consultation avec nos experts." : "Get detailed insights, tailored recommendations, benchmarking against peers, and a consultation call with our experts."}</p>
          <a href="mailto:info@checkmyenterprise.com?subject=Full%20Report%20Request" class="premium-button">
-           ${language === 'fr' ? 'Réservez Votre Rapport Complet' : 'Book Your Full Report'}
+           ${language === "fr" ? "Réservez Votre Rapport Complet" : "Book Your Full Report"}
          </a>
        </div>
        
        <!-- Section génération -->
        <div class="generation-info">
-         <p>${language === 'fr' ? 'Ce rapport a été généré par vitalCHECK Enterprise Health Check' : 'This report was generated by vitalCHECK Enterprise Health Check'}</p>
-         <p>${language === 'fr' ? 'Pour plus d\'informations, visitez notre site web ou contactez notre équipe' : 'For more information, visit our website or contact our team'}</p>
+         <p>${language === "fr" ? "Ce rapport a été généré par vitalCHECK Enterprise Health Check" : "This report was generated by vitalCHECK Enterprise Health Check"}</p>
+         <p><strong>UBUNTU BUSINESS BUILDERS (UBB) – SARL</strong></p>
+         <p>Dakar, Sénégal</p>
+         <p>RCCM : SN.DKR.2026.B.1650 | NINEA : 012753069</p>
+         <p>${language === "fr" ? "Pour plus d'informations, visitez notre site web ou contactez notre équipe" : "For more information, visit our website or contact our team"}</p>
        </div>
       
     </body>
@@ -520,52 +548,59 @@ function generateHTMLContent(assessment) {
 
 // Génération du contenu HTML simple (fallback)
 function generateSimpleHTMLContent(assessment) {
-  const { user, overallScore, overallStatus, pillarScores, completedAt, language = 'fr' } = assessment;
-  
-  const statusColors = {
-    red: '#EF4444',
-    amber: '#F59E0B',
-    green: '#10B981'
-  };
-  
-  const templates = {
-    en: {
-      statusTexts: {
-        red: 'Critical',
-        amber: 'Needs Improvement',
-        green: 'Healthy'
-      },
-      title: 'vitalCHECK Enterprise Health Check Report',
-      subtitle: 'Free Self-Assessment Report',
-      companyName: 'Company Name',
-      assessmentDate: 'Assessment Date',
-      overallScore: 'Overall Health Score',
-      pillarScores: 'Pillar Breakdown',
-      recommendations: 'Recommendations',
-      generatedOn: 'Generated on'
-    },
-    fr: {
-      statusTexts: {
-        red: 'Critique',
-        amber: 'À améliorer',
-        green: 'En bonne santé'
-      },
-      title: 'Rapport vitalCHECK Enterprise Health Check',
-      subtitle: 'Rapport d\'auto-évaluation gratuit',
-      companyName: 'Nom de l\'entreprise',
-      assessmentDate: 'Date d\'évaluation',
-      overallScore: 'Score de santé global',
-      pillarScores: 'Répartition par piliers',
-      recommendations: 'Recommandations',
-      generatedOn: 'Généré le'
-    }
-  };
-  
-  const t = templates[language] || templates.fr;
-  const overallText = t.statusTexts[overallStatus];
-  const overallColor = statusColors[overallStatus];
-  
-  return `
+	const {
+		user,
+		overallScore,
+		overallStatus,
+		pillarScores,
+		completedAt,
+		language = "fr",
+	} = assessment;
+
+	const statusColors = {
+		red: "#EF4444",
+		amber: "#F59E0B",
+		green: "#10B981",
+	};
+
+	const templates = {
+		en: {
+			statusTexts: {
+				red: "Critical",
+				amber: "Needs Improvement",
+				green: "Healthy",
+			},
+			title: "vitalCHECK Enterprise Health Check Report",
+			subtitle: "Free Self-Assessment Report",
+			companyName: "Company Name",
+			assessmentDate: "Assessment Date",
+			overallScore: "Overall Health Score",
+			pillarScores: "Pillar Breakdown",
+			recommendations: "Recommendations",
+			generatedOn: "Generated on",
+		},
+		fr: {
+			statusTexts: {
+				red: "Critique",
+				amber: "À améliorer",
+				green: "En bonne santé",
+			},
+			title: "Rapport vitalCHECK Enterprise Health Check",
+			subtitle: "Rapport d'auto-évaluation gratuit",
+			companyName: "Nom de l'entreprise",
+			assessmentDate: "Date d'évaluation",
+			overallScore: "Score de santé global",
+			pillarScores: "Répartition par piliers",
+			recommendations: "Recommandations",
+			generatedOn: "Généré le",
+		},
+	};
+
+	const t = templates[language] || templates.fr;
+	const overallText = t.statusTexts[overallStatus];
+	const overallColor = statusColors[overallStatus];
+
+	return `
     <!DOCTYPE html>
     <html>
     <head>
@@ -662,7 +697,7 @@ function generateSimpleHTMLContent(assessment) {
         <p><strong>${t.companyName}:</strong> ${user.companyName}</p>
         <p><strong>Secteur:</strong> ${user.sector}</p>
         <p><strong>Taille:</strong> ${user.companySize}</p>
-        <p><strong>${t.assessmentDate}:</strong> ${new Date(completedAt).toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US')}</p>
+        <p><strong>${t.assessmentDate}:</strong> ${new Date(completedAt).toLocaleDateString(language === "fr" ? "fr-FR" : "en-US")}</p>
       </div>
       
       <div class="score-section">
@@ -680,29 +715,36 @@ function generateSimpleHTMLContent(assessment) {
           </tr>
         </thead>
         <tbody>
-          ${pillarScores.map(pillar => `
+          ${pillarScores
+						.map(
+							(pillar) => `
             <tr>
               <td>${pillar.pillarName}</td>
               <td>${pillar.score}/100</td>
               <td><span class="status-badge status-${pillar.status}">${t.statusTexts[pillar.status]}</span></td>
             </tr>
-          `).join('')}
+          `,
+						)
+						.join("")}
         </tbody>
       </table>
       
       <!-- Section premium teaser -->
       <div class="premium-teaser">
-        <h3>${language === 'fr' ? 'Débloquez Votre Rapport Complet de Santé d\'Entreprise' : 'Unlock Your Full Enterprise Health Report'}</h3>
-        <p>${language === 'fr' ? 'Obtenez des insights détaillés, des recommandations personnalisées, un benchmarking par rapport aux pairs, et un appel de consultation avec nos experts.' : 'Get detailed insights, tailored recommendations, benchmarking against peers, and a consultation call with our experts.'}</p>
+        <h3>${language === "fr" ? "Débloquez Votre Rapport Complet de Santé d'Entreprise" : "Unlock Your Full Enterprise Health Report"}</h3>
+        <p>${language === "fr" ? "Obtenez des insights détaillés, des recommandations personnalisées, un benchmarking par rapport aux pairs, et un appel de consultation avec nos experts." : "Get detailed insights, tailored recommendations, benchmarking against peers, and a consultation call with our experts."}</p>
         <a href="mailto:info@checkmyenterprise.com?subject=Full%20Report%20Request" class="premium-button">
-          ${language === 'fr' ? 'Réservez Votre Rapport Complet' : 'Book Your Full Report'}
+          ${language === "fr" ? "Réservez Votre Rapport Complet" : "Book Your Full Report"}
         </a>
       </div>
       
       <!-- Section génération -->
       <div class="generation-info">
-        <p>${language === 'fr' ? 'Ce rapport a été généré par vitalCHECK Enterprise Health Check' : 'This report was generated by vitalCHECK Enterprise Health Check'}</p>
-        <p>${language === 'fr' ? 'Pour plus d\'informations, visitez notre site web ou contactez notre équipe' : 'For more information, visit our website or contact our team'}</p>
+        <p>${language === "fr" ? "Ce rapport a été généré par vitalCHECK Enterprise Health Check" : "This report was generated by vitalCHECK Enterprise Health Check"}</p>
+        <p><strong>UBUNTU BUSINESS BUILDERS (UBB) – SARL</strong></p>
+        <p>Dakar, Sénégal</p>
+        <p>RCCM : SN.DKR.2026.B.1650 | NINEA : 012753069</p>
+        <p>${language === "fr" ? "Pour plus d'informations, visitez notre site web ou contactez notre équipe" : "For more information, visit our website or contact our team"}</p>
       </div>
       
     </body>
@@ -711,6 +753,6 @@ function generateSimpleHTMLContent(assessment) {
 }
 
 module.exports = {
-  generatePDFReport,
-  generateSimplePDFReport
+	generatePDFReport,
+	generateSimplePDFReport,
 };

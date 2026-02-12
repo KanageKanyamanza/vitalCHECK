@@ -3,44 +3,49 @@
  * Gère le template HTML responsive avec tracking
  */
 
-const htmlToText = require('html-to-text');
+const htmlToText = require("html-to-text");
 
 class NewsletterEmail {
-  /**
-   * Générer le template HTML de la newsletter
-   * @param {Object} options - Options du template
-   * @param {string} options.htmlContent - Contenu HTML de la newsletter
-   * @param {string} options.subject - Sujet de l'email
-   * @param {string} options.imageUrl - URL de l'image (optionnel)
-   * @param {string} options.newsletterId - ID de la newsletter pour le tracking
-   * @param {string} options.subscriberId - ID de l'abonné pour le tracking
-   * @param {string} options.subscriberEmail - Email de l'abonné pour le lien de désinscription
-   * @param {string} options.previewText - Texte d'aperçu (optionnel)
-   */
-  static generateTemplate({
-    htmlContent,
-    subject,
-    imageUrl,
-    newsletterId,
-    subscriberId,
-    subscriberEmail,
-    previewText
-  }) {
-    const frontendUrl = process.env.FRONTEND_URL || 'https://www.checkmyenterprise.com';
-    const backendUrl = process.env.BACKEND_URL || process.env.API_URL || 'https://ubb-enterprise-health-check.onrender.com/api';
-    
-    // URL du pixel de tracking
-    const trackingPixelUrl = newsletterId && subscriberId
-      ? `${backendUrl}/newsletters/track/${newsletterId}/${subscriberId}`
-      : null;
+	/**
+	 * Générer le template HTML de la newsletter
+	 * @param {Object} options - Options du template
+	 * @param {string} options.htmlContent - Contenu HTML de la newsletter
+	 * @param {string} options.subject - Sujet de l'email
+	 * @param {string} options.imageUrl - URL de l'image (optionnel)
+	 * @param {string} options.newsletterId - ID de la newsletter pour le tracking
+	 * @param {string} options.subscriberId - ID de l'abonné pour le tracking
+	 * @param {string} options.subscriberEmail - Email de l'abonné pour le lien de désinscription
+	 * @param {string} options.previewText - Texte d'aperçu (optionnel)
+	 */
+	static generateTemplate({
+		htmlContent,
+		subject,
+		imageUrl,
+		newsletterId,
+		subscriberId,
+		subscriberEmail,
+		previewText,
+	}) {
+		const frontendUrl =
+			process.env.FRONTEND_URL || "https://www.checkmyenterprise.com";
+		const backendUrl =
+			process.env.BACKEND_URL ||
+			process.env.API_URL ||
+			"https://ubb-enterprise-health-check.onrender.com/api";
 
-    // URL de désinscription
-    const unsubscribeUrl = `${frontendUrl}/unsubscribe?email=${encodeURIComponent(subscriberEmail)}`;
+		// URL du pixel de tracking
+		const trackingPixelUrl =
+			newsletterId && subscriberId ?
+				`${backendUrl}/newsletters/track/${newsletterId}/${subscriberId}`
+			:	null;
 
-    // Logo URL
-    const logoUrl = `${frontendUrl}/ms-icon-310x310.png`;
+		// URL de désinscription
+		const unsubscribeUrl = `${frontendUrl}/unsubscribe?email=${encodeURIComponent(subscriberEmail)}`;
 
-    const template = `
+		// Logo URL
+		const logoUrl = `${frontendUrl}/ms-icon-310x310.png`;
+
+		const template = `
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -48,7 +53,7 @@ class NewsletterEmail {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="x-apple-disable-message-reformatting">
-  <title>${subject || 'Newsletter'} - vitalCHECK</title>
+  <title>${subject || "Newsletter"} - vitalCHECK</title>
   <!--[if mso]>
   <style type="text/css">
     body, table, td {font-family: Arial, sans-serif !important;}
@@ -140,20 +145,24 @@ class NewsletterEmail {
             <td class="header-padding" style="background: linear-gradient(135deg, #00751B 0%, #F4C542 100%); padding: 20px 15px; text-align: center;">
               <img src="${logoUrl}" alt="vitalCHECK Logo" class="logo-size" style="width: 50px; height: 50px; max-width: 100%; border-radius: 8px; object-fit: contain; margin-bottom: 10px; background: rgba(255,255,255,0.1); padding: 6px; border-radius: 12px; display: block; margin-left: auto; margin-right: auto;" />
               <h1 class="title-size" style="color: #ffffff; margin: 0; font-size: clamp(20px, 4vw, 28px); font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.2); letter-spacing: -0.5px; line-height: 1.2;">
-                ${subject || 'Newsletter vitalCHECK'}
+                ${subject || "Newsletter vitalCHECK"}
               </h1>
-              ${previewText ? `<p class="subtitle-size" style="color: rgba(255, 255, 255, 0.95); margin: 8px 0 0 0; font-size: clamp(14px, 2.5vw, 16px); font-weight: 400; line-height: 1.4;">${previewText}</p>` : ''}
+              ${previewText ? `<p class="subtitle-size" style="color: rgba(255, 255, 255, 0.95); margin: 8px 0 0 0; font-size: clamp(14px, 2.5vw, 16px); font-weight: 400; line-height: 1.4;">${previewText}</p>` : ""}
             </td>
           </tr>
 
-          ${imageUrl ? `
+          ${
+						imageUrl ?
+							`
           <!-- Image de la newsletter -->
           <tr>
             <td style="padding: 0;">
-              <img src="${imageUrl}" alt="${subject || 'Newsletter'}" style="width: 100%; max-width: 100%; height: auto; display: block;" />
+              <img src="${imageUrl}" alt="${subject || "Newsletter"}" style="width: 100%; max-width: 100%; height: auto; display: block;" />
             </td>
           </tr>
-          ` : ''}
+          `
+						:	""
+					}
 
           <!-- Contenu principal -->
           <tr>
@@ -175,7 +184,12 @@ class NewsletterEmail {
                 <p class="footer-text" style="color: #6b7280; margin: 0; font-size: clamp(11px, 1.8vw, 12px);"><a href="${frontendUrl}" style="color: #60a5fa; text-decoration: none;">www.checkmyenterprise.com</a></p>
               </div>
               <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #374151;">
-                <p class="footer-text" style="color: #6b7280; margin: 0; font-size: clamp(10px, 1.6vw, 11px); line-height: 1.5; word-wrap: break-word;">Vous recevez cet email car vous êtes abonné à la newsletter vitalCHECK.</p>
+                <p class="footer-text" style="color: #6b7280; margin: 0; font-size: clamp(10px, 1.6vw, 11px); line-height: 1.5; word-wrap: break-word;">
+                  <strong>UBUNTU BUSINESS BUILDERS (UBB) – SARL</strong><br/>
+                  Dakar, Sénégal<br/>
+                  RCCM : SN.DKR.2026.B.1650 | NINEA : 012753069
+                </p>
+                <p class="footer-text" style="color: #6b7280; margin: 10px 0 0 0; font-size: clamp(10px, 1.6vw, 11px); line-height: 1.5; word-wrap: break-word;">Vous recevez cet email car vous êtes abonné à la newsletter vitalCHECK.</p>
                 <p class="footer-text" style="color: #6b7280; margin: 10px 0 0 0; font-size: clamp(10px, 1.6vw, 11px);">
                   <a href="${unsubscribeUrl}" style="color: #60a5fa; text-decoration: underline;">Se désabonner</a>
                 </p>
@@ -189,87 +203,94 @@ class NewsletterEmail {
     </tr>
   </table>
   
-  ${trackingPixelUrl ? `
+  ${
+		trackingPixelUrl ?
+			`
   <!-- Pixel de tracking invisible -->
   <img src="${trackingPixelUrl}" width="1" height="1" style="display:none; width:1px; height:1px; border:0;" alt="" />
-  ` : ''}
+  `
+		:	""
+	}
 </body>
 </html>
     `;
 
-    return template.trim();
-  }
+		return template.trim();
+	}
 
-  /**
-   * Convertir HTML en texte brut
-   * @param {string} html - Contenu HTML
-   */
-  static htmlToText(html) {
-    return htmlToText.convert(html, {
-      wordwrap: 80,
-      selectors: [
-        { selector: 'img', format: 'skip' },
-        { selector: 'a', options: { ignoreHref: true } }
-      ]
-    });
-  }
+	/**
+	 * Convertir HTML en texte brut
+	 * @param {string} html - Contenu HTML
+	 */
+	static htmlToText(html) {
+		return htmlToText.convert(html, {
+			wordwrap: 80,
+			selectors: [
+				{ selector: "img", format: "skip" },
+				{ selector: "a", options: { ignoreHref: true } },
+			],
+		});
+	}
 
-  /**
-   * Envoyer une newsletter
-   * @param {Object} options - Options d'envoi
-   * @param {string} options.to - Email destinataire
-   * @param {string} options.subject - Sujet
-   * @param {string} options.htmlContent - Contenu HTML
-   * @param {string} options.imageUrl - URL de l'image (optionnel)
-   * @param {string} options.newsletterId - ID de la newsletter
-   * @param {string} options.subscriberId - ID de l'abonné
-   * @param {string} options.subscriberEmail - Email de l'abonné
-   * @param {string} options.previewText - Texte d'aperçu (optionnel)
-   */
-  static sendNewsletter(options) {
-    try {
-      const {
-        to,
-        subject,
-        htmlContent,
-        imageUrl,
-        newsletterId,
-        subscriberId,
-        subscriberEmail,
-        previewText
-      } = options;
+	/**
+	 * Envoyer une newsletter
+	 * @param {Object} options - Options d'envoi
+	 * @param {string} options.to - Email destinataire
+	 * @param {string} options.subject - Sujet
+	 * @param {string} options.htmlContent - Contenu HTML
+	 * @param {string} options.imageUrl - URL de l'image (optionnel)
+	 * @param {string} options.newsletterId - ID de la newsletter
+	 * @param {string} options.subscriberId - ID de l'abonné
+	 * @param {string} options.subscriberEmail - Email de l'abonné
+	 * @param {string} options.previewText - Texte d'aperçu (optionnel)
+	 */
+	static sendNewsletter(options) {
+		try {
+			const {
+				to,
+				subject,
+				htmlContent,
+				imageUrl,
+				newsletterId,
+				subscriberId,
+				subscriberEmail,
+				previewText,
+			} = options;
 
-      // Générer le template HTML
-      const html = this.generateTemplate({
-        htmlContent,
-        subject,
-        imageUrl,
-        newsletterId,
-        subscriberId,
-        subscriberEmail,
-        previewText
-      });
+			// Générer le template HTML
+			const html = this.generateTemplate({
+				htmlContent,
+				subject,
+				imageUrl,
+				newsletterId,
+				subscriberId,
+				subscriberEmail,
+				previewText,
+			});
 
-      // Convertir en texte brut (seulement le contenu, pas tout le template)
-      let text = '';
-      try {
-        text = this.htmlToText(htmlContent || '');
-      } catch (textError) {
-        console.warn('⚠️  [NEWSLETTER EMAIL] Erreur lors de la conversion HTML vers texte:', textError.message);
-        // Fallback: extraire le texte manuellement
-        text = (htmlContent || '').replace(/<[^>]*>/g, '').trim();
-      }
+			// Convertir en texte brut (seulement le contenu, pas tout le template)
+			let text = "";
+			try {
+				text = this.htmlToText(htmlContent || "");
+			} catch (textError) {
+				console.warn(
+					"⚠️  [NEWSLETTER EMAIL] Erreur lors de la conversion HTML vers texte:",
+					textError.message,
+				);
+				// Fallback: extraire le texte manuellement
+				text = (htmlContent || "").replace(/<[^>]*>/g, "").trim();
+			}
 
-      return {
-        html,
-        text,
-        subject
-      };
-    } catch (error) {
-      console.error('❌ [NEWSLETTER EMAIL] Erreur dans sendNewsletter:', error);
-      throw error;
-    }
-  }
+			return {
+				html,
+				text,
+				subject,
+			};
+		} catch (error) {
+			console.error("❌ [NEWSLETTER EMAIL] Erreur dans sendNewsletter:", error);
+			throw error;
+		}
+	}
 }
 
 module.exports = NewsletterEmail;
