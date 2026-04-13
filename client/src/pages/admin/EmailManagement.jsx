@@ -7,7 +7,9 @@ import {
   Users, 
   ArrowLeft,
   CheckCircle,
-  AlertCircle
+  AlertCircle,
+  Upload,
+  Plus
 } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { useAdminApi } from '../../hooks/useAdminApi';
@@ -47,9 +49,10 @@ const EmailManagement = () => {
       toast.error('Veuillez remplir tous les champs');
       return;
     }
-
-    if (selectedUsers.length === 0) {
-      toast.error('Aucun utilisateur sélectionné');
+    
+    const hasRecipients = selectedUsers.length > 0 || userEmails.length > 0;
+    if (!hasRecipients) {
+      toast.error('Aucun destinataire sélectionné');
       return;
     }
 
@@ -98,13 +101,14 @@ const EmailManagement = () => {
       } else {
         // Si pas de [LIEN], envoyer normalement
         const data = await sendBulkEmails({
-          userIds: selectedUsers,
+          ...(selectedUsers.length > 0 && { userIds: selectedUsers }),
+          ...(selectedUsers.length === 0 && { emails: userEmails.map(e => ({ to: e, subject: formData.subject, message: formData.message })) }),
           subject: formData.subject,
           message: formData.message
         });
 
         // Le toast est déjà géré par le hook
-        navigate('/admin/users');
+        navigate('/admin/contacts');
       }
     } catch (error) {
       console.error('Send email error:', error);
@@ -123,26 +127,39 @@ const EmailManagement = () => {
       
       // Si le message contient [LIEN], récupérer le lien de reprise
       if (formData.message.includes('[LIEN]')) {
-        try {
-          const response = await getUserDraftAssessment(userId);
-          
-          if (response.success && response.hasDraft) {
-            messageToSend = formData.message.replace('[LIEN]', response.assessment.resumeLink);
-          } else {
-            // Si pas d'évaluation en cours, utiliser le lien de connexion par défaut
+        if (userId) {
+          try {
+            const response = await getUserDraftAssessment(userId);
+            
+            if (response.success && response.hasDraft) {
+              messageToSend = formData.message.replace('[LIEN]', response.assessment.resumeLink);
+            } else {
+              messageToSend = formData.message.replace('[LIEN]', `${window.location.origin}/`);
+            }
+          } catch (error) {
+            console.error('Error getting draft assessment:', error);
             messageToSend = formData.message.replace('[LIEN]', `${window.location.origin}/`);
           }
-        } catch (error) {
-          console.error('Error getting draft assessment:', error);
-          // En cas d'erreur, utiliser le lien de connexion par défaut
+        } else {
           messageToSend = formData.message.replace('[LIEN]', `${window.location.origin}/`);
         }
       }
 
-      await sendReminderEmail(userId, {
-        subject: formData.subject,
-        message: messageToSend
-      });
+      if (userId) {
+        await sendReminderEmail(userId, {
+          subject: formData.subject,
+          message: messageToSend
+        });
+      } else {
+        // Envoi direct par email si pas de userId
+        await sendBulkEmails({
+            emails: [{
+                to: email,
+                subject: formData.subject,
+                message: messageToSend
+            }]
+        });
+      }
 
       // Le toast est déjà géré par le hook
     } catch (error) {
@@ -222,26 +239,35 @@ Connectez-vous ici : ${window.location.origin}/`
       {/* Header */}
       <div className="bg-white shadow">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap justify-between items-center py-6">
+            <div className="flex flex-wrap justify-between items-center py-4">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Gestion des Emails</h1>
-              <p className="text-gray-600">Envoyez des emails de relance aux utilisateurs</p>
+              <h1 className="text-xl font-bold text-gray-900">Gestion des Emails</h1>
+              <p className="text-sm text-gray-600">Envoyez des emails de relance aux utilisateurs</p>
             </div>
-            {/* <button
-              onClick={() => navigate('/admin/users')}
-              className="flex items-center px-4 py-2 text-sm text-gray-600 hover:text-gray-900"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Retour aux utilisateurs
-            </button> */}
+            <div className="flex gap-3">
+              <button
+                onClick={() => navigate('/admin/contacts')}
+                className="flex items-center px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors shadow-sm"
+              >
+                <Users className="h-4 w-4 mr-2" />
+                Mes Contacts
+              </button>
+              <button
+                onClick={() => navigate('/admin/emails/import')}
+                className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors shadow-sm"
+              >
+                <Upload className="h-4 w-4 mr-2" />
+                Importer
+              </button>
+            </div>
           </div>
         </div>
       </div>
 
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         {/* Templates */}
-        <div className="bg-white shadow rounded-lg p-6 mb-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Modèles prédéfinis</h3>
+        <div className="bg-white shadow rounded-lg p-4 mb-4">
+          <h3 className="text-md font-medium text-gray-900 mb-3">Modèles prédéfinis</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {predefinedTemplates.map((template, index) => (
               <button
@@ -259,7 +285,7 @@ Connectez-vous ici : ${window.location.origin}/`
         {/* Email Form */}
         <div className="bg-white shadow rounded-lg p-6 mb-6">
           <form onSubmit={handleSendEmail}>
-            <div className="space-y-6">
+            <div className="space-y-4">
               <div>
                 <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
                   Objet de l'email
@@ -302,7 +328,7 @@ Connectez-vous ici : ${window.location.origin}/`
                 </button>
                 <button
                   type="submit"
-                  disabled={loading || selectedUsers.length === 0}
+                  disabled={loading || (selectedUsers.length === 0 && userEmails.length === 0)}
                   className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {loading ? (
@@ -313,7 +339,7 @@ Connectez-vous ici : ${window.location.origin}/`
                   ) : (
                     <>
                       <Send className="h-4 w-4 mr-2" />
-                      Envoyer à {selectedUsers.length} utilisateur(s)
+                      Envoyer à {selectedUsers.length || userEmails.length} destinataire(s)
                     </>
                   )}
                 </button>
@@ -323,10 +349,10 @@ Connectez-vous ici : ${window.location.origin}/`
         </div>
 
         {/* Selected Users */}
-        {selectedUsers.length > 0 && (
-          <div className="bg-white shadow rounded-lg p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">
-              Utilisateurs sélectionnés ({selectedUsers.length})
+        {(selectedUsers.length > 0 || userEmails.length > 0) && (
+          <div className="bg-white shadow rounded-lg p-4">
+            <h3 className="text-md font-medium text-gray-900 mb-3">
+              Destinataires sélectionnés ({selectedUsers.length || userEmails.length})
             </h3>
             <div className="space-y-3">
               {userEmails.map((email, index) => (
