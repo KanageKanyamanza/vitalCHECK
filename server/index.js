@@ -99,6 +99,7 @@ app.use("/api/upload", require("./routes/upload"));
 app.use("/api/chat", require("./routes/chatbot"));
 app.use("/api/notifications", require("./routes/notifications"));
 app.use("/api/newsletters", require("./routes/newsletters"));
+app.use("/api/mailing-contacts", require("./routes/mailing-contacts"));
 app.use("/api", require("./routes/ping"));
 
 // Routes SEO

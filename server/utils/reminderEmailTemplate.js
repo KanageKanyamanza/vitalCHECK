@@ -80,6 +80,51 @@ const generateReminderEmailHTML = (user, message, subject) => {
   `;
 };
 
+const generateGenericEmailHTML = (message, subject) => {
+  return `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Communication - vitalCHECK</title>
+    </head>
+    <body style="margin: 0; padding: 0; background-color: #f8fafc; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;">
+      <div style="max-width: 600px; margin: 0 auto; background-color: #ffffff; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+        
+        <!-- Header -->
+        <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); padding: 40px 30px; text-align: center;">
+          <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="vitalCHECK Logo" style="width: 60px; height: 60px; border-radius: 50%; margin-bottom: 15px;" />
+          <h1 style="color: white; margin: 0; font-size: 24px; font-weight: 700;">
+            vitalCHECK Enterprise
+          </h1>
+        </div>
+        
+        <!-- Contenu principal -->
+        <div style="padding: 40px 30px;">
+          <div style="background-color: #ffffff; border-radius: 8px; color: #2d3748; font-size: 16px; line-height: 1.6;">
+            ${message.replace(/\n/g, '<br>')}
+          </div>
+
+          <!-- Footer -->
+          <div style="border-top: 1px solid #e2e8f0; padding-top: 30px; margin-top: 40px; text-align: center;">
+            <p style="color: #64748b; margin: 0 0 10px 0; font-size: 14px;">
+              Cordialement,<br>
+              <strong style="color: #f59e0b;">L'équipe vitalCHECK</strong>
+            </p>
+            <div style="color: #94a3b8; font-size: 12px; margin-top: 20px;">
+              <p style="margin: 5px 0;">Vous recevez cet email car vous êtes inscrit dans notre carnet d'adresses.</p>
+              <p style="margin: 5px 0;">&copy; ${new Date().getFullYear()} vitalCHECK Enterprise. Tous droits réservés.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </body>
+    </html>
+  `;
+};
+
 module.exports = {
-  generateReminderEmailHTML
+  generateReminderEmailHTML,
+  generateGenericEmailHTML
 };

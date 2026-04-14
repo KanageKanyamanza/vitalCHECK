@@ -20,6 +20,8 @@ import ChatbotManagement from './ChatbotManagement';
 import NewsletterManagement from './NewsletterManagement';
 import NewsletterEditPage from './NewsletterEditPage';
 import NewsletterSubscribers from './NewsletterSubscribers';
+import ContactManagement from './ContactManagement';
+import EmailImport from './EmailImport';
 
 const AdminApp = () => {
   const isAuthenticated = () => {
@@ -164,6 +166,18 @@ const AdminApp = () => {
         path="/newsletters/subscribers" 
         element={
           isAuthenticated() ? <NewsletterSubscribers /> : <Navigate to="/login" replace />
+        } 
+      />
+      <Route 
+        path="/contacts" 
+        element={
+          isAuthenticated() ? <ContactManagement /> : <Navigate to="/login" replace />
+        } 
+      />
+      <Route 
+        path="/emails/import" 
+        element={
+          isAuthenticated() ? <EmailImport /> : <Navigate to="/login" replace />
         } 
       />
       <Route 
