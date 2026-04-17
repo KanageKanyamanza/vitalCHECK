@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
 	ArrowLeft,
@@ -28,6 +28,25 @@ const EmailImport = () => {
 	const [parsedContacts, setParsedContacts] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [importStats, setImportStats] = useState(null);
+	const [existingEmails, setExistingEmails] = useState(new Set());
+
+	useEffect(() => {
+		fetchExistingEmails();
+	}, []);
+
+	const fetchExistingEmails = async () => {
+		try {
+			const token = localStorage.getItem("adminToken");
+			const response = await axios.get(`${API_BASE_URL}/mailing-contacts/emails-only`, {
+				headers: { Authorization: `Bearer ${token}` }
+			});
+			if (response.data.success) {
+				setExistingEmails(new Set(response.data.emails.map(e => String(e).toLowerCase())));
+			}
+		} catch (error) {
+			console.error("Error fetching existing emails:", error);
+		}
+	};
 
 	// Valider un email avec regex
 	const isValidEmail = (email) => {
@@ -49,6 +68,7 @@ const EmailImport = () => {
 		const lines = manualText.split(/[\n,;]/);
 		const newContacts = [];
 		const seenEmails = new Set(parsedContacts.map(c => c.email.toLowerCase()));
+		let skippedCount = 0;
 
 		lines.forEach(line => {
 			const trimmed = line.trim();
@@ -58,6 +78,13 @@ const EmailImport = () => {
 			const emailMatch = trimmed.match(/[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/);
 			if (emailMatch) {
 				const email = emailMatch[0].toLowerCase();
+				
+				// Vérifier si déjà dans la liste actuelle OU dans la base de données
+				if (existingEmails.has(email)) {
+					skippedCount++;
+					return;
+				}
+
 				if (!seenEmails.has(email)) {
 					// Essayer d'extraire le nom si possible (Ex: "John Doe <john@example.com>")
 					let firstName = "";
@@ -77,11 +104,19 @@ const EmailImport = () => {
 		});
 
 		if (newContacts.length === 0) {
-			toast.error("Aucun email valide trouvé");
+			if (skippedCount > 0) {
+				toast.error(`${skippedCount} contact(s) déjà présent(s) en base de données`);
+			} else {
+				toast.error("Aucun email valide trouvé");
+			}
 		} else {
 			setParsedContacts([...parsedContacts, ...newContacts]);
 			setManualText("");
-			toast.success(`${newContacts.length} contact(s) ajouté(s)`);
+			if (skippedCount > 0) {
+				toast.success(`${newContacts.length} contact(s) ajouté(s), ${skippedCount} déjà présent(s) ignoré(s)`);
+			} else {
+				toast.success(`${newContacts.length} contact(s) ajouté(s)`);
+			}
 		}
 	};
 
@@ -95,49 +130,73 @@ const EmailImport = () => {
 			try {
 				const bstr = evt.target.result;
 				const wb = XLSX.read(bstr, { type: "binary" });
-				const wsname = wb.SheetNames[0];
-				const ws = wb.Sheets[wsname];
-				const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
-
-				if (data.length < 1) {
-					toast.error("Le fichier est vide");
-					return;
-				}
-
-				// Identifier les colonnes
-				const headers = data[0].map(h => String(h).toLowerCase());
-				const emailIdx = headers.findIndex(h => h.includes("email") || h.includes("mail"));
-				const firstNameIdx = headers.findIndex(h => h.includes("prenom") || h.includes("first") || h.includes("prénom"));
-				const lastNameIdx = headers.findIndex(h => h.includes("nom") || h.includes("last"));
-
-				if (emailIdx === -1) {
-					toast.error("Impossible de trouver une colonne 'Email' dans le fichier");
-					return;
-				}
-
 				const newContacts = [];
 				const seenEmails = new Set(parsedContacts.map(c => c.email.toLowerCase()));
+				let skippedCount = 0;
+				let totalFound = 0;
 
-				for (let i = 1; i < data.length; i++) {
-					const row = data[i];
-					const email = String(row[emailIdx] || "").trim().toLowerCase();
-					
-					if (email && isValidEmail(email) && !seenEmails.has(email)) {
-						newContacts.push({
-							email,
-							firstName: firstNameIdx !== -1 ? String(row[firstNameIdx] || "").trim() : "",
-							lastName: lastNameIdx !== -1 ? String(row[lastNameIdx] || "").trim() : "",
-							source: "file"
-						});
-						seenEmails.add(email);
+				// Parcourir toutes les feuilles du classeur Excel
+				wb.SheetNames.forEach((wsname) => {
+					const ws = wb.Sheets[wsname];
+					const data = XLSX.utils.sheet_to_json(ws, { header: 1 });
+
+					if (data.length < 1) return;
+
+					// Identifier les colonnes pour cette feuille spécifique
+					const headers = data[0].map(h => String(h || "").toLowerCase());
+					const emailIdx = headers.findIndex(h => h.includes("email") || h.includes("mail"));
+					const firstNameIdx = headers.findIndex(h => h.includes("prenom") || h.includes("first") || h.includes("prénom"));
+					const lastNameIdx = headers.findIndex(h => h.includes("nom") || h.includes("last"));
+					const typeIdx = headers.findIndex(h => h.includes("type") || h.includes("catégorie") || h.includes("groupe") || h.includes("category"));
+
+					// Si on ne trouve pas de colonne email dans cette feuille, on l'ignore
+					if (emailIdx === -1) return;
+
+					for (let i = 1; i < data.length; i++) {
+						const row = data[i];
+						const emailValue = row[emailIdx];
+						if (!emailValue) continue;
+
+						const email = String(emailValue).trim().toLowerCase();
+						totalFound++;
+						
+						if (email && isValidEmail(email)) {
+							// Ignorer si déjà présent en base de données
+							if (existingEmails.has(email)) {
+								skippedCount++;
+								continue;
+							}
+
+							// Ignorer si déjà présent dans la liste actuelle d'importation
+							if (!seenEmails.has(email)) {
+								newContacts.push({
+									email,
+									firstName: firstNameIdx !== -1 ? String(row[firstNameIdx] || "").trim() : "",
+									lastName: lastNameIdx !== -1 ? String(row[lastNameIdx] || "").trim() : "",
+									type: typeIdx !== -1 ? String(row[typeIdx] || "").trim() : "Prospect",
+									source: "file"
+								});
+								seenEmails.add(email);
+							}
+						}
 					}
-				}
+				});
 
 				if (newContacts.length === 0) {
-					toast.error("Aucun nouvel email valide trouvé");
+					if (skippedCount > 0) {
+						toast.error(`${skippedCount} contact(s) déjà présent(s) en base de données`);
+					} else if (totalFound === 0) {
+						toast.error("Aucun contact trouvé dans le fichier");
+					} else {
+						toast.error("Aucun nouvel email valide trouvé");
+					}
 				} else {
 					setParsedContacts([...parsedContacts, ...newContacts]);
-					toast.success(`${newContacts.length} contacts chargés depuis le fichier`);
+					if (skippedCount > 0) {
+						toast.success(`${newContacts.length} contacts chargés depuis tous les onglets, ${skippedCount} déjà présent(s) ignoré(s)`);
+					} else {
+						toast.success(`${newContacts.length} contacts chargés depuis tous les onglets du fichier`);
+					}
 				}
 			} catch (err) {
 				console.error("Excel parse error:", err);
@@ -174,6 +233,7 @@ const EmailImport = () => {
 				setImportStats(response.data.stats);
 				setParsedContacts([]);
 				toast.success(response.data.message);
+				fetchExistingEmails(); // Refresh local list of existing emails
 			}
 		} catch (error) {
 			console.error("Import error:", error);
@@ -383,7 +443,7 @@ const EmailImport = () => {
 									<button
 										onClick={handleImport}
 										disabled={loading || parsedContacts.length === 0}
-										className="flex-[2] p-3 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 disabled:opacity-50 shadow-lg shadow-primary-200 transition-all flex items-center justify-center gap-2"
+										className="flex-[2] p-3 bg-primary-600 text-white rounded-xl font-bold hover:bg-primary-700 disabled:opacity-50 shadow-lg shadow-primary-200 transition-all flex items-center justify-center gap-2 whitespace-nowrap"
 									>
 										{loading ? (
 											<>
@@ -411,7 +471,8 @@ const EmailImport = () => {
 					<div>
 						<h4 className="font-bold text-blue-900 mb-2">Conseils pour l'importation</h4>
 						<ul className="text-sm text-blue-800 space-y-1">
-							<li>• Les doublons basés sur l'adresse email seront automatiquement mis à jour.</li>
+							<li>• Les doublons déjà présents en base de données sont automatiquement ignorés lors de l'ajout.</li>
+							<li>• Les doublons au sein du même fichier/saisie sont également filtrés.</li>
 							<li>• Pour Excel/CSV, assurez-vous que les colonnes sont nommées "Email", "Prenom" et "Nom".</li>
 							<li>• Vous pouvez copier-coller du texte depuis un PDF directement dans l'onglet "Saisie manuelle".</li>
 							<li>• Tous les nouveaux contacts seront marqués avec la source "Importation".</li>

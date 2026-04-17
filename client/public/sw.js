@@ -93,18 +93,29 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// Gestion des notifications push (optionnel)
+// Gestion des notifications push
 self.addEventListener('push', (event) => {
+  let data = {};
+  if (event.data) {
+    try {
+      data = event.data.json();
+    } catch (e) {
+      data = { notification: { body: event.data.text() } };
+    }
+  }
+
+  const notification = data.notification || {};
   const options = {
-    body: event.data ? event.data.text() : 'Nouvelle notification vitalCHECK',
-    icon: '/android-icon-192x192.png',
-    badge: '/android-icon-96x96.png',
-    vibrate: [100, 50, 100],
+    body: notification.body || 'Nouvelle notification vitalCHECK',
+    icon: notification.icon || '/android-icon-192x192.png',
+    badge: notification.badge || '/android-icon-96x96.png',
+    vibrate: notification.vibrate || [100, 50, 100],
     data: {
       dateOfArrival: Date.now(),
-      primaryKey: 1
+      primaryKey: 1,
+      url: notification.data?.url || '/'
     },
-    actions: [
+    actions: notification.actions && notification.actions.length > 0 ? notification.actions : [
       {
         action: 'explore',
         title: 'Voir les détails',
@@ -119,17 +130,30 @@ self.addEventListener('push', (event) => {
   };
 
   event.waitUntil(
-    self.registration.showNotification('vitalCHECK Enterprise Health Check', options)
+    self.registration.showNotification(notification.title || 'vitalCHECK Enterprise Health Check', options)
   );
 });
 
 // Gestion des clics sur les notifications
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
+  const url = event.notification.data?.url || '/';
 
-  if (event.action === 'explore') {
+  if (event.action !== 'close') {
     event.waitUntil(
-      clients.openWindow('/')
+      clients.matchAll({ type: 'window', includeUncontrolled: true }).then((windowClients) => {
+        // Si une fenêtre est déjà ouverte sur l'URL, on la focalise
+        for (let i = 0; i < windowClients.length; i++) {
+          const client = windowClients[i];
+          if (client.url.includes(url) && 'focus' in client) {
+            return client.focus();
+          }
+        }
+        // Sinon on ouvre une nouvelle fenêtre
+        if (clients.openWindow) {
+          return clients.openWindow(url);
+        }
+      })
     );
   }
 });
