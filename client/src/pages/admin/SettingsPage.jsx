@@ -24,6 +24,7 @@ import { useAdminApi } from '../../hooks/useAdminApi';
 const SettingsPage = () => {
   const [activeTab, setActiveTab] = useState('profile');
   const [loading, setLoading] = useState(false);
+  const [currentAdminRole, setCurrentAdminRole] = useState('admin');
   const [showPassword, setShowPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -34,6 +35,7 @@ const SettingsPage = () => {
     name: '',
     email: '',
     avatar: null,
+    signature: '',
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
@@ -58,15 +60,23 @@ const SettingsPage = () => {
     loadAdmins();
   }, []);
 
+  useEffect(() => {
+    if (activeTab === 'admins' && currentAdminRole !== 'superadmin') {
+      setActiveTab('profile');
+    }
+  }, [activeTab, currentAdminRole]);
+
   const loadAdminData = () => {
     const storedAdmin = localStorage.getItem('adminData');
     if (storedAdmin) {
       const admin = JSON.parse(storedAdmin);
+      setCurrentAdminRole(admin.role || 'admin');
       setAdminData(prev => ({
         ...prev,
         name: admin.name || '',
         email: admin.email || '',
-        avatar: admin.avatar?.url || null
+        avatar: admin.avatar?.url || null,
+        signature: admin.signature || ''
       }));
     }
   };
@@ -95,7 +105,8 @@ const SettingsPage = () => {
       setLoading(true);
       const updateData = {
         name: adminData.name,
-        email: adminData.email
+        email: adminData.email,
+        signature: adminData.signature
       };
 
       if (adminData.newPassword) {
@@ -105,16 +116,14 @@ const SettingsPage = () => {
 
       await updateAdmin(updateData);
       
-      // Mettre à jour les données locales
       const storedAdmin = JSON.parse(localStorage.getItem('adminData'));
       if (storedAdmin) {
         const updatedAdmin = { ...storedAdmin, ...updateData };
         localStorage.setItem('adminData', JSON.stringify(updatedAdmin));
       }
       
-      toast.success('Profil mis à jour avec succès');
+      toast.success('Profil mis à jour');
       
-      // Réinitialiser les champs de mot de passe
       setAdminData(prev => ({
         ...prev,
         currentPassword: '',
@@ -123,7 +132,7 @@ const SettingsPage = () => {
       }));
     } catch (error) {
       console.error('Update admin error:', error);
-      toast.error('Erreur lors de la mise à jour du profil');
+      toast.error('Erreur lors de la mise à jour');
     } finally {
       setLoading(false);
     }
@@ -143,7 +152,7 @@ const SettingsPage = () => {
     try {
       setLoading(true);
       await createAdmin(newAdmin);
-      toast.success('Administrateur créé avec succès');
+      toast.success('Administrateur créé');
       setShowCreateAdmin(false);
       setNewAdmin({
         name: '',
@@ -155,7 +164,7 @@ const SettingsPage = () => {
       loadAdmins();
     } catch (error) {
       console.error('Create admin error:', error);
-      toast.error('Erreur lors de la création de l\'administrateur');
+      toast.error('Erreur lors de la création');
     } finally {
       setLoading(false);
     }
@@ -165,7 +174,7 @@ const SettingsPage = () => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cet administrateur ?')) {
       try {
         await deleteAdmin(adminId);
-        toast.success('Administrateur supprimé avec succès');
+        toast.success('Administrateur supprimé');
         loadAdmins();
       } catch (error) {
         console.error('Delete admin error:', error);
@@ -177,15 +186,13 @@ const SettingsPage = () => {
   const handleAvatarChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
-      // Vérifier la taille du fichier (max 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        toast.error('Le fichier est trop volumineux (max 5MB)');
+        toast.error('Max 5MB');
         return;
       }
 
-      // Vérifier le type de fichier
       if (!file.type || !file.type.startsWith('image/')) {
-        toast.error('Seuls les fichiers image sont autorisés');
+        toast.error('Images uniquement');
         return;
       }
 
@@ -193,23 +200,21 @@ const SettingsPage = () => {
         setLoading(true);
         const response = await uploadAvatar(file);
         
-        // Mettre à jour l'avatar dans l'état local
         setAdminData(prev => ({
           ...prev,
           avatar: response.avatar.url
         }));
 
-        // Mettre à jour les données locales
         const storedAdmin = JSON.parse(localStorage.getItem('adminData'));
         if (storedAdmin) {
           storedAdmin.avatar = response.avatar;
           localStorage.setItem('adminData', JSON.stringify(storedAdmin));
         }
 
-        toast.success('Avatar mis à jour avec succès');
+        toast.success('Avatar mis à jour');
       } catch (error) {
         console.error('Upload avatar error:', error);
-        toast.error('Erreur lors de l\'upload de l\'avatar');
+        toast.error('Erreur lors de l\'upload');
       } finally {
         setLoading(false);
       }
@@ -218,26 +223,23 @@ const SettingsPage = () => {
 
   const tabs = [
     { id: 'profile', name: 'Mon Profil', icon: User },
-    { id: 'admins', name: 'Administrateurs', icon: UserPlus },
-    // { id: 'notifications', name: 'Notifications', icon: Bell },
-    // { id: 'system', name: 'Système', icon: Settings },
-    // { id: 'security', name: 'Sécurité', icon: Shield }
+    ...(currentAdminRole === 'superadmin' ? [{ id: 'admins', name: 'Administrateurs', icon: UserPlus }] : []),
   ];
 
   const renderProfileTab = () => (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Avatar */}
-      <div className="flex items-center space-x-6">
-        <div className="relative">
-          <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+      <div className="flex items-center space-x-4 pb-4 border-b border-gray-50">
+        <div className="relative group">
+          <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border-2 border-white shadow-sm ring-1 ring-gray-100">
             {adminData.avatar ? (
               <img src={adminData.avatar} alt="Avatar" className="w-full h-full object-cover" />
             ) : (
-              <User className="w-10 h-10 text-gray-400" />
+              <User className="w-8 h-8 text-gray-300" />
             )}
           </div>
-          <label className="absolute bottom-0 right-0 bg-primary-600 text-white rounded-full p-2 cursor-pointer hover:bg-primary-700">
-            <Camera className="w-4 h-4" />
+          <label className="absolute -bottom-1 -right-1 bg-primary-600 text-white rounded-full p-1.5 cursor-pointer hover:bg-primary-700 shadow-md transition-transform hover:scale-110">
+            <Camera className="w-3 h-3" />
             <input
               type="file"
               accept="image/*"
@@ -247,47 +249,59 @@ const SettingsPage = () => {
           </label>
         </div>
         <div>
-          <h3 className="text-lg font-medium text-gray-900">Photo de profil</h3>
-          <p className="text-sm text-gray-500">JPG, PNG ou GIF. Max 2MB.</p>
+          <h3 className="text-sm font-black text-gray-900 leading-tight">Photo de profil</h3>
+          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Format JPG/PNG • Max 2MB</p>
         </div>
       </div>
 
       {/* Informations de base */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-[10px] font-black text-gray-400 uppercase mb-1.5 tracking-widest">
             Nom complet *
           </label>
           <input
             type="text"
             value={adminData.name}
             onChange={(e) => setAdminData(prev => ({ ...prev, name: e.target.value }))}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full px-3 py-1.5 bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-xs text-gray-900 font-bold"
             placeholder="Votre nom complet"
           />
         </div>
         
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">
+          <label className="block text-[10px] font-black text-gray-400 uppercase mb-1.5 tracking-widest">
             Email *
           </label>
           <input
             type="email"
             value={adminData.email}
             onChange={(e) => setAdminData(prev => ({ ...prev, email: e.target.value }))}
-            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="w-full px-3 py-1.5 bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-xs text-gray-900 font-bold"
             placeholder="votre@email.com"
+          />
+        </div>
+
+        <div className="md:col-span-2">
+          <label className="block text-[10px] font-black text-gray-400 uppercase mb-1.5 tracking-widest flex items-center gap-2">
+            <Edit3 className="w-3.5 h-3.5" /> Signature
+          </label>
+          <textarea
+            value={adminData.signature}
+            onChange={(e) => setAdminData(prev => ({ ...prev, signature: e.target.value }))}
+            className="w-full px-3 py-2 bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 min-h-[80px] text-xs font-bold"
+            placeholder="Cordialement,&#10;Votre Nom"
           />
         </div>
       </div>
 
       {/* Changement de mot de passe */}
-      <div className="border-t pt-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Changer le mot de passe</h3>
+      <div className="border-t border-gray-50 pt-5">
+        <h3 className="text-xs font-black text-gray-900 mb-3 uppercase tracking-widest">Sécurité</h3>
         
-        <div className="space-y-4">
+        <div className="space-y-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-[10px] font-black text-gray-400 uppercase mb-1.5 tracking-widest">
               Mot de passe actuel
             </label>
             <div className="relative">
@@ -295,22 +309,21 @@ const SettingsPage = () => {
                 type={showPassword ? "text" : "password"}
                 value={adminData.currentPassword}
                 onChange={(e) => setAdminData(prev => ({ ...prev, currentPassword: e.target.value }))}
-                className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                placeholder="Mot de passe actuel"
+                className="w-full px-3 py-1.5 pr-10 bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-xs font-bold"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
                 className="absolute inset-y-0 right-0 pr-3 flex items-center"
               >
-                {showPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
+                {showPassword ? <EyeOff className="h-3.5 w-3.5 text-gray-400" /> : <Eye className="h-3.5 w-3.5 text-gray-400" />}
               </button>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-[10px] font-black text-gray-400 uppercase mb-1.5 tracking-widest">
                 Nouveau mot de passe
               </label>
               <div className="relative">
@@ -318,37 +331,35 @@ const SettingsPage = () => {
                   type={showNewPassword ? "text" : "password"}
                   value={adminData.newPassword}
                   onChange={(e) => setAdminData(prev => ({ ...prev, newPassword: e.target.value }))}
-                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  placeholder="Nouveau mot de passe"
+                  className="w-full px-3 py-1.5 pr-10 bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-xs font-bold"
                 />
                 <button
                   type="button"
                   onClick={() => setShowNewPassword(!showNewPassword)}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
                 >
-                  {showNewPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
+                  {showNewPassword ? <EyeOff className="h-3.5 w-3.5 text-gray-400" /> : <Eye className="h-3.5 w-3.5 text-gray-400" />}
                 </button>
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Confirmer le mot de passe
+              <label className="block text-[10px] font-black text-gray-400 uppercase mb-1.5 tracking-widest">
+                Confirmer
               </label>
               <div className="relative">
                 <input
                   type={showConfirmPassword ? "text" : "password"}
                   value={adminData.confirmPassword}
                   onChange={(e) => setAdminData(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                  className="w-full px-3 py-2 pr-10 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  placeholder="Confirmer le mot de passe"
+                  className="w-full px-3 py-1.5 pr-10 bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-xs font-bold"
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
                   className="absolute inset-y-0 right-0 pr-3 flex items-center"
                 >
-                  {showConfirmPassword ? <EyeOff className="h-4 w-4 text-gray-400" /> : <Eye className="h-4 w-4 text-gray-400" />}
+                  {showConfirmPassword ? <EyeOff className="h-3.5 w-3.5 text-gray-400" /> : <Eye className="h-3.5 w-3.5 text-gray-400" />}
                 </button>
               </div>
             </div>
@@ -356,96 +367,82 @@ const SettingsPage = () => {
         </div>
       </div>
 
-      <div className="flex justify-end">
+      <div className="flex justify-end pt-2">
         <button
           onClick={handleAdminUpdate}
           disabled={loading || apiLoading}
-          className="bg-primary-600 text-white px-6 py-2 rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center"
+          className="bg-primary-600 text-white px-5 py-2 rounded-lg hover:bg-primary-700 disabled:opacity-50 transition-all shadow-lg shadow-primary-100 flex items-center text-xs font-black uppercase tracking-widest"
         >
           {loading ? (
-            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+            <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-2"></div>
           ) : (
-            <Save className="h-4 w-4 mr-2" />
+            <Save className="h-3.5 w-3.5 mr-2" />
           )}
-          Sauvegarder les modifications
+          Enregistrer
         </button>
       </div>
     </div>
   );
 
   const renderAdminsTab = () => (
-    <div className="space-y-6">
-      <div className="flex flex-wrap gap-1 justify-between items-center">
+    <div className="space-y-5">
+      <div className="flex flex-wrap gap-2 justify-between items-center">
         <div>
-          <h3 className="text-lg font-medium text-gray-900">Administrateurs</h3>
-          <p className="text-sm text-gray-500">Gérez les comptes administrateurs</p>
+          <h3 className="text-sm font-black text-gray-900 leading-tight">Gestion des accès</h3>
+          <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Comptes administrateurs</p>
         </div>
         <button
           onClick={() => setShowCreateAdmin(true)}
-          className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 flex items-center"
+          className="bg-primary-600 text-white px-4 py-1.5 rounded-lg hover:bg-primary-700 flex items-center text-xs font-black transition-all shadow-md shadow-primary-50"
         >
-          <UserPlus className="h-4 w-4 mr-2" />
-          Ajouter un admin
+          <UserPlus className="h-3.5 w-3.5 mr-2" />
+          Nouveau
         </button>
       </div>
 
-      {/* Liste des admins */}
-      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+      <div className="bg-white border border-gray-100 rounded-xl overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <table className="min-w-full divide-y divide-gray-100">
+            <thead className="bg-gray-50/50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Administrateur
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Email
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Rôle
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Créé le
-                </th>
-                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Actions
-                </th>
+                <th className="px-4 py-2 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Admin</th>
+                <th className="px-4 py-2 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Email</th>
+                <th className="px-4 py-2 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">Rôle</th>
+                <th className="px-4 py-2 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            <tbody className="bg-white divide-y divide-gray-50">
               {admins.map((admin) => (
-                <tr key={admin._id}>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                <tr key={admin._id} className="hover:bg-gray-50/50">
+                  <td className="px-4 py-2.5 whitespace-nowrap">
                     <div className="flex items-center">
-                      <div className="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center">
+                      <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center overflow-hidden border border-gray-200">
                         {admin.avatar?.url ? (
-                          <img src={admin.avatar.url} alt={admin.name} className="w-full h-full object-cover rounded-full" />
+                          <img src={admin.avatar.url} alt={admin.name} className="w-full h-full object-cover" />
                         ) : (
-                          <User className="w-5 h-5 text-gray-400" />
+                          <User className="w-4 h-4 text-gray-400" />
                         )}
                       </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{admin.name}</div>
+                      <div className="ml-3">
+                        <div className="text-xs font-black text-gray-900">{admin.name}</div>
+                        <div className="text-[9px] text-gray-400 uppercase font-bold tracking-tighter">Créé {new Date(admin.createdAt).toLocaleDateString()}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                  <td className="px-4 py-2.5 whitespace-nowrap text-xs font-bold text-gray-600">
                     {admin.email}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-primary-100 text-primary-800">
+                  <td className="px-4 py-2.5 whitespace-nowrap">
+                    <span className="inline-flex px-1.5 py-0.5 text-[9px] font-black rounded-full bg-primary-50 text-primary-700 border border-primary-100 uppercase tracking-widest">
                       {admin.role || 'admin'}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(admin.createdAt).toLocaleDateString('fr-FR')}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                  <td className="px-4 py-2.5 whitespace-nowrap text-right">
                     <button
                       onClick={() => handleDeleteAdmin(admin._id)}
-                      className="text-red-600 hover:text-red-900"
+                      className="p-1 px-1.5 text-gray-400 hover:text-red-600 hover:bg-white rounded transition-all border border-transparent hover:border-gray-100"
                     >
-                      <Trash2 className="h-4 w-4" />
+                      <Trash2 className="h-3.5 w-3.5" />
                     </button>
                   </td>
                 </tr>
@@ -455,88 +452,75 @@ const SettingsPage = () => {
         </div>
       </div>
 
-      {/* Modal de création d'admin */}
       {showCreateAdmin && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg p-6 w-full max-w-md">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-lg font-medium text-gray-900">Créer un administrateur</h3>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[70] p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 border border-gray-100">
+            <div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+              <h3 className="font-bold text-gray-900 flex items-center gap-2">
+                <UserPlus className="w-4 h-4 text-primary-600" />
+                Nouvel Administrateur
+              </h3>
               <button
                 onClick={() => setShowCreateAdmin(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="p-2 text-gray-400 hover:bg-gray-200 rounded-lg transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="space-y-4">
+            <div className="p-6 space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Nom complet *
-                </label>
+                <label className="block text-[10px] font-black text-gray-400 uppercase mb-1.5 tracking-widest">Nom complet *</label>
                 <input
                   type="text"
                   value={newAdmin.name}
                   onChange={(e) => setNewAdmin(prev => ({ ...prev, name: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  placeholder="Nom complet"
+                  className="w-full px-4 py-2 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none text-sm font-bold"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Email *
-                </label>
+                <label className="block text-[10px] font-black text-gray-400 uppercase mb-1.5 tracking-widest">Email *</label>
                 <input
                   type="email"
                   value={newAdmin.email}
                   onChange={(e) => setNewAdmin(prev => ({ ...prev, email: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  placeholder="email@example.com"
+                  className="w-full px-4 py-2 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none text-sm font-bold"
                 />
               </div>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Mot de passe *
-                </label>
-                <input
-                  type="password"
-                  value={newAdmin.password}
-                  onChange={(e) => setNewAdmin(prev => ({ ...prev, password: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  placeholder="Mot de passe"
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Confirmer le mot de passe *
-                </label>
-                <input
-                  type="password"
-                  value={newAdmin.confirmPassword}
-                  onChange={(e) => setNewAdmin(prev => ({ ...prev, confirmPassword: e.target.value }))}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
-                  placeholder="Confirmer le mot de passe"
-                />
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase mb-1.5 tracking-widest">Pass *</label>
+                  <input
+                    type="password"
+                    value={newAdmin.password}
+                    onChange={(e) => setNewAdmin(prev => ({ ...prev, password: e.target.value }))}
+                    className="w-full px-4 py-2 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none text-sm font-bold"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-black text-gray-400 uppercase mb-1.5 tracking-widest">Confirmer *</label>
+                  <input
+                    type="password"
+                    value={newAdmin.confirmPassword}
+                    onChange={(e) => setNewAdmin(prev => ({ ...prev, confirmPassword: e.target.value }))}
+                    className="w-full px-4 py-2 bg-gray-50/50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-primary-500 outline-none text-sm font-bold"
+                  />
+                </div>
               </div>
             </div>
 
-            <div className="flex justify-end space-x-3 mt-6">
+            <div className="px-6 py-4 bg-gray-50 overflow-hidden border-t border-gray-100 flex gap-3">
               <button
                 onClick={() => setShowCreateAdmin(false)}
-                className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
-              >
-                Annuler
-              </button>
+                className="flex-1 py-2 px-4 bg-white border border-gray-200 text-gray-700 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-gray-50 transition-all"
+              > Annuler </button>
               <button
                 onClick={handleCreateAdmin}
                 disabled={loading}
-                className="px-4 py-2 text-sm font-medium text-white bg-primary-600 rounded-md hover:bg-primary-700 disabled:opacity-50"
-              >
-                {loading ? 'Création...' : 'Créer'}
-              </button>
+                className="flex-1 py-2 px-4 bg-primary-600 text-white rounded-xl text-xs font-black uppercase tracking-widest hover:bg-primary-700 shadow-lg shadow-primary-100 transition-all flex items-center justify-center"
+              > {loading ? 'En cours...' : 'Créer'} </button>
             </div>
           </div>
         </div>
@@ -546,84 +530,50 @@ const SettingsPage = () => {
 
   const renderTabContent = () => {
     switch (activeTab) {
-      case 'profile':
-        return renderProfileTab();
-      case 'admins':
-        return renderAdminsTab();
-      case 'notifications':
-        return (
-          <div className="text-center py-12">
-            <Bell className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">Notifications</h3>
-            <p className="mt-1 text-sm text-gray-500">Fonctionnalité à venir</p>
-          </div>
-        );
-      case 'system':
-        return (
-          <div className="text-center py-12">
-            <Settings className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">Paramètres système</h3>
-            <p className="mt-1 text-sm text-gray-500">Fonctionnalité à venir</p>
-          </div>
-        );
-      case 'security':
-        return (
-          <div className="text-center py-12">
-            <Shield className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">Sécurité</h3>
-            <p className="mt-1 text-sm text-gray-500">Fonctionnalité à venir</p>
-          </div>
-        );
-      default:
-        return renderProfileTab();
+      case 'profile': return renderProfileTab();
+      case 'admins': return currentAdminRole === 'superadmin' ? renderAdminsTab() : renderProfileTab();
+      default: return renderProfileTab();
     }
   };
 
   return (
     <AdminLayout>
-      <div className="pb-10">
-        {/* Header */}
-        <div className="bg-white shadow">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex flex-wrap justify-between items-center py-6">
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900">Paramètres</h1>
-                <p className="mt-1 text-sm text-gray-500">
-                  Gérez votre profil et les administrateurs
+      <div className="p-4 lg:p-5">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+            <div>
+                <h1 className="text-xl font-black text-gray-900 tracking-tight leading-none uppercase">
+                    Paramètres
+                </h1>
+                <p className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">
+                    Gestion du profil et des accès système
                 </p>
-              </div>
             </div>
-          </div>
         </div>
 
-        {/* Content */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-            {/* Tabs */}
-            <div className="border-b border-gray-200">
-              <nav className=" flex space-x-8 px-6 overflow-x-auto">
+        <div className="bg-white shadow-sm rounded-2xl border border-gray-100 overflow-hidden">
+            {/* Tabs Navigation */}
+            <div className="border-b border-gray-50 bg-gray-50/30 px-2 flex gap-1 overflow-x-auto">
                 {tabs.map((tab) => (
-                  <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center whitespace-nowrap ${
-                      activeTab === tab.id
-                        ? 'border-primary-500 text-primary-600'
-                        : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                    }`}
-                  >
-                    <tab.icon className="h-4 w-4 mr-2 " />
-                    {tab.name}
-                  </button>
+                    <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={`py-3 px-4 flex items-center gap-2 transition-all border-b-2 font-black text-[10px] uppercase tracking-widest ${
+                            activeTab === tab.id
+                                ? 'border-primary-600 text-primary-600 bg-white shadow-sm'
+                                : 'border-transparent text-gray-400 hover:text-gray-600'
+                        }`}
+                    >
+                        <tab.icon className="w-3.5 h-3.5" />
+                        {tab.name}
+                    </button>
                 ))}
-              </nav>
             </div>
 
             {/* Tab Content */}
             <div className="p-6">
-              {renderTabContent()}
+                {renderTabContent()}
             </div>
-          </div>
         </div>
       </div>
     </AdminLayout>

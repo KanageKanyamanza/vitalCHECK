@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -6,7 +7,7 @@ const cookieParser = require("cookie-parser");
 // Rate limiting désactivé - express-rate-limit retiré
 const { initAdmin } = require("./scripts/init-admin");
 const { startNewsletterScheduler } = require("./utils/newsletterScheduler");
-require("dotenv").config();
+const { startEmailSyncScheduler } = require("./utils/emailSyncScheduler");
 
 const app = express();
 
@@ -100,6 +101,7 @@ app.use("/api/chat", require("./routes/chatbot"));
 app.use("/api/notifications", require("./routes/notifications"));
 app.use("/api/newsletters", require("./routes/newsletters"));
 app.use("/api/mailing-contacts", require("./routes/mailing-contacts"));
+app.use("/api/messages", require("./routes/messages"));
 app.use("/api", require("./routes/ping"));
 
 // Routes SEO
@@ -181,6 +183,13 @@ const connectDB = async () => {
 		startNewsletterScheduler({
 			enabled: schedulerEnabled,
 			intervalMs,
+			logger: console,
+		});
+
+		// Démarrer la synchronisation des emails (toutes les 5 minutes par défaut)
+		startEmailSyncScheduler({
+			enabled: true,
+			intervalMs: 5 * 60 * 1000,
 			logger: console,
 		});
 	} catch (error) {

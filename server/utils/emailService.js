@@ -1,14 +1,17 @@
 const nodemailer = require('nodemailer');
 const { sendEmailExternal } = require('./emailServiceExternal');
 const { createUnifiedEmailTemplate } = require('./emailTemplates');
+const Message = require('../models/Message');
+const Contact = require('../models/Contact');
+const MailingContact = require('../models/MailingContact');
+const User = require('../models/User');
 
-// Create transporter
 const createTransporter = () => {
-  // Configuration SMTP directe dans le code (plus fiable sur Render)
+  // Configuration SMTP dynamique basée sur le .env (priorité Ionos)
   const config = {
-    host: 'smtp.gmail.com',
-    port: 587,
-    secure: false, // true for 465, false for other ports
+    host: process.env.EMAIL_HOST || 'smtp.ionos.fr',
+    port: parseInt(process.env.EMAIL_PORT) || 587,
+    secure: process.env.EMAIL_PORT == 465, // true pour 465, false pour 587
     auth: {
       user: process.env.EMAIL_USER,
       pass: process.env.EMAIL_PASS
@@ -16,26 +19,22 @@ const createTransporter = () => {
     tls: {
       rejectUnauthorized: false
     },
-    // Configuration optimisée pour Render
-    connectionTimeout: 15000, // 15 secondes
-    greetingTimeout: 15000,   // 15 secondes
-    socketTimeout: 15000,     // 15 secondes
-    // Pas de pool sur Render pour éviter les problèmes
+    // Configuration optimisée
+    connectionTimeout: 15000,
+    greetingTimeout: 15000,
+    socketTimeout: 15000,
     pool: false,
     maxConnections: 1,
     maxMessages: 1,
-    // Configuration simple
     debug: false,
     logger: false
   };
 
-  console.log('🔧 [EMAIL] Configuration SMTP directe:', {
+  console.log('🔧 [EMAIL] Configuration SMTP:', {
     host: config.host,
     port: config.port,
     user: process.env.EMAIL_USER ? 'Configuré' : 'Manquant',
-    pass: process.env.EMAIL_PASS ? 'Configuré' : 'Manquant',
-    connectionTimeout: config.connectionTimeout,
-    pool: config.pool
+    pass: process.env.EMAIL_PASS ? 'Configuré' : 'Manquant'
   });
 
   return nodemailer.createTransport(config);
@@ -79,6 +78,19 @@ const sendEmail = async (emailOptions, retryCount = 0) => {
       response: result.response,
       attempt: retryCount + 1
     });
+
+    // Enregistrer le message sortant dans la base de données
+    if (!emailOptions.skipTracking) {
+      saveOutboundEmail(
+        mailOptions, 
+        result.messageId, 
+        emailOptions.contactId, 
+        emailOptions.contactModel,
+        emailOptions.rawContent // Nouveau : passer le contenu brut
+      ).catch(err => 
+        console.error('❌ [EMAIL TRACKING] Erreur lors de l\'enregistrement du message sortant:', err.message)
+      );
+    }
     
     return result;
     
@@ -678,6 +690,59 @@ const sendPasswordResetEmail = async (to, name, resetToken) => {
   return sendEmail(mailOptions);
 };
 
+/**
+ * Utilitaire pour enregistrer un email sortant dans la collection Message
+ */
+const saveOutboundEmail = async (mailOptions, messageId, providedContactId = null, providedContactModel = null, rawContent = null) => {
+  try {
+    const toEmail = Array.isArray(mailOptions.to) ? mailOptions.to[0] : mailOptions.to;
+    const cleanEmail = (toEmail || '').toLowerCase().trim();
+    
+    let contactId = providedContactId;
+    let contactModel = providedContactModel || 'Contact';
+    
+    // Si l'ID n'est pas fourni, on cherche par email
+    if (!contactId) {
+      const contact = await Contact.findOne({ email: cleanEmail });
+      if (contact) {
+        contactId = contact._id;
+        contactModel = 'Contact';
+      } else {
+        const user = await User.findOne({ email: cleanEmail });
+        if (user) {
+          contactId = user._id;
+          contactModel = 'User';
+        } else {
+          const mailing = await MailingContact.findOne({ email: cleanEmail });
+          if (mailing) {
+            contactId = mailing._id;
+            contactModel = 'MailingContact';
+          }
+        }
+      }
+    }
+    
+    if (contactId) {
+      const newMessage = new Message({
+        contactId,
+        contactModel,
+        direction: 'outbound',
+        from: mailOptions.from?.includes('<') ? mailOptions.from.split('<')[1].replace('>', '') : mailOptions.from,
+        to: cleanEmail,
+        subject: mailOptions.subject,
+        body: rawContent || mailOptions.text || mailOptions.html || '', // Utiliser rawContent si disponible
+        htmlBody: mailOptions.html,
+        date: new Date(),
+        messageId: messageId,
+        isRead: true
+      });
+      await newMessage.save();
+    }
+  } catch (error) {
+    console.error('Error saving outbound email:', error);
+  }
+};
+
 module.exports = {
   sendEmail,
   testEmailConfig,
@@ -691,6 +756,7 @@ module.exports = {
   sendSubscriptionUpgradeEmail,
   sendPasswordResetEmail,
   emailService: {
+    sendEmail,
     sendContactConfirmation,
     sendContactNotification,
     sendPaymentEmail,

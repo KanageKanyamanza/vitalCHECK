@@ -17,7 +17,7 @@ const {
   exportUsersToPDF,
   exportAssessmentsToPDF
 } = require('../utils/exportUtils');
-const { generateReminderEmailHTML, generateGenericEmailHTML } = require('../utils/reminderEmailTemplate');
+const { createUnifiedEmailTemplate } = require('../utils/emailTemplates');
 const { uploadSingleImage, uploadToCloudinary, deleteImage } = require('../config/cloudinary');
 const router = express.Router();
 const { authenticateAdmin, checkPermission } = require('../middleware/auth');
@@ -410,227 +410,6 @@ router.get('/assessments/:assessmentId', authenticateAdmin, checkPermission('vie
   }
 });
 
-// Envoyer un email de relance
-router.post('/users/:userId/remind', authenticateAdmin, checkPermission('sendEmails'), [
-  body('subject').trim().isLength({ min: 1 }),
-  body('message').trim().isLength({ min: 1 })
-], async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { subject, message } = req.body;
-    const user = await User.findById(req.params.userId);
-
-    if (!user) {
-      return res.status(404).json({ 
-        success: false, 
-        message: 'Utilisateur non trouvé' 
-      });
-    }
-
-    const emailData = {
-      to: user.email,
-      subject: subject,
-      html: generateReminderEmailHTML(user, message, subject)
-    };
-
-    // Vérifier la configuration email avant d'envoyer
-    console.log('🔍 [EMAIL] Vérification de la configuration email...', {
-      EMAIL_HOST: process.env.EMAIL_HOST,
-      EMAIL_PORT: process.env.EMAIL_PORT,
-      EMAIL_USER: process.env.EMAIL_USER ? 'Configuré' : 'Manquant',
-      EMAIL_PASS: process.env.EMAIL_PASS ? 'Configuré' : 'Manquant',
-      EMAIL_FROM: process.env.EMAIL_FROM
-    });
-
-    // Essayer d'abord la méthode normale, puis l'externe
-    try {
-      console.log('📧 [EMAIL] Tentative d\'envoi avec configuration normale...');
-      const result = await sendEmail(emailData);
-      
-      console.log('✅ [EMAIL] Email de relance envoyé avec succès à:', user.email, {
-        messageId: result.messageId,
-        response: result.response
-      });
-
-      res.json({
-        success: true,
-        message: 'Email de relance envoyé avec succès !'
-      });
-    } catch (emailError) {
-      console.error('❌ [EMAIL] Erreur avec configuration normale:', {
-        userId: user._id,
-        email: user.email,
-        error: emailError.message,
-        code: emailError.code
-      });
-
-      // Dernier recours: service externe
-      try {
-        console.log('🌐 [EMAIL] Tentative avec service externe...');
-          const { sendEmailExternal } = require('../utils/emailServiceExternal');
-          const result = await sendEmailExternal(emailData);
-          
-          console.log('✅ [EMAIL] Email de relance envoyé avec succès (externe) à:', user.email, {
-            messageId: result.messageId,
-            response: result.response
-          });
-
-          res.json({
-            success: true,
-            message: 'Email de relance envoyé avec succès !'
-          });
-        } catch (extError) {
-          console.error('❌ [EMAIL] Erreur avec service externe:', {
-            userId: user._id,
-            email: user.email,
-            error: extError.message
-          });
-
-          res.status(500).json({
-            success: false,
-            message: `Erreur lors de l'envoi de l'email: ${extError.message}`
-          });
-        }
-      }
-
-  } catch (error) {
-    console.error('Send reminder email error:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Erreur lors de l\'envoi de l\'email' 
-    });
-  }
-});
-
-// Envoyer un email de relance en masse
-router.post('/users/remind-bulk', authenticateAdmin, checkPermission('sendEmails'), [
-  body('userIds').optional().isArray({ min: 1 }),
-  body('emails').optional().isArray({ min: 1 }),
-  body('subject').optional().trim().isLength({ min: 1 }),
-  body('message').optional().trim().isLength({ min: 1 })
-], async (req, res) => {
-  try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { userIds, emails, subject, message } = req.body;
-
-    // Support pour les deux formats : userIds + message commun OU emails personnalisés
-    if (emails && emails.length > 0) {
-      // Format avec emails personnalisés
-      const emailPromises = emails.map(async (emailData) => {
-        // Utiliser le nouveau template générique pour les contacts importés/manuels
-        const html = generateGenericEmailHTML(emailData.message, emailData.subject);
-        
-        const emailOptions = {
-          to: emailData.to,
-          subject: emailData.subject,
-          html: html
-        };
-
-        // Essayer d'abord la méthode normale, puis l'externe
-        try {
-          return await sendEmail(emailOptions);
-        } catch (error) {
-          console.error('❌ [EMAIL BULK] Erreur configuration normale:', error.message);
-          
-          try {
-            const { sendEmailExternal } = require('../utils/emailServiceExternal');
-            return await sendEmailExternal(emailOptions);
-          } catch (extError) {
-            console.error('❌ [EMAIL BULK] Erreur service externe:', extError.message);
-            throw extError;
-          }
-        }
-      });
-
-      await Promise.all(emailPromises);
-
-      res.json({
-        success: true,
-        message: `${emails.length} emails personnalisés envoyés avec succès`
-      });
-    } else if (userIds && userIds.length > 0) {
-      // Format classique avec userIds et message commun
-      const users = await User.find({ _id: { $in: userIds } });
-
-      if (users.length === 0) {
-        return res.status(404).json({ 
-          success: false, 
-          message: 'Aucun utilisateur trouvé' 
-        });
-      }
-
-      // Répondre immédiatement au client
-      res.json({
-        success: true,
-        message: `Envoi de ${users.length} emails de relance en cours...`
-      });
-
-      // Envoyer les emails de manière asynchrone avec fallback
-      const emailPromises = users.map(async (user) => {
-        const emailData = {
-          to: user.email,
-          subject: subject,
-          html: generateReminderEmailHTML(user, message, subject)
-        };
-
-        // Essayer d'abord la méthode normale, puis l'externe
-        try {
-          const result = await sendEmail(emailData);
-          console.log('✅ [EMAIL BULK] Email de relance envoyé avec succès à:', user.email);
-          return result;
-        } catch (error) {
-          console.error('❌ [EMAIL BULK] Erreur configuration normale:', {
-            userId: user._id,
-            email: user.email,
-            error: error.message
-          });
-          
-          try {
-            const { sendEmailExternal } = require('../utils/emailServiceExternal');
-            const result = await sendEmailExternal(emailData);
-            console.log('✅ [EMAIL BULK] Email de relance envoyé avec succès (externe) à:', user.email);
-            return result;
-          } catch (extError) {
-            console.error('❌ [EMAIL BULK] Erreur service externe:', {
-              userId: user._id,
-              email: user.email,
-              error: extError.message
-            });
-            throw extError;
-          }
-        }
-      });
-
-      // Traiter les emails en arrière-plan
-      Promise.allSettled(emailPromises)
-        .then((results) => {
-          const successful = results.filter(r => r.status === 'fulfilled').length;
-          const failed = results.filter(r => r.status === 'rejected').length;
-          console.log(`📊 [EMAIL] Résultats de l'envoi en masse: ${successful} réussis, ${failed} échoués`);
-        });
-    } else {
-      return res.status(400).json({
-        success: false,
-        message: 'userIds ou emails requis'
-      });
-    }
-
-  } catch (error) {
-    console.error('Send bulk reminder emails error:', error);
-    res.status(500).json({ 
-      success: false, 
-      message: 'Erreur lors de l\'envoi des emails' 
-    });
-  }
-});
 
 // Supprimer un utilisateur
 router.delete('/users/:userId', authenticateAdmin, checkPermission('manageUsers'), async (req, res) => {
@@ -1177,7 +956,7 @@ router.put('/profile', authenticateAdmin, [
       });
     }
 
-    const { name, email, currentPassword, newPassword } = req.body;
+    const { name, email, signature, currentPassword, newPassword } = req.body;
     const admin = await Admin.findById(req.admin._id);
 
     // Vérifier le mot de passe actuel si un nouveau mot de passe est fourni
@@ -1203,6 +982,7 @@ router.put('/profile', authenticateAdmin, [
     // Mettre à jour les autres champs
     if (name) admin.name = name;
     if (email) admin.email = email;
+    if (signature !== undefined) admin.signature = signature;
 
     await admin.save();
 

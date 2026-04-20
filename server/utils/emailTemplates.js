@@ -146,121 +146,79 @@ const createUnifiedEmailTemplate = (config) => {
                   
                   <!-- Header avec logo vitalCHECK -->
                   <tr>
-                    <td class="header-padding" style="background: linear-gradient(135deg, #F4C542 0%, #00751B 100%); padding: 20px 15px; text-align: center; position: relative;">
+                    <td class="header-padding" style="background: linear-gradient(135deg, #F4C542 0%, #00751B 100%); padding: 25px 15px; text-align: center; position: relative;">
                       <div style="position: relative; z-index: 2;">
-                        <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="vitalCHECK Logo" class="logo-size" style="width: 80px; height: 80px; max-width: 100%; border-radius: 8px; object-fit: contain; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto;" />
-                        <h1 class="title-size" style="color: white; margin: 0; font-size: 28px; font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3); line-height: 1.2;">
-                          Enterprise Health Check
+                        <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="vitalCHECK Logo" class="logo-size" style="width: 60px; height: 60px; max-width: 100%; border-radius: 8px; object-fit: contain; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto;" />
+                        <h1 class="title-size" style="color: white; margin: 0; font-size: 24px; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.1); line-height: 1.2; text-transform: uppercase;">
+                          ${title}
                         </h1>
-                        <p class="subtitle-size" style="color: rgba(255, 255, 255, 0.9); margin: 5px 0 0 0; font-size: 16px; font-weight: 300; line-height: 1.4;">
-                          ${t.tagline}
-                        </p>
                       </div>
                     </td>
                   </tr>
                   
                   <!-- Contenu principal -->
                   <tr>
-                    <td class="content-padding" style="padding: 20px 15px;">
-                      <div style="text-align: center; margin-bottom: 15px;">
-                        <h2 class="h2-size" style="color: #1a202c; margin: 0 0 10px 0; font-size: 24px; font-weight: 600; line-height: 1.3;">
-                          ${title}
-                        </h2>
-                        ${subtitle ? `<p class="text-size" style="color: #4a5568; margin: 0; font-size: 16px; line-height: 1.5;">${subtitle}</p>` : ''}
-                      </div>
+                    <td class="content-padding" style="padding: 15px 25px;">
                       
                       ${imageUrl ? `
-                      <!-- Image de la newsletter -->
-                      <div style="text-align: center; margin: 20px 0;">
+                      <div style="text-align: center; margin-bottom: 15px;">
                         <img src="${imageUrl}" alt="${title}" style="max-width: 100%; width: 100%; height: auto; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: block;" />
                       </div>
                       ` : ''}
-              
+
                       ${score ? `
-                      <!-- Score principal -->
                       <div style="background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%); border-radius: 16px; padding: 15px; margin: 15px 0; text-align: center; border: 1px solid #e2e8f0;">
-                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="width: 120px; max-width: 100%; height: 120px; margin: 0 auto 10px auto; border-radius: 50%; background: ${score.status === 'green' ? 'linear-gradient(135deg, #10B981, #059669)' : score.status === 'amber' ? 'linear-gradient(135deg, #F59E0B, #D97706)' : 'linear-gradient(135deg, #EF4444, #DC2626)'}; box-shadow: 0 8px 25px rgba(0,0,0,0.15);">
+                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="width: 100px; height: 100px; margin: 0 auto 10px auto; border-radius: 50%; background: ${score.status === 'green' ? 'linear-gradient(135deg, #10B981, #059669)' : score.status === 'amber' ? 'linear-gradient(135deg, #F59E0B, #D97706)' : 'linear-gradient(135deg, #EF4444, #DC2626)'};">
                           <tr>
-                            <td style="text-align: center; vertical-align: middle; width: 120px; height: 120px; max-width: 100%; border-radius: 50%;">
-                              <div style="color: white; font-size: clamp(24px, 5vw, 32px); font-weight: 700; text-shadow: 0 2px 4px rgba(0,0,0,0.3); margin: 0; padding: 0; line-height: 1;">
-                                ${score.value}
-                              </div>
-                            </td>
+                            <td align="center" valign="middle" style="color: white; font-size: 24px; font-weight: 700;">${score.value}</td>
                           </tr>
                         </table>
-                        <h3 class="h2-size" style="color: #2d3748; margin: 0 0 10px 0; font-size: 20px; font-weight: 600; line-height: 1.3;">
-                          ${score.label}
-                        </h3>
-                        <p class="text-size" style="color: #4a5568; margin: 0; font-size: 16px; line-height: 1.5;">
-                          ${score.message}
-                        </p>
+                        <h3 style="color: #2d3748; margin: 0 0 5px 0; font-size: 18px;">${score.label}</h3>
+                        <p style="color: #4a5568; margin: 0; font-size: 14px;">${score.message}</p>
                       </div>
                       ` : ''}
-              
+
                       ${companyInfo ? `
-                      <!-- Détails de l'entreprise -->
-                      <div style="background: white; border-radius: 12px; padding: 12px; margin: 15px 0; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                        <h3 class="h2-size" style="color: #2d3748; margin: 0 0 10px 0; font-size: 18px; font-weight: 600; line-height: 1.3;">
-                          <span style="background: #00751B; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-block; text-align: center; line-height: 24px; margin-right: 10px; font-size: 12px; vertical-align: middle;">●</span>
-                          ${companyInfo.title}
-                        </h3>
-                        <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" class="responsive-table" style="width: 100%;">
+                      <div style="margin: 15px 0; border: 1px solid #e2e8f0; border-radius: 12px; padding: 15px;">
+                        <h3 style="color: #2d3748; margin: 0 0 10px 0; font-size: 16px; font-weight: 600;">● ${companyInfo.title}</h3>
+                        <table width="100%" cellspacing="0" cellpadding="0" border="0">
                           <tr>
                             ${companyInfo.details.map((detail, index) => `
-                              <td style="padding: 6px; background: #f8fafc; border-radius: 8px; ${index % 2 === 0 ? 'padding-right: 4px;' : 'padding-left: 4px;'}" width="50%">
-                                <div style="color: #718096; font-size: 12px; font-weight: 500; text-transform: uppercase; margin-bottom: 4px;">${detail.label}</div>
-                                <div style="color: #2d3748; font-weight: 600; font-size: 14px; word-wrap: break-word; line-height: 1.4;">${detail.value}</div>
+                              <td style="padding: 5px;" width="50%">
+                                <div style="color: #718096; font-size: 11px; text-transform: uppercase;">${detail.label}</div>
+                                <div style="color: #2d3748; font-weight: 600; font-size: 13px;">${detail.value}</div>
                               </td>
                               ${index % 2 === 1 ? '</tr><tr>' : ''}
                             `).join('')}
-                            ${companyInfo.details.length % 2 === 1 ? '<td width="50%"></td></tr>' : '</tr>'}
-                          </table>
+                          </tr>
+                        </table>
                       </div>
                       ` : ''}
-                      
+
                       ${credentials ? `
-                      <!-- Identifiants de connexion -->
-                      <div style="background: white; border-radius: 12px; padding: 12px; margin: 15px 0; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                        <h3 class="h2-size" style="color: #2d3748; margin: 0 0 10px 0; font-size: 18px; font-weight: 600; line-height: 1.3;">
-                          <span style="background: #00751B; color: white; width: 24px; height: 24px; border-radius: 50%; display: inline-block; text-align: center; line-height: 24px; margin-right: 10px; font-size: 12px; vertical-align: middle;">●</span>
-                          ${credentials.title}
-                        </h3>
-                        <div style="background: #f8fafc; padding: 10px; border-radius: 8px;">
-                          <p class="text-size" style="margin: 0 0 10px 0; color: #2d3748; font-size: 14px; line-height: 1.5; word-wrap: break-word;"><strong>Email :</strong> ${credentials.email}</p>
-                          ${credentials.password ? `<p class="text-size" style="margin: 0 0 15px 0; color: #2d3748; font-size: 14px; line-height: 1.5; word-wrap: break-word;"><strong>Mot de passe temporaire :</strong> <code style="background: #e2e8f0; padding: 4px 8px; border-radius: 4px; font-size: 14px; word-break: break-all;">${credentials.password}</code></p>` : ''}
-                          ${credentials.warning ? `<p class="text-size" style="color: #dc2626; font-size: 14px; margin: 0; line-height: 1.5;">⚠️ <strong>Important :</strong> ${credentials.warning}</p>` : ''}
-                        </div>
+                      <div style="margin: 15px 0; background: #f8fafc; padding: 15px; border-radius: 12px; border: 1px solid #e2e8f0;">
+                         <h3 style="color: #2d3748; margin: 0 0 10px 0; font-size: 16px;">● ${credentials.title}</h3>
+                         <p style="margin: 0 0 5px 0; font-size: 14px;"><strong>Email:</strong> ${credentials.email}</p>
+                         ${credentials.password ? `<p style="margin: 0; font-size: 14px;"><strong>Pass:</strong> <code>${credentials.password}</code></p>` : ''}
                       </div>
                       ` : ''}
-                      
-                      <!-- Contenu principal -->
-                      <div style="background: white; border-radius: 12px; padding: 12px; margin: 15px 0; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
-                        <div class="text-size" style="color: #4a5568; font-size: 16px; line-height: 1.7; word-wrap: break-word;">
-                          ${content}
-                        </div>
+              
+                      <!-- Zone de message épurée -->
+                      <div class="text-size" style="color: #2d3748; font-size: 16px; line-height: 1.7; word-wrap: break-word;">
+                        ${content}
                       </div>
-                      
+
                       ${buttons.length > 0 ? `
-                      <!-- Boutons d'action -->
-                      <div style="text-align: center; margin: 20px 0;">
+                      <div style="text-align: center; margin: 25px 0;">
                         ${buttons.map(button => `
-                          <table role="presentation" cellspacing="0" cellpadding="0" border="0" class="button-table" style="width: 100%; max-width: 300px; margin: 0 auto 10px auto;">
-                            <tr>
-                              <td align="center" style="background: ${button.primary ? 'linear-gradient(135deg, #00751B 0%, #F4C542 100%)' : 'transparent'}; border-radius: 8px; ${button.primary ? '' : 'border: 2px solid #00751B;'}">
-                                <a href="${button.url}" 
-                                   class="button-link"
-                                   style="background: ${button.primary ? 'linear-gradient(135deg, #00751B 0%, #F4C542 100%)' : 'transparent'}; color: ${button.primary ? 'white' : '#00751B'}; padding: 12px 24px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: 600; font-size: 16px; ${button.primary ? 'box-shadow: 0 4px 12px rgba(0, 117, 27, 0.3);' : ''}">
-                                  ${button.icon ? `${button.icon} ` : ''}${button.text}
-                                </a>
-                              </td>
-                            </tr>
-                          </table>
+                          <a href="${button.url}" style="background: ${button.primary ? 'linear-gradient(135deg, #00751B, #F4C542)' : 'white'}; color: ${button.primary ? 'white' : '#00751B'}; padding: 12px 25px; text-decoration: none; border-radius: 8px; display: inline-block; font-weight: 600; margin: 5px; border: ${button.primary ? 'none' : '2px solid #00751B'}">
+                            ${button.text}
+                          </a>
                         `).join('')}
                       </div>
                       ` : ''}
-                      
+
                       ${note ? `
-                      <!-- Note importante -->
                       <div style="background: #f0fdf4; padding: 12px; border-radius: 8px; margin: 15px 0; border: 1px solid #bbf7d0;">
                         <p class="text-size" style="margin: 0; color: #14532d; font-size: 14px; line-height: 1.5;">
                           <strong>📋 Important :</strong> ${note}
@@ -272,24 +230,30 @@ const createUnifiedEmailTemplate = (config) => {
                   
                   <!-- Footer professionnel -->
                   <tr>
-                    <td class="footer-padding" style="background: #2d3748; padding: 15px; text-align: center; color: #a0aec0;">
-                      <div style="margin-bottom: 10px;">
+                    <td class="footer-padding" style="background: #1a202c; padding: 30px 20px; text-align: center; color: #a0aec0;">
+                      <div style="margin-bottom: 15px;">
                         <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="vitalCHECK Logo" style="width: 50px; height: 50px; max-width: 100%; border-radius: 8px; object-fit: contain; margin: 0 auto 10px auto; display: block;" />
-                        <div style="color: #e2e8f0; font-weight: 600; font-size: 14px; margin-top: 5px;">
+                        <div style="color: #e2e8f0; font-weight: 700; font-size: 15px; margin-top: 5px; text-transform: uppercase;">
                           Enterprise Health Check
                         </div>
                       </div>
-                      <p class="text-size" style="margin: 0 0 10px 0; font-size: 14px; color: #e2e8f0; line-height: 1.4;">
+                      <p class="text-size" style="margin: 0 0 15px 0; font-size: 13px; color: #cbd5e0; line-height: 1.4; font-style: italic;">
                         ${t.tagline}
                       </p>
-                      <div style="margin: 10px 0; padding: 10px 0; border-top: 1px solid #4a5568;">
-                        <p class="contact-text" style="margin: 0 0 10px 0; font-size: 12px; color: #a0aec0; line-height: 1.6; word-wrap: break-word;">
+                      <div style="margin: 15px 0; padding: 15px 0; border-top: 1px solid #2d3748;">
+                        <p class="contact-text" style="margin: 0 0 12px 0; font-size: 12px; color: #cbd5e0; line-height: 1.6; word-wrap: break-word;">
                           ${t.contact}
                         </p>
                         <p class="footer-text" style="margin: 0; font-size: 11px; color: #718096; line-height: 1.5;">
-                          ${t.generatedOn} ${new Date().toLocaleString(isFrench ? 'fr-FR' : 'en-US')} | ${t.version}
+                           UBUNTU BUSINESS BUILDERS (UBB) – SARL<br>
+                           Dakar, Sénégal<br>
+                           RCCM : SN.DKR.2026.B.1650 | NINEA : 012753069<br><br>
+                           ${t.generatedOn} ${new Date().toLocaleString(isFrench ? 'fr-FR' : 'en-US')}
                         </p>
                       </div>
+                      <p style="margin-top: 20px; font-size: 10px; color: #4a5568;">
+                        © ${new Date().getFullYear()} vitalCHECK Enterprise Health Check. Tous droits réservés.
+                      </p>
                     </td>
                   </tr>
                   

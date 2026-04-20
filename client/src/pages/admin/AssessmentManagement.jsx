@@ -25,7 +25,6 @@ const AssessmentManagement = () => {
   });
   const navigate = useNavigate();
   
-  // Utilisation du hook API
   const { 
     loading, 
     error, 
@@ -50,7 +49,6 @@ const AssessmentManagement = () => {
       setPagination(data.pagination);
     } catch (error) {
       console.error('Fetch assessments error:', error);
-      // L'erreur est déjà gérée par le hook
     }
   };
 
@@ -117,164 +115,166 @@ const AssessmentManagement = () => {
 
   return (
     <AdminLayout>
-      <div className="pb-10 ">
-      {/* Header */}
-      <div className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-wrap justify-between items-center py-6">
+      <div className="p-4 lg:p-5">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900">Gestion des Évaluations</h1>
-              <p className="text-gray-600">Consultez et gérez toutes les évaluations</p>
+                <h1 className="text-xl font-black text-gray-900 tracking-tight leading-none uppercase">
+                    Démarches & Évaluations
+                </h1>
+                <p className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">
+                    Suivi des diagnostics et rapports générés
+                </p>
             </div>
-            {/* <button
-              onClick={() => navigate('/admin/dashboard')}
-              className="px-4 py-2 text-sm text-gray-600 hover:text-gray-900"
-            >
-              ← Retour au tableau de bord
-            </button> */}
-          </div>
+            <div className="flex items-center gap-2">
+                <div className="p-1 px-2.5 bg-accent-50 text-accent-700 rounded-lg border border-accent-100 flex items-center gap-2">
+                    <FileText className="w-3.5 h-3.5" />
+                    <span className="text-[11px] font-black">{pagination.total} Évaluations</span>
+                </div>
+            </div>
         </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Filters */}
-        <div className="bg-white shadow rounded-lg p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div className="bg-white shadow-sm rounded-xl border border-gray-100 p-4 mb-5">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Statut
+              <label className="block text-[10px] font-black text-gray-400 uppercase mb-1.5 tracking-widest leading-none">
+                Statut / Score
               </label>
-              <select
-                value={filters.status}
-                onChange={(e) => handleFilterChange('status', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-              >
-                <option value="">Tous les statuts</option>
-                <option value="green">Excellent</option>
-                <option value="amber">Moyen</option>
-                <option value="red">Faible</option>
-              </select>
+              <div className="relative">
+                <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
+                <select
+                  value={filters.status}
+                  onChange={(e) => handleFilterChange('status', e.target.value)}
+                  className="pl-9 w-full px-3 py-1.5 bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-xs font-bold"
+                >
+                  <option value="">Tous les résultats</option>
+                  <option value="green">Excellent</option>
+                  <option value="amber">Moyen</option>
+                  <option value="red">Faible</option>
+                </select>
+              </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Date de début
+              <label className="block text-[10px] font-black text-gray-400 uppercase mb-1.5 tracking-widest leading-none">
+                Période (Du)
               </label>
               <input
                 type="date"
                 value={filters.dateFrom}
                 onChange={(e) => handleFilterChange('dateFrom', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-1.5 bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-xs font-bold"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Date de fin
+              <label className="block text-[10px] font-black text-gray-400 uppercase mb-1.5 tracking-widest leading-none">
+                Période (Au)
               </label>
               <input
                 type="date"
                 value={filters.dateTo}
                 onChange={(e) => handleFilterChange('dateTo', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                className="w-full px-3 py-1.5 bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-xs font-bold"
               />
             </div>
 
             <div className="flex items-end">
               <button
                 onClick={() => setFilters({ status: '', dateFrom: '', dateTo: '' })}
-                className="w-full px-4 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700"
+                className="w-full px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors text-[10px] font-black uppercase tracking-widest"
               >
-                Réinitialiser
+                Reset Filtrage
               </button>
             </div>
           </div>
         </div>
 
         {/* Assessments Table */}
-        <div className="bg-white shadow rounded-lg overflow-hidden">
+        <div className="bg-white shadow-sm rounded-xl border border-gray-100 overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-100">
+              <thead className="bg-gray-50/50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Utilisateur
+                  <th className="px-4 py-2 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                    Utilisateur / Lead
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Entreprise
+                  <th className="px-4 py-2 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                    Entreprise / Secteur
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Score Global
+                  <th className="px-4 py-2 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                    Score
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
                     Statut
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
                     Date
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
                     Rapport
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white divide-y divide-gray-50 font-bold">
                 {assessments.map((assessment) => (
-                  <tr key={assessment._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">{assessment.user?.email}</div>
-                        <div className="text-sm text-gray-500">{assessment.user?.companyName}</div>
+                  <tr key={assessment._id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-4 py-2.5 whitespace-nowrap">
+                      <div className="flex flex-col">
+                        <div className="text-xs font-black text-gray-900 leading-tight">{assessment.user?.email || '—'}</div>
+                        <div className="text-[10px] text-gray-400 uppercase tracking-tight">{assessment.user?.firstName || 'Utilisateur anonyme'}</div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{assessment.user?.companyName}</div>
-                      <div className="text-sm text-gray-500 capitalize">{assessment.user?.sector}</div>
+                    <td className="px-4 py-2.5 whitespace-nowrap">
+                      <div className="text-xs text-gray-900 leading-none">{assessment.user?.companyName || '—'}</div>
+                      <div className="text-[9px] text-primary-600 uppercase mt-0.5">{assessment.user?.sector || 'Non spécifié'}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <TrendingUp className="h-4 w-4 text-gray-400 mr-2" />
-                        <div className="text-sm font-medium text-gray-900">{assessment.overallScore}%</div>
+                    <td className="px-4 py-2.5 whitespace-nowrap">
+                      <div className="flex items-center text-xs font-black text-gray-900">
+                        <TrendingUp className="h-3 w-3 text-gray-400 mr-1.5" />
+                        <div>{assessment.overallScore}%</div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(assessment.overallStatus)}`}>
+                    <td className="px-4 py-2.5 whitespace-nowrap">
+                      <span className={`inline-flex px-1.5 py-0.5 text-[9px] font-black rounded-full leading-none ${getStatusColor(assessment.overallStatus)}`}>
                         {getStatusText(assessment.overallStatus)}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <Calendar className="h-4 w-4 text-gray-400 mr-2" />
-                        <div className="text-sm text-gray-900">
+                    <td className="px-4 py-2.5 whitespace-nowrap">
+                      <div className="flex items-center text-[10px] text-gray-500">
+                        <Calendar className="h-3 w-3 text-gray-400 mr-1.5" />
+                        <div>
                           {new Date(assessment.completedAt).toLocaleDateString('fr-FR')}
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <FileText className="h-4 w-4 text-gray-400 mr-2" />
-                        <span className={`text-sm ${assessment.reportGenerated ? 'text-green-600' : 'text-gray-500'}`}>
-                          {assessment.reportGenerated ? 'Généré' : 'Non généré'}
+                    <td className="px-4 py-2.5 whitespace-nowrap">
+                      <div className="flex items-center gap-1.5">
+                        <div className={`w-1.5 h-1.5 rounded-full ${assessment.reportGenerated ? 'bg-green-500' : 'bg-gray-300'}`} />
+                        <span className={`text-[10px] uppercase tracking-tighter ${assessment.reportGenerated ? 'text-green-700 font-black' : 'text-gray-400 font-bold'}`}>
+                          {assessment.reportGenerated ? 'Généré' : 'En attente'}
                         </span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
+                    <td className="px-4 py-2.5 whitespace-nowrap text-right">
+                      <div className="flex justify-end gap-0.5">
                         <button
                           onClick={() => handleViewAssessment(assessment._id)}
-                          className="text-blue-600 hover:text-blue-900"
-                          title="Voir les détails"
+                          className="p-1 px-1.5 text-gray-400 hover:text-primary-600 hover:bg-white rounded transition-all border border-transparent hover:border-gray-100"
+                          title="Détails"
                         >
-                          <Eye className="h-4 w-4" />
+                          <Eye className="h-3.5 w-3.5" />
                         </button>
                         <button
                           onClick={() => handleDeleteAssessment(assessment._id)}
-                          className="text-red-600 hover:text-red-900"
+                          className="p-1 px-1.5 text-gray-400 hover:text-red-600 hover:bg-white rounded transition-all border border-transparent hover:border-gray-100"
                           title="Supprimer"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-3.5 w-3.5" />
                         </button>
                       </div>
                     </td>
@@ -286,50 +286,30 @@ const AssessmentManagement = () => {
 
           {/* Pagination */}
           {pagination.pages > 1 && (
-            <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-              <div className="flex-1 flex justify-between sm:hidden">
-                <button
-                  onClick={() => handlePageChange(pagination.current - 1)}
-                  disabled={pagination.current === 1}
-                  className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Précédent
-                </button>
-                <button
-                  onClick={() => handlePageChange(pagination.current + 1)}
-                  disabled={pagination.current === pagination.pages}
-                  className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Suivant
-                </button>
-              </div>
+            <div className="bg-gray-50/50 px-4 py-2 flex items-center justify-between border-t border-gray-100 font-bold">
               <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-sm text-gray-700">
-                    Affichage de <span className="font-medium">{(pagination.current - 1) * 10 + 1}</span> à{' '}
-                    <span className="font-medium">
-                      {Math.min(pagination.current * 10, pagination.total)}
-                    </span>{' '}
-                    sur <span className="font-medium">{pagination.total}</span> résultats
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                    {pagination.total} EVALUATIONS
                   </p>
                 </div>
                 <div>
-                  <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                  <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px bg-white">
                     <button
                       onClick={() => handlePageChange(pagination.current - 1)}
                       disabled={pagination.current === 1}
-                      className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="relative inline-flex items-center px-2 py-1.5 rounded-l-md border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition-all shadow-sm"
                     >
-                      <ChevronLeft className="h-5 w-5" />
+                      <ChevronLeft className="h-3.5 w-3.5" />
                     </button>
                     {[...Array(pagination.pages)].map((_, i) => (
                       <button
                         key={i + 1}
                         onClick={() => handlePageChange(i + 1)}
-                        className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                        className={`relative inline-flex items-center px-3 py-1.5 border text-[10px] font-black transition-all ${
                           pagination.current === i + 1
-                            ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                            : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                            ? 'z-10 bg-primary-50 border-primary-500 text-primary-600'
+                            : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50'
                         }`}
                       >
                         {i + 1}
@@ -338,9 +318,9 @@ const AssessmentManagement = () => {
                     <button
                       onClick={() => handlePageChange(pagination.current + 1)}
                       disabled={pagination.current === pagination.pages}
-                      className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="relative inline-flex items-center px-2 py-1.5 rounded-r-md border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition-all shadow-sm"
                     >
-                      <ChevronRight className="h-5 w-5" />
+                      <ChevronRight className="h-3.5 w-3.5" />
                     </button>
                   </nav>
                 </div>
@@ -348,7 +328,6 @@ const AssessmentManagement = () => {
             </div>
           )}
         </div>
-      </div>
       </div>
     </AdminLayout>
   );

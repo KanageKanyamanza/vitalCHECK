@@ -33,9 +33,7 @@ const UserManagement = () => {
     loading, 
     error, 
     getUsers, 
-    deleteUser, 
-    sendReminderEmail, 
-    sendBulkEmails 
+    deleteUser
   } = useAdminApi();
 
   useEffect(() => {
@@ -85,28 +83,13 @@ const UserManagement = () => {
   };
 
   const handleSendEmail = (user) => {
-    navigate('/admin/emails', { 
+    // Rediriger vers la messagerie avec l'ID de l'utilisateur
+    navigate('/admin/inbox', { 
       state: { 
-        selectedUsers: [user._id],
-        userEmails: [user.email]
-      } 
-    });
-  };
-
-  const handleBulkEmail = () => {
-    if (selectedUsers.length === 0) {
-      toast.error('Sélectionnez au moins un utilisateur');
-      return;
-    }
-    
-    const userEmails = users
-      .filter(user => selectedUsers.includes(user._id))
-      .map(user => user.email);
-    
-    navigate('/admin/emails', { 
-      state: { 
-        selectedUsers,
-        userEmails
+        openContactId: user._id,
+        contactName: user.companyName,
+        contactEmail: user.email,
+        contactModel: 'User'
       } 
     });
   };
@@ -156,34 +139,52 @@ const UserManagement = () => {
 
   return (
     <AdminLayout>
-      <div className="p-4 lg:p-8">
-        {/* Filters */}
-        <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6 mb-6">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div className="p-4 lg:p-5">
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+                <h1 className="text-xl font-black text-gray-900 tracking-tight leading-none uppercase">
+                    Utilisateurs
+                </h1>
+                <p className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">
+                    Gestion des comptes et structures inscrits
+                </p>
+            </div>
+            <div className="flex items-center gap-2">
+                <div className="p-1 px-2.5 bg-primary-50 text-primary-700 rounded-lg border border-primary-100 flex items-center gap-2">
+                    <Users className="w-3.5 h-3.5" />
+                    <span className="text-[11px] font-black">{pagination.total} Total</span>
+                </div>
+            </div>
+        </div>
+
+        {/* Filters */}
+        <div className="bg-white shadow-sm rounded-xl border border-gray-100 p-4 mb-5">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <div>
+              <label className="block text-[10px] font-black text-gray-400 uppercase mb-1.5 tracking-widest leading-none">
                 Recherche
               </label>
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
                 <input
                   type="text"
                   placeholder="Nom ou email..."
                   value={filters.search}
                   onChange={(e) => handleFilterChange('search', e.target.value)}
-                  className="pl-10 w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                  className="pl-9 w-full px-3 py-1.5 bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-xs text-gray-900 font-bold"
                 />
               </div>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-[10px] font-black text-gray-400 uppercase mb-1.5 tracking-widest leading-none">
                 Secteur
               </label>
               <select
                 value={filters.sector}
                 onChange={(e) => handleFilterChange('sector', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                className="w-full px-3 py-1.5 bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-xs font-bold"
               >
                 <option value="">Tous les secteurs</option>
                 <option value="technologie">Technologie</option>
@@ -195,13 +196,13 @@ const UserManagement = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-[10px] font-black text-gray-400 uppercase mb-1.5 tracking-widest leading-none">
                 Taille
               </label>
               <select
                 value={filters.companySize}
                 onChange={(e) => handleFilterChange('companySize', e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                className="w-full px-3 py-1.5 bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-xs font-bold"
               >
                 <option value="">Toutes les tailles</option>
                 <option value="micro">Micro</option>
@@ -211,137 +212,135 @@ const UserManagement = () => {
             </div>
 
             <div className="flex items-end">
-              <button
-                onClick={handleBulkEmail}
-                disabled={selectedUsers.length === 0}
-                className="w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center transition-colors"
-              >
-                <Mail className="h-4 w-4 mr-2" />
-                Email ({selectedUsers.length})
-              </button>
+                <button 
+                  onClick={() => setFilters({search: '', sector: '', companySize: ''})}
+                  className="w-full px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors text-[10px] font-black uppercase tracking-widest"
+                >
+                    Reset Filtrage
+                </button>
             </div>
           </div>
         </div>
 
         {/* Users Table */}
-        <div className="bg-white shadow-lg rounded-xl border border-gray-100 overflow-hidden">
+        <div className="bg-white shadow-sm rounded-xl border border-gray-100 overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+            <table className="min-w-full divide-y divide-gray-100">
+              <thead className="bg-gray-50/50">
                 <tr>
-                  <th className="px-6 py-3 text-left">
+                  <th className="px-4 py-2 text-left">
                     <input
                       type="checkbox"
                       checked={selectedUsers.length === users.length && users.length > 0}
                       onChange={handleSelectAll}
-                      className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                      className="w-3.5 h-3.5 rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
                     />
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Utilisateur
+                  <th className="px-4 py-2 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                    Utilisateur / Email
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
                     Téléphone
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
                     Entreprise
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
                     Secteur
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
                     Taille
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Évaluations
+                  <th className="px-4 py-2 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                    Éval.
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
                     Dernier Score
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">
                     Actions
                   </th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="bg-white divide-y divide-gray-50 font-bold">
                 {users.map((user) => (
-                  <tr key={user._id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
+                  <tr key={user._id} className="hover:bg-gray-50 transition-colors group">
+                    <td className="px-4 py-2.5 whitespace-nowrap">
                       <input
                         type="checkbox"
                         checked={selectedUsers.includes(user._id)}
                         onChange={() => handleSelectUser(user._id)}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                        className="w-3.5 h-3.5 rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
                       />
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">{user.email}</div>
-                        <div className="text-sm text-gray-500">
-                          Inscrit le {new Date(user.createdAt).toLocaleDateString('fr-FR')}
+                    <td className="px-4 py-2.5 whitespace-nowrap">
+                      <div className="flex flex-col">
+                        <div className="text-xs font-black text-gray-900 leading-tight">{user.email}</div>
+                        <div className="text-[10px] text-gray-400">
+                          Depuis le {new Date(user.createdAt).toLocaleDateString('fr-FR')}
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900">{user.phone || 'N/A'}</div>
+                    <td className="px-4 py-2.5 whitespace-nowrap">
+                      <div className="text-[11px] text-gray-600">{user.phone || '—'}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 py-2.5 whitespace-nowrap">
                       <div className="flex items-center">
-                        <Building2 className="h-4 w-4 text-gray-400 mr-2" />
-                        <div className="text-sm text-gray-900">{user.companyName}</div>
+                        <Building2 className="h-3.5 w-3.5 text-gray-400 mr-2" />
+                        <div className="text-xs text-gray-900 leading-none">{user.companyName}</div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-900 capitalize">{user.sector}</div>
+                    <td className="px-4 py-2.5 whitespace-nowrap">
+                      <div className="text-[10px] text-primary-600 uppercase tracking-tight">{user.sector}</div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-secondary-100 text-secondary-800">
+                    <td className="px-4 py-2.5 whitespace-nowrap">
+                      <span className="inline-flex px-1.5 py-0.5 text-[10px] font-black rounded bg-gray-100 text-gray-600 border border-gray-200/50">
                         {user.companySize === 'micro' ? 'Micro' : 
                          user.companySize === 'sme' ? 'PME' : 'Grande PME'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="flex items-center">
-                        <FileText className="h-4 w-4 text-gray-400 mr-2" />
-                        <span className="text-sm text-gray-900">{user.assessments?.length || 0}</span>
+                    <td className="px-4 py-2.5 whitespace-nowrap">
+                      <div className="flex items-center text-[11px] text-gray-900">
+                        <FileText className="h-3 w-3 text-gray-400 mr-1" />
+                        <span>{user.assessments?.length || 0}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-4 py-2.5 whitespace-nowrap">
                       {user.assessments?.length > 0 ? (
-                        <div>
-                          <div className="text-sm font-medium text-gray-900">
+                        <div className="flex flex-col">
+                          <div className="text-[10px] font-black text-gray-900">
                             {user.assessments[0].overallScore}%
                           </div>
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(user.assessments[0].overallStatus)}`}>
+                          <span className={`inline-flex px-1.5 py-0.5 text-[9px] font-black rounded-full w-fit leading-none ${getStatusColor(user.assessments[0].overallStatus)}`}>
                             {getStatusText(user.assessments[0].overallStatus)}
                           </span>
                         </div>
                       ) : (
-                        <span className="text-sm text-gray-500">Aucune</span>
+                        <span className="text-[10px] text-gray-400 italic">Aucune</span>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
+                    <td className="px-4 py-2.5 whitespace-nowrap text-right">
+                      <div className="flex justify-end gap-0.5">
                         <button
                           onClick={() => handleSendEmail(user)}
-                          className="text-earth-600 hover:text-earth-900 p-1 rounded hover:bg-earth-50"
-                          title="Envoyer un email"
+                          className="p-1 px-1.5 text-gray-400 hover:text-primary-600 hover:bg-white rounded transition-all border border-transparent hover:border-gray-100"
+                          title="Message"
                         >
-                          <Mail className="h-4 w-4" />
+                          <Mail className="h-3.5 w-3.5" />
                         </button>
                         <button
                           onClick={() => navigate(`/admin/users/${user._id}`)}
-                          className="text-success-600 hover:text-success-900 p-1 rounded hover:bg-success-50"
-                          title="Voir les détails"
+                          className="p-1 px-1.5 text-gray-400 hover:text-green-600 hover:bg-white rounded transition-all border border-transparent hover:border-gray-100"
+                          title="Détails"
                         >
-                          <Eye className="h-4 w-4" />
+                          <Eye className="h-3.5 w-3.5" />
                         </button>
                         <button
                           onClick={() => handleDeleteUser(user._id)}
-                          className="text-danger-600 hover:text-danger-900 p-1 rounded hover:bg-danger-50"
+                          className="p-1 px-1.5 text-gray-400 hover:text-red-600 hover:bg-white rounded transition-all border border-transparent hover:border-gray-100"
                           title="Supprimer"
                         >
-                          <Trash2 className="h-4 w-4" />
+                          <Trash2 className="h-3.5 w-3.5" />
                         </button>
                       </div>
                     </td>
@@ -353,50 +352,30 @@ const UserManagement = () => {
 
           {/* Pagination */}
           {pagination.pages > 1 && (
-            <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
-              <div className="flex-1 flex justify-between sm:hidden">
-                <button
-                  onClick={() => handlePageChange(pagination.current - 1)}
-                  disabled={pagination.current === 1}
-                  className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Précédent
-                </button>
-                <button
-                  onClick={() => handlePageChange(pagination.current + 1)}
-                  disabled={pagination.current === pagination.pages}
-                  className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Suivant
-                </button>
-              </div>
+            <div className="bg-gray-50/50 px-4 py-2 flex items-center justify-between border-t border-gray-100 font-bold">
               <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
                 <div>
-                  <p className="text-sm text-gray-700">
-                    Affichage de <span className="font-medium">{(pagination.current - 1) * 10 + 1}</span> à{' '}
-                    <span className="font-medium">
-                      {Math.min(pagination.current * 10, pagination.total)}
-                    </span>{' '}
-                    sur <span className="font-medium">{pagination.total}</span> résultats
+                  <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+                    {pagination.total} RESULTATS
                   </p>
                 </div>
                 <div>
-                  <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px">
+                  <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px bg-white">
                     <button
                       onClick={() => handlePageChange(pagination.current - 1)}
                       disabled={pagination.current === 1}
-                      className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="relative inline-flex items-center px-2 py-1.5 rounded-l-md border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition-all shadow-sm"
                     >
-                      <ChevronLeft className="h-5 w-5" />
+                      <ChevronLeft className="h-3.5 w-3.5" />
                     </button>
                     {[...Array(pagination.pages)].map((_, i) => (
                       <button
                         key={i + 1}
                         onClick={() => handlePageChange(i + 1)}
-                        className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                        className={`relative inline-flex items-center px-3 py-1.5 border text-[10px] font-black transition-all ${
                           pagination.current === i + 1
-                            ? 'z-10 bg-blue-50 border-blue-500 text-blue-600'
-                            : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                            ? 'z-10 bg-primary-50 border-primary-500 text-primary-600'
+                            : 'bg-white border-gray-200 text-gray-500 hover:bg-gray-50'
                         }`}
                       >
                         {i + 1}
@@ -405,9 +384,9 @@ const UserManagement = () => {
                     <button
                       onClick={() => handlePageChange(pagination.current + 1)}
                       disabled={pagination.current === pagination.pages}
-                      className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="relative inline-flex items-center px-2 py-1.5 rounded-r-md border border-gray-200 text-gray-500 hover:bg-gray-50 disabled:opacity-30 transition-all shadow-sm"
                     >
-                      <ChevronRight className="h-5 w-5" />
+                      <ChevronRight className="h-3.5 w-3.5" />
                     </button>
                   </nav>
                 </div>

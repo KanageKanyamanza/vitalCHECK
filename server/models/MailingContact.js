@@ -28,6 +28,11 @@ const mailingContactSchema = new mongoose.Schema({
     enum: ['manual', 'import'],
     default: 'manual'
   },
+  type: {
+    type: String,
+    trim: true,
+    default: 'Prospect'
+  },
   addedAt: {
     type: Date,
     default: Date.now

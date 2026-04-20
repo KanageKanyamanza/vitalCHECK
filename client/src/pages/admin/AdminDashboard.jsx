@@ -76,50 +76,23 @@ const AdminDashboard = () => {
 
   return (
     <AdminLayout>
-      <div className="p-4 lg:p-8">
-        {/* Debug Tools */}
-        {/* <div className="mb-6 flex flex-wrap gap-2">
-          <button
-            onClick={handleUpdateServiceWorker}
-            className="flex items-center px-3 py-2 text-sm text-primary-600 hover:text-primary-900 bg-primary-50 rounded-lg"
-            title="Mettre à jour le Service Worker"
-          >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Mise à jour SW
-          </button>
-          <button
-            onClick={handleClearCache}
-            className="flex items-center px-3 py-2 text-sm text-warning-600 hover:text-warning-900 bg-warning-50 rounded-lg"
-            title="Nettoyer le cache"
-          >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Nettoyer Cache
-          </button>
-          <button
-            onClick={handleClearApiCache}
-            className="flex items-center px-3 py-2 text-sm text-accent-600 hover:text-accent-900 bg-accent-50 rounded-lg"
-            title="Vider le cache API"
-          >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Cache API
-          </button>
-        </div> */}
+      <div className="p-4 lg:p-5">
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div className="bg-white overflow-hidden shadow-lg rounded-xl border border-gray-100">
-            <div className="p-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <div className="bg-white overflow-hidden shadow-md rounded-xl border border-gray-100 transition-all hover:shadow-lg">
+            <div className="p-4">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-primary-100 rounded-lg flex items-center justify-center">
-                    <Users className="h-6 w-6 text-primary-600" />
+                  <div className="w-10 h-10 bg-primary-50 rounded-lg flex items-center justify-center">
+                    <Users className="h-5 w-5 text-primary-600" />
                   </div>
                 </div>
-                <div className="ml-4 w-0 flex-1">
+                <div className="ml-3 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
+                    <dt className="text-[11px] font-black uppercase text-gray-400 tracking-wider truncate">
                       Total Utilisateurs
                     </dt>
-                    <dd className="text-2xl font-bold text-gray-900">
+                    <dd className="text-xl font-black text-gray-900 leading-tight">
                       {stats?.totalUsers || 0}
                     </dd>
                   </dl>
@@ -128,20 +101,20 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white overflow-hidden shadow-lg rounded-xl border border-gray-100">
-            <div className="p-6">
+          <div className="bg-white overflow-hidden shadow-md rounded-xl border border-gray-100 transition-all hover:shadow-lg">
+            <div className="p-4">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-success-100 rounded-lg flex items-center justify-center">
-                    <FileText className="h-6 w-6 text-success-600" />
+                  <div className="w-10 h-10 bg-success-50 rounded-lg flex items-center justify-center">
+                    <FileText className="h-5 w-5 text-success-600" />
                   </div>
                 </div>
-                <div className="ml-4 w-0 flex-1">
+                <div className="ml-3 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
+                    <dt className="text-[11px] font-black uppercase text-gray-400 tracking-wider truncate">
                       Évaluations Complétées
                     </dt>
-                    <dd className="text-2xl font-bold text-gray-900">
+                    <dd className="text-xl font-black text-gray-900 leading-tight">
                       {stats?.completedAssessments || 0}
                     </dd>
                   </dl>
@@ -150,20 +123,20 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white overflow-hidden shadow-lg rounded-xl border border-gray-100">
-            <div className="p-6">
+          <div className="bg-white overflow-hidden shadow-md rounded-xl border border-gray-100 transition-all hover:shadow-lg">
+            <div className="p-4">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-accent-100 rounded-lg flex items-center justify-center">
-                    <TrendingUp className="h-6 w-6 text-accent-600" />
+                  <div className="w-10 h-10 bg-accent-50 rounded-lg flex items-center justify-center">
+                    <TrendingUp className="h-5 w-5 text-accent-600" />
                   </div>
                 </div>
-                <div className="ml-4 w-0 flex-1">
+                <div className="ml-3 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
+                    <dt className="text-[11px] font-black uppercase text-gray-400 tracking-wider truncate">
                       Utilisateurs (7j)
                     </dt>
-                    <dd className="text-2xl font-bold text-gray-900">
+                    <dd className="text-xl font-black text-gray-900 leading-tight">
                       {stats?.recentUsers || 0}
                     </dd>
                   </dl>
@@ -172,20 +145,20 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white overflow-hidden shadow-lg rounded-xl border border-gray-100">
-            <div className="p-6">
+          <div className="bg-white overflow-hidden shadow-md rounded-xl border border-gray-100 transition-all hover:shadow-lg">
+            <div className="p-4">
               <div className="flex items-center">
                 <div className="flex-shrink-0">
-                  <div className="w-12 h-12 bg-warning-100 rounded-lg flex items-center justify-center">
-                    <Calendar className="h-6 w-6 text-warning-600" />
+                  <div className="w-10 h-10 bg-warning-50 rounded-lg flex items-center justify-center">
+                    <Calendar className="h-5 w-5 text-warning-600" />
                   </div>
                 </div>
-                <div className="ml-4 w-0 flex-1">
+                <div className="ml-3 w-0 flex-1">
                   <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
+                    <dt className="text-[11px] font-black uppercase text-gray-400 tracking-wider truncate">
                       Évaluations (7j)
                     </dt>
-                    <dd className="text-2xl font-bold text-gray-900">
+                    <dd className="text-xl font-black text-gray-900 leading-tight">
                       {stats?.recentAssessments || 0}
                     </dd>
                   </dl>
@@ -195,57 +168,63 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* Quick Actions */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-          <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
-            <h3 className="text-lg font-display font-semibold text-gray-900 mb-4">Actions Rapides</h3>
-            <div className="space-y-3">
+        {/* Quick Actions & Sector Stats */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-6">
+          <div className="bg-white shadow-md rounded-xl border border-gray-100 p-5">
+            <h3 className="text-base font-black text-gray-900 mb-4 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-primary-600" />
+              Actions Rapides
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <button
                 onClick={() => navigate('/admin/users')}
-                className="w-full flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-colors group"
+                className="flex items-center px-3 py-2.5 text-xs font-bold text-gray-700 hover:bg-primary-50 hover:text-primary-700 rounded-lg transition-all border border-transparent hover:border-primary-100 group"
               >
-                <div className="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-primary-200">
-                  <Users className="h-4 w-4 text-primary-600" />
+                <div className="w-7 h-7 bg-primary-100 rounded-lg flex items-center justify-center mr-2 group-hover:bg-primary-200 shadow-sm">
+                  <Users className="h-3.5 w-3.5 text-primary-600" />
                 </div>
                 Gérer les Utilisateurs
               </button>
               <button
                 onClick={() => navigate('/admin/assessments')}
-                className="w-full flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-success-50 hover:text-success-700 rounded-lg transition-colors group"
+                className="flex items-center px-3 py-2.5 text-xs font-bold text-gray-700 hover:bg-success-50 hover:text-success-700 rounded-lg transition-all border border-transparent hover:border-success-100 group"
               >
-                <div className="w-8 h-8 bg-success-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-success-200">
-                  <FileText className="h-4 w-4 text-success-600" />
+                <div className="w-7 h-7 bg-success-100 rounded-lg flex items-center justify-center mr-2 group-hover:bg-success-200 shadow-sm">
+                  <FileText className="h-3.5 w-3.5 text-success-600" />
                 </div>
                 Voir les Évaluations
               </button>
               <button
-                onClick={() => navigate('/admin/emails')}
-                className="w-full flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-earth-50 hover:text-earth-700 rounded-lg transition-colors group"
+                onClick={() => navigate('/admin/emails/broadcast')}
+                className="flex items-center px-3 py-2.5 text-xs font-bold text-gray-700 hover:bg-orange-50 hover:text-orange-700 rounded-lg transition-all border border-transparent hover:border-orange-100 group"
               >
-                <div className="w-8 h-8 bg-earth-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-earth-200">
-                  <Mail className="h-4 w-4 text-earth-600" />
+                <div className="w-7 h-7 bg-orange-100 rounded-lg flex items-center justify-center mr-2 group-hover:bg-orange-200 shadow-sm">
+                  <Mail className="h-3.5 w-3.5 text-orange-600" />
                 </div>
                 Envoyer des Emails
               </button>
               <button
                 onClick={handleExport}
-                className="w-full flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-accent-50 hover:text-accent-700 rounded-lg transition-colors group"
+                className="flex items-center px-3 py-2.5 text-xs font-bold text-gray-700 hover:bg-accent-50 hover:text-accent-700 rounded-lg transition-all border border-transparent hover:border-accent-100 group"
               >
-                <div className="w-8 h-8 bg-accent-100 rounded-lg flex items-center justify-center mr-3 group-hover:bg-accent-200">
-                  <Download className="h-4 w-4 text-accent-600" />
+                <div className="w-7 h-7 bg-accent-100 rounded-lg flex items-center justify-center mr-2 group-hover:bg-accent-200 shadow-sm">
+                  <Download className="h-3.5 w-3.5 text-accent-600" />
                 </div>
                 Exporter les Données
               </button>
             </div>
           </div>
 
-          <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
-            <h3 className="text-lg font-display font-semibold text-gray-900 mb-4">Statistiques par Secteur</h3>
-            <div className="space-y-3">
-              {stats?.sectorStats?.slice(0, 5).map((sector, index) => (
-                <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                  <span className="text-sm font-medium text-gray-700 capitalize">{sector._id}</span>
-                  <span className="text-sm font-bold text-primary-600 bg-primary-100 px-2 py-1 rounded-full">
+          <div className="bg-white shadow-md rounded-xl border border-gray-100 p-5">
+            <h3 className="text-base font-black text-gray-900 mb-4 flex items-center gap-2">
+              <BarChart3 className="w-4 h-4 text-primary-600" />
+              Statistiques par Secteur
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {stats?.sectorStats?.slice(0, 6).map((sector, index) => (
+                <div key={index} className="flex justify-between items-center px-3 py-2 bg-gray-50/50 hover:bg-gray-50 rounded-lg transition-colors border border-gray-100">
+                  <span className="text-[11px] font-bold text-gray-600 capitalize truncate pr-2">{sector._id}</span>
+                  <span className="text-[11px] font-black text-primary-600 bg-white px-2 py-0.5 rounded border border-primary-100 shadow-sm whitespace-nowrap">
                     {sector.count}
                   </span>
                 </div>
@@ -254,18 +233,21 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        {/* Charts Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
-            <h3 className="text-lg font-display font-semibold text-gray-900 mb-4">Répartition par Taille d'Entreprise</h3>
-            <div className="space-y-3">
+        {/* Charts / Bottom Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="bg-white shadow-md rounded-xl border border-gray-100 p-5">
+            <h3 className="text-base font-black text-gray-900 mb-4 flex items-center gap-2">
+              <Building2 className="w-4 h-4 text-secondary-600" />
+              Répartition par Taille d'Entreprise
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {stats?.sizeStats?.map((size, index) => (
-                <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                  <span className="text-sm font-medium text-gray-700 capitalize">
+                <div key={index} className="flex justify-between items-center px-3 py-2 bg-gray-50/50 rounded-lg border border-gray-100 transition-all hover:bg-gray-50">
+                  <span className="text-[11px] font-bold text-gray-600 capitalize">
                     {size._id === 'micro' ? 'Micro' : 
                      size._id === 'sme' ? 'PME' : 'Grande PME'}
                   </span>
-                  <span className="text-sm font-bold text-secondary-600 bg-secondary-100 px-2 py-1 rounded-full">
+                  <span className="text-[11px] font-black text-secondary-600 bg-white px-2 py-0.5 rounded border border-secondary-100 shadow-sm">
                     {size.count}
                   </span>
                 </div>
@@ -273,22 +255,25 @@ const AdminDashboard = () => {
             </div>
           </div>
 
-          <div className="bg-white shadow-lg rounded-xl border border-gray-100 p-6">
-            <h3 className="text-lg font-display font-semibold text-gray-900 mb-4">Statut des Évaluations</h3>
-            <div className="space-y-3">
+          <div className="bg-white shadow-md rounded-xl border border-gray-100 p-5">
+            <h3 className="text-base font-black text-gray-900 mb-4 flex items-center gap-2">
+              <FileText className="w-4 h-4 text-success-600" />
+              Statut des Évaluations
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               {stats?.scoreStats?.map((status, index) => (
-                <div key={index} className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
+                <div key={index} className="flex justify-between items-center px-3 py-2 bg-gray-50/50 rounded-lg border border-gray-100 transition-all hover:bg-gray-50">
                   <div className="flex items-center">
-                    <div className={`w-4 h-4 rounded-full mr-3 ${
+                    <div className={`w-2.5 h-2.5 rounded-full mr-2 shadow-sm ${
                       status._id === 'green' ? 'bg-success-500' :
                       status._id === 'amber' ? 'bg-warning-500' : 'bg-danger-500'
                     }`}></div>
-                    <span className="text-sm font-medium text-gray-700 capitalize">
+                    <span className="text-[11px] font-bold text-gray-600 capitalize">
                       {status._id === 'green' ? 'Excellent' :
                        status._id === 'amber' ? 'Moyen' : 'Faible'}
                     </span>
                   </div>
-                  <span className="text-sm font-bold text-gray-900 bg-white px-3 py-1 rounded-full border">
+                  <span className="text-[11px] font-black text-gray-900 bg-white px-2 py-0.5 rounded border border-gray-100 shadow-sm">
                     {status.count}
                   </span>
                 </div>

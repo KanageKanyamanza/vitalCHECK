@@ -22,6 +22,8 @@ import NewsletterEditPage from './NewsletterEditPage';
 import NewsletterSubscribers from './NewsletterSubscribers';
 import ContactManagement from './ContactManagement';
 import EmailImport from './EmailImport';
+import EmailInbox from './EmailInbox';
+import EmailBroadcast from './EmailBroadcast';
 
 const AdminApp = () => {
   const isAuthenticated = () => {
@@ -109,9 +111,9 @@ const AdminApp = () => {
         } 
       />
       <Route 
-        path="/emails" 
+        path="/emails/broadcast" 
         element={
-          isAuthenticated() ? <EmailManagement /> : <Navigate to="/login" replace />
+          isAuthenticated() ? <EmailBroadcast /> : <Navigate to="/login" replace />
         } 
       />
       <Route 
@@ -172,6 +174,12 @@ const AdminApp = () => {
         path="/contacts" 
         element={
           isAuthenticated() ? <ContactManagement /> : <Navigate to="/login" replace />
+        } 
+      />
+      <Route 
+        path="/inbox" 
+        element={
+          isAuthenticated() ? <EmailInbox /> : <Navigate to="/login" replace />
         } 
       />
       <Route 
