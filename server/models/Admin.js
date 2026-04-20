@@ -18,6 +18,11 @@ const adminSchema = new mongoose.Schema({
     required: [true, 'Name is required'],
     trim: true
   },
+  signature: {
+    type: String,
+    trim: true,
+    default: ""
+  },
   role: {
     type: String,
     enum: ['super-admin', 'admin', 'moderator'],

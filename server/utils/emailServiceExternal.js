@@ -1,5 +1,59 @@
 const sgMail = require('@sendgrid/mail');
 const emailjs = require('@emailjs/nodejs');
+const Message = require('../models/Message');
+const Contact = require('../models/Contact');
+const MailingContact = require('../models/MailingContact');
+const User = require('../models/User');
+
+/**
+ * Utilitaire pour enregistrer un email sortant dans la collection Message
+ */
+const saveOutboundEmail = async (mailOptions, messageId) => {
+  try {
+    const toEmail = Array.isArray(mailOptions.to) ? mailOptions.to[0] : mailOptions.to;
+    const cleanEmail = (toEmail || '').toLowerCase().trim();
+    
+    let contactId = null;
+    let contactModel = 'Contact';
+    
+    const contact = await Contact.findOne({ email: cleanEmail });
+    if (contact) {
+      contactId = contact._id;
+      contactModel = 'Contact';
+    } else {
+      const user = await User.findOne({ email: cleanEmail });
+      if (user) {
+        contactId = user._id;
+        contactModel = 'User';
+      } else {
+        const mailing = await MailingContact.findOne({ email: cleanEmail });
+        if (mailing) {
+          contactId = mailing._id;
+          contactModel = 'MailingContact';
+        }
+      }
+    }
+    
+    if (contactId) {
+      const newMessage = new Message({
+        contactId,
+        contactModel,
+        direction: 'outbound',
+        from: mailOptions.from || process.env.EMAIL_USER,
+        to: cleanEmail,
+        subject: mailOptions.subject,
+        body: mailOptions.html || mailOptions.text || '',
+        htmlBody: mailOptions.html,
+        date: new Date(),
+        messageId: messageId,
+        isRead: true
+      });
+      await newMessage.save();
+    }
+  } catch (error) {
+    console.error('Error saving outbound email (external):', error);
+  }
+};
 
 /**
  * Service d'email externe pour Render
@@ -45,19 +99,21 @@ const sendEmailSendGrid = async (emailOptions) => {
 
     const response = await sgMail.send(msg);
     
-    console.log('✅ [SENDGRID] Email envoyé avec succès:', {
-      messageId: response[0].headers['x-message-id'],
-      to: emailOptions.to,
-      subject: emailOptions.subject,
-      statusCode: response[0].statusCode
-    });
-
-    return {
+    const result = {
       messageId: response[0].headers['x-message-id'] || `sendgrid-${Date.now()}@vitalCHECK.com`,
       response: `SendGrid: ${response[0].statusCode}`,
       accepted: [emailOptions.to],
       rejected: []
     };
+
+    // Tracker l'email sortant
+    if (!emailOptions.skipTracking) {
+      saveOutboundEmail(emailOptions, result.messageId).catch(err => 
+        console.error('❌ [EMAIL TRACKING EXT] Error:', err.message)
+      );
+    }
+
+    return result;
     
   } catch (error) {
     console.error('❌ [SENDGRID] Erreur SendGrid:', {
@@ -114,12 +170,21 @@ const sendEmailEmailJS = async (emailOptions) => {
       status: response.status
     });
 
-    return {
-      messageId: `emailjs-${Date.now()}@vitalCHECK.com`,
+    const result = {
+      messageId: response.text || `emailjs-${Date.now()}@vitalCHECK.com`,
       response: `EmailJS: ${response.status}`,
       accepted: [emailOptions.to],
       rejected: []
     };
+
+    // Tracker l'email sortant
+    if (!emailOptions.skipTracking) {
+      saveOutboundEmail(emailOptions, result.messageId).catch(err => 
+        console.error('❌ [EMAIL TRACKING EXT] Error:', err.message)
+      );
+    }
+
+    return result;
     
   } catch (error) {
     console.error('❌ [EMAILJS] Erreur EmailJS:', {

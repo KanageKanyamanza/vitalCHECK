@@ -31,23 +31,23 @@ const AdminHeader = ({ onMenuClick, sidebarOpen, adminData, onLogout }) => {
 
   return (
     <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
-      <div className="flex items-center justify-between px-4 py-3 lg:px-6">
+      <div className="flex items-center justify-between px-4 py-2 lg:px-6">
         {/* Left side - Admin icon on mobile, menu button on desktop */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center space-x-3">
           {/* Menu button for mobile */}
           {!sidebarOpen && (
             <button
               onClick={onMenuClick}
-              className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
+              className="lg:hidden p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
               aria-label="Open menu"
             >
-              <Menu className="w-6 h-6 text-gray-700" />
+              <Menu className="w-5 h-5 text-gray-700" />
             </button>
           )}
 
           {/* vitalCHECK Logo for mobile */}
-          <div className="lg:hidden flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center">
+          <div className="lg:hidden flex items-center space-x-2">
+            <div className="w-7 h-7 rounded-lg overflow-hidden flex items-center justify-center">
               <img 
                 src={Logo} 
                 alt="vitalCHECK Logo" 
@@ -55,33 +55,30 @@ const AdminHeader = ({ onMenuClick, sidebarOpen, adminData, onLogout }) => {
               />
             </div>
             <div>
-              <h1 className="md:text-lg sm:text-md text-xs font-display font-semibold text-gray-900">
-                 vitalCHECK Admin
+              <h1 className="text-sm font-display font-bold text-gray-900">
+                 vitalCHECK 
               </h1>
             </div>
           </div>
 
 
           {/* Title - hidden on mobile */}
-          <div className="hidden lg:block">
-            <h1 className="text-xl font-display font-semibold text-gray-900">
+          <div className="hidden lg:block leading-tight">
+            <h1 className="text-lg font-black text-gray-900 leading-none">
               vitalCHECK Admin
             </h1>
-            <p className="text-sm text-gray-500">Gestion des utilisateurs et évaluations</p>
+            <p className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-0.5">Tableau de bord stratégique</p>
           </div>
         </div>
 
         {/* Right side - User info and actions */}
-        <div className="flex items-center space-x-4">
-          {/* Language Selector - visible on all screens */}
+        <div className="flex items-center space-x-3">
           <LanguageSelector />
-
-          {/* Notifications - visible on all screens */}
           <NotificationDropdown />
 
           {/* User info - hidden on mobile */}
-          <div className="hidden lg:flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center">
+          <div className="hidden lg:flex items-center space-x-2.5">
+            <div className="w-7 h-7 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center shadow-inner">
               {adminData?.avatar?.url ? (
                 <img 
                   src={adminData.avatar.url} 
@@ -89,14 +86,14 @@ const AdminHeader = ({ onMenuClick, sidebarOpen, adminData, onLogout }) => {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-accent-500 rounded-full flex items-center justify-center">
-                  <User className="w-4 h-4 text-white" />
+                <div className="w-full h-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
+                  <User className="w-3.5 h-3.5 text-white" />
                 </div>
               )}
             </div>
-            <div>
-              <p className="text-sm font-medium text-gray-900">{adminData?.name}</p>
-              <p className="text-xs text-gray-500">Administrateur</p>
+            <div className="leading-none">
+              <p className="text-xs font-black text-gray-900">{adminData?.name}</p>
+              <p className="text-[10px] font-bold text-primary-600/60 uppercase mt-0.5">{adminData?.role || 'Administrateur'}</p>
             </div>
           </div>
 
@@ -104,7 +101,7 @@ const AdminHeader = ({ onMenuClick, sidebarOpen, adminData, onLogout }) => {
           <div className="lg:hidden relative" ref={menuRef}>
             <button
               onClick={() => setShowMobileMenu(!showMobileMenu)}
-              className="w-8 h-8 rounded-full overflow-hidden bg-gray-200 flex items-center justify-center"
+              className="w-7 h-7 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center"
             >
               {adminData?.avatar?.url ? (
                 <img 
@@ -113,24 +110,22 @@ const AdminHeader = ({ onMenuClick, sidebarOpen, adminData, onLogout }) => {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-8 h-8 bg-gradient-to-br from-primary-500 to-accent-500 rounded-full flex items-center justify-center">
-                  <User className="w-4 h-4 text-white" />
+                <div className="w-full h-full bg-gradient-to-br from-primary-500 to-accent-500 flex items-center justify-center">
+                  <User className="w-3.5 h-3.5 text-white" />
                 </div>
               )}
             </button>
-
-            {/* Mobile dropdown menu */}
             {showMobileMenu && (
-              <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg border border-gray-200 py-1 z-50">
-                <div className="px-4 py-2 border-b border-gray-100">
-                  <p className="text-sm font-medium text-gray-900">{adminData?.name}</p>
+              <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 py-1 z-50">
+                <div className="px-4 py-2 border-b border-gray-50">
+                  <p className="text-sm font-bold text-gray-900">{adminData?.name}</p>
                   <p className="text-xs text-gray-500">Administrateur</p>
                 </div>
                 <button
                   onClick={handleSettingsClick}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 flex items-center"
+                  className="w-full text-left px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 flex items-center transition-colors"
                 >
-                  <Settings className="w-4 h-4 mr-2" />
+                  <Settings className="w-4 h-4 mr-2 text-gray-400" />
                   Paramètres
                 </button>
                 <button
@@ -138,7 +133,7 @@ const AdminHeader = ({ onMenuClick, sidebarOpen, adminData, onLogout }) => {
                     setShowMobileMenu(false);
                     onLogout();
                   }}
-                  className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center"
+                  className="w-full text-left px-4 py-2 text-sm font-medium text-red-600 hover:bg-red-50 flex items-center transition-colors"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
                   Déconnexion
@@ -147,14 +142,16 @@ const AdminHeader = ({ onMenuClick, sidebarOpen, adminData, onLogout }) => {
             )}
           </div>
 
+          <div className="h-4 w-px bg-gray-200 hidden lg:block mx-1"></div>
+
           {/* Desktop logout button */}
           <button
             onClick={onLogout}
-            className="hidden lg:flex items-center space-x-2 px-3 py-2 text-danger-600 hover:bg-danger-50 rounded-lg transition-colors"
+            className="hidden lg:flex items-center space-x-1.5 px-2.5 py-1.5 text-red-600 hover:bg-red-50 rounded-lg transition-all active:scale-95"
             title="Déconnexion"
           >
-            <LogOut className="w-4 h-4" />
-            <span className="text-sm font-medium">Déconnexion</span>
+            <LogOut className="w-3.5 h-3.5" />
+            <span className="text-[11px] font-black uppercase tracking-wider">Déconnexion</span>
           </button>
         </div>
       </div>

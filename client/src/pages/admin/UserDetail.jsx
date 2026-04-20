@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { useAdminApi } from '../../hooks/useAdminApi';
+import ConversationHistory from '../../components/admin/ConversationHistory';
 
 const UserDetail = () => {
   const [user, setUser] = useState(null);
@@ -329,6 +330,24 @@ const UserDetail = () => {
                 </div>
               </div>
             )}
+          </div>
+        </div>
+
+        {/* Conversation History */}
+        <div className="bg-white shadow rounded-lg mt-8">
+          <div className="px-6 py-4 border-b border-gray-200">
+            <h3 className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                <Mail className="h-5 w-5 text-primary-600" />
+                Historique des échanges par email
+            </h3>
+          </div>
+          <div className="p-6">
+            <ConversationHistory 
+              contactId={user._id} 
+              contactModel="User"
+              contactEmail={user.email}
+              contactName={user.companyName}
+            />
           </div>
         </div>
       </div>

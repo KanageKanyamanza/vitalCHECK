@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import AdminSidebar from './AdminSidebar';
 import AdminHeader from './AdminHeader';
 
-const AdminLayout = ({ children }) => {
+const AdminLayout = ({ children, noScroll = false }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
     // Récupérer l'état du collapse depuis localStorage
@@ -65,7 +65,7 @@ const AdminLayout = ({ children }) => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className={`min-h-screen bg-gray-50 ${noScroll ? 'h-screen overflow-hidden' : ''}`}>
       {/* Sidebar */}
       <AdminSidebar 
         isOpen={sidebarOpen}
@@ -76,9 +76,10 @@ const AdminLayout = ({ children }) => {
 
       {/* Main content */}
       <div className={`
-        transition-all duration-300 ease-in-out
+        transition-all duration-300 ease-in-out h-full
         ${sidebarCollapsed ? 'lg:ml-16' : 'lg:ml-64'}
         ${sidebarOpen ? 'ml-64' : 'ml-0'}
+        ${noScroll ? 'overflow-hidden' : ''}
       `}>
         {/* Header */}
         <AdminHeader 
@@ -89,7 +90,7 @@ const AdminLayout = ({ children }) => {
         />
 
         {/* Page content */}
-        <main className="min-h-screen">
+        <main className={`${noScroll ? 'h-[calc(100vh-64px)] overflow-hidden' : 'min-h-screen'}`}>
           {children}
         </main>
       </div>

@@ -19,11 +19,13 @@ import {
     Save,
     X,
     Tag,
+    MessageSquare
 } from "lucide-react";
 import AdminLayout from "../../components/admin/AdminLayout";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { API_BASE_URL } from "../../services/api";
+import ConversationHistory from "../../components/admin/ConversationHistory";
 
 const ContactManagement = () => {
 	const navigate = useNavigate();
@@ -38,6 +40,9 @@ const ContactManagement = () => {
 	const [editingContact, setEditingContact] = useState(null);
 	const [editForm, setEditForm] = useState({ firstName: "", lastName: "", email: "", type: "" });
 	const [isSaving, setIsSaving] = useState(false);
+	const [isBulkModalOpen, setIsBulkModalOpen] = useState(false);
+	const [bulkMessage, setBulkMessage] = useState({ subject: "", body: "" });
+	const [isSendingBulk, setIsSendingBulk] = useState(false);
 
 	const [stats, setStats] = useState({
 		total: 0,
@@ -155,17 +160,47 @@ const ContactManagement = () => {
 			toast.error("Veuillez sélectionner au moins un contact");
 			return;
 		}
+		
+		navigate('/admin/emails/broadcast', { 
+			state: { 
+				selectedSubscribers,
+				contactModel: 'MailingContact'
+			} 
+		});
+	};
 
-		const selectedEmails = subscribers
-			.filter((sub) => selectedSubscribers.includes(sub._id))
-			.map((sub) => sub.email);
+	const handleBulkSendExecute = async () => {
+		if (!bulkMessage.subject.trim() || !bulkMessage.body.trim()) {
+			toast.error("Le sujet et le message sont obligatoires");
+			return;
+		}
 
-		navigate("/admin/emails", { 
-            state: { 
-                selectedUsers: [],
-                userEmails: selectedEmails 
-            } 
-        });
+		try {
+			setIsSendingBulk(true);
+			const token = localStorage.getItem("adminToken");
+			
+			// On envoie les emails directement via une nouvelle route qu'on va créer ou simplifier
+			const response = await axios.post(`${API_BASE_URL}/messages/bulk-send`, {
+				recipientIds: selectedSubscribers,
+				contactModel: 'MailingContact',
+				subject: bulkMessage.subject,
+				body: bulkMessage.body
+			}, {
+				headers: { Authorization: `Bearer ${token}` }
+			});
+
+			if (response.data.success) {
+				toast.success(`${selectedSubscribers.length} messages envoyés avec succès`);
+				setIsBulkModalOpen(false);
+				setBulkMessage({ subject: "", body: "" });
+				setSelectedSubscribers([]);
+			}
+		} catch (error) {
+			console.error("Bulk send error:", error);
+			toast.error("Erreur lors de l'envoi groupé");
+		} finally {
+			setIsSendingBulk(false);
+		}
 	};
 
 	const handleEditClick = (contact) => {
@@ -214,6 +249,17 @@ const ContactManagement = () => {
         } catch (error) {
             toast.error("Erreur lors de la suppression");
         }
+    };
+
+    const handleMessageClick = (contact) => {
+        navigate('/admin/inbox', { 
+            state: { 
+                openContactId: contact._id,
+                contactName: `${contact.firstName || ''} ${contact.lastName || ''}`.trim() || contact.email,
+                contactEmail: contact.email,
+                contactModel: 'MailingContact'
+            } 
+        });
     };
 
 	const getStatusBadge = (isActive) => {
@@ -268,110 +314,114 @@ const ContactManagement = () => {
 
 	return (
 		<AdminLayout>
-			<div className="p-4 lg:p-6">
+			<div className="p-4 lg:p-5">
 				{/* Header */}
-				<div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+				<div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-5">
 					<div>
-						<h1 className="text-3xl font-bold text-gray-900 tracking-tight">
+						<h1 className="text-xl font-black text-gray-900 tracking-tight leading-none">
 							Mes Contacts
 						</h1>
-						<p className="text-gray-600 mt-1">
-							Gérez vos listes de contacts et destinataires pour vos campagnes
+						<p className="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-1">
+							Gestion des listes et destinataires
 						</p>
 					</div>
 					<div className="flex flex-wrap gap-2">
 						<button
-							onClick={() => navigate("/admin/emails")}
-							className="flex items-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-all shadow-sm font-medium"
+							onClick={handleSendToSelected}
+							className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all shadow-md shadow-green-100 font-bold text-xs"
 						>
 							<Mail className="w-4 h-4" />
-							Envoyer un Mail
+							{selectedSubscribers.length > 0 ? (
+								<span>Envoyer à {selectedSubscribers.length}</span>
+							) : (
+								<span>Envoyer un Mail</span>
+							)}
 						</button>
 						<button
 							onClick={() => navigate("/admin/emails/import")}
-							className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-all shadow-sm font-medium"
+							className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-all shadow-sm font-bold text-xs"
 						>
-							<Upload className="w-4 h-4 text-orange-600" />
+							<Upload className="w-3.5 h-3.5 text-orange-600" />
 							Importer
 						</button>
 						<button
 							onClick={exportToCSV}
-							className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-all shadow-sm font-medium"
+							className="flex items-center gap-2 px-3 py-1.5 bg-white border border-gray-200 text-gray-700 rounded-lg hover:bg-gray-50 transition-all shadow-sm font-bold text-xs"
 						>
-							<Download className="w-4 h-4 text-blue-600" />
+							<Download className="w-3.5 h-3.5 text-blue-600" />
 							Exporter
 						</button>
 					</div>
 				</div>
 
 				{/* Stats Cards */}
-				<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-					<div className="bg-white shadow-sm rounded-xl border border-gray-100 p-6 flex items-center gap-4">
-						<div className="p-3 bg-primary-50 rounded-lg">
-							<Users className="w-6 h-6 text-primary-600" />
+				<div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
+					<div className="bg-white shadow-sm rounded-xl border border-gray-100 p-4 flex items-center gap-3">
+						<div className="p-2 bg-primary-50 rounded-lg">
+							<Users className="w-5 h-5 text-primary-600" />
 						</div>
                         <div>
-                            <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Total Contacts</p>
-                            <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Total Contacts</p>
+                            <p className="text-lg font-black text-gray-900 leading-none mt-1">{stats.total}</p>
                         </div>
 					</div>
 
-					<div className="bg-white shadow-sm rounded-xl border border-gray-100 p-6 flex items-center gap-4">
-						<div className="p-3 bg-green-50 rounded-lg">
-							<CheckCircle className="w-6 h-6 text-green-600" />
+					<div className="bg-white shadow-sm rounded-xl border border-gray-100 p-4 flex items-center gap-3">
+						<div className="p-2 bg-green-50 rounded-lg">
+							<CheckCircle className="w-5 h-5 text-green-600" />
 						</div>
                         <div>
-                            <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Actifs</p>
-                            <p className="text-2xl font-bold text-green-600">{stats.active}</p>
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Actifs</p>
+                            <p className="text-lg font-black text-green-600 leading-none mt-1">{stats.active}</p>
                         </div>
 					</div>
 
-					<div className="bg-white shadow-sm rounded-xl border border-gray-100 p-6 flex items-center gap-4">
-						<div className="p-3 bg-red-50 rounded-lg">
-							<XCircle className="w-6 h-6 text-red-600" />
+					<div className="bg-white shadow-sm rounded-xl border border-gray-100 p-4 flex items-center gap-3">
+						<div className="p-2 bg-red-50 rounded-lg">
+							<XCircle className="w-5 h-5 text-red-600" />
 						</div>
                         <div>
-                            <p className="text-sm font-medium text-gray-500 uppercase tracking-wider">Inactifs</p>
-                            <p className="text-2xl font-bold text-red-600">{stats.inactive}</p>
+                            <p className="text-[10px] font-black text-gray-400 uppercase tracking-widest">Inactifs</p>
+                            <p className="text-lg font-black text-red-600 leading-none mt-1">{stats.inactive}</p>
                         </div>
 					</div>
 				</div>
 
 				{/* Filters */}
-				<div className="bg-white shadow-sm rounded-xl border border-gray-100 p-6 mb-6">
-					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+				<div className="bg-white shadow-sm rounded-xl border border-gray-100 p-4 mb-5">
+					<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
 						<div className="lg:col-span-2">
-							<label className="block text-xs font-bold text-gray-500 uppercase mb-2 tracking-widest">
+							<label className="block text-[10px] font-black text-gray-400 uppercase mb-1.5 tracking-widest">
 								Recherche
 							</label>
 							<div className="relative">
-								<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+								<Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
 								<input
 									type="text"
-									placeholder="Email, nom, entreprise, type..."
+									placeholder="Email, nom, type..."
 									value={searchTerm}
 									onChange={(e) => {
 										setSearchTerm(e.target.value);
 										setPagination((prev) => ({ ...prev, page: 1 }));
 									}}
-									className="pl-10 w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-sm text-gray-900 font-medium"
+									className="pl-9 w-full px-3 py-1.5 bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-xs text-gray-900 font-bold"
 								/>
 							</div>
 						</div>
 
 						<div>
-							<label className="block text-xs font-bold text-gray-500 uppercase mb-2 tracking-widest">
+							<label className="block text-[10px] font-black text-gray-400 uppercase mb-1.5 tracking-widest">
 								Type / Groupe
 							</label>
                             <div className="relative">
-                                <Tag className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                                <Tag className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
                                 <select
                                     value={typeFilter}
                                     onChange={(e) => {
                                         setTypeFilter(e.target.value);
                                         setPagination((prev) => ({ ...prev, page: 1 }));
                                     }}
-                                    className="pl-10 w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-sm font-medium"
+                                    className="pl-9 w-full px-3 py-1.5 bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-xs font-bold"
                                 >
                                     <option value="">Tous les types</option>
                                     {availableTypes.map(t => (
@@ -382,22 +432,22 @@ const ContactManagement = () => {
 						</div>
 
 						<div>
-							<label className="block text-xs font-bold text-gray-500 uppercase mb-2 tracking-widest">
+							<label className="block text-[10px] font-black text-gray-400 uppercase mb-1.5 tracking-widest">
 								Statut
 							</label>
 							<div className="relative">
-								<Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+								<Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-3.5 w-3.5 text-gray-400" />
 								<select
 									value={statusFilter}
 									onChange={(e) => {
 										setStatusFilter(e.target.value);
 										setPagination((prev) => ({ ...prev, page: 1 }));
 									}}
-									className="pl-10 w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-sm font-medium"
+									className="pl-9 w-full px-3 py-1.5 bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-xs font-bold"
 								>
 									<option value="">Tous les statuts</option>
-									<option value="active">Actifs uniquement</option>
-									<option value="inactive">Inactifs uniquement</option>
+									<option value="active">Actifs</option>
+									<option value="inactive">Inactifs</option>
 								</select>
 							</div>
 						</div>
@@ -411,9 +461,9 @@ const ContactManagement = () => {
 									setDateRangeFilter("");
 									setPagination((prev) => ({ ...prev, page: 1 }));
 								}}
-								className="w-full px-4 py-2 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors text-sm font-bold"
+								className="w-full px-3 py-1.5 bg-gray-100 text-gray-600 rounded-lg hover:bg-gray-200 transition-colors text-[10px] font-black uppercase tracking-widest"
 							>
-								Réinitialiser
+								Reset
 							</button>
 						</div>
 					</div>
@@ -421,33 +471,31 @@ const ContactManagement = () => {
 
 				{/* Contacts List */}
 				<div className="bg-white shadow-sm rounded-xl border border-gray-100 overflow-hidden">
-					<div className="px-6 py-4 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
-						<h2 className="text-base font-bold text-gray-900 flex items-center gap-2">
-							<Users className="w-5 h-5 text-gray-400" />
-							Liste des Contacts ({pagination.total})
+					<div className="px-4 py-3 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+						<h2 className="text-sm font-black text-gray-900 flex items-center gap-2">
+							<Users className="w-4 h-4 text-primary-600" />
+							Liste des Contacts
 						</h2>
-                        {selectedSubscribers.length > 0 && (
-                            <button
-                                onClick={handleSendToSelected}
-                                className="flex items-center gap-2 px-3 py-1.5 bg-green-50 text-green-700 border border-green-200 rounded-lg hover:bg-green-100 transition-all text-xs font-bold"
-                            >
-                                <Send className="w-3.5 h-3.5" />
-                                Envoyer à {selectedSubscribers.length} sélectionné(s)
-                            </button>
-                        )}
+						<div className="flex items-center gap-2">
+							{selectedSubscribers.length > 0 && (
+								<span className="text-[10px] font-black text-primary-600 bg-primary-50 px-2.5 py-0.5 rounded-full border border-primary-100">
+									{selectedSubscribers.length} sélectionnés
+								</span>
+							)}
+						</div>
 					</div>
 
 					{subscribers.length === 0 ?
-						<div className="p-16 text-center">
-							<Mail className="w-16 h-16 text-gray-200 mx-auto mb-4" />
-							<p className="text-gray-500 font-medium">Aucun contact trouvé pour cette recherche</p>
+						<div className="p-10 text-center">
+							<Mail className="w-12 h-12 text-gray-200 mx-auto mb-3" />
+							<p className="text-xs text-gray-400 font-bold">Aucun contact trouvé</p>
 						</div>
 					:	<>
 							<div className="overflow-x-auto">
 								<table className="min-w-full divide-y divide-gray-100">
 									<thead className="bg-gray-50/50">
 										<tr>
-											<th className="px-6 py-4 text-left">
+											<th className="px-4 py-2 text-left">
 												<input
 													type="checkbox"
 													checked={
@@ -463,22 +511,22 @@ const ContactManagement = () => {
 															setSelectedSubscribers([]);
 														}
 													}}
-													className="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
+													className="w-3.5 h-3.5 rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
 												/>
 											</th>
-											<th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
+											<th className="px-4 py-2 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
 												Contact
 											</th>
-											<th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
+											<th className="px-4 py-2 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
 												Type
 											</th>
-											<th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
+											{/* <th className="px-4 py-2 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
 												Statut
+											</th> */}
+											<th className="px-4 py-2 text-left text-[10px] font-black text-gray-400 uppercase tracking-widest">
+												Date
 											</th>
-											<th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase tracking-widest">
-												Date d'ajout
-											</th>
-											<th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase tracking-widest">
+											<th className="px-4 py-2 text-right text-[10px] font-black text-gray-400 uppercase tracking-widest">
 												Actions
 											</th>
 										</tr>
@@ -487,9 +535,9 @@ const ContactManagement = () => {
 										{subscribers.map((subscriber) => (
 											<tr
 												key={subscriber._id}
-												className={`hover:bg-gray-50/80 transition-colors group ${selectedSubscribers.includes(subscriber._id) ? "bg-primary-50/30" : ""}`}
+												className={`hover:bg-gray-50/80 transition-colors group ${selectedSubscribers.includes(subscriber._id) ? "bg-primary-50/20" : ""}`}
 											>
-												<td className="px-6 py-4 whitespace-nowrap">
+												<td className="px-4 py-2.5 whitespace-nowrap">
 													<input
 														type="checkbox"
 														checked={selectedSubscribers.includes(
@@ -509,48 +557,55 @@ const ContactManagement = () => {
 																);
 															}
 														}}
-														className="w-4 h-4 rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
+														className="w-3.5 h-3.5 rounded border-gray-300 text-primary-600 focus:ring-primary-500 cursor-pointer"
 													/>
 												</td>
-												<td className="px-6 py-4">
+												<td className="px-4 py-2.5">
 													<div className="flex flex-col">
-														<span className="text-sm font-bold text-gray-900">
+														<span className="text-xs font-black text-gray-900 leading-tight">
 															{subscriber.firstName || subscriber.lastName ?
 																`${subscriber.firstName || ""} ${subscriber.lastName || ""}`.trim()
 															:	"Sans nom"}
 														</span>
-														<span className="text-xs text-gray-500">{subscriber.email}</span>
+														<span className="text-[10px] font-bold text-gray-400">{subscriber.email}</span>
 													</div>
 												</td>
-												<td className="px-6 py-4 whitespace-nowrap">
-													<span className="inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold bg-blue-50 text-blue-700 border border-blue-100">
+												<td className="px-4 py-2.5 whitespace-nowrap">
+													<span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-black bg-blue-50 text-blue-700 border border-blue-100">
 														{subscriber.type || "Prospect"}
 													</span>
 												</td>
-												<td className="px-6 py-4 whitespace-nowrap">
+												{/* <td className="px-4 py-2.5 whitespace-nowrap">
 													{getStatusBadge(subscriber.isActive)}
-												</td>
-												<td className="px-6 py-4 whitespace-nowrap">
-													<span className="text-xs text-gray-500 flex items-center gap-1.5 font-medium">
-														<Calendar className="w-3.5 h-3.5" />
+												</td> */}
+												<td className="px-4 py-2.5 whitespace-nowrap">
+													<span className="text-[10px] text-gray-500 font-bold flex items-center gap-1">
+														<Calendar className="w-3 h-3" />
 														{new Date(subscriber.addedAt || subscriber.createdAt).toLocaleDateString("fr-FR")}
 													</span>
 												</td>
-												<td className="px-6 py-4 whitespace-nowrap text-right">
-                                                    <div className="flex justify-end gap-1 transition-opacity">
+												<td className="px-4 py-2.5 whitespace-nowrap text-right">
+                                                    <div className="flex justify-end gap-0.5">
                                                         <button
                                                             onClick={() => handleEditClick(subscriber)}
-                                                            className="p-1.5 text-gray-400 hover:text-primary-600 hover:bg-primary-50 rounded-lg transition-all"
+                                                            className="p-1 px-1.5 text-gray-400 hover:text-primary-600 hover:bg-white rounded transition-all border border-transparent hover:border-gray-100"
                                                             title="Modifier"
                                                         >
-                                                            <Edit className="w-4 h-4" />
+                                                            <Edit className="w-3.5 h-3.5" />
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleMessageClick(subscriber)}
+                                                            className="p-1 px-1.5 text-gray-400 hover:text-green-600 hover:bg-white rounded transition-all border border-transparent hover:border-gray-100"
+                                                            title="Message"
+                                                        >
+                                                            <MessageSquare className="w-3.5 h-3.5" />
                                                         </button>
                                                         <button
                                                             onClick={() => handleDeleteContact(subscriber._id)}
-                                                            className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-all"
+                                                            className="p-1 px-1.5 text-gray-400 hover:text-red-600 hover:bg-white rounded transition-all border border-transparent hover:border-gray-100"
                                                             title="Supprimer"
                                                         >
-                                                            <Trash2 className="w-4 h-4" />
+                                                            <Trash2 className="w-3.5 h-3.5" />
                                                         </button>
                                                     </div>
 												</td>
@@ -562,25 +617,25 @@ const ContactManagement = () => {
 
 							{/* Pagination */}
 							{pagination.pages > 1 && (
-								<div className="px-6 py-4 border-t border-gray-100 bg-gray-50/30">
+								<div className="px-4 py-2 border-t border-gray-100 bg-gray-50/30 font-bold">
 									<div className="flex items-center justify-between">
-										<div className="text-xs font-bold text-gray-500 uppercase tracking-widest">
-											Page {pagination.page} / {pagination.pages}
+										<div className="text-[10px] font-black text-gray-400 uppercase tracking-widest">
+											{pagination.page} / {pagination.pages}
 										</div>
 										<div className="flex gap-1">
 											<button
 												onClick={() => handlePageChange(pagination.page - 1)}
 												disabled={pagination.page === 1}
-												className="p-2 rounded-lg border border-gray-200 hover:bg-white disabled:opacity-40 transition-all shadow-sm"
+												className="p-1.5 rounded bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition-all shadow-sm"
 											>
-												<ChevronLeft className="w-4 h-4" />
+												<ChevronLeft className="w-3 h-3" />
 											</button>
 											<button
 												onClick={() => handlePageChange(pagination.page + 1)}
 												disabled={pagination.page === pagination.pages}
-												className="p-2 rounded-lg border border-gray-200 hover:bg-white disabled:opacity-40 transition-all shadow-sm"
+												className="p-1.5 rounded bg-white border border-gray-200 hover:bg-gray-50 disabled:opacity-30 transition-all shadow-sm"
 											>
-												<ChevronRight className="w-4 h-4" />
+												<ChevronRight className="w-3 h-3" />
 											</button>
 										</div>
 									</div>
@@ -675,6 +730,8 @@ const ContactManagement = () => {
                     </div>
                 </div>
             )}
+
+
 		</AdminLayout>
 	);
 };

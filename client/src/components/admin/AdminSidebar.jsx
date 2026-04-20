@@ -17,7 +17,8 @@ import {
   UserCheck,
   Download,
   DollarSign,
-  MessageCircle
+  MessageCircle,
+  Send
 } from 'lucide-react';
 import Logo from '../../assets/Logo.png';
 
@@ -75,12 +76,12 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
       hoverColor: 'hover:bg-indigo-100'
     },
     {
-      name: 'Emails',
-      path: '/admin/emails',
+      name: 'Messagerie',
+      path: '/admin/inbox',
       icon: Mail,
-      color: 'text-earth-600',
-      bgColor: 'bg-earth-50',
-      hoverColor: 'hover:bg-earth-100'
+      color: 'text-primary-600',
+      bgColor: 'bg-primary-50',
+      hoverColor: 'hover:bg-primary-100'
     },
     {
       name: 'Mes Contacts',
@@ -93,7 +94,7 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
     {
       name: 'Newsletters',
       path: '/admin/newsletters',
-      icon: Mail,
+      icon: Send,
       color: 'text-pink-600',
       bgColor: 'bg-pink-50',
       hoverColor: 'hover:bg-pink-100'
@@ -165,31 +166,31 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
         fixed top-0 left-0 h-full bg-white shadow-lg z-50 transition-all duration-300 ease-in-out flex flex-col
         ${isOpen ? 'translate-x-0' : '-translate-x-full'}
         lg:translate-x-0
-        ${isCollapsed ? 'w-[80px]' : 'w-64'}
+        ${isCollapsed ? 'w-[64px]' : 'w-60'}
       `}>
         {/* Header */}
-        <div className="flex items-center justify-between p-3 border-b border-gray-200 flex-shrink-0">
+        <div className="flex items-center justify-between p-2.5 border-b border-gray-100 flex-shrink-0">
           {!isCollapsed ? (
-            <div className="flex items-center space-x-3">
-              <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-white border border-gray-200">
+            <div className="flex items-center space-x-2">
+              <div className="w-7 h-7 rounded-lg overflow-hidden flex items-center justify-center bg-white border border-gray-100 shadow-sm">
                 <img 
                   src={Logo} 
                   alt="vitalCHECK Logo" 
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-contain p-0.5"
                 />
               </div>
-              <div>
-                <h2 className="text-lg font-display font-semibold text-gray-900">Admin</h2>
-                <p className="text-xs text-gray-500">Health Check</p>
+              <div className="leading-tight">
+                <h2 className="text-sm font-black text-gray-900 uppercase tracking-tighter">vitalCHECK</h2>
+                <p className="text-[9px] font-bold text-primary-600/60 uppercase tracking-widest">Admin</p>
               </div>
             </div>
           ) : (
             <div className="flex items-center justify-center w-full">
-              <div className="w-8 h-8 rounded-lg overflow-hidden flex items-center justify-center bg-white border border-gray-200">
+              <div className="w-7 h-7 rounded-lg overflow-hidden flex items-center justify-center bg-white border border-gray-100 shadow-sm">
                 <img 
                   src={Logo} 
                   alt="vitalCHECK Logo" 
-                  className="w-full h-full object-contain"
+                  className="w-full h-full object-contain p-0.5"
                 />
               </div>
             </div>
@@ -198,26 +199,24 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
           {/* Bouton collapse pour desktop */}
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="hidden lg:flex items-center justify-center w-8 h-8 rounded-lg hover:bg-gray-100 transition-colors"
+            className="hidden lg:flex items-center justify-center w-6 h-6 rounded-md hover:bg-gray-50 border border-transparent hover:border-gray-100 transition-all"
           >
             {isCollapsed ? (
-              <ChevronRight className="w-4 h-4 text-gray-600" />
+              <ChevronRight className="w-3.5 h-3.5 text-gray-500" />
             ) : (
-              <ChevronLeft className="w-4 h-4 text-gray-600" />
+              <ChevronLeft className="w-3.5 h-3.5 text-gray-500" />
             )}
           </button>
-
-          {/* Bouton fermer pour mobile */}
           <button
             onClick={() => setIsOpen(false)}
-            className="lg:hidden flex items-center justify-center w-8 h-8 rounded-lg hover:bg-gray-100 transition-colors"
+            className="lg:hidden flex items-center justify-center w-7 h-7 rounded-lg hover:bg-gray-100 transition-colors"
           >
             <X className="w-4 h-4 text-gray-600" />
           </button>
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-2 space-y-1 overflow-y-auto">
+        <nav className="flex-1 p-2 space-y-0.5 overflow-y-auto scrollbar-hide">
           {menuItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
@@ -230,18 +229,18 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
                   setIsOpen(false);
                 }}
                 className={`
-                  w-full flex items-center space-x-3 px-3 py-2 rounded-lg transition-all duration-200
+                  w-full flex items-center space-x-2.5 px-2.5 py-1.5 rounded-lg transition-all duration-200
                   ${active 
-                    ? `${item.bgColor} ${item.color} shadow-sm` 
-                    : `text-gray-600 hover:bg-gray-50 ${item.hoverColor}`
+                    ? `${item.bgColor} ${item.color} shadow-sm border border-black/5` 
+                    : `text-gray-500 hover:bg-gray-50 ${item.hoverColor} border border-transparent`
                   }
-                  ${isCollapsed ? 'justify-center' : ''}
+                  ${isCollapsed ? 'justify-center px-0' : ''}
                 `}
                 title={isCollapsed ? item.name : ''}
               >
-                <Icon className={`w-5 h-5 ${active ? item.color : 'text-gray-500'}`} />
+                <Icon className={`w-4 h-4 shrink-0 ${active ? item.color : 'text-gray-400'}`} />
                 {!isCollapsed && (
-                  <span className={`text-sm font-medium ${active ? item.color : 'text-gray-700'}`}>
+                  <span className={`text-[11px] font-black uppercase tracking-tight ${active ? item.color : 'text-gray-600'}`}>
                     {item.name}
                   </span>
                 )}
@@ -251,18 +250,18 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
         </nav>
 
         {/* Footer */}
-        <div className="p-2 border-t border-gray-200 flex-shrink-0">
+        <div className="p-2 border-t border-gray-100 flex-shrink-0">
           <button
             onClick={handleLogout}
             className={`
-              w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-danger-600 hover:bg-danger-50 transition-all duration-200
-              ${isCollapsed ? 'justify-center' : ''}
+              w-full flex items-center space-x-2.5 px-2.5 py-1.5 rounded-lg text-red-600 hover:bg-red-50 transition-all duration-200
+              ${isCollapsed ? 'justify-center px-0' : ''}
             `}
             title={isCollapsed ? 'Déconnexion' : ''}
           >
-            <LogOut className="w-5 h-5" />
+            <LogOut className="w-4 h-4 shrink-0" />
             {!isCollapsed && (
-              <span className="text-sm font-medium">Déconnexion</span>
+              <span className="text-[11px] font-black uppercase tracking-tight">Déconnexion</span>
             )}
           </button>
         </div>
