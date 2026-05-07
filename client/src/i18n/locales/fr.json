@@ -245,7 +245,11 @@
 		"complete": "Terminé",
 		"pleaseAnswerAll": "Veuillez répondre à toutes les questions",
 		"completedSuccessfully": "Évaluation terminée avec succès !",
-		"submissionError": "Erreur lors de la soumission de l'évaluation"
+		"submissionError": "Erreur lors de la soumission de l'évaluation",
+		"limitReachedTitle": "Limite mensuelle atteinte",
+		"limitReachedDesc": "Vous avez atteint votre limite mensuelle d'évaluations ({{limit}}) pour ce mois. Passez au plan supérieur pour continuer à évaluer votre entreprise.",
+		"viewOldResults": "Consulter mes anciens résultats",
+		"limitResetNote": "Réinitialisation de la limite le 1er du mois prochain"
 	},
 	"resume": {
 		"title": "Évaluation vitalCHECK - Reprise",
@@ -1097,6 +1101,7 @@
 	"pricing": {
 		"title": "Tarifs vitalCHECK",
 		"subtitle": "Choisissez le plan qui correspond à vos besoins d'évaluation et d'amélioration continue",
+		"upgradeNow": "Voir les plans premium",
 		"heroFeatures": {
 			"freeEvaluation": "Évaluation gratuite disponible",
 			"noCommitment": "Sans engagement",

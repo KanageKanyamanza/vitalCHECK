@@ -10,6 +10,7 @@ import {
 	ProgressBar,
 	QuestionCard,
 	SubmissionProgress,
+	LimitReachedModal,
 } from "../components/assessment";
 import useSmoothScroll from "../hooks/useSmoothScroll";
 import SEOHead from "../components/seo/SEOHead";
@@ -36,6 +37,8 @@ const AssessmentPage = () => {
 	const [submissionId] = useState(
 		() => `submission_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
 	);
+	const [showLimitModal, setShowLimitModal] = useState(false);
+	const [limitData, setLimitData] = useState(null);
 
 	useEffect(() => {
 		if (!user) {
@@ -75,7 +78,12 @@ const AssessmentPage = () => {
 				}
 			}
 		} catch (error) {
-			// Ne pas bloquer l'évaluation si la création du draft échoue
+			console.error("Draft creation error:", error);
+			if (error.response?.status === 403 && error.response?.data?.limitReached) {
+				setLimitData(error.response.data);
+				setShowLimitModal(true);
+			}
+			// Ne pas bloquer l'évaluation pour les autres erreurs (mode dégradé)
 		}
 	};
 
@@ -355,6 +363,12 @@ const AssessmentPage = () => {
 					onRetry={handleRetry}
 				/>
 			)}
+
+			<LimitReachedModal
+				isOpen={showLimitModal}
+				limitData={limitData}
+				onClose={() => navigate("/results")}
+			/>
 
 			{/* Progress Bar */}
 			<div className="bg-white shadow-sm">

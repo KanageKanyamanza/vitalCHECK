@@ -19,6 +19,7 @@ const {
 	sendAssessmentCompletedExistingUser,
 } = require("../utils/emailService");
 const { sendPushNotification, notifyAdmins } = require("../utils/pushService");
+const PLAN_LIMITS = require("../config/planLimits");
 const router = express.Router();
 
 // Helper to resolve questions based on sector
@@ -81,6 +82,35 @@ router.get("/languages", (req, res) => {
 	}
 });
 
+// Helper to check if user has reached monthly limit
+const checkMonthlyLimit = async (userId) => {
+	const user = await User.findById(userId);
+	if (!user) return { allowed: false, message: "Utilisateur non trouvé" };
+
+	// If user is admin or special, maybe allow unlimited? 
+	// For now, let's stick to plans.
+	const plan = user.subscription?.plan || 'free';
+	const limit = PLAN_LIMITS[plan] || PLAN_LIMITS.free;
+
+	const startOfMonth = new Date();
+	startOfMonth.setDate(1);
+	startOfMonth.setHours(0, 0, 0, 0);
+
+	const count = await Assessment.countDocuments({
+		user: userId,
+		status: 'completed',
+		completedAt: { $gte: startOfMonth }
+	});
+
+	return {
+		allowed: count < limit,
+		currentCount: count,
+		limit: limit,
+		plan: plan
+	};
+};
+
+
 // Create draft assessment
 router.post(
 	"/draft",
@@ -106,11 +136,23 @@ router.post(
 				});
 			}
 
+			// Check monthly limit
+			const limitCheck = await checkMonthlyLimit(userId);
+			
 			// Check if user already has a draft assessment
 			let draftAssessment = await Assessment.findOne({
 				user: userId,
 				status: "draft",
 			});
+
+			if (!limitCheck.allowed && !draftAssessment) {
+				return res.status(403).json({
+					success: false,
+					message: `Vous avez atteint votre limite mensuelle d'évaluations (${limitCheck.limit}) pour le plan ${limitCheck.plan}.`,
+					limitReached: true,
+					...limitCheck
+				});
+			}
 
 			if (draftAssessment) {
 				// console.log('📋 [DRAFT] Draft existant trouvé:', {
@@ -443,11 +485,24 @@ router.post(
 				});
 			}
 
-			// Protection contre les soumissions multiples récentes (dans les 5 dernières minutes)
-			const fiveMinutesAgo = new Date(Date.now() - 5 * 60 * 1000);
+			// Check monthly limit (only if it's a new assessment, not updating a draft)
+			if (!assessmentId) {
+				const limitCheck = await checkMonthlyLimit(userId);
+				if (!limitCheck.allowed) {
+					return res.status(403).json({
+						success: false,
+						message: `Vous avez atteint votre limite mensuelle d'évaluations (${limitCheck.limit}) pour le plan ${limitCheck.plan}.`,
+						limitReached: true,
+						...limitCheck
+					});
+				}
+			}
+
+			// Protection contre les soumissions multiples récentes (dans la dernière minute)
+			const oneMinuteAgo = new Date(Date.now() - 1 * 60 * 1000);
 			const recentSubmission = await Assessment.findOne({
 				user: userId,
-				completedAt: { $gte: fiveMinutesAgo },
+				completedAt: { $gte: oneMinuteAgo },
 				status: "completed",
 			});
 
@@ -455,7 +510,7 @@ router.post(
 				return res.status(429).json({
 					success: false,
 					message:
-						"Une soumission récente a déjà été effectuée. Veuillez patienter quelques minutes.",
+						"Une soumission récente a déjà été effectuée. Veuillez patienter une minute.",
 					existingAssessment: {
 						id: recentSubmission._id,
 						completedAt: recentSubmission.completedAt,

@@ -96,7 +96,12 @@ const setupResponseInterceptor = (instance, isAdmin = false) => {
 						break;
 
 					case 403:
-						toast.error("Accès refusé. Permissions insuffisantes.");
+						if (data && data.limitReached) {
+							// Silence global toast for limit errors, will be handled by UI
+							console.log("Monthly limit reached - handled by UI");
+						} else {
+							toast.error("Accès refusé. Permissions insuffisantes.");
+						}
 						break;
 
 					case 429:
