@@ -11,10 +11,12 @@ module.exports = {
 						{
 							label: "Non, trésorerie tendue",
 							score: 0,
+							recommendation: "Recherchez un financement de campagne ou une ligne de crédit de court terme pour sécuriser vos cycles d'exploitation.",
 						},
 						{
 							label: "Oui, mais sans marge de sécurité",
 							score: 1,
+							recommendation: "Établissez un plan de trésorerie prévisionnel glissant sur 12 mois pour anticiper les périodes creuses.",
 						},
 						{
 							label: "Oui, fonds de roulement solide",
@@ -29,10 +31,12 @@ module.exports = {
 						{
 							label: "Non, comptabilité globale uniquement",
 							score: 0,
+							recommendation: "Mettez en place une comptabilité analytique pour identifier vos cultures les plus rentables.",
 						},
 						{
 							label: "Partiellement, estimation approximative",
 							score: 1,
+							recommendation: "Utilisez un outil de gestion parcellaire pour calculer précisément vos marges par culture.",
 						},
 						{
 							label: "Oui, comptabilité analytique précise",
@@ -43,16 +47,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Commencez à tenir des registres financiers mensuels.",
-					"Séparez les finances personnelles et professionnelles.",
+					"Commencez à noter quotidiennement toutes vos dépenses d'exploitation (intrants, carburant).",
+					"Séparez strictement votre compte bancaire personnel de celui de l'exploitation.",
 				],
 				amber: [
-					"Construisez un prévisionnel de trésorerie.",
-					"Suivez de plus près les créances.",
+					"Comparez vos coûts de production avec les moyennes régionales pour identifier des économies possibles.",
+					"Négociez des délais de paiement plus longs avec vos fournisseurs d'engrais et de semences.",
 				],
 				green: [
-					"Explorez les options de financement.",
-					"Utilisez des tableaux de bord financiers.",
+					"Investissez vos excédents dans l'amélioration de la fertilité des sols (capital sol).",
+					"Explorez les subventions pour la transition écologique ou l'agroforesterie.",
 				],
 			},
 		},
@@ -67,10 +71,12 @@ module.exports = {
 						{
 							label: "Non, pilotage visuel uniquement",
 							score: 0,
+							recommendation: "Réalisez des analyses de sol régulières pour ajuster précisément vos apports en fertilisants.",
 						},
 						{
 							label: "Oui, suivi des quantités consommées",
 							score: 1,
+							recommendation: "Installez des sondes capacitives pour piloter votre irrigation au plus juste des besoins de la plante.",
 						},
 						{
 							label: "Oui, pilotage de précision (dosages optimisés)",
@@ -85,10 +91,12 @@ module.exports = {
 						{
 							label: "Non, travail essentiellement manuel",
 							score: 0,
+							recommendation: "Évaluez la rentabilité de l'achat ou de la location de matériel pour réduire la pénibilité du travail.",
 						},
 						{
 							label: "Partiellement mécanisé",
 							score: 1,
+							recommendation: "Adhérez à une CUMA (Coopérative d'Utilisation de Matériel Agricole) pour accéder à du matériel performant à moindre coût.",
 						},
 						{
 							label: "Oui, mécanisation avancée",
@@ -99,16 +107,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Documentez au moins vos processus de base.",
-					"Identifiez les goulots d'étranglement.",
+					"Documentez vos protocoles de culture (calendrier de semis, doses d'application).",
+					"Mettez en place un plan de maintenance préventive pour votre matériel agricole.",
 				],
 				amber: [
-					"Standardisez les flux de travail.",
-					"Mettez en place des révisions régulières.",
+					"Standardisez vos flux de travail pour gagner du temps lors des périodes de pointe (moisson, vendanges).",
+					"Optimisez vos zones de stockage pour réduire les pertes post-récolte.",
 				],
 				green: [
-					"Automatisez les processus.",
-					"Implémentez des analyses avancées.",
+					"Automatisez le suivi de vos stocks d'intrants avec des alertes de réapprovisionnement.",
+					"Implémentez une démarche de certification qualité (HVE, Bio, etc.) pour valoriser vos pratiques.",
 				],
 			},
 		},
@@ -123,10 +131,12 @@ module.exports = {
 						{
 							label: "Vente en gros uniquement (prix subis)",
 							score: 0,
+							recommendation: "Étudiez la possibilité de vendre une partie de votre production en circuit court pour augmenter vos marges.",
 						},
 						{
 							label: "Mixte (Gros + un peu de direct)",
 							score: 1,
+							recommendation: "Développez une activité de transformation (confitures, jus, découpe) pour capter plus de valeur ajoutée.",
 						},
 						{
 							label: "Majorité valorisée (Transformation/Circuit court)",
@@ -141,10 +151,12 @@ module.exports = {
 						{
 							label: "Non, vente au spot après récolte",
 							score: 0,
+							recommendation: "Commencez à utiliser des contrats à terme pour sécuriser un prix de vente minimum.",
 						},
 						{
 							label: "Quelques contrats verbaux ou partiels",
 							score: 1,
+							recommendation: "Formalisez vos accords de vente par des contrats écrits pour sécuriser vos débouchés.",
 						},
 						{
 							label: "Oui, contrats écrits sur la majorité de la production",
@@ -155,16 +167,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Définissez clairement vos clients cibles.",
-					"Mettez en place une présence numérique de base.",
+					"Identifiez vos clients finaux et comprenez leurs attentes en termes de qualité.",
+					"Créez une fiche produit simple détaillant les caractéristiques de votre production.",
 				],
 				amber: [
-					"Lancez des campagnes marketing structurées.",
-					"Suivez systématiquement les prospects.",
+					"Développez une présence sur les réseaux sociaux pour communiquer sur votre métier et vos produits.",
+					"Rejoignez un groupement de producteurs pour peser davantage dans les négociations commerciales.",
 				],
 				green: [
-					"Optimisez la valeur vie client.",
-					"Utilisez l'analyse de données.",
+					"Optimisez votre logistique de livraison pour réduire les coûts du dernier kilomètre.",
+					"Créez un site de vente en ligne ou de pré-commande pour vos clients fidèles.",
 				],
 			},
 		},
@@ -179,10 +191,12 @@ module.exports = {
 						{
 							label: "Gestion informelle / Difficultés de logement",
 							score: 0,
+							recommendation: "Anticipez vos besoins de main-d'œuvre et vérifiez la conformité des logements saisonniers.",
 						},
 						{
 							label: "Recrutement anticipé mais logement précaire",
 							score: 1,
+							recommendation: "Améliorez les conditions d'accueil pour fidéliser vos saisonniers d'une année sur l'autre.",
 						},
 						{
 							label: "Processus structuré et logements aux normes",
@@ -197,10 +211,12 @@ module.exports = {
 						{
 							label: "Non, apprentissage sur le tas",
 							score: 0,
+							recommendation: "Rédigez des consignes de sécurité simples et affichez-les près du matériel dangereux.",
 						},
 						{
 							label: "Partielle / Oralement seulement",
 							score: 1,
+							recommendation: "Organisez une journée de formation sécurité annuelle pour tous les salariés et saisonniers.",
 						},
 						{
 							label: "Oui, formation complète et documentée",
@@ -211,16 +227,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Définissez clairement les rôles.",
-					"Créez des descriptions de poste de base.",
+					"Définissez clairement les responsabilités de chacun au sein de l'exploitation.",
+					"Assurez-vous que le Document Unique d'Évaluation des Risques (DUER) est à jour.",
 				],
 				amber: [
-					"Introduisez des évaluations de performance.",
-					"Développez des parcours de carrière.",
+					"Proposez des formations techniques (ex: Certiphyto) à vos salariés pour monter en compétence.",
+					"Mettez en place un système de primes simples basées sur la qualité du travail (ex: propreté des récoltes).",
 				],
 				green: [
-					"Construisez un pipeline de leadership.",
-					"Implémentez un logiciel RH complet.",
+					"Préparez la transmission de l'exploitation en formant un successeur ou un chef de culture.",
+					"Améliorez le bien-être au travail pour réduire l'accidentologie et l'absentéisme.",
 				],
 			},
 		},
@@ -235,10 +251,12 @@ module.exports = {
 						{
 							label: "Non / Monoproduction risquée",
 							score: 0,
+							recommendation: "Réalisez une étude de marché sur les opportunités de diversification (agrotourisme, photovoltaïque, etc.).",
 						},
 						{
 							label: "Réflexion en cours / Tests",
 							score: 1,
+							recommendation: "Lancez un projet pilote de diversification à petite échelle pour tester la viabilité.",
 						},
 						{
 							label: "Oui / Revenus diversifiés",
@@ -248,15 +266,17 @@ module.exports = {
 				},
 				{
 					id: "agriculture_strategy_2",
-					text: "Pradiquez-vous une agriculture durable pour préserver la valeur de vos terres à long terme ?",
+					text: "Pratiquez-vous une agriculture durable pour préserver la valeur de vos terres à long terme ?",
 					options: [
 						{
 							label: "Non, culture intensive classique",
 							score: 0,
+							recommendation: "Introduisez des cultures intermédiaires (couverts végétaux) pour protéger et enrichir vos sols.",
 						},
 						{
 							label: "Démarches isolées (ex: rotation raisonnée)",
 							score: 1,
+							recommendation: "Engagez-vous dans une démarche globale d'agriculture de conservation ou de régénération.",
 						},
 						{
 							label: "Oui, pratiques durables systémiques (Sols vivants...)",
@@ -267,16 +287,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Rédigez un plan d'entreprise d'une page.",
-					"Définissez vos avantages concurrentiels.",
+					"Rédigez un projet d'exploitation à 5 ans pour donner une direction claire à votre activité.",
+					"Analysez vos forces et faiblesses face au changement climatique.",
 				],
 				amber: [
-					"Tenez des révisions de performance trimestrielles.",
-					"Développez des KPI stratégiques.",
+					"Échangez avec d'autres agriculteurs au sein d'un groupe de progrès ou d'un GIEE.",
+					"Réalisez un bilan carbone de votre exploitation pour identifier des leviers d'amélioration.",
 				],
 				green: [
-					"Mettez en place un conseil consultatif.",
-					"Implémentez la planification de scénarios.",
+					"Participez à des projets de recherche et développement locaux (ferme pilote).",
+					"Développez des partenariats avec des acteurs du territoire (collectivités, écoles).",
 				],
 			},
 		},
@@ -291,10 +311,12 @@ module.exports = {
 						{
 							label: "Non, équipements standards",
 							score: 0,
+							recommendation: "Équipez votre tracteur principal d'un système de guidage GPS pour réduire les chevauchements et les manques.",
 						},
 						{
 							label: "Oui, quelques outils (ex: barre de guidage)",
 							score: 1,
+							recommendation: "Utilisez la modulation de dose (VRA) pour optimiser l'épandage d'engrais selon le potentiel de chaque zone.",
 						},
 						{
 							label: "Oui, équipement complet (Modulation de dose, GPS RTK...)",
@@ -309,10 +331,12 @@ module.exports = {
 						{
 							label: "Non, carnet papier",
 							score: 0,
+							recommendation: "Passez à un logiciel de gestion parcellaire simple (ou application mobile) pour sécuriser votre traçabilité.",
 						},
 						{
 							label: "Tableur Excel classique",
 							score: 1,
+							recommendation: "Adoptez un logiciel métier connecté à vos outils de bord pour automatiser la saisie des travaux.",
 						},
 						{
 							label: "Oui, logiciel métier spécialisé",
@@ -323,14 +347,17 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Adoptez des logiciels métier de base.",
-					"Implémentez des sauvegardes régulières.",
+					"Installez des outils de gestion de base (station météo connectée).",
+					"Sauvegardez vos données d'exploitation sur un support numérique sécurisé.",
 				],
 				amber: [
-					"Sauvegardez régulièrement les données.",
-					"Intégrez les systèmes métier.",
+					"Utilisez des images satellites gratuites (ex: Sentinel) pour surveiller l'état de vos cultures.",
+					"Intégrez vos données de gestion avec les outils de votre conseiller technique.",
 				],
-				green: ["Intégrez des systèmes avancés (CRM + ERP).", "Explorez l'IA."],
+				green: [
+					"Expérimentez l'utilisation de capteurs IoT pour le suivi en temps réel de vos stocks ou du bien-être animal.",
+					"Explorez l'utilisation de l'intelligence artificielle pour prédire les risques de maladies.",
+				],
 			},
 		},
 		{
@@ -344,10 +371,12 @@ module.exports = {
 						{
 							label: "Non, aucune assurance spécifique",
 							score: 0,
+							recommendation: "Souscrivez une assurance multirisque climatique (MRC) pour protéger votre chiffre d'affaires.",
 						},
 						{
 							label: "Assurance partielle (Grêle/Incendie uniquement)",
 							score: 1,
+							recommendation: "Étudiez le coût d'une couverture complète contre la sécheresse et les inondations.",
 						},
 						{
 							label: "Oui, assurance multirisque climatique complète",
@@ -362,10 +391,12 @@ module.exports = {
 						{
 							label: "Non, réaction curative uniquement",
 							score: 0,
+							recommendation: "Instaurez des mesures d'hygiène strictes (sas sanitaires, pédiluves) pour limiter l'entrée de pathogènes.",
 						},
 						{
 							label: "Mesures d'hygiène de base",
 							score: 1,
+							recommendation: "Formez votre personnel aux signes précoces de maladies pour intervenir le plus tôt possible.",
 						},
 						{
 							label: "Oui, protocole sanitaire strict et préventif",
@@ -376,16 +407,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Identifiez les principaux risques.",
-					"Consultez les réglementations applicables.",
+					"Identifiez les dépendances critiques de votre exploitation (ex: unique fournisseur de pièces).",
+					"Vérifiez que tous vos contrats d'assurance couvrent bien la valeur réelle de vos stocks.",
 				],
 				amber: [
-					"Développez un processus de gestion des risques.",
-					"Effectuez des audits réguliers.",
+					"Mettez en place un plan de continuité en cas d'incapacité prolongée de l'exploitant.",
+					"Réalisez un audit de sécurité incendie de vos bâtiments agricoles.",
 				],
 				green: [
-					"Implémentez un système complet de gestion des risques.",
-					"Obtenez des certifications.",
+					"Implémentez un système de surveillance vidéo ou d'alarmes pour protéger vos stocks et votre matériel.",
+					"Travaillez sur la résilience de l'exploitation face aux crises sanitaires mondiales.",
 				],
 			},
 		},
@@ -400,10 +431,12 @@ module.exports = {
 						{
 							label: "Non, agriculture conventionnelle",
 							score: 0,
+							recommendation: "Évaluez l'intérêt de vous engager dans un label reconnu pour mieux valoriser vos produits.",
 						},
 						{
 							label: "En conversion ou certification partielle",
 							score: 1,
+							recommendation: "Communiquez activement sur votre démarche de progrès et vos efforts environnementaux.",
 						},
 						{
 							label: "Oui, labels reconnus et affichés",
@@ -418,10 +451,12 @@ module.exports = {
 						{
 							label: "Non, produit standardisé",
 							score: 0,
+							recommendation: "Créez une identité visuelle (logo) et racontez l'histoire de votre ferme sur vos emballages.",
 						},
 						{
 							label: "Un peu de communication locale",
 							score: 1,
+							recommendation: "Organisez des journées 'ferme ouverte' pour recréer du lien avec les consommateurs locaux.",
 						},
 						{
 							label: "Oui, Storytelling fort (Terroir, Savoir-faire)",
@@ -431,14 +466,17 @@ module.exports = {
 				},
 			],
 			recommendations: {
-				red: ["Définissez votre identité de marque.", "Créez un logo de base."],
+				red: [
+					"Définissez le nom de votre exploitation comme une marque à part entière.",
+					"Uniformisez la présentation de vos produits sur les lieux de vente.",
+				],
 				amber: [
-					"Harmonisez votre branding.",
-					"Améliorez la qualité du packaging.",
+					"Améliorez la qualité de vos emballages pour qu'ils reflètent la qualité de vos produits.",
+					"Sollicitez des articles dans la presse locale ou spécialisée pour faire connaître votre exploitation.",
 				],
 				green: [
-					"Créez une expérience de marque premium.",
-					"Investissez dans un packaging innovant.",
+					"Collaborez avec des chefs cuisiniers locaux pour qu'ils deviennent les ambassadeurs de vos produits.",
+					"Développez une gamme de coffrets cadeaux premium pour les entreprises locales.",
 				],
 			},
 		},
@@ -453,10 +491,12 @@ module.exports = {
 						{
 							label: "Non, normes locales uniquement",
 							score: 0,
+							recommendation: "Mettez-vous aux normes internationales (ex: GlobalGAP) pour ouvrir les portes des marchés étrangers.",
 						},
 						{
 							label: "En cours de mise aux normes",
 							score: 1,
+							recommendation: "Faites auditer votre exploitation par un organisme agréé export pour valider votre conformité.",
 						},
 						{
 							label: "Oui, certifications export valides (GlobalGAP...)",
@@ -471,10 +511,12 @@ module.exports = {
 						{
 							label: "Non, vente locale uniquement",
 							score: 0,
+							recommendation: "Associez-vous à un exportateur ou une coopérative maîtrisant la logistique internationale.",
 						},
 						{
 							label: "Sous-traitance logistique",
 							score: 1,
+							recommendation: "Optimisez vos emballages de transport pour garantir la fraîcheur sur de longues distances.",
 						},
 						{
 							label: "Oui, logistique export maîtrisée",
@@ -485,16 +527,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Évaluez le potentiel d'exportation.",
-					"Renseignez-vous sur les réglementations.",
+					"Étudiez quels pays voisins importent des produits similaires aux vôtres.",
+					"Identifiez les barrières tarifaires et douanières pour vos produits.",
 				],
 				amber: [
-					"Développez un plan d'exportation.",
-					"Établissez des partenariats locaux.",
+					"Participez à des salons professionnels internationaux pour rencontrer des acheteurs étrangers.",
+					"Traduisez vos supports commerciaux et fiches produits dans les langues de vos pays cibles.",
 				],
 				green: [
-					"Implémentez une stratégie d'exportation complète.",
-					"Créez une présence internationale.",
+					"Développez un partenariat exclusif avec un distributeur dans un pays stratégique.",
+					"Adaptez vos variétés ou vos produits aux goûts spécifiques des consommateurs étrangers.",
 				],
 			},
 		},

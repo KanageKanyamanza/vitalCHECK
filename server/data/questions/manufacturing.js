@@ -11,10 +11,12 @@ module.exports = {
 						{
 							label: "Non, estimation globale uniquement",
 							score: 0,
+							recommendation: "Calculez précisément votre coût de revient industriel (matières, main d'œuvre, amortissements) par produit.",
 						},
 						{
 							label: "Calcul périodique (trimestriel/annuel)",
 							score: 1,
+							recommendation: "Mettez en place un suivi des coûts en temps réel pour identifier immédiatement les dérives de production.",
 						},
 						{
 							label: "Oui, coût standard vs réel suivi en temps réel",
@@ -29,10 +31,12 @@ module.exports = {
 						{
 							label: "Non, achat basé sur le besoin immédiat",
 							score: 0,
+							recommendation: "Analysez le Taux de Rendement Synthétique (TRS) de vos machines pour justifier vos futurs investissements.",
 						},
 						{
 							label: "Calcul théorique à l'achat",
 							score: 1,
+							recommendation: "Suivez le Retour sur Investissement (ROI) réel de vos équipements pour optimiser le renouvellement de votre parc.",
 						},
 						{
 							label: "Suivi précis du ROI et taux d'utilisation",
@@ -43,16 +47,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Commencez à tenir des registres financiers mensuels.",
-					"Séparez les finances personnelles et professionnelles.",
+					"Réalisez un audit de vos stocks de matières premières pour libérer de la trésorerie immobilisée.",
+					"Identifiez vos produits les moins rentables et étudiez leur arrêt ou leur re-conception (Design-to-cost).",
 				],
 				amber: [
-					"Construisez un prévisionnel de trésorerie.",
-					"Suivez de plus près les créances.",
+					"Optimisez vos consommations énergétiques industrielles par des investissements ciblés.",
+					"Négociez des contrats de volume avec vos fournisseurs de matières stratégiques.",
 				],
 				green: [
-					"Explorez les options de financement.",
-					"Utilisez des tableaux de bord financiers.",
+					"Investissez dans des technologies d'économie circulaire pour valoriser vos déchets de production.",
+					"Étudiez l'opportunité d'une intégration verticale pour sécuriser vos marges.",
 				],
 			},
 		},
@@ -67,10 +71,12 @@ module.exports = {
 						{
 							label: "Production traditionnelle sans méthode",
 							score: 0,
+							recommendation: "Initiez une démarche Lean Manufacturing simple (ex: méthode 5S) pour organiser vos ateliers.",
 						},
 						{
 							label: "Actions ponctuelles de nettoyage/rangement",
 							score: 1,
+							recommendation: "Standardisez vos postes de travail et formez vos opérateurs à la détection des gaspillages (Muda).",
 						},
 						{
 							label: "Démarche Lean/5S structurée et active",
@@ -85,10 +91,12 @@ module.exports = {
 						{
 							label: "Maintenance corrective (quand ça casse)",
 							score: 0,
+							recommendation: "Mettez en place un plan de maintenance préventive pour éviter les arrêts de production coûteux.",
 						},
 						{
 							label: "Planification théorique peu suivie",
 							score: 1,
+							recommendation: "Integrez la maintenance dans le planning de production et responsabilisez les opérateurs sur le premier niveau de maintenance (TPM).",
 						},
 						{
 							label: "Maintenance prédictive ou préventive rigoureuse",
@@ -99,16 +107,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Documentez au moins vos processus de base.",
-					"Identifiez les goulots d'étranglement.",
+					"Supprimez les goulots d'étranglement qui limitent la capacité globale de votre usine.",
+					"Mettez en place un contrôle qualité rigoureux à chaque étape critique de fabrication.",
 				],
 				amber: [
-					"Standardisez les flux de travail.",
-					"Mettez en place des révisions régulières.",
+					"Optimisez l'implantation de vos machines (Layout) pour réduire les flux logistiques internes.",
+					"Réduisez vos temps de changement de série par la méthode SMED.",
 				],
 				green: [
-					"Automatisez les processus.",
-					"Implémentez des analyses avancées.",
+					"Implémentez un système de maintenance prédictive basé sur des capteurs IoT.",
+					"Visez une production zéro défaut par le déploiement du Poka-Yoke (systèmes anti-erreur).",
 				],
 			},
 		},
@@ -123,10 +131,12 @@ module.exports = {
 						{
 							label: "Flux tendu sans visibilité (< 1 semaine)",
 							score: 0,
+							recommendation: "Développez votre force commerciale pour stabiliser votre carnet de commandes et mieux planifier votre production.",
 						},
 						{
 							label: "Visibilité moyenne (1 mois)",
 							score: 1,
+							recommendation: "Mettez en place des contrats cadres ou des prévisions glissantes avec vos principaux clients.",
 						},
 						{
 							label: "Visibilité forte (> 3 mois) sécurisée",
@@ -141,10 +151,12 @@ module.exports = {
 						{
 							label: "Dépendance à un seul canal/intermédiaire",
 							score: 0,
+							recommendation: "Diversifiez vos canaux de vente (vente directe, distributeurs, e-commerce B2B) pour limiter vos risques.",
 						},
 						{
 							label: "Mixte mais peu optimisé",
 							score: 1,
+							recommendation: "Animez votre réseau de distribution avec des outils d'aide à la vente et des formations produits régulières.",
 						},
 						{
 							label: "Stratégie multicanale maîtrisée",
@@ -155,16 +167,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Définissez clairement vos clients cibles.",
-					"Mettez en place une présence numérique de base.",
+					"Définissez clairement votre Proposition de Valeur : pourquoi choisir votre fabrication plutôt qu'une importation ?",
+					"Créez un catalogue produit professionnel et à jour.",
 				],
 				amber: [
-					"Lancez des campagnes marketing structurées.",
-					"Suivez systématiquement les prospects.",
+					"Mettez en place un processus de réponse aux appels d'offres plus structuré et rapide.",
+					"Mesurez la satisfaction client après chaque livraison et analysez les causes de retours produits.",
 				],
 				green: [
-					"Optimisez la valeur vie client.",
-					"Utilisez l'analyse de données.",
+					"Développez une offre de services associée à vos produits (maintenance, formation, recyclage).",
+					"Positionnez-vous sur des marchés de niche à forte valeur ajoutée technologique.",
 				],
 			},
 		},
@@ -179,10 +191,12 @@ module.exports = {
 						{
 							label: "Respect minimal des obligations légales",
 							score: 0,
+							recommendation: "Instaurez une culture sécurité 'Zéro Accident' et réalisez des causeries sécurité hebdomadaires.",
 						},
 						{
 							label: "Actions de sensibilisation régulières",
 							score: 1,
+							recommendation: "Auditez les comportements de sécurité sur le terrain et impliquez les opérateurs dans l'analyse des presqu'accidents.",
 						},
 						{
 							label: "Culture sécurité « Zéro accident » proactive",
@@ -197,10 +211,12 @@ module.exports = {
 						{
 							label: "Forte dépendance aux individus",
 							score: 0,
+							recommendation: "Créez une matrice de polyvalence pour identifier les postes critiques sans remplaçant formé.",
 						},
 						{
 							label: "Polyvalence informelle",
 							score: 1,
+							recommendation: "Planifiez des sessions de formation croisée pour que chaque poste clé puisse être tenu par au moins 2 personnes.",
 						},
 						{
 							label: "Matrice de polyvalence gérée et à jour",
@@ -211,16 +227,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Définissez clairement les rôles.",
-					"Créez des descriptions de poste de base.",
+					"Clarifiez les consignes de poste et assurez-vous qu'elles sont comprises et appliquées par tous.",
+					"Mettez en place un système de remontée d'idées d'amélioration venant du terrain.",
 				],
 				amber: [
-					"Introduisez des évaluations de performance.",
-					"Développez des parcours de carrière.",
+					"Améliorez l'ergonomie des postes de travail pour réduire la pénibilité et les TMS.",
+					"Développez un plan de formation technique pour accompagner l'évolution de vos outils industriels.",
 				],
 				green: [
-					"Construisez un pipeline de leadership.",
-					"Implémentez un logiciel RH complet.",
+					"Développez l'autonomie des équipes (îlots de production autonomes).",
+					"Investissez dans votre marque employeur pour attirer des jeunes vers les métiers de l'industrie.",
 				],
 			},
 		},
@@ -235,10 +251,12 @@ module.exports = {
 						{
 							label: "Fournisseurs uniques critiques",
 							score: 0,
+							recommendation: "Identifiez et validez des sources d'approvisionnement alternatives pour vos composants critiques.",
 						},
 						{
 							label: "Quelques alternatives identifiées",
 							score: 1,
+							recommendation: "Développez des partenariats de long terme avec vos fournisseurs clés (co-développement).",
 						},
 						{
 							label: "Double sourcing actif sur composants clés",
@@ -253,10 +271,12 @@ module.exports = {
 						{
 							label: "Parc machine vieillissant",
 							score: 0,
+							recommendation: "Établissez un plan directeur industriel pour moderniser votre parc machine sur 3 à 5 ans.",
 						},
 						{
 							label: "Renouvellement ponctuel",
 							score: 1,
+							recommendation: "Étudiez l'intégration de technologies numériques (capteurs, cobotique) pour gagner en agilité.",
 						},
 						{
 							label: "Investissement continu et digitalisation",
@@ -267,16 +287,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Rédigez un plan d'entreprise d'une page.",
-					"Définissez vos avantages concurrentiels.",
+					"Définissez votre cœur de métier : que devez-vous fabriquer en interne et que pouvez-vous sous-traiter ?",
+					"Analysez les risques de rupture de votre supply chain globale.",
 				],
 				amber: [
-					"Tenez des révisions de performance trimestrielles.",
-					"Développez des KPI stratégiques.",
+					"Engagez une démarche d'écoconception de vos produits pour anticiper les futures réglementations.",
+					"Réalisez une veille technologique sur les nouveaux matériaux et procédés de fabrication.",
 				],
 				green: [
-					"Mettez en place un conseil consultatif.",
-					"Implémentez la planification de scénarios.",
+					"Explorez des modèles de production à la demande ou de personnalisation de masse.",
+					"Visez une production neutre en carbone par l'optimisation énergétique et les énergies renouvelables.",
 				],
 			},
 		},
@@ -291,10 +311,12 @@ module.exports = {
 						{
 							label: "Aucun outil ou Excel dispersé",
 							score: 0,
+							recommendation: "Déployez un logiciel de GPAO (Gestion de la Production Assistée par Ordinateur) pour piloter vos ordres de fabrication.",
 						},
 						{
 							label: "ERP/GPAO basique ou mal utilisé",
 							score: 1,
+							recommendation: "Formez vos équipes à l'utilisation avancée de votre ERP pour fiabiliser vos stocks et vos délais.",
 						},
 						{
 							label: "Système intégré pilotant toute l'usine",
@@ -309,10 +331,12 @@ module.exports = {
 						{
 							label: "Tout papier (risques d'erreurs)",
 							score: 0,
+							recommendation: "Adoptez des terminaux ou tablettes en atelier pour une saisie de production en temps réel.",
 						},
 						{
 							label: "Saisie informatique a posteriori",
 							score: 1,
+							recommendation: "Connectez vos machines directement à votre système d'information (MES) pour automatiser la remontée des données.",
 						},
 						{
 							label: "Saisie atelier sur tablettes/terminaux",
@@ -323,14 +347,17 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Adoptez des logiciels métier de base.",
-					"Implémentez des sauvegardes régulières.",
+					"Assurez la cybersécurité de vos systèmes industriels pour éviter tout arrêt d'usine par piratage.",
+					"Centralisez vos données techniques (CAO, nomenclatures) dans un système unique et sécurisé.",
 				],
 				amber: [
-					"Sauvegardez régulièrement les données.",
-					"Intégrez les systèmes métier.",
+					"Mettez en place des tableaux de bord de performance (KPI) visuels en temps réel dans vos ateliers.",
+					"Utilisez des outils de simulation de flux pour optimiser l'organisation de vos lignes de production.",
 				],
-				green: ["Intégrez des systèmes avancés (CRM + ERP).", "Explorez l'IA."],
+				green: [
+					"Expérimentez la réalité augmentée pour l'assistance à la maintenance ou à la formation des opérateurs.",
+					"Créez un jumeau numérique de votre usine pour tester vos changements d'organisation virtuellement.",
+				],
 			},
 		},
 		{
@@ -344,10 +371,12 @@ module.exports = {
 						{
 							label: "Non-conformités connues",
 							score: 0,
+							recommendation: "Réalisez une mise en conformité immédiate de vos installations critiques (incendie, rejets).",
 						},
 						{
 							label: "Conforme à l'essentiel",
 							score: 1,
+							recommendation: "Préparez une certification ISO 14001 pour structurer votre gestion des risques environnementaux.",
 						},
 						{
 							label: "Certification ISO 14001 / Conformité totale",
@@ -362,10 +391,12 @@ module.exports = {
 						{
 							label: "Aucun plan de secours",
 							score: 0,
+							recommendation: "Rédigez un Plan de Continuité d'Activité (PCA) pour faire face aux pannes machines majeures ou ruptures d'approvisionnement.",
 						},
 						{
 							label: "Stocks de sécurité augmentés",
 							score: 1,
+							recommendation: "Diversifiez géographiquement vos sources de matières premières pour réduire la dépendance à une seule zone.",
 						},
 						{
 							label: "PCA formalisé et chaîne logistique agile",
@@ -376,16 +407,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Identifiez les principaux risques.",
-					"Consultez les réglementations applicables.",
+					"Vérifiez que votre assurance industrielle couvre bien la valeur de remplacement de vos machines à neuf.",
+					"Mettez en place un système de détection des fuites et des anomalies énergétiques.",
 				],
 				amber: [
-					"Développez un processus de gestion des risques.",
-					"Effectuez des audits réguliers.",
+					"Auditez vos procédures de sécurité machine (Consignation/LOTO) pour protéger vos agents de maintenance.",
+					"Mettez en place une veille réglementaire environnementale active.",
 				],
 				green: [
-					"Implémentez un système complet de gestion des risques.",
-					"Obtenez des certifications.",
+					"Réalisez une Analyse de Cycle de Vie (ACV) complète de vos produits phares.",
+					"Obtenez des labels de fabrication responsable (ex: Origine France Garantie, B-Corp).",
 				],
 			},
 		},
@@ -400,10 +431,12 @@ module.exports = {
 						{
 							label: "Design fonctionnel basique",
 							score: 0,
+							recommendation: "Travaillez sur le design industriel pour rendre vos produits plus esthétiques et ergonomiques.",
 						},
 						{
 							label: "Design soigné mais standard",
 							score: 1,
+							recommendation: "Faites appel à un designer pour créer une signature visuelle propre à votre marque industrielle.",
 						},
 						{
 							label: "Design innovant et marque de fabrique",
@@ -418,10 +451,12 @@ module.exports = {
 						{
 							label: "Absence de communication",
 							score: 0,
+							recommendation: "Mettez en avant votre savoir-faire industriel et votre ancrage territorial sur vos supports de communication.",
 						},
 						{
 							label: "Mention simple",
 							score: 1,
+							recommendation: "Utilisez le 'Storytelling' industriel (vidéos d'usine, coulisses de fabrication) pour rassurer vos clients sur la qualité.",
 						},
 						{
 							label: "Qualité/Origine comme argument central",
@@ -431,14 +466,17 @@ module.exports = {
 				},
 			],
 			recommendations: {
-				red: ["Définissez votre identité de marque.", "Créez un logo de base."],
+				red: [
+					"Créez une identité de marque qui reflète la robustesse et la précision de votre production.",
+					"Modernisez votre packaging pour qu'il protège mieux et valorise davantage vos produits.",
+				],
 				amber: [
-					"Harmonisez votre branding.",
-					"Améliorez la qualité du packaging.",
+					"Participez à des salons professionnels de référence pour asseoir votre notoriété industrielle.",
+					"Affichez vos certifications qualité (ISO 9001) de manière visible sur tous vos supports.",
 				],
 				green: [
-					"Créez une expérience de marque premium.",
-					"Investissez dans un packaging innovant.",
+					"Organisez des visites d'usine pour vos clients clés afin de démontrer votre excellence opérationnelle.",
+					"Développez une stratégie de marque pour vos composants (Intel Inside style) si vous êtes en B2B.",
 				],
 			},
 		},
@@ -453,10 +491,12 @@ module.exports = {
 						{
 							label: "Normes locales uniquement",
 							score: 0,
+							recommendation: "Lancez les démarches d'homologation internationale (CE, UL, CCC) indispensables pour l'export.",
 						},
 						{
 							label: "En cours d'homologation",
 							score: 1,
+							recommendation: "Anticipez les futures normes techniques internationales pour concevoir des produits 'Global by Design'.",
 						},
 						{
 							label: "Certifications internationales valides",
@@ -471,10 +511,12 @@ module.exports = {
 						{
 							label: "Pas de SAV export",
 							score: 0,
+							recommendation: "Identifiez des partenaires techniques locaux capables d'assurer la maintenance de vos machines à l'étranger.",
 						},
 						{
 							label: "SAV depuis le siège (délais longs)",
 							score: 1,
+							recommendation: "Formez des techniciens locaux ou mettez en place une assistance de télé-maintenance à distance.",
 						},
 						{
 							label: "Réseau de maintenance agréé localement",
@@ -485,16 +527,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Évaluez le potentiel d'exportation.",
-					"Renseignez-vous sur les réglementations.",
+					"Étudiez la faisabilité logistique de vos exportations (poids, volume, fragilité).",
+					"Identifiez les barrières douanières et les taxes applicables à vos produits par pays.",
 				],
 				amber: [
-					"Développez un plan d'exportation.",
-					"Établissez des partenariats locaux.",
+					"Adaptez vos notices techniques et vos interfaces machines dans la langue de vos marchés cibles.",
+					"Sécurisez vos paiements export par des crédits documentaires ou des assurances export.",
 				],
 				green: [
-					"Implémentez une stratégie d'exportation complète.",
-					"Créez une présence internationale.",
+					"Envisagez l'assemblage local (SKD/CKD) dans vos pays cibles pour réduire les taxes et les coûts logistiques.",
+					"Créez un centre logistique régional pour servir plus rapidement vos clients internationaux.",
 				],
 			},
 		},

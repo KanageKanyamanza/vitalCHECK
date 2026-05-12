@@ -538,6 +538,7 @@ router.post(
 
 			// Generate recommendations
 			const recommendations = generateRecommendations(
+				answers,
 				pillarScores,
 				selectedQuestions,
 			);
