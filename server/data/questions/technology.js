@@ -11,10 +11,12 @@ module.exports = {
 						{
 							label: "Pilotage au CA global uniquement",
 							score: 0,
+							recommendation: "Mettez en place un tableau de bord SaaS (MRR, Churn, LTV/CAC) pour piloter votre croissance.",
 						},
 						{
 							label: "Suivi basique (MRR simple)",
 							score: 1,
+							recommendation: "Approfondissez votre analyse financière avec le suivi du coût d'acquisition client (CAC) et de la Lifetime Value (LTV).",
 						},
 						{
 							label: "Dashboard SaaS complet (LTV/CAC, Cohortes)",
@@ -29,10 +31,12 @@ module.exports = {
 						{
 							label: "Aucun contrôle des coûts (Surprovisioning)",
 							score: 0,
+							recommendation: "Réalisez un audit FinOps pour identifier et supprimer les ressources cloud inutilisées.",
 						},
 						{
 							label: "Revue ponctuelle des factures",
 							score: 1,
+							recommendation: "Implémentez des outils d'alerte de budget et l'auto-scaling pour optimiser vos coûts d'infrastructure.",
 						},
 						{
 							label: "FinOps actif et auto-scaling",
@@ -43,16 +47,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Commencez à tenir des registres financiers mensuels.",
-					"Séparez les finances personnelles et professionnelles.",
+					"Établissez un budget mensuel strict pour vos coûts de serveurs et licences SaaS.",
+					"Désignez un responsable 'FinOps' pour surveiller la consommation cloud.",
 				],
 				amber: [
-					"Construisez un prévisionnel de trésorerie.",
-					"Suivez de plus près les créances.",
+					"Améliorez la précision de vos rapports de marge brute par client SaaS.",
+					"Optimisez vos instances réservées sur votre fournisseur cloud pour réduire les coûts fixes.",
 				],
 				green: [
-					"Explorez les options de financement.",
-					"Utilisez des tableaux de bord financiers.",
+					"Analysez la rentabilité par fonctionnalité produit pour orienter la R&D.",
+					"Préparez une levée de fonds ou une ligne de crédit basée sur la récurrence de vos revenus (RBF).",
 				],
 			},
 		},
@@ -67,10 +71,12 @@ module.exports = {
 						{
 							label: "Développement en cycle en V ou sans méthode",
 							score: 0,
+							recommendation: "Adoptez une méthodologie Agile (Scrum ou Kanban) pour gagner en réactivité et qualité.",
 						},
 						{
 							label: "Agilité partielle ou mal appliquée",
 							score: 1,
+							recommendation: "Renforcez vos rituels agiles (Daily, Retrospectives) pour améliorer la vélocité de l'équipe.",
 						},
 						{
 							label: "Méthodologie Agile rodée (Sprints, Rituels)",
@@ -85,10 +91,12 @@ module.exports = {
 						{
 							label: "Déploiements manuels (FTP, SSH)",
 							score: 0,
+							recommendation: "Mettez en place une pipeline CI/CD basique pour automatiser vos déploiements.",
 						},
 						{
 							label: "Quelques scripts d'automatisation",
 							score: 1,
+							recommendation: "Intégrez des tests unitaires et d'intégration automatisés dans votre flux de déploiement.",
 						},
 						{
 							label: "CI/CD complet avec tests automatisés",
@@ -99,16 +107,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Documentez au moins vos processus de base.",
-					"Identifiez les goulots d'étranglement.",
+					"Documentez vos processus critiques de mise en production (Runbook).",
+					"Standardisez l'environnement de développement local pour tous les développeurs (Docker).",
 				],
 				amber: [
-					"Standardisez les flux de travail.",
-					"Mettez en place des révisions régulières.",
+					"Réduisez le temps de cycle (Lead Time) entre l'idée et le déploiement.",
+					"Implémentez une revue de code (Code Review) systématique pour chaque Pull Request.",
 				],
 				green: [
-					"Automatisez les processus.",
-					"Implémentez des analyses avancées.",
+					"Explorez le déploiement continu complet (Continuous Deployment) vers la production.",
+					"Mesurez la performance de l'équipe via les métriques DORA (Deployment Frequency, Lead Time, etc.).",
 				],
 			},
 		},
@@ -123,10 +131,12 @@ module.exports = {
 						{
 							label: "Site vitrine passif",
 							score: 0,
+							recommendation: "Ajoutez des appels à l'action (CTA) clairs comme 'Essai gratuit' ou 'Réserver une démo'.",
 						},
 						{
 							label: "Quelques conversions (formulaires)",
 							score: 1,
+							recommendation: "Optimisez vos Landing Pages avec de l'A/B testing pour augmenter le taux de conversion.",
 						},
 						{
 							label: "Entonnoir de conversion optimisé (PLG/Sales-Led)",
@@ -141,10 +151,12 @@ module.exports = {
 						{
 							label: "Aucune relance structurée",
 							score: 0,
+							recommendation: "Mettez en place une séquence d'emails automatique pour relancer les inscrits inactifs.",
 						},
 						{
 							label: "Newsletter générique",
 							score: 1,
+							recommendation: "Segmentez vos emails selon le comportement des utilisateurs dans votre application.",
 						},
 						{
 							label: "Séquences d'emails segmentées et automatisées",
@@ -155,16 +167,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Définissez clairement vos clients cibles.",
-					"Mettez en place une présence numérique de base.",
+					"Définissez précisément votre Ideal Customer Profile (ICP) technologique.",
+					"Installez un outil de tracking (Hotjar, Mixpanel) pour comprendre le parcours utilisateur.",
 				],
 				amber: [
-					"Lancez des campagnes marketing structurées.",
-					"Suivez systématiquement les prospects.",
+					"Lancez des campagnes de prospection ciblées sur LinkedIn (Social Selling).",
+					"Mettez en place un programme de parrainage pour vos utilisateurs actuels.",
 				],
 				green: [
-					"Optimisez la valeur vie client.",
-					"Utilisez l'analyse de données.",
+					"Développez une stratégie de Product-Led Growth (PLG) pour réduire le coût de vente.",
+					"Internationalisez vos campagnes marketing pour toucher de nouveaux marchés.",
 				],
 			},
 		},
@@ -179,10 +191,12 @@ module.exports = {
 						{
 							label: "Turnover élevé, pas de stratégie",
 							score: 0,
+							recommendation: "Créez une culture d'entreprise forte et offrez de la flexibilité (télétravail) pour attirer les talents.",
 						},
 						{
 							label: "Salaire aligné marché uniquement",
 							score: 1,
+							recommendation: "Proposez des avantages non-financiers (formation, matériel) et des perspectives de carrière claires.",
 						},
 						{
 							label: "Culture tech forte, Remote, BSPCE",
@@ -197,10 +211,12 @@ module.exports = {
 						{
 							label: "Aucun temps dédié à la veille",
 							score: 0,
+							recommendation: "Allouez au moins 4 heures par semaine à l'équipe pour la veille technologique et l'auto-formation.",
 						},
 						{
 							label: "Veille sur temps personnel",
 							score: 1,
+							recommendation: "Financez des certifications ou des accès à des plateformes d'apprentissage en ligne (Udemy, Pluralsight).",
 						},
 						{
 							label: "Temps/Budget formation alloué (Conférences, Cours)",
@@ -211,16 +227,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Définissez clairement les rôles.",
-					"Créez des descriptions de poste de base.",
+					"Rédigez une fiche de poste claire pour chaque profil technique.",
+					"Instaurez des entretiens 'one-to-one' hebdomadaires pour écouter vos développeurs.",
 				],
 				amber: [
-					"Introduisez des évaluations de performance.",
-					"Développez des parcours de carrière.",
+					"Mettez en place un plan d'intéressement au capital (BSPCE/Stock Options) pour fidéliser les piliers.",
+					"Organisez des 'Lunch & Learn' internes pour partager les connaissances techniques.",
 				],
 				green: [
-					"Construisez un pipeline de leadership.",
-					"Implémentez un logiciel RH complet.",
+					"Développez votre marque employeur via des articles de blog technique ou des contributions Open Source.",
+					"Mettez en place un programme de mentorat pour l'onboarding des nouveaux juniors.",
 				],
 			},
 		},
@@ -235,10 +251,12 @@ module.exports = {
 						{
 							label: "Pilotage au gré des demandes clients (Feature factory)",
 							score: 0,
+							recommendation: "Adoptez un framework de priorisation (RICE, Kano) pour votre roadmap produit.",
 						},
 						{
 							label: "Roadmap fluctuante",
 							score: 1,
+							recommendation: "Publiez une roadmap publique simplifiée pour aligner les attentes des clients et de l'équipe.",
 						},
 						{
 							label: "Vision claire et priorisation basée sur la donnée",
@@ -253,10 +271,12 @@ module.exports = {
 						{
 							label: "Code non protégé / Open source non maîtrisé",
 							score: 0,
+							recommendation: "Déposez votre marque et sécurisez la propriété du code source dans vos contrats de travail.",
 						},
 						{
 							label: "Marque déposée uniquement",
 							score: 1,
+							recommendation: "Auditez vos dépendances Open Source pour éviter les risques de licence (Copyleft).",
 						},
 						{
 							label: "Stratégie IP (Brevets, Dépôt, Contrats)",
@@ -267,16 +287,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Rédigez un plan d'entreprise d'une page.",
-					"Définissez vos avantages concurrentiels.",
+					"Définissez votre proposition de valeur unique face aux géants du secteur.",
+					"Réalisez une analyse SWOT focalisée sur vos barrières à l'entrée technologiques.",
 				],
 				amber: [
-					"Tenez des révisions de performance trimestrielles.",
-					"Développez des KPI stratégiques.",
+					"Validez votre 'Product-Market Fit' via des sondages NPS réguliers.",
+					"Explorez des partenariats stratégiques pour intégrer votre solution dans des écosystèmes existants.",
 				],
 				green: [
-					"Mettez en place un conseil consultatif.",
-					"Implémentez la planification de scénarios.",
+					"Anticipez les prochaines ruptures technologiques (IA, Web3) dans votre roadmap à 2 ans.",
+					"Envisagez une expansion géographique ou un pivot vers une offre Enterprise.",
 				],
 			},
 		},
@@ -291,10 +311,12 @@ module.exports = {
 						{
 							label: "Dette ignorée, accumulation critique",
 							score: 0,
+							recommendation: "Allouez 20% du temps de chaque sprint au refactoring et à la réduction de la dette technique.",
 						},
 						{
 							label: "Refactoring quand c'est bloquant",
 							score: 1,
+							recommendation: "Utilisez un outil d'analyse de code (SonarQube) pour identifier automatiquement la dette technique.",
 						},
 						{
 							label: "Refactoring continu (Règle des 20%)",
@@ -309,10 +331,12 @@ module.exports = {
 						{
 							label: "Monolithe fragile",
 							score: 0,
+							recommendation: "Prévoyez une transition progressive vers une architecture de micro-services ou serverless.",
 						},
 						{
 							label: "Scalabilité verticale limitée",
 							score: 1,
+							recommendation: "Implémentez du caching (Redis) et optimisez vos requêtes base de données pour améliorer la performance.",
 						},
 						{
 							label:
@@ -324,14 +348,17 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Adoptez des logiciels métier de base.",
-					"Implémentez des sauvegardes régulières.",
+					"Implémentez une stratégie de sauvegarde (Backup) testée et déportée hors de votre cloud principal.",
+					"Activez l'authentification à deux facteurs (2FA) sur tous les outils de développement.",
 				],
 				amber: [
-					"Sauvegardez régulièrement les données.",
-					"Intégrez les systèmes métier.",
+					"Monitorez les performances applicatives (APM) en temps réel avec des outils comme Datadog ou New Relic.",
+					"Préparez un plan de migration vers des containers (Kubernetes) pour plus de portabilité.",
 				],
-				green: ["Intégrez des systèmes avancés (CRM + ERP).", "Explorez l'IA."],
+				green: [
+					"Explorez l'intégration de l'IA générative pour automatiser certaines tâches au sein de votre produit.",
+					"Documentez votre architecture technique pour faciliter le passage à l'échelle (Scale-up).",
+				],
 			},
 		},
 		{
@@ -345,10 +372,12 @@ module.exports = {
 						{
 							label: "Jamais réalisés",
 							score: 0,
+							recommendation: "Effectuez un audit de sécurité externe pour identifier vos failles critiques.",
 						},
 						{
 							label: "Scan de vulnérabilités automatisé",
 							score: 1,
+							recommendation: "Mettez en place un programme de 'Bug Bounty' ou des pentests annuels complets.",
 						},
 						{
 							label: "Pentests externes bisannuels",
@@ -363,10 +392,12 @@ module.exports = {
 						{
 							label: "Pas de PRA, risque de perte totale",
 							score: 0,
+							recommendation: "Définissez un Plan de Reprise d'Activité (PRA) et testez-le au moins une fois par an.",
 						},
 						{
 							label: "Backups simples (RTO/RPO longs)",
 							score: 1,
+							recommendation: "Implémentez la réplication de base de données multi-régions pour minimiser les pertes de données.",
 						},
 						{
 							label: "Redondance géographique et PRA testé",
@@ -377,16 +408,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Identifiez les principaux risques.",
-					"Consultez les réglementations applicables.",
+					"Formez vos employés aux risques de Phishing et d'ingénierie sociale.",
+					"Auditez les accès administrateurs de vos serveurs et révoquez les accès inutiles.",
 				],
 				amber: [
-					"Développez un processus de gestion des risques.",
-					"Effectuez des audits réguliers.",
+					"Obtenez une cyber-assurance pour couvrir les risques d'attaque par ransomware.",
+					"Mettez en place un système de Logging et de monitoring de sécurité (SIEM).",
 				],
 				green: [
-					"Implémentez un système complet de gestion des risques.",
-					"Obtenez des certifications.",
+					"Préparez une certification de sécurité reconnue (ISO 27001 ou SOC2).",
+					"Nommez un Délégué à la Protection des Données (DPO) pour garantir la conformité continue.",
 				],
 			},
 		},
@@ -401,10 +432,12 @@ module.exports = {
 						{
 							label: 'Design daté ou "Ingénieur"',
 							score: 0,
+							recommendation: "Recrutez un Product Designer pour moderniser l'interface et améliorer l'expérience utilisateur.",
 						},
 						{
 							label: "Fonctionnel mais sans âme",
 							score: 1,
+							recommendation: "Mettez en place un Design System pour assurer une cohérence visuelle sur toute la plateforme.",
 						},
 						{
 							label: "Design System world-class",
@@ -419,10 +452,12 @@ module.exports = {
 						{
 							label: "Inconnu au bataillon",
 							score: 0,
+							recommendation: "Commencez à partager votre expertise sur un blog technique ou via des webinaires.",
 						},
 						{
 							label: "Présence technique discrète",
 							score: 1,
+							recommendation: "Prenez la parole dans des conférences tech de référence pour renforcer votre autorité.",
 						},
 						{
 							label: "Conférencier, Contributeur Open Source",
@@ -432,14 +467,17 @@ module.exports = {
 				},
 			],
 			recommendations: {
-				red: ["Définissez votre identité de marque.", "Créez un logo de base."],
+				red: [
+					"Créez une charte graphique cohérente (couleurs, typographie) pour votre site et app.",
+					"Clarifiez votre 'Pitch' pour expliquer votre technologie complexe en 30 secondes.",
+				],
 				amber: [
-					"Harmonisez votre branding.",
-					"Améliorez la qualité du packaging.",
+					"Publiez des études de cas (Case Studies) détaillées pour prouver l'efficacité de votre solution.",
+					"Améliorez la documentation technique publique de votre API.",
 				],
 				green: [
-					"Créez une expérience de marque premium.",
-					"Investissez dans un packaging innovant.",
+					"Lancez un podcast ou une série de vidéos sur le futur de votre secteur technologique.",
+					"Créez une communauté d'utilisateurs ambassadeurs (Slack/Discord).",
 				],
 			},
 		},
@@ -454,10 +492,12 @@ module.exports = {
 						{
 							label: "Hardcodé en une seule langue",
 							score: 0,
+							recommendation: "Implémentez une bibliothèque d'internationalisation (i18n) pour préparer l'expansion mondiale.",
 						},
 						{
 							label: "Traduction partielle ou complexe",
 							score: 1,
+							recommendation: "Utilisez un service de traduction professionnelle pour vos marchés prioritaires.",
 						},
 						{
 							label: "Architecture i18n native et fluide",
@@ -472,10 +512,12 @@ module.exports = {
 						{
 							label: "Données hébergées hors UE sans cadre",
 							score: 0,
+							recommendation: "Mettez en conformité vos conditions générales et assurez le stockage sécurisé des données.",
 						},
 						{
 							label: "Conformité en cours d'analyse",
 							score: 1,
+							recommendation: "Obtenez un avis juridique sur la conformité de vos transferts de données transfrontaliers.",
 						},
 						{
 							label: "Conformité RGPD/CCPA validée",
@@ -486,16 +528,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Évaluez le potentiel d'exportation.",
-					"Renseignez-vous sur les réglementations.",
+					"Analysez la demande pour votre produit dans les pays voisins.",
+					"Vérifiez les contraintes légales d'exportation de logiciels (cryptage, etc.).",
 				],
 				amber: [
-					"Développez un plan d'exportation.",
-					"Établissez des partenariats locaux.",
+					"Adaptez vos tarifs et moyens de paiement aux monnaies locales (Stripe/Adyen).",
+					"Recrutez un Customer Success multilingue pour accompagner vos premiers clients étrangers.",
 				],
 				green: [
-					"Implémentez une stratégie d'exportation complète.",
-					"Créez une présence internationale.",
+					"Ouvrez un bureau commercial dans votre marché export le plus porteur.",
+					"Adaptez votre produit aux spécificités culturelles et réglementaires locales (ex: taxes).",
 				],
 			},
 		},

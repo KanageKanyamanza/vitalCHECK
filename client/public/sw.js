@@ -59,6 +59,16 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  // Ne pas intercepter les requêtes de développement Vite ou les schémas non supportés
+  if (
+    event.request.url.includes('/src/') || 
+    event.request.url.includes('/@vite/') || 
+    event.request.url.includes('/node_modules/') ||
+    !event.request.url.startsWith('http')
+  ) {
+    return;
+  }
+
   event.respondWith(
     fetch(event.request)
       .then((response) => {
@@ -72,7 +82,11 @@ self.addEventListener('fetch', (event) => {
 
         caches.open(CACHE_NAME)
           .then((cache) => {
-            cache.put(event.request, responseToCache);
+            try {
+              cache.put(event.request, responseToCache);
+            } catch (cacheError) {
+              console.warn('Service Worker: Erreur lors de la mise en cache:', cacheError);
+            }
           });
 
         return response;

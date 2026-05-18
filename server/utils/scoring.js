@@ -48,20 +48,47 @@ function calculateScores(answers, questionsData) {
   };
 }
 
-// Generate recommendations based on pillar scores
-function generateRecommendations(pillarScores, questionsData) {
+// Generate recommendations based on pillar scores and specific answers
+function generateRecommendations(answers, pillarScores, questionsData) {
   const recommendations = [];
 
   pillarScores.forEach((pillar, index) => {
     const pillarData = questionsData.pillars[index];
-    const pillarRecommendations = pillarData.recommendations[pillar.status];
-    
-    // Select 2-3 random recommendations for freemium version
-    const selectedRecommendations = pillarRecommendations
-      .sort(() => 0.5 - Math.random())
-      .slice(0, Math.min(3, pillarRecommendations.length));
+    let selectedRecommendations = [];
 
-    recommendations.push(selectedRecommendations);
+    // 1. Look for specific recommendations based on answers in this pillar
+    pillarData.questions.forEach(question => {
+      const answer = answers.find(a => a.questionId === question.id);
+      if (answer) {
+        // Find the selected option
+        const selectedOption = question.options.find(opt => opt.score === answer.answer);
+        
+        // If the option has a specific recommendation, add it
+        if (selectedOption && selectedOption.recommendation) {
+          selectedRecommendations.push(selectedOption.recommendation);
+        }
+      }
+    });
+
+    // 2. If we don't have enough specific recommendations, add from the pillar pool
+    const pillarPool = pillarData.recommendations[pillar.status] || [];
+    const remainingCount = 2 - selectedRecommendations.length;
+
+    if (remainingCount > 0 && pillarPool.length > 0) {
+      const additionalRecs = pillarPool
+        .filter(rec => !selectedRecommendations.includes(rec))
+        .sort(() => 0.5 - Math.random())
+        .slice(0, remainingCount);
+      
+      selectedRecommendations = [...selectedRecommendations, ...additionalRecs];
+    }
+
+    // Ensure we have at least some recommendations, and limit to 2
+    if (selectedRecommendations.length === 0 && pillarPool.length > 0) {
+      selectedRecommendations = pillarPool.slice(0, 2);
+    }
+
+    recommendations.push(selectedRecommendations.slice(0, 2));
   });
 
   return recommendations;

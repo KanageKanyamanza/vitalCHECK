@@ -11,10 +11,12 @@ module.exports = {
 						{
 							label: "Rentabilité inconnue par projet",
 							score: 0,
+							recommendation: "Mettez en place un suivi des temps (Timesheets) pour calculer la rentabilité réelle de chaque mission.",
 						},
 						{
 							label: "Estimation a posteriori",
 							score: 1,
+							recommendation: "Utilisez un outil de gestion de projet avec suivi budgétaire pour piloter la rentabilité en cours de mission.",
 						},
 						{
 							label: "Suivi précis et temps réel (Timesheets)",
@@ -29,10 +31,12 @@ module.exports = {
 						{
 							label: "Facturation manuelle et irrégulière",
 							score: 0,
+							recommendation: "Automatisez votre facturation récurrente et proposez le prélèvement automatique pour sécuriser votre trésorerie.",
 						},
 						{
 							label: "Processus mensuel manuel",
 							score: 1,
+							recommendation: "Utilisez un outil de gestion des abonnements pour réduire le temps administratif lié à la facturation.",
 						},
 						{
 							label: "Prélèvement automatique et facturation automatisée",
@@ -43,16 +47,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Commencez à tenir des registres financiers mensuels.",
-					"Séparez les finances personnelles et professionnelles.",
+					"Définissez précisément votre taux journalier moyen (TJM) plancher pour couvrir vos charges et marger.",
+					"Mettez en place un acompte systématique de 30% à la signature de chaque devis.",
 				],
 				amber: [
-					"Construisez un prévisionnel de trésorerie.",
-					"Suivez de plus près les créances.",
+					"Analysez vos écarts entre le temps vendu et le temps réellement passé pour ajuster vos futurs devis.",
+					"Optimisez vos charges fixes (bureaux, abonnements logiciels inutilisés).",
 				],
 				green: [
-					"Explorez les options de financement.",
-					"Utilisez des tableaux de bord financiers.",
+					"Diversifiez vos sources de revenus vers des produits à haute marge (formation, conseil stratégique).",
+					"Constituez une réserve de trésorerie équivalente à 6 mois de salaires.",
 				],
 			},
 		},
@@ -67,10 +71,12 @@ module.exports = {
 						{
 							label: "Chaque onboarding est une improvisation",
 							score: 0,
+							recommendation: "Créez une checklist d'onboarding standard pour ne rien oublier lors du démarrage d'un nouveau client.",
 						},
 						{
 							label: "Checklist simple utilisée",
 							score: 1,
+							recommendation: "Automatisez l'envoi des documents de bienvenue et la collecte des informations client initiales.",
 						},
 						{
 							label: "Parcours client automatisé et standardisé",
@@ -83,12 +89,14 @@ module.exports = {
 					text: "Utilisez-vous un outil de gestion de projet partagé pour le suivi des livrables ?",
 					options: [
 						{
-							label: "Échanes par email uniquement",
+							label: "Échanges par email uniquement",
 							score: 0,
+							recommendation: "Adoptez un outil de gestion de projet (Asana, Trello, Notion) pour centraliser les tâches et les échanges.",
 						},
 						{
 							label: "Outil interne non partagé",
 							score: 1,
+							recommendation: "Donnez un accès limité à vos clients sur votre outil de gestion de projet pour plus de transparence.",
 						},
 						{
 							label: "Plateforme collaborative avec le client",
@@ -99,16 +107,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Documentez au moins vos processus de base.",
-					"Identifiez les goulots d'étranglement.",
+					"Documentez vos méthodes de travail pour pouvoir déléguer la production sans perte de qualité.",
+					"Clarifiez les délais de livraison (SLA) dans tous vos contrats de service.",
 				],
 				amber: [
-					"Standardisez les flux de travail.",
-					"Mettez en place des révisions régulières.",
+					"Mettez en place une revue de qualité systématique avant chaque livraison client.",
+					"Standardisez vos modèles de documents (comptes-rendus, rapports, présentations).",
 				],
 				green: [
-					"Automatisez les processus.",
-					"Implémentez des analyses avancées.",
+					"Automatisez vos tâches administratives récurrentes (relances, reporting) pour libérer du temps de conseil.",
+					"Implémentez une démarche de certification qualité (ISO 9001) pour valoriser votre organisation.",
 				],
 			},
 		},
@@ -123,10 +131,12 @@ module.exports = {
 						{
 							label: "Attente passive des recommandations",
 							score: 0,
+							recommendation: "Sollicitez activement des recommandations auprès de vos clients les plus satisfaits à la fin de chaque mission.",
 						},
 						{
 							label: "Demande informelle ponctuelle",
 							score: 1,
+							recommendation: "Mettez en place un programme de parrainage récompensant les clients qui vous apportent de nouveaux projets.",
 						},
 						{
 							label: "Programme de parrainage structuré",
@@ -141,10 +151,12 @@ module.exports = {
 						{
 							label: 'Offre "Je fais tout" (Généraliste)',
 							score: 0,
+							recommendation: "Spécialisez votre offre sur une niche ou une expertise précise pour devenir la référence sur ce marché.",
 						},
 						{
 							label: "Spécialisation par secteur ou métier",
 							score: 1,
+							recommendation: "Développez une méthodologie propre (signature) qui vous distingue des autres experts du secteur.",
 						},
 						{
 							label: "Expertise de niche unique et reconnue",
@@ -155,16 +167,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Définissez clairement vos clients cibles.",
-					"Mettez en place une présence numérique de base.",
+					"Identifiez les 3 bénéfices majeurs que vous apportez à vos clients et mettez-les en avant.",
+					"Créez une page de vente claire pour chaque service que vous proposez.",
 				],
 				amber: [
-					"Lancez des campagnes marketing structurées.",
-					"Suivez systématiquement les prospects.",
+					"Développez votre réseau professionnel via des clubs d'entreprises ou des réseaux d'experts.",
+					"Mettez en place un suivi CRM pour relancer vos anciens clients et générer du 'Repeat Business'.",
 				],
 				green: [
-					"Optimisez la valeur vie client.",
-					"Utilisez l'analyse de données.",
+					"Lancez une stratégie de contenu expert (livres blancs, webinaires) pour attirer des prospects qualifiés (Inbound).",
+					"Internationalisez votre prospection commerciale si votre expertise est exportable.",
 				],
 			},
 		},
@@ -179,10 +191,12 @@ module.exports = {
 						{
 							label: "Silos de connaissances (Risque élevé)",
 							score: 0,
+							recommendation: "Mettez en place une base de connaissances partagée (Wiki) pour documenter vos expertises clés.",
 						},
 						{
 							label: "Réunions de partage informelles",
 							score: 1,
+							recommendation: "Instaurez des sessions de mentorat ou de binomage pour diffuser les compétences rares dans l'équipe.",
 						},
 						{
 							label: "Base de connaissances (Wiki) et mentorat",
@@ -197,10 +211,12 @@ module.exports = {
 						{
 							label: "Profils techniques uniquement",
 							score: 0,
+							recommendation: "Formez vos experts aux 'Soft Skills' (communication, écoute active, gestion de projet) pour améliorer la satisfaction client.",
 						},
 						{
 							label: 'Sensibilisation aux "Soft Skills"',
 							score: 1,
+							recommendation: "Proposez des mises en situation de gestion de crise ou de négociation commerciale à vos équipes.",
 						},
 						{
 							label: "Formation continue Relation Client & Vente",
@@ -211,16 +227,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Définissez clairement les rôles.",
-					"Créez des descriptions de poste de base.",
+					"Clarifiez les fiches de poste et les niveaux de séniorité pour chaque collaborateur.",
+					"Réalisez des entretiens de feedback mensuels pour suivre l'engagement de vos équipes.",
 				],
 				amber: [
-					"Introduisez des évaluations de performance.",
-					"Développez des parcours de carrière.",
+					"Déléguez la gestion de projet aux collaborateurs seniors pour libérer du temps stratégique à la direction.",
+					"Définissez un plan de formation annuel aligné sur l'évolution des besoins de vos clients.",
 				],
 				green: [
-					"Construisez un pipeline de leadership.",
-					"Implémentez un logiciel RH complet.",
+					"Mettez en place un système de partage des profits ou d'intéressement pour fidéliser les talents.",
+					"Développez la marque employeur pour attirer des profils d'experts sur un marché tendu.",
 				],
 			},
 		},
@@ -235,10 +251,12 @@ module.exports = {
 						{
 							label: "Vente de temps uniquement (Taux horaire)",
 							score: 0,
+							recommendation: "Transformez vos services récurrents en 'packs' ou 'produits' avec un prix et un périmètre fixes.",
 						},
 						{
 							label: "Forfaits packagés",
 							score: 1,
+							recommendation: "Créez une offre de service automatisée ou digitale (SaaS-light) pour décorréler vos revenus du temps passé.",
 						},
 						{
 							label: "Services 'produits' scalables et récurrents",
@@ -253,10 +271,12 @@ module.exports = {
 						{
 							label: "J'accepte tout client",
 							score: 0,
+							recommendation: "Définissez des critères de sélection de projets (Go/No-Go) pour vous concentrer sur les missions à haute valeur ajoutée.",
 						},
 						{
 							label: "Filtrage léger",
 							score: 1,
+							recommendation: "Osez refuser les clients qui ne correspondent pas à votre expertise ou dont la rentabilité est trop faible.",
 						},
 						{
 							label: "Positionnement strict et sélectif",
@@ -267,16 +287,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Rédigez un plan d'entreprise d'une page.",
-					"Définissez vos avantages concurrentiels.",
+					"Analysez votre mix de services pour identifier ceux qui ont la meilleure marge et le meilleur potentiel de croissance.",
+					"Rédigez votre vision stratégique à 3 ans et partagez-la avec votre équipe.",
 				],
 				amber: [
-					"Tenez des révisions de performance trimestrielles.",
-					"Développez des KPI stratégiques.",
+					"Développez des partenariats stratégiques avec des entreprises aux services complémentaires.",
+					"Réalisez une veille concurrentielle sur les nouvelles méthodes de délivrance de service dans votre secteur.",
 				],
 				green: [
-					"Mettez en place un conseil consultatif.",
-					"Implémentez la planification de scénarios.",
+					"Explorez l'expansion géographique via des agences ou des partenaires locaux.",
+					"Envisagez une stratégie de croissance par acquisition de petits cabinets spécialisés.",
 				],
 			},
 		},
@@ -291,10 +311,12 @@ module.exports = {
 						{
 							label: "Emails non sécurisés avec pièces jointes",
 							score: 0,
+							recommendation: "Mettez en place un espace de partage documentaire sécurisé (GED) pour vos échanges clients.",
 						},
 						{
 							label: "Dossiers partagés basiques (Drive/Dropbox)",
 							score: 1,
+							recommendation: "Configurez des permissions d'accès strictes et la double authentification sur vos espaces de stockage.",
 						},
 						{
 							label: "Portail client sécurisé et GED",
@@ -309,10 +331,12 @@ module.exports = {
 						{
 							label: "Pas de CRM (mémoire ou carnet)",
 							score: 0,
+							recommendation: "Adoptez un CRM (Hubspot, Pipedrive) pour centraliser l'historique et les besoins de vos clients.",
 						},
 						{
 							label: "Fichier Excel ou CRM déconnecté",
 							score: 1,
+							recommendation: "Intégrez votre CRM à votre messagerie pour capturer automatiquement tous les échanges clients.",
 						},
 						{
 							label: "CRM centralisé et connecté aux emails/agenda",
@@ -323,14 +347,17 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Adoptez des logiciels métier de base.",
-					"Implémentez des sauvegardes régulières.",
+					"Modernisez votre matériel informatique pour garantir la sécurité et la productivité de vos experts.",
+					"Installez un gestionnaire de mots de passe d'équipe (Bitwarden, LastPass).",
 				],
 				amber: [
-					"Sauvegardez régulièrement les données.",
-					"Intégrez les systèmes métier.",
+					"Automatisez la génération de vos rapports ou livrables standards avec des outils de publipostage ou no-code.",
+					"Utilisez des outils de signature électronique pour accélérer la validation de vos devis et contrats.",
 				],
-				green: ["Intégrez des systèmes avancés (CRM + ERP).", "Explorez l'IA."],
+				green: [
+					"Intégrez l'IA générative dans vos processus de production pour accélérer la rédaction ou l'analyse de données.",
+					"Développez vos propres outils digitaux internes pour créer un avantage concurrentiel technologique.",
+				],
 			},
 		},
 		{
@@ -344,10 +371,12 @@ module.exports = {
 						{
 							label: "Pas d'assurance spécifique",
 							score: 0,
+							recommendation: "Souscrivez une assurance RC Professionnelle couvrant spécifiquement vos risques de conseil ou de prestation.",
 						},
 						{
 							label: "RC Pro standard minimale",
 							score: 1,
+							recommendation: "Faites auditer vos plafonds de garantie par un courtier pour vous assurer qu'ils couvrent vos plus gros contrats.",
 						},
 						{
 							label: "Couverture complète auditée régulièrement",
@@ -362,10 +391,12 @@ module.exports = {
 						{
 							label: "Pas de contrat écrit / Accord oral",
 							score: 0,
+							recommendation: "Ne démarrez aucune mission sans un contrat écrit ou un devis signé incluant vos conditions générales de service.",
 						},
 						{
 							label: "CGV ou contrat standard non adapté",
 							score: 1,
+							recommendation: "Faites valider vos modèles de contrats par un avocat spécialisé pour limiter vos clauses de responsabilité.",
 						},
 						{
 							label: "Contrats sur-mesure et validés juridiquement",
@@ -376,16 +407,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Identifiez les principaux risques.",
-					"Consultez les réglementations applicables.",
+					"Vérifiez que vous ne dépendez pas d'un seul client pour plus de 30% de votre chiffre d'affaires (Risque de dépendance économique).",
+					"Sécurisez la propriété intellectuelle de vos livrables dans vos contrats.",
 				],
 				amber: [
-					"Développez un processus de gestion des risques.",
-					"Effectuez des audits réguliers.",
+					"Mettez en place une veille sur la solvabilité de vos nouveaux clients avant de démarrer des missions importantes.",
+					"Prévoyez des clauses de résiliation claires dans tous vos contrats de prestation récurrente.",
 				],
 				green: [
-					"Implémentez un système complet de gestion des risques.",
-					"Obtenez des certifications.",
+					"Obtenez des certifications de sécurité (Cyber Essentials) pour rassurer vos clients grands comptes.",
+					"Diversifiez vos prestataires technologiques critiques pour éviter tout risque d'interruption de service.",
 				],
 			},
 		},
@@ -400,10 +431,12 @@ module.exports = {
 						{
 							label: "Profils LinkedIn incomplets ou inactifs",
 							score: 0,
+							recommendation: "Optimisez les profils LinkedIn des experts de l'entreprise et publiez régulièrement du contenu de valeur.",
 						},
 						{
 							label: "Présence correcte mais passive",
 							score: 1,
+							recommendation: "Encouragez vos experts à prendre la parole lors de webinaires ou d'événements pour asseoir leur autorité.",
 						},
 						{
 							label: "Leaders d'opinion actifs et reconnus",
@@ -418,10 +451,12 @@ module.exports = {
 						{
 							label: "Aucun contenu de preuve",
 							score: 0,
+							recommendation: "Rédigez au moins 3 études de cas détaillant les résultats obtenus pour vos clients.",
 						},
 						{
 							label: "Quelques articles de blog",
 							score: 1,
+							recommendation: "Regroupez vos expertises dans un 'Guide Blanc' téléchargeable contre un email pour générer des leads.",
 						},
 						{
 							label: "Contenus experts réguliers et téléchargeables",
@@ -431,14 +466,17 @@ module.exports = {
 				},
 			],
 			recommendations: {
-				red: ["Définissez votre identité de marque.", "Créez un logo de base."],
+				red: [
+					"Définissez un ton et une identité éditoriale qui reflètent le professionnalisme de votre cabinet.",
+					"Uniformisez la signature email et les supports de présentation de tous les collaborateurs.",
+				],
 				amber: [
-					"Harmonisez votre branding.",
-					"Améliorez la qualité du packaging.",
+					"Sollicitez des témoignages vidéo de vos clients pour humaniser votre preuve sociale.",
+					"Participez à des trophées ou des classements professionnels pour gagner en visibilité institutionnelle.",
 				],
 				green: [
-					"Créez une expérience de marque premium.",
-					"Investissez dans un packaging innovant.",
+					"Lancez un podcast expert ou une newsletter de référence dans votre secteur.",
+					"Développez une stratégie de relations presse pour devenir le 'bon client' des journalistes sur votre sujet.",
 				],
 			},
 		},
@@ -453,10 +491,12 @@ module.exports = {
 						{
 							label: "Présentiel et langue locale impératifs",
 							score: 0,
+							recommendation: "Adaptez vos outils de collaboration pour permettre la délivrance de service à distance (visio, outils partagés).",
 						},
 						{
 							label: "Possible mais difficile (barrière langue/outils)",
 							score: 1,
+							recommendation: "Formez vos équipes à l'anglais professionnel pour pouvoir répondre à des appels d'offres internationaux.",
 						},
 						{
 							label: 'Organisation "Remote-first" et bilingue',
@@ -471,10 +511,12 @@ module.exports = {
 						{
 							label: "Ignorance totale des règles",
 							score: 0,
+							recommendation: "Consultez un fiscaliste pour comprendre les règles de TVA et de retenue à la source sur vos prestations export.",
 						},
 						{
 							label: "Gestion au cas par cas réactive",
 							score: 1,
+							recommendation: "Établissez une grille de facturation export incluant les contraintes fiscales par zone géographique.",
 						},
 						{
 							label: "Cadre fiscal et légal maîtrisé",
@@ -485,16 +527,16 @@ module.exports = {
 			],
 			recommendations: {
 				red: [
-					"Évaluez le potentiel d'exportation.",
-					"Renseignez-vous sur les réglementations.",
+					"Identifiez un premier pays cible dont la culture de service est proche de la vôtre.",
+					"Vérifiez si vos diplômes ou certifications sont reconnus à l'étranger.",
 				],
 				amber: [
-					"Développez un plan d'exportation.",
-					"Établissez des partenariats locaux.",
+					"Créez une version anglaise complète de votre site web et de vos plaquettes commerciales.",
+					"Établissez des partenariats avec des cabinets locaux dans vos pays cibles pour sous-traiter la partie 'locale'.",
 				],
 				green: [
-					"Implémentez une stratégie d'exportation complète.",
-					"Créez une présence internationale.",
+					"Recrutez un business developer natif pour votre marché export prioritaire.",
+					"Envisagez la création d'une structure légère à l'étranger si le volume d'affaires le justifie.",
 				],
 			},
 		},

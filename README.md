@@ -12,6 +12,21 @@ Une application web complète pour évaluer la santé d'entreprise avec la stack
 - **Recommandations Personnalisées** : Conseils adaptés selon les scores
 - **Support Multilingue** : Interface disponible en anglais et français
 
+## 📚 Documentation
+
+Une documentation détaillée de toutes les fonctionnalités du projet (frontend et backend) est disponible dans le dossier `docs/` :
+
+- [Index de la documentation](docs/README.md)
+- [Système d'Évaluation](docs/features/assessment.md)
+- [Authentification](docs/features/auth.md)
+- [Blog](docs/features/blog.md)
+- [Paiements](docs/features/payments.md)
+- [Newsletters](docs/features/newsletters.md)
+- [Chatbot](docs/features/chatbot.md)
+- [Notifications](docs/features/notifications.md)
+- [SEO & Analytics](docs/features/seo.md)
+- [Panel d'Administration](docs/features/admin.md)
+
 ## 🏗️ Architecture
 
 ### Backend (Node.js + Express + MongoDB)
@@ -178,16 +193,6 @@ L'application supporte plusieurs langues avec i18next (gratuit) :
 
 - 🇺🇸 **Anglais** (en) - Langue par défaut
 - 🇫🇷 **Français** (fr) - Questions traduites
-- 🇪🇸 **Espagnol** (es) - Interface traduite
-- 🇩🇪 **Allemand** (de) - Interface traduite
-- 🇮🇹 **Italien** (it) - Interface traduite
-- 🇵🇹 **Portugais** (pt) - Interface traduite
-- 🇸🇦 **Arabe** (ar) - Interface traduite
-- 🇨🇳 **Chinois** (zh) - Interface traduite
-- 🇯🇵 **Japonais** (ja) - Interface traduite
-- 🇰🇷 **Coréen** (ko) - Interface traduite
-- 🇷🇺 **Russe** (ru) - Interface traduite
-- 🇮🇳 **Hindi** (hi) - Interface traduite
 
 ### Configuration i18next
 
