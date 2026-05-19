@@ -16,7 +16,9 @@ import {
   ShieldAlert,
   AlertTriangle,
   RefreshCw,
-  Power
+  Power,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { useAdminApi } from '../../hooks/useAdminApi';
@@ -26,6 +28,7 @@ const AdminManagement = () => {
   const [currentAdmin, setCurrentAdmin] = useState(null); // Pour le rôle de l'utilisateur connecté
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   
   // Formulaire d'administration
   const [formData, setFormData] = useState({
@@ -120,6 +123,7 @@ const AdminManagement = () => {
   const handleOpenCreateModal = () => {
     setIsEditing(false);
     setEditingId(null);
+    setShowPassword(false);
     setFormData({
       name: '',
       email: '',
@@ -142,6 +146,7 @@ const AdminManagement = () => {
   const handleOpenEditModal = (admin) => {
     setIsEditing(true);
     setEditingId(admin._id);
+    setShowPassword(false);
     setFormData({
       name: admin.name,
       email: admin.email,
@@ -575,13 +580,24 @@ const AdminManagement = () => {
                     <div className="relative">
                       <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
                       <input
-                        type="password"
+                        type={showPassword ? 'text' : 'password'}
                         placeholder="Min. 6 caractères"
                         required={!isEditing}
                         value={formData.password}
                         onChange={(e) => setFormData(prev => ({ ...prev, password: e.target.value }))}
-                        className="pl-9 w-full px-3 py-2 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-xs font-bold text-gray-900"
+                        className="pl-9 pr-10 w-full px-3 py-2 bg-gray-50/50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-xs font-bold text-gray-900"
                       />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-pointer" />
+                        ) : (
+                          <Eye className="w-4 h-4 text-gray-400 hover:text-gray-600 cursor-pointer" />
+                        )}
+                      </button>
                     </div>
                   </div>
 
