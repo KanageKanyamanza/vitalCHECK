@@ -64,7 +64,7 @@ const UnifiedLoginPage = () => {
         const { token, user } = response.data
         
         // Sauvegarder le token selon le rôle
-        if (user.role === 'admin') {
+        if (user.role && user.role !== 'client') {
           localStorage.setItem('adminToken', token)
           localStorage.setItem('adminData', JSON.stringify(user))
           setDetectedRole('admin')

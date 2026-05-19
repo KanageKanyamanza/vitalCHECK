@@ -24,6 +24,7 @@ import ContactManagement from './ContactManagement';
 import EmailImport from './EmailImport';
 import EmailInbox from './EmailInbox';
 import EmailBroadcast from './EmailBroadcast';
+import AdminManagement from './AdminManagement';
 
 const AdminApp = () => {
   const isAuthenticated = () => {
@@ -186,6 +187,12 @@ const AdminApp = () => {
         path="/emails/import" 
         element={
           isAuthenticated() ? <EmailImport /> : <Navigate to="/login" replace />
+        } 
+      />
+      <Route 
+        path="/manage" 
+        element={
+          isAuthenticated() ? <AdminManagement /> : <Navigate to="/login" replace />
         } 
       />
       <Route 

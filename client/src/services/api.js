@@ -262,6 +262,7 @@ export const adminApiService = {
 	// Admins
 	getAdmins: () => adminApi.get("/admin/admins"),
 	updateAdmin: (data) => adminApi.put("/admin/profile", data),
+	updateAdminDetails: (id, data) => adminApi.put(`/admin/admins/${id}`, data),
 	createAdmin: (data) => adminApi.post("/admin/admins", data),
 	deleteAdmin: (adminId) => adminApi.delete(`/admin/admins/${adminId}`),
 	uploadAvatar: (formData) =>
