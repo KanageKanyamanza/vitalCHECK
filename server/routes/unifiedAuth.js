@@ -49,7 +49,7 @@ router.post('/login', async (req, res) => {
               id: admin._id,
               email: admin.email,
               name: admin.name,
-              role: 'admin'
+              role: admin.role
             }
           });
         } else {
@@ -156,7 +156,7 @@ router.get('/me', async (req, res) => {
           id: admin._id,
           email: admin.email,
           name: admin.name,
-          role: 'admin'
+          role: admin.role
         }
       });
     } else if (decoded.role === 'client') {

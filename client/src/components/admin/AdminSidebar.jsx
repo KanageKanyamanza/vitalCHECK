@@ -18,13 +18,17 @@ import {
   Download,
   DollarSign,
   MessageCircle,
-  Send
+  Send,
+  Shield
 } from 'lucide-react';
 import Logo from '../../assets/Logo.png';
 
 const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
   const navigate = useNavigate();
   const location = useLocation();
+
+  const adminData = JSON.parse(localStorage.getItem('adminData') || '{}');
+  const isSuperAdmin = adminData.role === 'super-admin';
 
   const menuItems = [
     {
@@ -140,6 +144,17 @@ const AdminSidebar = ({ isOpen, setIsOpen, isCollapsed, setIsCollapsed }) => {
       hoverColor: 'hover:bg-gray-100'
     }
   ];
+
+  if (isSuperAdmin) {
+    menuItems.push({
+      name: 'Admins',
+      path: '/admin/manage',
+      icon: Shield,
+      color: 'text-rose-600',
+      bgColor: 'bg-rose-50',
+      hoverColor: 'hover:bg-rose-100'
+    });
+  }
 
   const handleLogout = () => {
     localStorage.removeItem('adminToken');

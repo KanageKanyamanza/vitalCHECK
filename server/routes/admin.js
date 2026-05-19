@@ -1937,4 +1937,213 @@ router.get('/chatbot/responses/stats', authenticateAdmin, async (req, res) => {
   }
 });
 
+// ==========================================
+// ENDPOINTS DE GESTION DES ADMINISTRATEURS (SUPER ADMIN UNIQUEMENT)
+// ==========================================
+
+// Obtenir tous les administrateurs
+router.get('/admins', authenticateAdmin, async (req, res) => {
+  try {
+    if (req.admin.role !== 'super-admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Accès réservé au Super Admin'
+      });
+    }
+    const admins = await Admin.find().select('-password').sort({ createdAt: -1 });
+    res.json({
+      success: true,
+      admins
+    });
+  } catch (error) {
+    console.error('Get admins error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur serveur lors de la récupération des administrateurs'
+    });
+  }
+});
+
+// Créer un nouvel administrateur
+router.post('/admins', authenticateAdmin, [
+  body('email').isEmail().normalizeEmail(),
+  body('password').isLength({ min: 6 }),
+  body('name').notEmpty().trim(),
+  body('role').isIn(['super-admin', 'admin', 'moderator']).default('admin')
+], async (req, res) => {
+  try {
+    if (req.admin.role !== 'super-admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Accès réservé au Super Admin'
+      });
+    }
+
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { email, password, name, role, permissions } = req.body;
+
+    const existingAdmin = await Admin.findOne({ email });
+    if (existingAdmin) {
+      return res.status(400).json({
+        success: false,
+        message: 'Un administrateur avec cet email existe déjà'
+      });
+    }
+
+    // Permissions par défaut si non fournies
+    const defaultPermissions = {
+      viewUsers: true,
+      manageUsers: role !== 'moderator',
+      viewAssessments: true,
+      manageAssessments: role !== 'moderator',
+      sendEmails: role !== 'moderator',
+      viewReports: true,
+      manageAdmins: role === 'super-admin'
+    };
+
+    const newAdmin = new Admin({
+      email,
+      password,
+      name,
+      role,
+      permissions: permissions || defaultPermissions
+    });
+
+    await newAdmin.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Administrateur créé avec succès',
+      admin: {
+        id: newAdmin._id,
+        email: newAdmin.email,
+        name: newAdmin.name,
+        role: newAdmin.role,
+        permissions: newAdmin.permissions
+      }
+    });
+  } catch (error) {
+    console.error('Create admin error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur serveur lors de la création de l\'administrateur'
+    });
+  }
+});
+
+// Mettre à jour un administrateur spécifique
+router.put('/admins/:id', authenticateAdmin, async (req, res) => {
+  try {
+    if (req.admin.role !== 'super-admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Accès réservé au Super Admin'
+      });
+    }
+
+    const { name, role, permissions, isActive, password } = req.body;
+    const adminToUpdate = await Admin.findById(req.params.id);
+
+    if (!adminToUpdate) {
+      return res.status(404).json({
+        success: false,
+        message: 'Administrateur non trouvé'
+      });
+    }
+
+    // Empêcher de désactiver ou modifier le rôle du seul super-admin actif
+    if (adminToUpdate.role === 'super-admin' && (role && role !== 'super-admin' || isActive === false)) {
+      const superAdminCount = await Admin.countDocuments({ role: 'super-admin', isActive: true });
+      if (superAdminCount <= 1) {
+        return res.status(400).json({
+          success: false,
+          message: 'Impossible de désactiver ou de modifier le rôle du seul Super Admin actif'
+        });
+      }
+    }
+
+    if (name) adminToUpdate.name = name;
+    if (role) adminToUpdate.role = role;
+    if (isActive !== undefined) adminToUpdate.isActive = isActive;
+    if (permissions) {
+      // Fusionner les permissions pour ne pas écraser les autres champs
+      adminToUpdate.permissions = { ...adminToUpdate.permissions.toObject(), ...permissions };
+    }
+    
+    // Mettre à jour le mot de passe si fourni
+    if (password && password.trim().length >= 6) {
+      adminToUpdate.password = password; // Sera hashé par le pre-save hook
+    }
+
+    await adminToUpdate.save();
+
+    res.json({
+      success: true,
+      message: 'Administrateur mis à jour avec succès',
+      admin: adminToUpdate
+    });
+  } catch (error) {
+    console.error('Update admin details error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur serveur lors de la mise à jour de l\'administrateur'
+    });
+  }
+});
+
+// Supprimer un administrateur spécifique
+router.delete('/admins/:id', authenticateAdmin, async (req, res) => {
+  try {
+    if (req.admin.role !== 'super-admin') {
+      return res.status(403).json({
+        success: false,
+        message: 'Accès réservé au Super Admin'
+      });
+    }
+
+    const adminToDelete = await Admin.findById(req.params.id);
+    if (!adminToDelete) {
+      return res.status(404).json({
+        success: false,
+        message: 'Administrateur non trouvé'
+      });
+    }
+
+    // Ne pas se supprimer soi-même
+    if (adminToDelete._id.toString() === req.admin._id.toString()) {
+      return res.status(400).json({
+        success: false,
+        message: 'Vous ne pouvez pas vous supprimer vous-même'
+      });
+    }
+
+    if (adminToDelete.role === 'super-admin') {
+      const superAdminCount = await Admin.countDocuments({ role: 'super-admin' });
+      if (superAdminCount <= 1) {
+        return res.status(400).json({
+          success: false,
+          message: 'Impossible de supprimer le dernier Super Admin'
+        });
+      }
+    }
+
+    await Admin.findByIdAndDelete(req.params.id);
+
+    res.json({
+      success: true,
+      message: 'Administrateur supprimé avec succès'
+    });
+  } catch (error) {
+    console.error('Delete admin error:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Erreur serveur lors de la suppression de l\'administrateur'
+    });
+  }
+});
+
 module.exports = router;

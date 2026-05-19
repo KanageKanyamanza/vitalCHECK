@@ -356,6 +356,12 @@ export const useAdminApi = () => {
     return executeRequest(() => adminApiService.updateAdmin(data));
   }, [executeRequest]);
 
+  const updateAdminDetails = useCallback(async (id, data) => {
+    // Invalider le cache des admins
+    requestCache.current.delete('admins');
+    return executeRequest(() => adminApiService.updateAdminDetails(id, data));
+  }, [executeRequest]);
+
   const createAdmin = useCallback(async (data) => {
     // Invalider le cache des admins
     requestCache.current.delete('admins');
@@ -423,6 +429,7 @@ export const useAdminApi = () => {
     // Admins
     getAdmins,
     updateAdmin,
+    updateAdminDetails,
     createAdmin,
     deleteAdmin,
     uploadAvatar,
