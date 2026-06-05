@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     
     <!-- Primary Meta Tags -->
-    <title>vitalCHECK Enterprise Health Check - Évaluez la santé de votre entreprise</title>
-    <meta name="title" content="vitalCHECK Enterprise Health Check - Évaluez la santé de votre entreprise" />
+    <title>vitalCHECK - Diagnostic de santé d'entreprise | Évaluation gratuite</title>
+    <meta name="title" content="vitalCHECK - Diagnostic de santé d'entreprise | Évaluation gratuite" />
     <meta name="description" content="Évaluez la santé organisationnelle de votre entreprise africaine avec vitalCHECK. Évaluation gratuite de 10 minutes avec recommandations personnalisées et rapport détaillé." />
     <meta name="keywords" content="entreprise, santé organisationnelle, évaluation, vitalCHECK, Afrique, business, conseil, croissance, PME, diagnostic, management, finance, opérations, marketing, RH, gouvernance, technologie" />
     <meta name="author" content="vitalCHECK - Ubuntu Business Builders" />
@@ -108,12 +108,78 @@
     <link rel="dns-prefetch" href="//fonts.googleapis.com">
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     
-    <!-- Schema.org Structured Data -->
+    <!-- Schema.org : WebSite — signal de marque principal pour Google -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
-      "@type": "WebApplication",
-      "name": "vitalCHECK Enterprise Health Check",
+      "@type": "WebSite",
+      "@id": "https://www.checkmyenterprise.com/#website",
+      "name": "vitalCHECK",
+      "alternateName": ["vitalCHECK Enterprise Health Check", "checkmyenterprise"],
+      "url": "https://www.checkmyenterprise.com/",
+      "description": "Plateforme d'évaluation de la santé organisationnelle des entreprises africaines.",
+      "inLanguage": ["fr", "en"],
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": {
+          "@type": "EntryPoint",
+          "urlTemplate": "https://www.checkmyenterprise.com/blog?q={search_term_string}"
+        },
+        "query-input": "required name=search_term_string"
+      },
+      "publisher": { "@id": "https://www.checkmyenterprise.com/#organization" }
+    }
+    </script>
+
+    <!-- Schema.org : Organization — entité de marque vitalCHECK -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "@id": "https://www.checkmyenterprise.com/#organization",
+      "name": "vitalCHECK",
+      "legalName": "Ubuntu Business Builders",
+      "alternateName": ["vitalCHECK Enterprise Health Check", "checkmyenterprise.com"],
+      "description": "Plateforme d'évaluation de la santé organisationnelle des entreprises africaines. Diagnostic gratuit, recommandations personnalisées et rapport détaillé.",
+      "url": "https://www.checkmyenterprise.com/",
+      "logo": {
+        "@type": "ImageObject",
+        "@id": "https://www.checkmyenterprise.com/#logo",
+        "url": "https://www.checkmyenterprise.com/logo.png",
+        "contentUrl": "https://www.checkmyenterprise.com/logo.png",
+        "width": 512,
+        "height": 512,
+        "caption": "vitalCHECK"
+      },
+      "image": { "@id": "https://www.checkmyenterprise.com/#logo" },
+      "brand": {
+        "@type": "Brand",
+        "name": "vitalCHECK",
+        "alternateName": "vitalCHECK Enterprise Health Check"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "email": "contact@checkmyenterprise.com",
+        "availableLanguage": ["French", "English"]
+      },
+      "sameAs": [
+        "https://www.checkmyenterprise.com/",
+        "https://www.linkedin.com/company/vitalcheck",
+        "https://twitter.com/vitalCHECK"
+      ],
+      "foundingDate": "2024"
+    }
+    </script>
+
+    <!-- Schema.org : SoftwareApplication — la plateforme vitalCHECK -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "@id": "https://www.checkmyenterprise.com/#software",
+      "name": "vitalCHECK",
+      "alternateName": "vitalCHECK Enterprise Health Check",
       "description": "Évaluez la santé organisationnelle de votre entreprise africaine avec vitalCHECK. Évaluation gratuite de 10 minutes avec recommandations personnalisées et rapport détaillé.",
       "url": "https://www.checkmyenterprise.com/",
       "applicationCategory": "BusinessApplication",
@@ -121,28 +187,11 @@
       "offers": {
         "@type": "Offer",
         "price": "0",
-        "priceCurrency": "EUR"
+        "priceCurrency": "XOF"
       },
-      "provider": {
-        "@type": "Organization",
-        "name": "Ubuntu Business Builders",
-        "url": "https://www.checkmyenterprise.com/",
-        "logo": "https://www.checkmyenterprise.com/logo.png",
-        "contactPoint": {
-          "@type": "ContactPoint",
-          "contactType": "customer service",
-          "email": "contact@vitalCHECK.com"
-        }
-      },
-      "author": {
-        "@type": "Organization",
-        "name": "Ubuntu Business Builders"
-      },
+      "author": { "@id": "https://www.checkmyenterprise.com/#organization" },
+      "provider": { "@id": "https://www.checkmyenterprise.com/#organization" },
       "inLanguage": ["fr", "en"],
-      "audience": {
-        "@type": "BusinessAudience",
-        "audienceType": "Entrepreneurs, PME, Startups"
-      },
       "featureList": [
         "Évaluation gratuite de santé d'entreprise",
         "Rapport détaillé personnalisé",

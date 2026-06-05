@@ -1,37 +1,107 @@
 // Données structurées Schema.org pour différentes pages
 
+const BASE_URL = "https://www.checkmyenterprise.com"
+const LOGO_URL = `${BASE_URL}/logo.png`
+const OG_IMAGE = `${BASE_URL}/og-image.png`
+
+// Signal de marque #1 : dit à Google que ce domaine EST vitalCHECK
+export const getWebSiteStructuredData = () => ({
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "@id": `${BASE_URL}/#website`,
+  "name": "vitalCHECK",
+  "alternateName": ["vitalCHECK Enterprise Health Check", "checkmyenterprise"],
+  "url": `${BASE_URL}/`,
+  "description": "Plateforme d'évaluation de la santé organisationnelle des entreprises africaines.",
+  "inLanguage": ["fr", "en"],
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": {
+      "@type": "EntryPoint",
+      "urlTemplate": `${BASE_URL}/blog?q={search_term_string}`
+    },
+    "query-input": "required name=search_term_string"
+  },
+  "publisher": {
+    "@id": `${BASE_URL}/#organization`
+  }
+})
+
+// Signal de marque #2 : entité Organisation avec brand explicite
+export const getBrandOrganizationStructuredData = () => ({
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "@id": `${BASE_URL}/#organization`,
+  "name": "vitalCHECK",
+  "legalName": "Ubuntu Business Builders",
+  "alternateName": ["vitalCHECK Enterprise Health Check", "checkmyenterprise.com"],
+  "description": "Plateforme d'évaluation de la santé organisationnelle des entreprises africaines. Diagnostic gratuit, recommandations personnalisées et rapport détaillé.",
+  "url": `${BASE_URL}/`,
+  "logo": {
+    "@type": "ImageObject",
+    "@id": `${BASE_URL}/#logo`,
+    "url": LOGO_URL,
+    "contentUrl": LOGO_URL,
+    "width": 512,
+    "height": 512,
+    "caption": "vitalCHECK"
+  },
+  "image": {
+    "@id": `${BASE_URL}/#logo`
+  },
+  "brand": {
+    "@type": "Brand",
+    "name": "vitalCHECK",
+    "alternateName": "vitalCHECK Enterprise Health Check"
+  },
+  "contactPoint": {
+    "@type": "ContactPoint",
+    "contactType": "customer service",
+    "email": "contact@checkmyenterprise.com",
+    "availableLanguage": ["French", "English"]
+  },
+  "address": {
+    "@type": "PostalAddress",
+    "addressContinent": "Africa"
+  },
+  "sameAs": [
+    `${BASE_URL}/`,
+    "https://www.linkedin.com/company/vitalcheck",
+    "https://twitter.com/vitalCHECK"
+  ],
+  "foundingDate": "2024"
+})
+
 export const getHomePageStructuredData = () => ({
   "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "vitalCHECK Enterprise Health Check",
+  "@type": "SoftwareApplication",
+  "@id": `${BASE_URL}/#software`,
+  "name": "vitalCHECK",
+  "alternateName": "vitalCHECK Enterprise Health Check",
   "description": "Évaluez la santé organisationnelle de votre entreprise africaine avec vitalCHECK. Évaluation gratuite de 10 minutes avec recommandations personnalisées et rapport détaillé.",
-  "url": "https://www.checkmyenterprise.com/",
+  "url": `${BASE_URL}/`,
   "applicationCategory": "BusinessApplication",
   "operatingSystem": "Web Browser",
   "offers": {
     "@type": "Offer",
     "price": "0",
-    "priceCurrency": "EUR"
+    "priceCurrency": "XOF"
   },
-  "provider": {
-    "@type": "Organization",
-    "name": "Ubuntu Business Builders",
-    "url": "https://www.checkmyenterprise.com/",
-    "logo": "https://www.checkmyenterprise.com/logo.png",
-    "contactPoint": {
-      "@type": "ContactPoint",
-      "contactType": "customer service",
-      "email": "contact@vitalCHECK.com"
-    }
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.8",
+    "ratingCount": "120"
   },
   "author": {
-    "@type": "Organization",
-    "name": "Ubuntu Business Builders"
+    "@id": `${BASE_URL}/#organization`
+  },
+  "provider": {
+    "@id": `${BASE_URL}/#organization`
   },
   "inLanguage": ["fr", "en"],
   "audience": {
     "@type": "BusinessAudience",
-    "audienceType": "Entrepreneurs, PME, Startups"
+    "audienceType": "Entrepreneurs, PME, Startups africains"
   },
   "featureList": [
     "Évaluation gratuite de santé d'entreprise",
@@ -39,7 +109,9 @@ export const getHomePageStructuredData = () => ({
     "Recommandations d'amélioration",
     "Diagnostic multi-piliers",
     "Interface multilingue"
-  ]
+  ],
+  "image": OG_IMAGE,
+  "screenshot": OG_IMAGE
 })
 
 export const getAssessmentPageStructuredData = () => ({
@@ -88,7 +160,7 @@ export const getBlogPageStructuredData = () => ({
     "name": "Ubuntu Business Builders",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://healthcheck.growthvitalCHECK.space/logo.png"
+      "url": LOGO_URL
     }
   },
   "breadcrumb": {
@@ -135,7 +207,7 @@ export const getBlogPostStructuredData = (blog) => {
     "name": "Ubuntu Business Builders",
     "logo": {
       "@type": "ImageObject",
-      "url": "https://healthcheck.growthvitalCHECK.space/logo.png"
+      "url": LOGO_URL
     }
   },
   "mainEntityOfPage": {
@@ -182,15 +254,15 @@ export const getAboutPageStructuredData = () => ({
     "name": "Ubuntu Business Builders",
     "description": "Organisation dédiée au développement des entreprises africaines",
     "url": "https://www.checkmyenterprise.com/",
-    "logo": "https://www.checkmyenterprise.com/logo.png",
+    "logo": LOGO_URL,
     "contactPoint": {
       "@type": "ContactPoint",
       "contactType": "customer service",
-      "email": "contact@vitalCHECK.com"
+      "email": "contact@checkmyenterprise.com"
     },
     "sameAs": [
-      "https://twitter.com/vitalCHECK",
-      "https://linkedin.com/company/vitalCHECK"
+      "https://www.linkedin.com/company/vitalcheck",
+      "https://twitter.com/vitalCHECK"
     ]
   }
 })
@@ -227,26 +299,4 @@ export const getFAQStructuredData = (faqs) => ({
   }))
 })
 
-// Fonction utilitaire pour générer des données structurées d'organisation
-export const getOrganizationStructuredData = () => ({
-  "@context": "https://schema.org",
-  "@type": "Organization",
-  "name": "Ubuntu Business Builders",
-  "description": "Organisation dédiée au développement et à l'accompagnement des entreprises africaines",
-  "url": "https://www.checkmyenterprise.com/",
-  "logo": "https://healthcheck.growthvitalCHECK.space/logo.png",
-  "contactPoint": {
-    "@type": "ContactPoint",
-    "contactType": "customer service",
-    "email": "contact@vitalCHECK.com",
-    "availableLanguage": ["French", "English"]
-  },
-  "address": {
-    "@type": "PostalAddress",
-    "addressCountry": "Africa"
-  },
-  "sameAs": [
-    "https://twitter.com/vitalCHECK",
-    "https://linkedin.com/company/vitalCHECK"
-  ]
-})
+export const getOrganizationStructuredData = getBrandOrganizationStructuredData

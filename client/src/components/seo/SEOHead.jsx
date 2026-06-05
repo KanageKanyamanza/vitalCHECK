@@ -67,12 +67,12 @@ const SEOHead = (props = {}) => {
       <link rel="alternate" hreflang={lang === 'fr' ? 'en' : 'fr'} href={`${fullUrl}?lang=${lang === 'fr' ? 'en' : 'fr'}`} />
       <link rel="alternate" hreflang="x-default" href="https://www.checkmyenterprise.com/" />
       
-      {/* Structured Data */}
-      {structuredData && (
-        <script type="application/ld+json">
-          {JSON.stringify(structuredData)}
+      {/* Structured Data — accepte un objet ou un tableau */}
+      {structuredData && (Array.isArray(structuredData) ? structuredData : [structuredData]).map((data, i) => (
+        <script key={i} type="application/ld+json">
+          {JSON.stringify(data)}
         </script>
-      )}
+      ))}
     </Helmet>
   )
 }

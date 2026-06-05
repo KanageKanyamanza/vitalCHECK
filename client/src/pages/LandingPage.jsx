@@ -6,7 +6,7 @@ import { Footer } from '../components/navigation'
 import { SocialShare } from '../components/ui'
 import { useAssessment } from '../context/AssessmentContext'
 import SEOHead from '../components/seo/SEOHead'
-import { getHomePageStructuredData } from '../utils/seoData'
+import { getHomePageStructuredData, getWebSiteStructuredData, getBrandOrganizationStructuredData } from '../utils/seoData'
 
 const LandingPage = () => {
   const navigate = useNavigate()
@@ -42,7 +42,7 @@ const LandingPage = () => {
         description="Évaluez la santé organisationnelle de votre entreprise africaine avec vitalCHECK. Évaluation gratuite de 10 minutes avec recommandations personnalisées et rapport détaillé."
         keywords="entreprise, santé organisationnelle, évaluation, vitalCHECK, Afrique, business, conseil, croissance, PME, diagnostic, management, finance, opérations, marketing, RH, gouvernance, technologie"
         url="/"
-        structuredData={getHomePageStructuredData()}
+        structuredData={[getWebSiteStructuredData(), getBrandOrganizationStructuredData(), getHomePageStructuredData()]}
       />
       
       {/* Hero Section */}
