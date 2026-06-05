@@ -24,3 +24,5 @@ dist
 # Documentation de fonctionnalités
 docs/LIKE_FEATURE_DOCUMENTATION.md
 docs/RESET_PASSWORD_FEATURE_DOCUMENTATION.md
+# Claude Code
+.claude/
