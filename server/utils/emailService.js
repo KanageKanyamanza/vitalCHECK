@@ -589,6 +589,69 @@ const sendAssessmentCompletedExistingUser = async (to, name, score) => {
   return sendEmail(mailOptions);
 };
 
+// Send results email for the simplified Niveau 1 diagnostic (v2), with the 2-page PDF attached
+const sendV2ResultEmail = async (to, name, overallScore, levelLabel, levelId, resultsUrl, pdfBuffer) => {
+  const statusByLevel = {
+    critique: 'red',
+    vulnerable: 'red',
+    stable: 'amber',
+    pret: 'green',
+    haute_performance: 'green'
+  };
+
+  const mailOptions = {
+    from: `"vitalCHECK" <${process.env.EMAIL_USER}>`,
+    to,
+    subject: 'vitalCHECK - Votre diagnostic gratuit est prêt !',
+    html: createUnifiedEmailTemplate({
+      language: 'fr',
+      title: 'Votre diagnostic vitalCHECK est prêt !',
+      subtitle: `Bonjour <strong>${name}</strong>, voici les résultats de votre diagnostic gratuit (Niveau 1).`,
+      score: {
+        value: `${Math.round(overallScore)}/100`,
+        label: `Niveau : ${levelLabel}`,
+        status: statusByLevel[levelId] || 'amber',
+        message: 'Retrouvez le détail de votre score par pilier dans le rapport ci-joint.'
+      },
+      content: `
+        <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.5; color: #4a5568;">
+          Vous trouverez en pièce jointe votre rapport complet (2 pages) avec :
+        </p>
+
+        <ul style="margin: 0; padding-left: 20px; color: #4a5568; line-height: 1.8;">
+          <li>Votre score détaillé pour chacun des 5 piliers</li>
+          <li>Votre niveau de maturité global et son interprétation</li>
+          <li>Vos principaux risques et points forts</li>
+          <li>Vos 3 prochaines actions prioritaires</li>
+        </ul>
+
+        <div style="background: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <p style="margin: 0; color: #14532d; font-size: 14px;">
+            <strong>Envie d'aller plus loin ?</strong> Notre diagnostic Premium vous propose une analyse approfondie et un accompagnement personnalisé.
+          </p>
+        </div>
+      `,
+      buttons: [
+        {
+          text: 'Voir mes résultats en ligne',
+          url: resultsUrl,
+          primary: true,
+          icon: ''
+        }
+      ],
+      note: 'Ce rapport correspond à votre auto-évaluation gratuite (Niveau 1) et constitue un point de départ pour identifier vos priorités.'
+    }),
+    attachments: pdfBuffer ? [
+      {
+        filename: 'vitalCHECK-diagnostic-niveau1.pdf',
+        content: pdfBuffer
+      }
+    ] : []
+  };
+
+  return sendEmail(mailOptions);
+};
+
 // Send subscription upgrade email (for existing account holders who pay)
 const sendSubscriptionUpgradeEmail = async (to, name, planName, planId) => {
   const mailOptions = {
@@ -753,6 +816,7 @@ module.exports = {
   sendAccountCreatedEmail,
   sendAccountCreatedAfterAssessment,
   sendAssessmentCompletedExistingUser,
+  sendV2ResultEmail,
   sendSubscriptionUpgradeEmail,
   sendPasswordResetEmail,
   emailService: {
@@ -764,6 +828,7 @@ module.exports = {
     sendAccountCreatedEmail,
     sendAccountCreatedAfterAssessment,
     sendAssessmentCompletedExistingUser,
+    sendV2ResultEmail,
     sendSubscriptionUpgradeEmail,
     sendPasswordResetEmail
   }
