@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import { Clock, ArrowRight } from 'lucide-react'
 import { Hero } from '../components/layout'
 import { AssessmentForm } from '../components/assessment'
 import { Footer } from '../components/navigation'
@@ -47,7 +49,38 @@ const LandingPage = () => {
       
       {/* Hero Section */}
       <Hero onStartAssessment={handleStartAssessment} />
-      
+
+      {/* Diagnostic gratuit "Niveau 1" */}
+      <div className="bg-primary-50 py-16">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <div className="inline-flex items-center space-x-2 text-primary-600 mb-3">
+              <Clock className="w-5 h-5" />
+              <span className="text-sm font-medium">5 à 7 minutes · 100% gratuit</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 mb-3">
+              Découvrez votre score de santé d'entreprise
+            </h2>
+            <p className="text-gray-600 max-w-2xl mx-auto mb-6">
+              Répondez à 25 questions rapides et obtenez instantanément votre score
+              global, vos points forts et vos premières recommandations.
+            </p>
+            <button
+              onClick={() => navigate('/diagnostic')}
+              className="bg-accent-500 hover:bg-accent-600 text-white font-semibold px-8 py-3 rounded-lg inline-flex items-center space-x-2 transform hover:scale-105 transition-all duration-300 shadow-lg"
+            >
+              <span>Obtenir mon score gratuit</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </motion.div>
+        </div>
+      </div>
+
       {/* Assessment Form Section */}
       {showForm && (
         <div id="assessment-form">
