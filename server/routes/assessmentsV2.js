@@ -248,7 +248,7 @@ router.post(
 // GET /api/assessments-v2/:assessmentId - récupération d'un résultat sauvegardé
 router.get("/:assessmentId", async (req, res) => {
 	try {
-		const assessment = await Assessment.findById(req.params.assessmentId);
+		const assessment = await Assessment.findById(req.params.assessmentId).select("-pdfBuffer");
 
 		if (!assessment || assessment.version !== "v2") {
 			return res.status(404).json({

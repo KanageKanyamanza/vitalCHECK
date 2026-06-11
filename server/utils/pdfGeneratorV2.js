@@ -176,13 +176,13 @@ function generateV2HTMLContent(data) {
 
         body {
           font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-          line-height: 1.6;
+          line-height: 1.5;
           color: #333;
           background: white;
         }
 
         .page {
-          padding: 10px 5px;
+          padding: 8px 5px;
         }
 
         .page-break {
@@ -240,9 +240,9 @@ function generateV2HTMLContent(data) {
         h2.section-title {
           font-size: 18px;
           color: #2d3748;
-          margin-bottom: 15px;
+          margin-bottom: 10px;
           border-bottom: 2px solid #fbc350;
-          padding-bottom: 8px;
+          padding-bottom: 6px;
         }
 
         .pillar-list {
@@ -344,14 +344,14 @@ function generateV2HTMLContent(data) {
         }
 
         .insight-block {
-          margin-bottom: 25px;
+          margin-bottom: 14px;
         }
 
         .insight-item {
           background: #f8fafc;
           border-radius: 8px;
-          padding: 14px 18px;
-          margin-bottom: 10px;
+          padding: 10px 14px;
+          margin-bottom: 6px;
           border-left: 4px solid #cbd5e0;
         }
 
@@ -367,26 +367,26 @@ function generateV2HTMLContent(data) {
           font-weight: 700;
           color: #2d3748;
           font-size: 14px;
-          margin-bottom: 4px;
+          margin-bottom: 3px;
         }
 
         .insight-item .pillar-score {
           font-weight: 600;
-          font-size: 13px;
+          font-size: 12px;
           color: #718096;
-          margin-bottom: 6px;
+          margin-bottom: 4px;
         }
 
         .insight-item ul {
           margin: 0;
           padding-left: 18px;
-          font-size: 13px;
+          font-size: 12px;
           color: #4a5568;
         }
 
         .next-steps-list {
           counter-reset: step;
-          margin-bottom: 30px;
+          margin-bottom: 14px;
         }
 
         .next-steps-list .step {
@@ -395,8 +395,8 @@ function generateV2HTMLContent(data) {
           gap: 12px;
           background: #fffbeb;
           border-radius: 8px;
-          padding: 14px 18px;
-          margin-bottom: 10px;
+          padding: 10px 14px;
+          margin-bottom: 6px;
           border-left: 4px solid #fbc350;
         }
 
@@ -415,34 +415,34 @@ function generateV2HTMLContent(data) {
         }
 
         .step-text {
-          font-size: 14px;
+          font-size: 13px;
           color: #4a5568;
         }
 
         .premium-section {
           background: linear-gradient(135deg, #fbc350 0%, #f59e0b 100%);
           color: white;
-          padding: 30px;
+          padding: 18px;
           border-radius: 16px;
-          margin-top: 10px;
+          margin-top: 8px;
         }
 
         .premium-section h3 {
-          font-size: 19px;
-          margin-bottom: 16px;
+          font-size: 18px;
+          margin-bottom: 10px;
           text-align: center;
         }
 
         .premium-section ul {
           list-style: none;
           padding: 0;
-          margin-bottom: 20px;
+          margin-bottom: 10px;
         }
 
         .premium-section li {
-          padding: 8px 0 8px 28px;
+          padding: 5px 0 5px 28px;
           position: relative;
-          font-size: 14px;
+          font-size: 13px;
         }
 
         .premium-section li::before {
@@ -468,8 +468,9 @@ function generateV2HTMLContent(data) {
         }
 
         .footer-note {
-          margin-top: 25px;
-          font-size: 11px;
+          margin-top: 10px;
+          font-size: 10px;
+          line-height: 1.3;
           color: #a0aec0;
           text-align: center;
         }
@@ -541,7 +542,7 @@ function generateV2HTMLContent(data) {
         <h2 class="section-title">${t.page2Title}</h2>
 
         <div class="insight-block">
-          <h3 style="font-size: 14px; color: #2d3748; margin-bottom: 10px;">${t.topRisks}</h3>
+          <h3 style="font-size: 14px; color: #2d3748; margin-bottom: 6px;">${t.topRisks}</h3>
           ${weakest
 						.map(
 							(pillar) => `
@@ -558,7 +559,7 @@ function generateV2HTMLContent(data) {
         </div>
 
         <div class="insight-block">
-          <h3 style="font-size: 14px; color: #2d3748; margin-bottom: 10px;">${t.topStrengths}</h3>
+          <h3 style="font-size: 14px; color: #2d3748; margin-bottom: 6px;">${t.topStrengths}</h3>
           ${strongest
 						.map(
 							(pillar) => `
@@ -571,7 +572,7 @@ function generateV2HTMLContent(data) {
 						.join("")}
         </div>
 
-        <h3 style="font-size: 14px; color: #2d3748; margin-bottom: 10px;">${t.nextSteps}</h3>
+        <h3 style="font-size: 14px; color: #2d3748; margin-bottom: 6px;">${t.nextSteps}</h3>
         <div class="next-steps-list">
           ${nextSteps
 						.map(
