@@ -9,7 +9,7 @@ const answerSchema = new mongoose.Schema({
     type: Number,
     required: true,
     min: 0,
-    max: 3
+    max: 4 // v1 utilise 0/1/3, v2 utilise 0/2/4
   }
 });
 
@@ -30,8 +30,12 @@ const pillarScoreSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ['red', 'amber', 'green'],
-    required: true
+    enum: ['red', 'amber', 'green']
+  },
+  // v2 uniquement : palier de maturité (5 niveaux)
+  level: {
+    type: String,
+    enum: ['critique', 'vulnerable', 'stable', 'pret', 'haute_performance']
   },
   recommendations: [{
     type: String
@@ -39,10 +43,15 @@ const pillarScoreSchema = new mongoose.Schema({
 });
 
 const assessmentSchema = new mongoose.Schema({
+  // v1 = ancien questionnaire sectoriel, v2 = diagnostic simplifié Niveau 1
+  version: {
+    type: String,
+    enum: ['v1', 'v2'],
+    default: 'v1'
+  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    required: true
+    ref: 'User'
   },
   answers: [answerSchema],
   pillarScores: [pillarScoreSchema],
@@ -54,6 +63,26 @@ const assessmentSchema = new mongoose.Schema({
   overallStatus: {
     type: String,
     enum: ['red', 'amber', 'green']
+  },
+  // v2 uniquement : palier de maturité global (5 niveaux)
+  overallLevel: {
+    type: String,
+    enum: ['critique', 'vulnerable', 'stable', 'pret', 'haute_performance']
+  },
+  // v2 uniquement : informations saisies dans le formulaire simplifié,
+  // dénormalisées pour permettre un calcul de score sans compte utilisateur
+  companyName: {
+    type: String
+  },
+  email: {
+    type: String
+  },
+  companySize: {
+    type: String,
+    enum: ['micro', 'sme', 'large-sme']
+  },
+  sector: {
+    type: String
   },
   language: {
     type: String,
