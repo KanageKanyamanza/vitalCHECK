@@ -179,6 +179,29 @@ export const authAPI = publicApi;
 export const assessmentAPI = publicApi;
 export const reportsAPI = publicApi;
 
+// API du diagnostic simplifié "Niveau 1" (v2)
+export const assessmentV2API = {
+	// Récupérer les 25 questions (5 piliers x 5 questions)
+	getQuestions: (lang = "fr") =>
+		api.get(`/assessments-v2/questions?lang=${lang}`),
+
+	// Calculer les scores sans persistance (aucun compte requis)
+	scoreAssessment: (data) => api.post("/assessments-v2/score", data),
+
+	// Sauvegarder le résultat (crée/lie un compte, génère le PDF, envoie l'email)
+	saveAssessment: (data) => api.post("/assessments-v2/save", data),
+
+	// Récupérer un résultat sauvegardé
+	getAssessment: (assessmentId) =>
+		api.get(`/assessments-v2/${assessmentId}`),
+
+	// Télécharger le PDF du rapport
+	downloadReport: (assessmentId) =>
+		api.get(`/assessments-v2/${assessmentId}/pdf`, {
+			responseType: "blob",
+		}),
+};
+
 // Payments API (public)
 export const paymentsAPI = {
 	recordPayment: (data) => api.post("/payments/record", data),
