@@ -190,7 +190,7 @@ function generateV2HTMLContent(data) {
         }
 
         .header {
-          background: linear-gradient(135deg, #fbc350 0%, #f59e0b 100%);
+          background: linear-gradient(135deg, #F4C542 0%, #00751B 100%);
           color: white;
           padding: 30px;
           text-align: center;
@@ -241,7 +241,7 @@ function generateV2HTMLContent(data) {
           font-size: 18px;
           color: #2d3748;
           margin-bottom: 10px;
-          border-bottom: 2px solid #fbc350;
+          border-bottom: 2px solid #F4C542;
           padding-bottom: 6px;
         }
 
@@ -257,7 +257,7 @@ function generateV2HTMLContent(data) {
           background: #f8fafc;
           border-radius: 8px;
           margin-bottom: 10px;
-          border-left: 4px solid #fbc350;
+          border-left: 4px solid #F4C542;
         }
 
         .pillar-name {
@@ -397,11 +397,11 @@ function generateV2HTMLContent(data) {
           border-radius: 8px;
           padding: 10px 14px;
           margin-bottom: 6px;
-          border-left: 4px solid #fbc350;
+          border-left: 4px solid #F4C542;
         }
 
         .step-number {
-          background: #f59e0b;
+          background: #00751B;
           color: white;
           width: 26px;
           height: 26px;
@@ -420,7 +420,7 @@ function generateV2HTMLContent(data) {
         }
 
         .premium-section {
-          background: linear-gradient(135deg, #fbc350 0%, #f59e0b 100%);
+          background: linear-gradient(135deg, #F4C542 0%, #00751B 100%);
           color: white;
           padding: 18px;
           border-radius: 16px;
@@ -458,7 +458,7 @@ function generateV2HTMLContent(data) {
           width: fit-content;
           margin: 0 auto;
           background: white;
-          color: #f59e0b;
+          color: #00751B;
           padding: 12px 28px;
           border-radius: 8px;
           font-weight: 700;
