@@ -9,52 +9,62 @@
  * - 5 paliers de maturité (remplacent les anciens statuts red/amber/green)
  */
 
-// Paliers de maturité (du plus faible au plus élevé)
+// Paliers de maturité bilingues (du plus faible au plus élevé)
 const LEVELS = [
 	{
 		id: "critique",
 		min: 0,
 		max: 39,
-		label: "Critique",
 		color: "#EF4444", // red-500
-		interpretation:
-			"Votre entreprise fait face à des risques importants qui menacent sa pérennité. Une action rapide est nécessaire pour stabiliser les fondations.",
+		label: { fr: "Critique", en: "Critical" },
+		interpretation: {
+			fr: "Votre entreprise fait face à des risques importants qui menacent sa pérennité. Une action rapide est nécessaire pour stabiliser les fondations.",
+			en: "Your business is facing significant risks that threaten its sustainability. Immediate action is needed to stabilize the foundations.",
+		},
 	},
 	{
 		id: "vulnerable",
 		min: 40,
 		max: 59,
-		label: "Vulnérable",
 		color: "#F59E0B", // amber-500
-		interpretation:
-			"Votre entreprise tient le coup mais repose sur des bases fragiles. Plusieurs axes nécessitent une attention prioritaire.",
+		label: { fr: "Vulnérable", en: "Vulnerable" },
+		interpretation: {
+			fr: "Votre entreprise tient le coup mais repose sur des bases fragiles. Plusieurs axes nécessitent une attention prioritaire.",
+			en: "Your business is holding on but is built on fragile foundations. Several areas require priority attention.",
+		},
 	},
 	{
 		id: "stable",
 		min: 60,
 		max: 79,
-		label: "Stable",
 		color: "#EAB308", // yellow-500
-		interpretation:
-			"Votre entreprise a des bases solides. Quelques ajustements ciblés permettront de passer à la vitesse supérieure.",
+		label: { fr: "Stable", en: "Stable" },
+		interpretation: {
+			fr: "Votre entreprise a des bases solides. Quelques ajustements ciblés permettront de passer à la vitesse supérieure.",
+			en: "Your business has solid foundations. A few targeted adjustments will help you move up a gear.",
+		},
 	},
 	{
 		id: "pret",
 		min: 80,
 		max: 89,
-		label: "Prêt pour la croissance",
 		color: "#3B82F6", // blue-500
-		interpretation:
-			"Votre entreprise est bien structurée et prête à accélérer son développement avec une stratégie de croissance ambitieuse.",
+		label: { fr: "Prêt pour la croissance", en: "Growth-Ready" },
+		interpretation: {
+			fr: "Votre entreprise est bien structurée et prête à accélérer son développement avec une stratégie de croissance ambitieuse.",
+			en: "Your business is well-structured and ready to accelerate its development with an ambitious growth strategy.",
+		},
 	},
 	{
 		id: "haute_performance",
 		min: 90,
 		max: 100,
-		label: "Haute performance",
 		color: "#10B981", // emerald-500
-		interpretation:
-			"Votre entreprise affiche une excellente maturité organisationnelle sur l'ensemble des piliers clés. Continuez sur cette lancée !",
+		label: { fr: "Haute performance", en: "High Performance" },
+		interpretation: {
+			fr: "Votre entreprise affiche une excellente maturité organisationnelle sur l'ensemble des piliers clés. Continuez sur cette lancée !",
+			en: "Your business shows excellent organizational maturity across all key pillars. Keep up the great work!",
+		},
 	},
 ];
 
@@ -77,14 +87,16 @@ function getLevelColor(levelId) {
 	return level ? level.color : LEVELS[0].color;
 }
 
-function getLevelLabel(levelId) {
+function getLevelLabel(levelId, lang = "fr") {
 	const level = LEVELS.find((l) => l.id === levelId);
-	return level ? level.label : LEVELS[0].label;
+	if (!level) return LEVELS[0].label[lang] || LEVELS[0].label.fr;
+	return level.label[lang] || level.label.fr;
 }
 
-function getLevelInterpretation(levelId) {
+function getLevelInterpretation(levelId, lang = "fr") {
 	const level = LEVELS.find((l) => l.id === levelId);
-	return level ? level.interpretation : LEVELS[0].interpretation;
+	if (!level) return LEVELS[0].interpretation[lang] || LEVELS[0].interpretation.fr;
+	return level.interpretation[lang] || level.interpretation.fr;
 }
 
 /**
