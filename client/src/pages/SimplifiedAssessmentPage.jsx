@@ -2,37 +2,22 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, CheckCircle, Clock } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { assessmentV2API } from "../services/api";
 import { SimpleQuestionCard, SimpleProgressBar } from "../components/assessment";
+import { LanguageSelector } from "../components/ui";
 import useSmoothScroll from "../hooks/useSmoothScroll";
 import SEOHead from "../components/seo/SEOHead";
 
-const COMPANY_SIZES = [
-	{ value: "micro", label: "Micro-entreprise (1-9 employés)" },
-	{ value: "sme", label: "PME (10-49 employés)" },
-	{ value: "large-sme", label: "Moyenne entreprise (50-250 employés)" },
-];
-
-const SECTORS = [
-	{ value: "technology", label: "Technologie" },
-	{ value: "commerce", label: "Commerce" },
-	{ value: "services", label: "Services" },
-	{ value: "manufacturing", label: "Industrie / Manufacture" },
-	{ value: "agriculture", label: "Agriculture" },
-	{ value: "healthcare", label: "Santé" },
-	{ value: "education", label: "Éducation" },
-	{ value: "finance", label: "Finance" },
-	{ value: "other", label: "Autre" },
-];
-
 const PROGRESS_STORAGE_KEY = "vitalcheck-v2-progress";
 const RESULT_STORAGE_KEY = "vitalcheck-v2-result";
-const LANGUAGE = "fr";
 
 const SimplifiedAssessmentPage = () => {
 	const navigate = useNavigate();
 	const { scrollToTop } = useSmoothScroll();
+	const { t, i18n } = useTranslation();
+	const language = i18n.language?.substring(0, 2) || "fr";
 
 	const [step, setStep] = useState("intro"); // 'intro' | 'questions'
 	const [formData, setFormData] = useState({
@@ -47,24 +32,27 @@ const SimplifiedAssessmentPage = () => {
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [submitting, setSubmitting] = useState(false);
 
-	// Charger les questions dès l'arrivée sur la page
+	// Charger (ou recharger) les questions quand la langue change
 	useEffect(() => {
 		const loadQuestions = async () => {
+			setLoadingQuestions(true);
 			try {
-				const response = await assessmentV2API.getQuestions(LANGUAGE);
+				const response = await assessmentV2API.getQuestions(language);
 				if (response.data.success) {
 					setQuestionsData(response.data.data);
+					setAnswers([]);
+					setCurrentIndex(0);
 				}
 			} catch (error) {
 				console.error("Erreur de chargement des questions v2:", error);
-				toast.error("Impossible de charger le diagnostic. Veuillez réessayer.");
+				toast.error(t("diagnostic.errors.loadFailed"));
 			} finally {
 				setLoadingQuestions(false);
 			}
 		};
 
 		loadQuestions();
-	}, []);
+	}, [language]);
 
 	// Restaurer une progression interrompue (rafraîchissement de page)
 	useEffect(() => {
@@ -87,12 +75,12 @@ const SimplifiedAssessmentPage = () => {
 		try {
 			sessionStorage.setItem(
 				PROGRESS_STORAGE_KEY,
-				JSON.stringify({ step, formData, answers, currentIndex }),
+				JSON.stringify({ step, formData, answers, currentIndex, language }),
 			);
 		} catch {
 			// Ignorer les erreurs d'écriture du stockage
 		}
-	}, [step, formData, answers, currentIndex]);
+	}, [step, formData, answers, currentIndex, language]);
 
 	const flatQuestions =
 		questionsData?.pillars?.flatMap((pillar, pillarIndex) =>
@@ -120,12 +108,12 @@ const SimplifiedAssessmentPage = () => {
 		e.preventDefault();
 
 		if (!formData.companyName.trim() || !formData.email.trim() || !formData.companySize) {
-			toast.error("Merci de remplir tous les champs obligatoires");
+			toast.error(t("diagnostic.errors.requiredFields"));
 			return;
 		}
 
 		if (!questionsData) {
-			toast.error("Le diagnostic n'a pas pu être chargé. Veuillez réessayer.");
+			toast.error(t("diagnostic.errors.noQuestions"));
 			return;
 		}
 
@@ -171,7 +159,7 @@ const SimplifiedAssessmentPage = () => {
 		try {
 			const response = await assessmentV2API.scoreAssessment({
 				answers,
-				language: LANGUAGE,
+				language,
 			});
 
 			if (response.data.success) {
@@ -179,7 +167,7 @@ const SimplifiedAssessmentPage = () => {
 					result: response.data.result,
 					formData,
 					answers,
-					language: LANGUAGE,
+					language,
 				};
 
 				try {
@@ -192,11 +180,11 @@ const SimplifiedAssessmentPage = () => {
 				scrollToTop(400);
 				navigate("/diagnostic/resultats", { state: payload });
 			} else {
-				toast.error("Une erreur est survenue lors du calcul des résultats");
+				toast.error(t("diagnostic.errors.scoreError"));
 			}
 		} catch (error) {
 			console.error("Erreur de calcul des scores v2:", error);
-			toast.error("Une erreur est survenue lors du calcul des résultats");
+			toast.error(t("diagnostic.errors.scoreError"));
 		} finally {
 			setSubmitting(false);
 		}
@@ -207,17 +195,35 @@ const SimplifiedAssessmentPage = () => {
 			<div className="min-h-screen flex items-center justify-center">
 				<div className="text-center">
 					<div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-					<p className="text-gray-600">Chargement du diagnostic...</p>
+					<p className="text-gray-600">{t("diagnostic.loading.questions")}</p>
 				</div>
 			</div>
 		);
 	}
 
+	const companySizes = [
+		{ value: "micro", label: t("diagnostic.sizes.micro") },
+		{ value: "sme", label: t("diagnostic.sizes.sme") },
+		{ value: "large-sme", label: t("diagnostic.sizes.large-sme") },
+	];
+
+	const sectors = [
+		{ value: "technology", label: t("diagnostic.sectors.technology") },
+		{ value: "commerce", label: t("diagnostic.sectors.commerce") },
+		{ value: "services", label: t("diagnostic.sectors.services") },
+		{ value: "manufacturing", label: t("diagnostic.sectors.manufacturing") },
+		{ value: "agriculture", label: t("diagnostic.sectors.agriculture") },
+		{ value: "healthcare", label: t("diagnostic.sectors.healthcare") },
+		{ value: "education", label: t("diagnostic.sectors.education") },
+		{ value: "finance", label: t("diagnostic.sectors.finance") },
+		{ value: "other", label: t("diagnostic.sectors.other") },
+	];
+
 	return (
 		<div className="min-h-screen py-[70px] bg-gray-50">
 			<SEOHead
-				title="Diagnostic gratuit - vitalCHECK"
-				description="Obtenez en 5 à 7 minutes un score de santé organisationnelle gratuit pour votre entreprise, avec recommandations immédiates."
+				title={t("diagnostic.meta.title")}
+				description={t("diagnostic.meta.description")}
 				keywords="diagnostic gratuit, score entreprise, santé organisationnelle, vitalCHECK, PME"
 				url="/diagnostic"
 			/>
@@ -232,24 +238,21 @@ const SimplifiedAssessmentPage = () => {
 					>
 						<div className="flex items-center space-x-2 text-primary-600 mb-3">
 							<Clock className="w-5 h-5" />
-							<span className="text-sm font-medium">5 à 7 minutes</span>
+							<span className="text-sm font-medium">
+								{t("diagnostic.intro.duration")} · {t("diagnostic.intro.free")}
+							</span>
 						</div>
 						<h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 mb-2">
-							Votre score de santé d'entreprise gratuit
+							{t("diagnostic.intro.title")}
 						</h1>
 						<p className="text-gray-600 mb-6">
-							Répondez à 25 questions rapides réparties sur 5 piliers clés et
-							obtenez instantanément votre score global, vos points forts et vos
-							premières recommandations.
+							{t("diagnostic.intro.subtitle")}
 						</p>
 
 						<form onSubmit={handleStart} className="space-y-5">
 							<div>
-								<label
-									htmlFor="companyName"
-									className="block text-sm font-medium text-gray-700 mb-2"
-								>
-									Nom de l'entreprise *
+								<label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-2">
+									{t("diagnostic.intro.companyName")} *
 								</label>
 								<input
 									type="text"
@@ -258,17 +261,14 @@ const SimplifiedAssessmentPage = () => {
 									value={formData.companyName}
 									onChange={handleFormChange}
 									className="input-field"
-									placeholder="Ex: Ma Société SARL"
+									placeholder={t("diagnostic.intro.companyNamePlaceholder")}
 									required
 								/>
 							</div>
 
 							<div>
-								<label
-									htmlFor="companySize"
-									className="block text-sm font-medium text-gray-700 mb-2"
-								>
-									Taille de l'entreprise *
+								<label htmlFor="companySize" className="block text-sm font-medium text-gray-700 mb-2">
+									{t("diagnostic.intro.companySize")} *
 								</label>
 								<select
 									id="companySize"
@@ -278,8 +278,8 @@ const SimplifiedAssessmentPage = () => {
 									className="input-field"
 									required
 								>
-									<option value="">Sélectionnez une taille</option>
-									{COMPANY_SIZES.map((size) => (
+									<option value="">{t("diagnostic.intro.companySizePlaceholder")}</option>
+									{companySizes.map((size) => (
 										<option key={size.value} value={size.value}>
 											{size.label}
 										</option>
@@ -288,11 +288,8 @@ const SimplifiedAssessmentPage = () => {
 							</div>
 
 							<div>
-								<label
-									htmlFor="sector"
-									className="block text-sm font-medium text-gray-700 mb-2"
-								>
-									Secteur d'activité (optionnel)
+								<label htmlFor="sector" className="block text-sm font-medium text-gray-700 mb-2">
+									{t("diagnostic.intro.sector")} {t("common.optional")}
 								</label>
 								<select
 									id="sector"
@@ -301,8 +298,8 @@ const SimplifiedAssessmentPage = () => {
 									onChange={handleFormChange}
 									className="input-field"
 								>
-									<option value="">Préférez ne pas préciser</option>
-									{SECTORS.map((sector) => (
+									<option value="">{t("diagnostic.intro.sectorPlaceholder")}</option>
+									{sectors.map((sector) => (
 										<option key={sector.value} value={sector.value}>
 											{sector.label}
 										</option>
@@ -311,11 +308,8 @@ const SimplifiedAssessmentPage = () => {
 							</div>
 
 							<div>
-								<label
-									htmlFor="email"
-									className="block text-sm font-medium text-gray-700 mb-2"
-								>
-									Adresse email *
+								<label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+									{t("diagnostic.intro.email")} *
 								</label>
 								<input
 									type="email"
@@ -324,17 +318,23 @@ const SimplifiedAssessmentPage = () => {
 									value={formData.email}
 									onChange={handleFormChange}
 									className="input-field"
-									placeholder="vous@entreprise.com"
+									placeholder={t("diagnostic.intro.emailPlaceholder")}
 									required
 								/>
 								<p className="text-xs text-gray-500 mt-1">
-									Vos résultats s'affichent immédiatement. Cette adresse nous
-									permettra de vous renvoyer votre rapport si besoin.
+									{t("diagnostic.intro.emailHint")}
 								</p>
 							</div>
 
+							<div>
+								<label className="block text-sm font-medium text-gray-700 mb-2">
+									{t("diagnostic.intro.language")}
+								</label>
+								<LanguageSelector />
+							</div>
+
 							<button type="submit" className="btn-primary w-full justify-center">
-								Démarrer le diagnostic
+								{t("diagnostic.intro.startButton")}
 							</button>
 						</form>
 					</motion.div>
@@ -347,7 +347,7 @@ const SimplifiedAssessmentPage = () => {
 						<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
 							<div className="flex items-center justify-between">
 								<span className="sm:text-lg font-bold text-gray-900">
-									Diagnostic gratuit
+									{t("diagnostic.questions.header")}
 								</span>
 								<div className="text-lg text-gray-600">{formData.companyName}</div>
 							</div>
@@ -385,13 +385,16 @@ const SimplifiedAssessmentPage = () => {
 								className="btn-outline flex items-center space-x-2"
 							>
 								<ArrowLeft className="w-4 h-4" />
-								<span className="hidden sm:block">Précédent</span>
+								<span className="hidden sm:block">{t("diagnostic.questions.previous")}</span>
 							</button>
 
 							<div className="flex items-center space-x-2 text-sm text-gray-500">
 								<CheckCircle className="w-4 h-4" />
 								<span>
-									{answers.length} / {totalQuestions} réponses
+									{t("diagnostic.questions.answers", {
+										current: answers.length,
+										total: totalQuestions,
+									})}
 								</span>
 							</div>
 
@@ -405,7 +408,9 @@ const SimplifiedAssessmentPage = () => {
 								) : (
 									<>
 										<span className="hidden sm:block">
-											{isLastQuestion ? "Voir mes résultats" : "Suivant"}
+											{isLastQuestion
+												? t("diagnostic.questions.seeResults")
+												: t("diagnostic.questions.next")}
 										</span>
 										<ArrowRight className="w-4 h-4" />
 									</>
