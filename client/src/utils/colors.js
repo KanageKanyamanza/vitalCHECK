@@ -159,3 +159,61 @@ export const gradientClasses = {
   text: 'bg-gradient-to-r from-primary-600 to-secondary-600 bg-clip-text text-transparent',
   background: 'bg-gradient-to-r from-primary-500 via-secondary-500 to-accent-500',
 }
+
+// Paliers de maturité du diagnostic simplifié "Niveau 1" (v2)
+// Doit rester cohérent avec server/utils/scoringV2.js
+export const LEVELS_V2 = [
+  {
+    id: 'critique',
+    min: 0,
+    max: 39,
+    label: 'Critique',
+    color: colors.danger[500], // #ef4444
+    interpretation:
+      "Votre entreprise fait face à des risques importants qui menacent sa pérennité. Une action rapide est nécessaire pour stabiliser les fondations.",
+  },
+  {
+    id: 'vulnerable',
+    min: 40,
+    max: 59,
+    label: 'Vulnérable',
+    color: colors.warning[500], // #f59e0b
+    interpretation:
+      "Votre entreprise tient le coup mais repose sur des bases fragiles. Plusieurs axes nécessitent une attention prioritaire.",
+  },
+  {
+    id: 'stable',
+    min: 60,
+    max: 79,
+    label: 'Stable',
+    color: '#EAB308', // yellow-500
+    interpretation:
+      "Votre entreprise a des bases solides. Quelques ajustements ciblés permettront de passer à la vitesse supérieure.",
+  },
+  {
+    id: 'pret',
+    min: 80,
+    max: 89,
+    label: 'Prêt pour la croissance',
+    color: colors.primary[500], // #3b82f6
+    interpretation:
+      "Votre entreprise est bien structurée et prête à accélérer son développement avec une stratégie de croissance ambitieuse.",
+  },
+  {
+    id: 'haute_performance',
+    min: 90,
+    max: 100,
+    label: 'Haute performance',
+    color: colors.success[500], // #10b981
+    interpretation:
+      "Votre entreprise affiche une excellente maturité organisationnelle sur l'ensemble des piliers clés. Continuez sur cette lancée !",
+  },
+]
+
+// Récupère le palier correspondant à un score 0-100
+export const getLevelV2 = (score) =>
+  LEVELS_V2.find((level) => score >= level.min && score <= level.max) || LEVELS_V2[0]
+
+// Récupère un palier par son identifiant (ex: 'stable')
+export const getLevelV2ById = (levelId) =>
+  LEVELS_V2.find((level) => level.id === levelId) || LEVELS_V2[0]

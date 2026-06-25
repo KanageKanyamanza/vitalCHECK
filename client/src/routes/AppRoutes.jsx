@@ -5,6 +5,8 @@ import AboutPage from '../pages/AboutPage'
 import AssessmentPage from '../pages/AssessmentPage'
 import ResumeAssessmentPage from '../pages/ResumeAssessmentPage'
 import ResultsPage from '../pages/ResultsPage'
+import SimplifiedAssessmentPage from '../pages/SimplifiedAssessmentPage'
+import SimplifiedResultsPage from '../pages/SimplifiedResultsPage'
 import ContactPage from '../pages/ContactPage'
 import PricingPage from '../pages/PricingPage'
 import CheckoutPage from '../pages/CheckoutPage'
@@ -31,6 +33,8 @@ const AppRoutes = () => {
       <Route path="/assessment" element={<AssessmentPage />} />
       <Route path="/resume/:token" element={<ResumeAssessmentPage />} />
       <Route path="/results" element={<ResultsPage />} />
+      <Route path="/diagnostic" element={<SimplifiedAssessmentPage />} />
+      <Route path="/diagnostic/resultats" element={<SimplifiedResultsPage />} />
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/checkout" element={<CheckoutPage />} />

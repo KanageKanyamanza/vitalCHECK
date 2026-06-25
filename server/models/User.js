@@ -27,8 +27,8 @@ const userSchema = new mongoose.Schema({
   },
   sector: {
     type: String,
-    required: [true, 'Sector is required'],
-    trim: true
+    trim: true,
+    default: 'other' // optionnel depuis le diagnostic simplifié (v2)
   },
   companySize: {
     type: String,

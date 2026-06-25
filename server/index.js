@@ -88,6 +88,7 @@ app.use("/api/auth", require("./routes/auth"));
 app.use("/api/client-auth", require("./routes/clientAuth").router); // Routes auth client
 app.use("/api/unified-auth", require("./routes/unifiedAuth")); // Connexion unifiée
 app.use("/api/assessments", require("./routes/assessments"));
+app.use("/api/assessments-v2", require("./routes/assessmentsV2")); // Diagnostic simplifié Niveau 1
 app.use("/api/reports", require("./routes/reports"));
 app.use("/api/contact", require("./routes/contact"));
 app.use("/api/payments", require("./routes/payments")); // Route publique: /api/payments/record
