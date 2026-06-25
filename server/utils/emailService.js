@@ -590,7 +590,7 @@ const sendAssessmentCompletedExistingUser = async (to, name, score) => {
 };
 
 // Send results email for the simplified Niveau 1 diagnostic (v2), with the 2-page PDF attached
-const sendV2ResultEmail = async (to, name, overallScore, levelLabel, levelId, resultsUrl, pdfBuffer) => {
+const sendV2ResultEmail = async (to, name, overallScore, levelLabel, levelId, resultsUrl, pdfBuffer, language = 'fr') => {
   const statusByLevel = {
     critique: 'red',
     vulnerable: 'red',
@@ -599,54 +599,94 @@ const sendV2ResultEmail = async (to, name, overallScore, levelLabel, levelId, re
     haute_performance: 'green'
   };
 
+  const isFr = language !== 'en';
+
+  const emailTexts = {
+    fr: {
+      subject: 'vitalCHECK - Votre diagnostic gratuit est prêt !',
+      title: 'Votre diagnostic vitalCHECK est prêt !',
+      subtitle: `Bonjour <strong>${name}</strong>, voici les résultats de votre diagnostic gratuit (Niveau 1).`,
+      levelPrefix: 'Niveau :',
+      scoreMessage: 'Retrouvez le détail de votre score par pilier dans le rapport ci-joint.',
+      contentIntro: 'Vous trouverez en pièce jointe votre rapport complet (2 pages) avec :',
+      bullets: [
+        'Votre score détaillé pour chacun des 5 piliers',
+        'Votre niveau de maturité global et son interprétation',
+        'Vos principaux risques et points forts',
+        'Vos 3 prochaines actions prioritaires',
+      ],
+      ctaNote: '<strong>Envie d\'aller plus loin ?</strong> Notre diagnostic Premium vous propose une analyse approfondie et un accompagnement personnalisé.',
+      ctaButton: 'Voir mes résultats en ligne',
+      note: 'Ce rapport correspond à votre auto-évaluation gratuite (Niveau 1) et constitue un point de départ pour identifier vos priorités.',
+      filename: 'vitalCHECK-diagnostic-niveau1.pdf',
+    },
+    en: {
+      subject: 'vitalCHECK - Your free diagnostic is ready!',
+      title: 'Your vitalCHECK diagnostic is ready!',
+      subtitle: `Hello <strong>${name}</strong>, here are the results of your free diagnostic (Level 1).`,
+      levelPrefix: 'Level:',
+      scoreMessage: 'Find the detailed breakdown of your score by pillar in the attached report.',
+      contentIntro: 'Your full report (2 pages) is attached and includes:',
+      bullets: [
+        'Your detailed score for each of the 5 pillars',
+        'Your overall maturity level and its interpretation',
+        'Your main risks and strengths',
+        'Your 3 priority next steps',
+      ],
+      ctaNote: '<strong>Want to go further?</strong> Our Premium diagnostic offers an in-depth analysis and personalized support.',
+      ctaButton: 'View my results online',
+      note: 'This report reflects your free self-assessment (Level 1) and serves as a starting point to identify your priorities.',
+      filename: 'vitalCHECK-diagnostic-level1.pdf',
+    },
+  };
+
+  const tx = isFr ? emailTexts.fr : emailTexts.en;
+
   const mailOptions = {
     from: `"vitalCHECK" <${process.env.EMAIL_USER}>`,
     to,
-    subject: 'vitalCHECK - Votre diagnostic gratuit est prêt !',
+    subject: tx.subject,
     html: createUnifiedEmailTemplate({
-      language: 'fr',
-      title: 'Votre diagnostic vitalCHECK est prêt !',
-      subtitle: `Bonjour <strong>${name}</strong>, voici les résultats de votre diagnostic gratuit (Niveau 1).`,
+      language,
+      title: tx.title,
+      subtitle: tx.subtitle,
       score: {
         value: `${Math.round(overallScore)}/100`,
-        label: `Niveau : ${levelLabel}`,
+        label: `${tx.levelPrefix} ${levelLabel}`,
         status: statusByLevel[levelId] || 'amber',
-        message: 'Retrouvez le détail de votre score par pilier dans le rapport ci-joint.'
+        message: tx.scoreMessage,
       },
       content: `
         <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.5; color: #4a5568;">
-          Vous trouverez en pièce jointe votre rapport complet (2 pages) avec :
+          ${tx.contentIntro}
         </p>
 
         <ul style="margin: 0; padding-left: 20px; color: #4a5568; line-height: 1.8;">
-          <li>Votre score détaillé pour chacun des 5 piliers</li>
-          <li>Votre niveau de maturité global et son interprétation</li>
-          <li>Vos principaux risques et points forts</li>
-          <li>Vos 3 prochaines actions prioritaires</li>
+          ${tx.bullets.map((b) => `<li>${b}</li>`).join('')}
         </ul>
 
         <div style="background: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <p style="margin: 0; color: #14532d; font-size: 14px;">
-            <strong>Envie d'aller plus loin ?</strong> Notre diagnostic Premium vous propose une analyse approfondie et un accompagnement personnalisé.
+            ${tx.ctaNote}
           </p>
         </div>
       `,
       buttons: [
         {
-          text: 'Voir mes résultats en ligne',
+          text: tx.ctaButton,
           url: resultsUrl,
           primary: true,
-          icon: ''
-        }
+          icon: '',
+        },
       ],
-      note: 'Ce rapport correspond à votre auto-évaluation gratuite (Niveau 1) et constitue un point de départ pour identifier vos priorités.'
+      note: tx.note,
     }),
     attachments: pdfBuffer ? [
       {
-        filename: 'vitalCHECK-diagnostic-niveau1.pdf',
-        content: pdfBuffer
-      }
-    ] : []
+        filename: tx.filename,
+        content: pdfBuffer,
+      },
+    ] : [],
   };
 
   return sendEmail(mailOptions);

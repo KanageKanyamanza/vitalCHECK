@@ -83,7 +83,7 @@ router.post(
 					pillarScores,
 					overallScore,
 					overallLevel,
-					overallLevelLabel: getLevelLabel(overallLevel),
+					overallLevelLabel: getLevelLabel(overallLevel, language),
 					recommendations,
 					weakest,
 					strongest,
@@ -211,10 +211,11 @@ router.post(
 					email,
 					companyName,
 					overallScore,
-					getLevelLabel(overallLevel),
+					getLevelLabel(overallLevel, language),
 					overallLevel,
 					resultsUrl,
 					pdfBuffer,
+					language,
 				);
 			} catch (emailError) {
 				console.error("V2 result email error:", emailError);
@@ -226,7 +227,7 @@ router.post(
 					id: assessment._id,
 					overallScore,
 					overallLevel,
-					overallLevelLabel: getLevelLabel(overallLevel),
+					overallLevelLabel: getLevelLabel(overallLevel, language),
 					pillarScores: assessment.pillarScores,
 					completedAt: assessment.completedAt,
 				},
