@@ -341,9 +341,334 @@ const fr = {
 	],
 };
 
-// Contenu anglais à compléter en phase 2 (structure prête)
 const en = {
-	pillars: [],
+	pillars: [
+		{
+			id: "leadership",
+			name: "Leadership & Strategy",
+			questions: [
+				{
+					id: "v2_leadership_1",
+					text: "Do you have written business objectives for the next 1 and 3 years?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "Quantified, dated objectives shared with the team" },
+						{ value: 2, shortLabel: "Partially", label: "General objectives, not formally written down" },
+						{ value: 0, shortLabel: "No", label: "No formal objectives defined", recommendation: "Set aside 2 hours to write down 3 measurable goals for the next 12 months and share them with your team." },
+					],
+				},
+				{
+					id: "v2_leadership_2",
+					text: "Do you regularly review your business performance against these objectives?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "Formalized monthly or quarterly review" },
+						{ value: 2, shortLabel: "Partially", label: "Annual or irregular review" },
+						{ value: 0, shortLabel: "No", label: "Never reviewed", recommendation: "Block 30 minutes each month to compare your results against your objectives." },
+					],
+				},
+				{
+					id: "v2_leadership_3",
+					text: "Do you have a budget forecast for the current financial year?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "Detailed budget tracked monthly" },
+						{ value: 2, shortLabel: "Partially", label: "Approximate budget, rarely updated" },
+						{ value: 0, shortLabel: "No", label: "No budget established", recommendation: "Build a simple forecast budget on a spreadsheet for the next 12 months." },
+					],
+				},
+				{
+					id: "v2_leadership_4",
+					text: "Do you track at least 3 key performance indicators (KPIs) for your business?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "KPIs tracked and displayed regularly" },
+						{ value: 2, shortLabel: "Partially", label: "KPIs defined but rarely monitored" },
+						{ value: 0, shortLabel: "No", label: "No indicators tracked", recommendation: "Choose 3 key indicators (revenue, margin, customer satisfaction) and track them every week." },
+					],
+				},
+				{
+					id: "v2_leadership_5",
+					text: "Do you have a growth or development plan for the next 12 months?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "Documented plan with actions and deadlines" },
+						{ value: 2, shortLabel: "Partially", label: "Informal growth ideas" },
+						{ value: 0, shortLabel: "No", label: "No growth plan", recommendation: "Identify 3 concrete actions to grow your business over the next 12 months." },
+					],
+				},
+			],
+			recommendationPool: {
+				low: [
+					"Define your company vision in one sentence and share it with your team.",
+					"Spend 1 hour per week working ON your business rather than IN it.",
+				],
+				mid: [
+					"Conduct a SWOT analysis (Strengths, Weaknesses, Opportunities, Threats) of your business.",
+					"Write down your competitive advantages and share them with your team.",
+				],
+				high: [
+					"Set up a strategic dashboard shared with your teams.",
+					"Explore new growth opportunities (markets, partnerships, products).",
+				],
+			},
+		},
+		{
+			id: "finance",
+			name: "Finance",
+			questions: [
+				{
+					id: "v2_finance_1",
+					text: "Is your business profitable and do you know your net margin?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "Profitable, net margin known and tracked" },
+						{ value: 2, shortLabel: "Partially", label: "Profitable but net margin is unclear" },
+						{ value: 0, shortLabel: "No", label: "Profitability uncertain or unknown", recommendation: "Calculate your net margin for the last quarter with your accountant." },
+					],
+				},
+				{
+					id: "v2_finance_2",
+					text: "Do you manage your cash flow with a monthly tracking of income and expenses?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "Up-to-date monthly cash flow statement" },
+						{ value: 2, shortLabel: "Partially", label: "Irregular cash flow tracking" },
+						{ value: 0, shortLabel: "No", label: "No cash flow tracking", recommendation: "Set up a simple table listing your income and expenses each month." },
+					],
+				},
+				{
+					id: "v2_finance_3",
+					text: "Do you strictly separate your business finances from your personal finances?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "Complete separation, distinct bank accounts" },
+						{ value: 2, shortLabel: "Partially", label: "Partial separation, funds occasionally mixed" },
+						{ value: 0, shortLabel: "No", label: "Frequent mixing of finances", recommendation: "Open a dedicated business bank account and stop mixing personal and business funds immediately." },
+					],
+				},
+				{
+					id: "v2_finance_4",
+					text: "Do you have up-to-date financial statements (balance sheet, income statement)?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "Up-to-date documents, reviewed regularly" },
+						{ value: 2, shortLabel: "Partially", label: "Documents established but rarely consulted" },
+						{ value: 0, shortLabel: "No", label: "Documents non-existent or very outdated", recommendation: "Ask your accountant for your latest financial statements and review them." },
+					],
+				},
+				{
+					id: "v2_finance_5",
+					text: "Can you cover 3 months of fixed costs without revenue (cash reserve)?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "3-month fixed cost reserve in place" },
+						{ value: 2, shortLabel: "Partially", label: "Partial reserve (1 to 2 months)" },
+						{ value: 0, shortLabel: "No", label: "No cash reserve", recommendation: "Set aside a small percentage of your revenue each month to build up a cash reserve." },
+					],
+				},
+			],
+			recommendationPool: {
+				low: [
+					"Identify your 5 biggest expense items and look to reduce them by 10%.",
+					"Schedule a meeting with an accountant to assess your financial situation.",
+				],
+				mid: [
+					"Establish a detailed budget forecast for next year.",
+					"Set up an automated follow-up system for unpaid invoices.",
+				],
+				high: [
+					"Optimize your tax situation by consulting a chartered accountant.",
+					"Explore financing options to accelerate your growth.",
+				],
+			},
+		},
+		{
+			id: "sales",
+			name: "Sales & Marketing",
+			questions: [
+				{
+					id: "v2_sales_1",
+					text: "Do you know how much it costs you to acquire a new customer (CAC)?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "CAC calculated and tracked regularly" },
+						{ value: 2, shortLabel: "Partially", label: "Approximate estimate of CAC" },
+						{ value: 0, shortLabel: "No", label: "CAC unknown", recommendation: "List your marketing expenses from last month and divide by the number of new customers acquired." },
+					],
+				},
+				{
+					id: "v2_sales_2",
+					text: "Do you have a process to convert prospects into customers (sales pipeline)?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "Defined and documented conversion process" },
+						{ value: 2, shortLabel: "Partially", label: "Informal, undocumented process" },
+						{ value: 0, shortLabel: "No", label: "No prospect tracking", recommendation: "Create a prospect tracking sheet with their status (contacted, quote sent, signed)." },
+					],
+				},
+				{
+					id: "v2_sales_3",
+					text: "Do you measure your customer retention rate or referral rate?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "Rate measured with a defined target" },
+						{ value: 2, shortLabel: "Partially", label: "Occasional customer satisfaction tracking" },
+						{ value: 0, shortLabel: "No", label: "Never measured", recommendation: "Ask your last 10 customers if they would recommend you and record their answers." },
+					],
+				},
+				{
+					id: "v2_sales_4",
+					text: "Do you have an active online presence (website and/or social media)?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "Active presence, regularly updated" },
+						{ value: 2, shortLabel: "Partially", label: "Minimal or outdated presence" },
+						{ value: 0, shortLabel: "No", label: "No online presence", recommendation: "Create or update a page (website or social media) with your contact details and offers." },
+					],
+				},
+				{
+					id: "v2_sales_5",
+					text: "Do you have quantified sales targets for the year?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "Targets defined by period (monthly/quarterly)" },
+						{ value: 2, shortLabel: "Partially", label: "Annual overall target only" },
+						{ value: 0, shortLabel: "No", label: "No sales targets", recommendation: "Set a revenue target for next month and track it every week." },
+					],
+				},
+			],
+			recommendationPool: {
+				low: [
+					"Define your 'ideal customer' to better focus your marketing efforts.",
+					"Ensure you have a minimum online presence (active website or social media).",
+				],
+				mid: [
+					"Set up a systematic follow-up process for sent quotes.",
+					"Develop a referral program to encourage your customers to recommend you.",
+				],
+				high: [
+					"Test new acquisition channels (targeted advertising, partnerships).",
+					"Measure your conversion rate (signed quotes / sent quotes) and look to improve it.",
+				],
+			},
+		},
+		{
+			id: "operations",
+			name: "Operations",
+			questions: [
+				{
+					id: "v2_operations_1",
+					text: "Are your key operational processes documented (procedures, checklists)?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "Written procedures accessible to the team" },
+						{ value: 2, shortLabel: "Partially", label: "A few scattered, incomplete documents" },
+						{ value: 0, shortLabel: "No", label: "Everything is in the manager's head", recommendation: "Write a simple checklist for your most repetitive task." },
+					],
+				},
+				{
+					id: "v2_operations_2",
+					text: "Do you regularly measure delays or errors in your production / service delivery?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "Regular tracking with a quality dashboard" },
+						{ value: 2, shortLabel: "Partially", label: "Informal tracking, on a case-by-case basis" },
+						{ value: 0, shortLabel: "No", label: "No measurement", recommendation: "Log every error or delay for 2 weeks to identify friction points." },
+					],
+				},
+				{
+					id: "v2_operations_3",
+					text: "Are responsibilities clearly defined for each critical activity?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "Org chart and roles clearly defined" },
+						{ value: 2, shortLabel: "Partially", label: "Roles partially defined" },
+						{ value: 0, shortLabel: "No", label: "Confusion about responsibilities", recommendation: "List on a single page who does what in your team." },
+					],
+				},
+				{
+					id: "v2_operations_4",
+					text: "Do you use digital tools to save time (automation, cloud)?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "Integrated tools used daily" },
+						{ value: 2, shortLabel: "Partially", label: "A few tools used in isolation" },
+						{ value: 0, shortLabel: "No", label: "Paper or manual tools only", recommendation: "Identify one repetitive task you could automate with a simple, free tool." },
+					],
+				},
+				{
+					id: "v2_operations_5",
+					text: "Have you measured your team's productivity / business output this quarter?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "Productivity measured with a defined target" },
+						{ value: 2, shortLabel: "Partially", label: "General impression, without precise measurement" },
+						{ value: 0, shortLabel: "No", label: "Never measured", recommendation: "Choose a simple indicator (e.g. orders processed/day) and track it for 2 weeks." },
+					],
+				},
+			],
+			recommendationPool: {
+				low: [
+					"Identify the 3 main bottlenecks slowing down your business.",
+					"Standardize your work tools to avoid wasted time and errors.",
+				],
+				mid: [
+					"Implement a simple time management method to increase efficiency.",
+					"Centralize your documents in a shared, secure cloud space.",
+				],
+				high: [
+					"Automate your information flows between your different tools.",
+					"Commit to a continuous improvement approach for your processes.",
+				],
+			},
+		},
+		{
+			id: "people",
+			name: "People & Organization",
+			questions: [
+				{
+					id: "v2_people_1",
+					text: "Does each team member have clear, written individual objectives?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "Written objectives regularly evaluated" },
+						{ value: 2, shortLabel: "Partially", label: "Objectives communicated verbally only" },
+						{ value: 0, shortLabel: "No", label: "No individual objectives", recommendation: "Define 1 to 2 simple objectives for the quarter with each team member." },
+					],
+				},
+				{
+					id: "v2_people_2",
+					text: "Do you conduct regular performance reviews with your team?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "Formal reviews scheduled (at least annual)" },
+						{ value: 2, shortLabel: "Partially", label: "Occasional informal discussions" },
+						{ value: 0, shortLabel: "No", label: "No reviews ever", recommendation: "Schedule a 30-minute individual meeting with each team member this quarter." },
+					],
+				},
+				{
+					id: "v2_people_3",
+					text: "Is your staff turnover under control (less than 15% per year)?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "Low turnover, active retention" },
+						{ value: 2, shortLabel: "Partially", label: "Average turnover, not precisely tracked" },
+						{ value: 0, shortLabel: "No", label: "High turnover", recommendation: "Identify the 2 main reasons why your last employees left and take action." },
+					],
+				},
+				{
+					id: "v2_people_4",
+					text: "Do you invest in training and skills development?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "Dedicated training budget in use" },
+						{ value: 2, shortLabel: "Partially", label: "Occasional, unplanned training" },
+						{ value: 0, shortLabel: "No", label: "No training", recommendation: "Identify one key missing skill and find a short, affordable training course." },
+					],
+				},
+				{
+					id: "v2_people_5",
+					text: "Have you identified a successor or deputy for key positions?",
+					options: [
+						{ value: 4, shortLabel: "Yes", label: "Succession planned for key positions" },
+						{ value: 2, shortLabel: "Partially", label: "Reflection in progress, nothing formalized" },
+						{ value: 0, shortLabel: "No", label: "No succession plan", recommendation: "Identify who could temporarily replace you in your critical tasks and start training them." },
+					],
+				},
+			],
+			recommendationPool: {
+				low: [
+					"Clarify the org chart and responsibilities within your team.",
+					"Write clear job descriptions defining each person's responsibilities.",
+				],
+				mid: [
+					"Establish team rituals to improve internal communication.",
+					"Define a fair and motivating compensation policy.",
+				],
+				high: [
+					"Develop a strong company culture to attract and retain talent.",
+					"Implement a participatory management system.",
+				],
+			},
+		},
+	],
 };
 
 module.exports = {
