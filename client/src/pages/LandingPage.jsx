@@ -1,40 +1,18 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Clock, ArrowRight } from 'lucide-react'
 import { Hero } from '../components/layout'
-import { AssessmentForm } from '../components/assessment'
 import { Footer } from '../components/navigation'
 import { SocialShare } from '../components/ui'
-import { useAssessment } from '../context/AssessmentContext'
 import SEOHead from '../components/seo/SEOHead'
 import { getHomePageStructuredData, getWebSiteStructuredData, getBrandOrganizationStructuredData } from '../utils/seoData'
 
 const LandingPage = () => {
   const navigate = useNavigate()
-  const { user } = useAssessment()
-  const [showForm, setShowForm] = useState(false)
-
-  // Afficher le formulaire si l'utilisateur a déjà des données
-  useEffect(() => {
-    if (user && (user.companyName || user.email)) {
-      setShowForm(true)
-    }
-  }, [user])
 
   const handleStartAssessment = () => {
-    setShowForm(true)
-    // Scroll to form
-    setTimeout(() => {
-      document.getElementById('assessment-form')?.scrollIntoView({ 
-        behavior: 'smooth' 
-      })
-    }, 100)
-  }
-
-  const handleFormSubmit = (user) => {
-    // Navigate to assessment
-    navigate('/assessment')
+    navigate('/diagnostic')
   }
 
   return (
@@ -80,13 +58,6 @@ const LandingPage = () => {
           </motion.div>
         </div>
       </div>
-
-      {/* Assessment Form Section */}
-      {showForm && (
-        <div id="assessment-form">
-          <AssessmentForm onFormSubmit={handleFormSubmit} />
-        </div>
-      )}
 
       {/* Social Share */}
       <SocialShare 
