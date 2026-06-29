@@ -144,8 +144,8 @@ function generateV2HTMLContent(data) {
 	const sizeLabels = COMPANY_SIZE_LABELS[language] || COMPANY_SIZE_LABELS.fr;
 
 	const overallColor = getLevelColor(overallLevel);
-	const overallLabel = getLevelLabel(overallLevel);
-	const overallInterpretation = getLevelInterpretation(overallLevel);
+	const overallLabel = getLevelLabel(overallLevel, language);
+	const overallInterpretation = getLevelInterpretation(overallLevel, language);
 
 	const { weakest, strongest } = rankPillars(pillarScores);
 
@@ -548,7 +548,7 @@ function generateV2HTMLContent(data) {
 							(pillar) => `
             <div class="insight-item risk">
               <div class="pillar-title">${pillar.pillarName}</div>
-              <div class="pillar-score">${pillar.score}/100 — ${getLevelLabel(pillar.level)}</div>
+              <div class="pillar-score">${pillar.score}/100 — ${getLevelLabel(pillar.level, language)}</div>
               <ul>
                 ${recsFor(pillar.pillarId).map((rec) => `<li>${rec}</li>`).join("")}
               </ul>
@@ -565,7 +565,7 @@ function generateV2HTMLContent(data) {
 							(pillar) => `
             <div class="insight-item strength">
               <div class="pillar-title">${pillar.pillarName}</div>
-              <div class="pillar-score">${pillar.score}/100 — ${getLevelLabel(pillar.level)}</div>
+              <div class="pillar-score">${pillar.score}/100 — ${getLevelLabel(pillar.level, language)}</div>
             </div>
           `,
 						)

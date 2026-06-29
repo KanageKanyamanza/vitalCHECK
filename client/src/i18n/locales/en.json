@@ -1232,5 +1232,94 @@
 		"address": "Dakar, Senegal",
 		"rccm": "RCCM : SN.DKR.2026.B.1650",
 		"ninea": "NINEA : 012753069"
+	},
+	"diagnostic": {
+		"meta": {
+			"title": "Free diagnostic - vitalCHECK",
+			"description": "Get a free organizational health score for your business in 5 to 7 minutes, with immediate recommendations.",
+			"resultsTitle": "Your results - vitalCHECK",
+			"resultsDescription": "Discover your organizational health score and your first vitalCHECK recommendations."
+		},
+		"loading": {
+			"questions": "Loading diagnostic...",
+			"results": "Loading your results..."
+		},
+		"errors": {
+			"loadFailed": "Unable to load the diagnostic. Please try again.",
+			"requiredFields": "Please fill in all required fields",
+			"noQuestions": "The diagnostic could not be loaded. Please try again.",
+			"scoreError": "An error occurred while calculating your results",
+			"saveError": "An error occurred. Please try again.",
+			"noEmail": "Please enter your email address",
+			"resultsNotFound": "Results not found",
+			"reportNotReady": "The PDF report is not yet available."
+		},
+		"intro": {
+			"duration": "5 to 7 minutes",
+			"free": "100% free",
+			"title": "Your free business health score",
+			"subtitle": "Answer 25 quick questions across 5 key pillars and instantly get your overall score, strengths, and first recommendations.",
+			"companyName": "Company name",
+			"companyNamePlaceholder": "Ex: My Company Ltd",
+			"companySize": "Company size",
+			"companySizePlaceholder": "Select a size",
+			"sector": "Industry",
+			"sectorPlaceholder": "Prefer not to say",
+			"email": "Email address",
+			"emailPlaceholder": "you@company.com",
+			"emailHint": "Your results are displayed immediately. We will use this address to resend your report if needed.",
+			"language": "Diagnostic language",
+			"startButton": "Start the diagnostic"
+		},
+		"sizes": {
+			"micro": "Micro-enterprise (1-9 employees)",
+			"sme": "SME (10-49 employees)",
+			"large-sme": "Mid-size company (50-250 employees)"
+		},
+		"sectors": {
+			"technology": "Technology",
+			"commerce": "Commerce",
+			"services": "Services",
+			"manufacturing": "Industry / Manufacturing",
+			"agriculture": "Agriculture",
+			"healthcare": "Healthcare",
+			"education": "Education",
+			"finance": "Finance",
+			"other": "Other"
+		},
+		"questions": {
+			"header": "Free diagnostic",
+			"answers": "{{current}} / {{total}} answers",
+			"previous": "Previous",
+			"next": "Next",
+			"seeResults": "See my results"
+		},
+		"results": {
+			"pageTitle": "Your results",
+			"redo": "Redo the diagnostic",
+			"freeLabel": "Free diagnostic",
+			"overallTitle": "Overall organizational health score",
+			"pillarsTitle": "Your results by pillar",
+			"risksTitle": "Areas to watch",
+			"strengthsTitle": "Your strengths",
+			"nextStepsTitle": "Your next steps",
+			"emailSectionTitle": "Receive your full report by email",
+			"emailSectionSubtitle": "Save your results and receive a detailed PDF report by email. A vitalCHECK account will be created automatically so you can access your results at any time.",
+			"emailPlaceholder": "you@company.com",
+			"sendReportButton": "Receive my report",
+			"reportReadyTitle": "Your report is ready",
+			"reportReadySubtitle": "Your PDF report has been sent by email. You can also download it directly.",
+			"downloadButton": "Download the PDF report",
+			"reportSentToast": "Your PDF report has been sent to your email!",
+			"premiumTitle": "Go further with the Premium diagnostic",
+			"premiumCta": "Discover the Premium diagnostic",
+			"premiumBenefits": [
+				"In-depth diagnostic in 20 to 30 minutes across all your key business functions",
+				"Detailed analysis of each pillar with sector benchmarks",
+				"Prioritized 90-day action plan",
+				"Full report with transformation roadmap",
+				"Support from a vitalCHECK expert"
+			]
+		}
 	}
 }

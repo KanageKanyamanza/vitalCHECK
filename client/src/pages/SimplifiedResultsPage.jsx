@@ -11,6 +11,7 @@ import {
 	CheckCircle,
 	ListChecks,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { assessmentV2API } from "../services/api";
 import { getLevelV2ById } from "../utils/colors";
@@ -18,14 +19,6 @@ import useSmoothScroll from "../hooks/useSmoothScroll";
 import SEOHead from "../components/seo/SEOHead";
 
 const RESULT_STORAGE_KEY = "vitalcheck-v2-result";
-
-const PREMIUM_BENEFITS = [
-	"Diagnostic approfondi en 20 à 30 minutes sur l'ensemble de vos fonctions clés",
-	"Analyse détaillée de chaque pilier avec benchmarks sectoriels",
-	"Plan d'action priorisé sur 90 jours",
-	"Rapport complet avec feuille de route de transformation",
-	"Accompagnement par un expert vitalCHECK",
-];
 
 const rankPillars = (pillarScores) => {
 	const sorted = [...pillarScores].sort((a, b) => a.score - b.score);
@@ -40,6 +33,7 @@ const SimplifiedResultsPage = () => {
 	const location = useLocation();
 	const [searchParams] = useSearchParams();
 	const { scrollToTop } = useSmoothScroll();
+	const { t, i18n } = useTranslation();
 
 	const [data, setData] = useState(location.state || null);
 	const [loading, setLoading] = useState(!location.state);
@@ -50,6 +44,9 @@ const SimplifiedResultsPage = () => {
 	const [emailInput, setEmailInput] = useState("");
 	const [saving, setSaving] = useState(false);
 	const [downloading, setDownloading] = useState(false);
+
+	// Langue de l'assessment (stockée dans data) ou langue UI courante
+	const language = data?.language || i18n.language?.substring(0, 2) || "fr";
 
 	useEffect(() => {
 		scrollToTop(400);
@@ -85,7 +82,7 @@ const SimplifiedResultsPage = () => {
 							pillarScores,
 							overallScore: assessment.overallScore,
 							overallLevel: assessment.overallLevel,
-							overallLevelLabel: getLevelV2ById(assessment.overallLevel).label,
+							overallLevelLabel: getLevelV2ById(assessment.overallLevel, assessment.language || "fr").label,
 							recommendations,
 							weakest,
 							strongest,
@@ -96,12 +93,13 @@ const SimplifiedResultsPage = () => {
 							companySize: assessment.companySize,
 							sector: assessment.sector,
 						},
+						language: assessment.language || "fr",
 						completedAt: assessment.completedAt,
 					});
 					setEmailInput(assessment.email || "");
 				})
 				.catch(() => {
-					toast.error("Résultats introuvables");
+					toast.error(t("diagnostic.errors.resultsNotFound"));
 					navigate("/diagnostic");
 				})
 				.finally(() => setLoading(false));
@@ -129,7 +127,7 @@ const SimplifiedResultsPage = () => {
 		if (!data || saving) return;
 
 		if (!emailInput.trim()) {
-			toast.error("Merci de renseigner votre email");
+			toast.error(t("diagnostic.errors.noEmail"));
 			return;
 		}
 
@@ -137,7 +135,7 @@ const SimplifiedResultsPage = () => {
 		try {
 			const response = await assessmentV2API.saveAssessment({
 				answers: data.answers,
-				language: data.language || "fr",
+				language,
 				companyName: data.formData?.companyName,
 				email: emailInput.trim(),
 				companySize: data.formData?.companySize,
@@ -147,13 +145,11 @@ const SimplifiedResultsPage = () => {
 			if (response.data.success) {
 				setSavedAssessmentId(response.data.assessment.id);
 				setSaved(true);
-				toast.success(
-					"Votre rapport PDF vous a été envoyé par email !",
-				);
+				toast.success(t("diagnostic.results.reportSentToast"));
 			}
 		} catch (error) {
 			console.error("Erreur de sauvegarde du diagnostic v2:", error);
-			toast.error("Une erreur est survenue. Veuillez réessayer.");
+			toast.error(t("diagnostic.errors.saveError"));
 		} finally {
 			setSaving(false);
 		}
@@ -176,7 +172,7 @@ const SimplifiedResultsPage = () => {
 			window.URL.revokeObjectURL(url);
 		} catch (error) {
 			console.error("Erreur de téléchargement du rapport v2:", error);
-			toast.error("Le rapport PDF n'est pas encore disponible.");
+			toast.error(t("diagnostic.errors.reportNotReady"));
 		} finally {
 			setDownloading(false);
 		}
@@ -201,18 +197,19 @@ const SimplifiedResultsPage = () => {
 			<div className="min-h-screen flex items-center justify-center">
 				<div className="text-center">
 					<div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-					<p className="text-gray-600">Chargement de vos résultats...</p>
+					<p className="text-gray-600">{t("diagnostic.loading.results")}</p>
 				</div>
 			</div>
 		);
 	}
 
 	const { result, formData = {}, completedAt } = data;
-	const { pillarScores, overallScore, overallLevel, recommendations, weakest, strongest } =
-		result;
+	const { pillarScores, overallScore, overallLevel, recommendations, weakest, strongest } = result;
 
-	const overallLevelInfo = getLevelV2ById(overallLevel);
-	const dateLabel = new Date(completedAt || Date.now()).toLocaleDateString("fr-FR", {
+	const overallLevelInfo = getLevelV2ById(overallLevel, language);
+
+	const dateLocale = language === "en" ? "en-US" : "fr-FR";
+	const dateLabel = new Date(completedAt || Date.now()).toLocaleDateString(dateLocale, {
 		day: "numeric",
 		month: "long",
 		year: "numeric",
@@ -230,11 +227,13 @@ const SimplifiedResultsPage = () => {
 		)
 		.slice(0, 3);
 
+	const premiumBenefits = t("diagnostic.results.premiumBenefits", { returnObjects: true });
+
 	return (
 		<div className="min-h-screen pb-[50px] bg-gray-50">
 			<SEOHead
-				title="Vos résultats - vitalCHECK"
-				description="Découvrez votre score de santé organisationnelle et vos premières recommandations vitalCHECK."
+				title={t("diagnostic.meta.resultsTitle")}
+				description={t("diagnostic.meta.resultsDescription")}
 				url="/diagnostic/resultats"
 				noindex
 			/>
@@ -244,21 +243,21 @@ const SimplifiedResultsPage = () => {
 				<div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
 					<div className="flex flex-wrap gap-2 items-center justify-between">
 						<span className="text-lg font-bold text-gray-900">
-							Vos résultats
+							{t("diagnostic.results.pageTitle")}
 						</span>
 						<button
 							onClick={handleNewAssessment}
 							className="btn-outline flex items-center space-x-2"
 						>
 							<ArrowLeft className="w-4 h-4" />
-							<span>Refaire le diagnostic</span>
+							<span>{t("diagnostic.results.redo")}</span>
 						</button>
 					</div>
 				</div>
 			</div>
 
 			<div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-				{/* ===== PAGE 1 : Calculate Your Readiness ===== */}
+				{/* Score global */}
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
@@ -268,7 +267,9 @@ const SimplifiedResultsPage = () => {
 						<h1 className="text-2xl font-bold text-gray-900">
 							{formData.companyName}
 						</h1>
-						<p className="text-sm text-gray-500">Diagnostic gratuit · {dateLabel}</p>
+						<p className="text-sm text-gray-500">
+							{t("diagnostic.results.freeLabel")} · {dateLabel}
+						</p>
 					</div>
 
 					<div className="grid lg:grid-cols-3 gap-8 items-center mb-8">
@@ -296,7 +297,7 @@ const SimplifiedResultsPage = () => {
 
 						<div className="lg:col-span-2">
 							<h2 className="text-lg font-semibold text-gray-900 mb-2">
-								Score global de santé organisationnelle
+								{t("diagnostic.results.overallTitle")}
 							</h2>
 							<p className="text-gray-700 leading-relaxed">
 								{overallLevelInfo.interpretation}
@@ -305,11 +306,11 @@ const SimplifiedResultsPage = () => {
 					</div>
 
 					<h3 className="text-lg font-semibold text-gray-900 mb-4">
-						Vos résultats par pilier
+						{t("diagnostic.results.pillarsTitle")}
 					</h3>
 					<div className="space-y-4">
 						{pillarScores.map((pillar) => {
-							const levelInfo = getLevelV2ById(pillar.level);
+							const levelInfo = getLevelV2ById(pillar.level, language);
 							return (
 								<div key={pillar.pillarId}>
 									<div className="flex justify-between mb-1 text-sm">
@@ -335,7 +336,7 @@ const SimplifiedResultsPage = () => {
 					</div>
 				</motion.div>
 
-				{/* ===== PAGE 2 : Strategic Reality ===== */}
+				{/* Risques & Forces */}
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
@@ -346,7 +347,7 @@ const SimplifiedResultsPage = () => {
 						<div className="flex items-center space-x-2 mb-4">
 							<TrendingDown className="w-5 h-5 text-danger-500" />
 							<h3 className="text-lg font-bold text-gray-900">
-								Vos axes de vigilance
+								{t("diagnostic.results.risksTitle")}
 							</h3>
 						</div>
 						<div className="space-y-4">
@@ -375,7 +376,7 @@ const SimplifiedResultsPage = () => {
 						<div className="flex items-center space-x-2 mb-4">
 							<TrendingUp className="w-5 h-5 text-success-500" />
 							<h3 className="text-lg font-bold text-gray-900">
-								Vos points forts
+								{t("diagnostic.results.strengthsTitle")}
 							</h3>
 						</div>
 						<div className="space-y-4">
@@ -393,7 +394,7 @@ const SimplifiedResultsPage = () => {
 					</div>
 				</motion.div>
 
-				{/* Next Steps */}
+				{/* Prochaines étapes */}
 				<motion.div
 					initial={{ opacity: 0, y: 20 }}
 					animate={{ opacity: 1, y: 0 }}
@@ -403,7 +404,7 @@ const SimplifiedResultsPage = () => {
 					<div className="flex items-center space-x-2 mb-4">
 						<ListChecks className="w-5 h-5 text-primary-500" />
 						<h3 className="text-lg font-bold text-gray-900">
-							Vos prochaines étapes
+							{t("diagnostic.results.nextStepsTitle")}
 						</h3>
 					</div>
 					<ol className="space-y-3">
@@ -418,7 +419,7 @@ const SimplifiedResultsPage = () => {
 					</ol>
 				</motion.div>
 
-				{/* Save / send report */}
+				{/* Envoyer le rapport */}
 				{!saved && (
 					<motion.div
 						initial={{ opacity: 0, y: 20 }}
@@ -429,20 +430,18 @@ const SimplifiedResultsPage = () => {
 						<div className="flex items-center space-x-2 mb-2">
 							<Mail className="w-5 h-5 text-primary-500" />
 							<h3 className="text-lg font-bold text-gray-900">
-								Recevez votre rapport complet par email
+								{t("diagnostic.results.emailSectionTitle")}
 							</h3>
 						</div>
 						<p className="text-gray-600 mb-4">
-							Sauvegardez vos résultats et recevez un rapport PDF détaillé par
-							email. Un compte vitalCHECK sera créé automatiquement pour
-							retrouver vos résultats à tout moment.
+							{t("diagnostic.results.emailSectionSubtitle")}
 						</p>
 						<form onSubmit={handleSaveAndSend} className="flex flex-col sm:flex-row gap-3">
 							<input
 								type="email"
 								value={emailInput}
 								onChange={(e) => setEmailInput(e.target.value)}
-								placeholder="vous@entreprise.com"
+								placeholder={t("diagnostic.results.emailPlaceholder")}
 								className="input-field flex-1"
 								required
 							/>
@@ -456,7 +455,7 @@ const SimplifiedResultsPage = () => {
 								) : (
 									<>
 										<Mail className="w-4 h-4" />
-										<span>Recevoir mon rapport</span>
+										<span>{t("diagnostic.results.sendReportButton")}</span>
 									</>
 								)}
 							</button>
@@ -474,12 +473,11 @@ const SimplifiedResultsPage = () => {
 						<div className="flex items-center space-x-2 mb-4">
 							<CheckCircle className="w-5 h-5 text-success-500" />
 							<h3 className="text-lg font-bold text-gray-900">
-								Votre rapport est prêt
+								{t("diagnostic.results.reportReadyTitle")}
 							</h3>
 						</div>
 						<p className="text-gray-600 mb-4">
-							Votre rapport PDF a été envoyé par email. Vous pouvez également le
-							télécharger directement.
+							{t("diagnostic.results.reportReadySubtitle")}
 						</p>
 						<button
 							onClick={handleDownload}
@@ -491,7 +489,7 @@ const SimplifiedResultsPage = () => {
 							) : (
 								<>
 									<Download className="w-4 h-4" />
-									<span>Télécharger le rapport PDF</span>
+									<span>{t("diagnostic.results.downloadButton")}</span>
 								</>
 							)}
 						</button>
@@ -508,11 +506,11 @@ const SimplifiedResultsPage = () => {
 					<div className="flex items-center space-x-2 mb-4">
 						<Star className="w-6 h-6 text-purple-500" />
 						<h3 className="text-xl font-bold text-gray-900">
-							Allez plus loin avec le diagnostic Premium
+							{t("diagnostic.results.premiumTitle")}
 						</h3>
 					</div>
 					<ul className="space-y-2 mb-6">
-						{PREMIUM_BENEFITS.map((benefit, i) => (
+						{Array.isArray(premiumBenefits) && premiumBenefits.map((benefit, i) => (
 							<li key={i} className="flex items-start space-x-2 text-gray-700">
 								<CheckCircle className="w-4 h-4 text-purple-500 mt-1 flex-shrink-0" />
 								<span>{benefit}</span>
@@ -524,7 +522,7 @@ const SimplifiedResultsPage = () => {
 						className="btn-secondary flex items-center justify-center space-x-2"
 					>
 						<Star className="w-4 h-4" />
-						<span>Découvrir le diagnostic Premium</span>
+						<span>{t("diagnostic.results.premiumCta")}</span>
 					</button>
 				</motion.div>
 			</div>

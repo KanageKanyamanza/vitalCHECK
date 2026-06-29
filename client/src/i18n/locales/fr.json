@@ -1290,5 +1290,94 @@
 		"address": "Dakar, Sénégal",
 		"rccm": "RCCM : SN.DKR.2026.B.1650",
 		"ninea": "NINEA : 012753069"
+	},
+	"diagnostic": {
+		"meta": {
+			"title": "Diagnostic gratuit - vitalCHECK",
+			"description": "Obtenez en 5 à 7 minutes un score de santé organisationnelle gratuit pour votre entreprise, avec recommandations immédiates.",
+			"resultsTitle": "Vos résultats - vitalCHECK",
+			"resultsDescription": "Découvrez votre score de santé organisationnelle et vos premières recommandations vitalCHECK."
+		},
+		"loading": {
+			"questions": "Chargement du diagnostic...",
+			"results": "Chargement de vos résultats..."
+		},
+		"errors": {
+			"loadFailed": "Impossible de charger le diagnostic. Veuillez réessayer.",
+			"requiredFields": "Merci de remplir tous les champs obligatoires",
+			"noQuestions": "Le diagnostic n'a pas pu être chargé. Veuillez réessayer.",
+			"scoreError": "Une erreur est survenue lors du calcul des résultats",
+			"saveError": "Une erreur est survenue. Veuillez réessayer.",
+			"noEmail": "Merci de renseigner votre email",
+			"resultsNotFound": "Résultats introuvables",
+			"reportNotReady": "Le rapport PDF n'est pas encore disponible."
+		},
+		"intro": {
+			"duration": "5 à 7 minutes",
+			"free": "100% gratuit",
+			"title": "Votre score de santé d'entreprise gratuit",
+			"subtitle": "Répondez à 25 questions rapides réparties sur 5 piliers clés et obtenez instantanément votre score global, vos points forts et vos premières recommandations.",
+			"companyName": "Nom de l'entreprise",
+			"companyNamePlaceholder": "Ex: Ma Société SARL",
+			"companySize": "Taille de l'entreprise",
+			"companySizePlaceholder": "Sélectionnez une taille",
+			"sector": "Secteur d'activité",
+			"sectorPlaceholder": "Préférez ne pas préciser",
+			"email": "Adresse email",
+			"emailPlaceholder": "vous@entreprise.com",
+			"emailHint": "Vos résultats s'affichent immédiatement. Cette adresse nous permettra de vous renvoyer votre rapport si besoin.",
+			"language": "Langue du diagnostic",
+			"startButton": "Démarrer le diagnostic"
+		},
+		"sizes": {
+			"micro": "Micro-entreprise (1-9 employés)",
+			"sme": "PME (10-49 employés)",
+			"large-sme": "Moyenne entreprise (50-250 employés)"
+		},
+		"sectors": {
+			"technology": "Technologie",
+			"commerce": "Commerce",
+			"services": "Services",
+			"manufacturing": "Industrie / Manufacture",
+			"agriculture": "Agriculture",
+			"healthcare": "Santé",
+			"education": "Éducation",
+			"finance": "Finance",
+			"other": "Autre"
+		},
+		"questions": {
+			"header": "Diagnostic gratuit",
+			"answers": "{{current}} / {{total}} réponses",
+			"previous": "Précédent",
+			"next": "Suivant",
+			"seeResults": "Voir mes résultats"
+		},
+		"results": {
+			"pageTitle": "Vos résultats",
+			"redo": "Refaire le diagnostic",
+			"freeLabel": "Diagnostic gratuit",
+			"overallTitle": "Score global de santé organisationnelle",
+			"pillarsTitle": "Vos résultats par pilier",
+			"risksTitle": "Vos axes de vigilance",
+			"strengthsTitle": "Vos points forts",
+			"nextStepsTitle": "Vos prochaines étapes",
+			"emailSectionTitle": "Recevez votre rapport complet par email",
+			"emailSectionSubtitle": "Sauvegardez vos résultats et recevez un rapport PDF détaillé par email. Un compte vitalCHECK sera créé automatiquement pour retrouver vos résultats à tout moment.",
+			"emailPlaceholder": "vous@entreprise.com",
+			"sendReportButton": "Recevoir mon rapport",
+			"reportReadyTitle": "Votre rapport est prêt",
+			"reportReadySubtitle": "Votre rapport PDF a été envoyé par email. Vous pouvez également le télécharger directement.",
+			"downloadButton": "Télécharger le rapport PDF",
+			"reportSentToast": "Votre rapport PDF vous a été envoyé par email !",
+			"premiumTitle": "Allez plus loin avec le diagnostic Premium",
+			"premiumCta": "Découvrir le diagnostic Premium",
+			"premiumBenefits": [
+				"Diagnostic approfondi en 20 à 30 minutes sur l'ensemble de vos fonctions clés",
+				"Analyse détaillée de chaque pilier avec benchmarks sectoriels",
+				"Plan d'action priorisé sur 90 jours",
+				"Rapport complet avec feuille de route de transformation",
+				"Accompagnement par un expert vitalCHECK"
+			]
+		}
 	}
 }
