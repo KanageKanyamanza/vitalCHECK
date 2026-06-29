@@ -30,6 +30,7 @@ const LanguageSelector = ({ onLanguageChange, className = '' }) => {
   return (
     <div className={`relative ${className}`}>
       <button
+        type="button"
         onClick={() => setIsOpen(!isOpen)}
         className="w-full flex items-center justify-between px-4 py-3 border border-gray-300 rounded-lg hover:border-primary-500 focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-200 bg-white"
       >
@@ -65,6 +66,7 @@ const LanguageSelector = ({ onLanguageChange, className = '' }) => {
             >
               {languages.map((language) => (
                 <button
+                  type="button"
                   key={language.code}
                   onClick={() => handleLanguageSelect(language.code)}
                   className={`w-full flex items-center justify-between px-4 py-3 text-left hover:bg-gray-50 transition-colors duration-200 ${
