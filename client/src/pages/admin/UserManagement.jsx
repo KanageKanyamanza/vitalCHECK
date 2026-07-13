@@ -1,18 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { 
-  Search, 
-  Filter, 
-  Mail, 
-  Trash2, 
-  Eye, 
-  ChevronLeft, 
+import {
+  Search,
+  Mail,
+  Trash2,
+  Eye,
+  ChevronLeft,
   ChevronRight,
   Building2,
   Users,
-  Calendar,
-  FileText
+  FileText,
+  Download,
+  ChevronDown,
+  FileSpreadsheet,
+  FileText as FilePdf
 } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { useAdminApi } from '../../hooks/useAdminApi';
@@ -26,14 +28,31 @@ const UserManagement = () => {
     companySize: ''
   });
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [exportMenuOpen, setExportMenuOpen] = useState(false);
+  const [exporting, setExporting] = useState(false);
+  const exportMenuRef = useRef(null);
   const navigate = useNavigate();
-  
+
+  // Fermer le menu export au clic extérieur
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (exportMenuRef.current && !exportMenuRef.current.contains(e.target)) {
+        setExportMenuOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
   // Utilisation du hook API
-  const { 
-    loading, 
-    error, 
-    getUsers, 
-    deleteUser
+  const {
+    loading,
+    error,
+    getUsers,
+    deleteUser,
+    exportUsers,
+    exportUsersExcel,
+    exportUsersPDF,
   } = useAdminApi();
 
   useEffect(() => {
@@ -109,6 +128,21 @@ const UserManagement = () => {
     }
   };
 
+  const handleExport = async (format) => {
+    setExportMenuOpen(false);
+    setExporting(true);
+    try {
+      if (format === 'csv') await exportUsers();
+      else if (format === 'excel') await exportUsersExcel();
+      else if (format === 'pdf') await exportUsersPDF();
+      toast.success('Export téléchargé avec succès');
+    } catch (err) {
+      toast.error("Erreur lors de l'export");
+    } finally {
+      setExporting(false);
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'green': return 'text-green-600 bg-green-100';
@@ -154,6 +188,45 @@ const UserManagement = () => {
                 <div className="p-1 px-2.5 bg-primary-50 text-primary-700 rounded-lg border border-primary-100 flex items-center gap-2">
                     <Users className="w-3.5 h-3.5" />
                     <span className="text-[11px] font-black">{pagination.total} Total</span>
+                </div>
+
+                {/* Bouton Export */}
+                <div className="relative" ref={exportMenuRef}>
+                  <button
+                    onClick={() => setExportMenuOpen((o) => !o)}
+                    disabled={exporting}
+                    className="flex items-center gap-1.5 px-2.5 py-1 bg-gray-900 text-white rounded-lg text-[10px] font-black uppercase tracking-widest hover:bg-gray-700 transition-colors disabled:opacity-50"
+                  >
+                    <Download className="w-3 h-3" />
+                    {exporting ? 'Export...' : 'Exporter'}
+                    <ChevronDown className="w-3 h-3" />
+                  </button>
+
+                  {exportMenuOpen && (
+                    <div className="absolute right-0 mt-1 w-44 bg-white border border-gray-100 rounded-xl shadow-lg z-20 overflow-hidden">
+                      <button
+                        onClick={() => handleExport('csv')}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-black text-gray-700 hover:bg-gray-50 transition-colors"
+                      >
+                        <FileText className="w-3.5 h-3.5 text-gray-400" />
+                        CSV
+                      </button>
+                      <button
+                        onClick={() => handleExport('excel')}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-black text-gray-700 hover:bg-gray-50 transition-colors"
+                      >
+                        <FileSpreadsheet className="w-3.5 h-3.5 text-green-500" />
+                        Excel (.xlsx)
+                      </button>
+                      <button
+                        onClick={() => handleExport('pdf')}
+                        className="w-full flex items-center gap-2 px-3 py-2 text-[11px] font-black text-gray-700 hover:bg-gray-50 transition-colors"
+                      >
+                        <FilePdf className="w-3.5 h-3.5 text-red-500" />
+                        PDF
+                      </button>
+                    </div>
+                  )}
                 </div>
             </div>
         </div>
