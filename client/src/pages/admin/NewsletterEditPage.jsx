@@ -506,7 +506,7 @@ const NewsletterEditPage = () => {
               <h3 style="color: #ffffff; margin: 0 0 6px 0; font-size: clamp(16px, 3vw, 18px); font-weight: 700; line-height: 1.2;">Enterprise Health Check</h3>
               <p class="text-size" style="color: #9ca3af; margin: 0; font-size: clamp(12px, 2vw, 13px); line-height: 1.5;">Évaluation Professionnelle d'Entreprise & Conseil en Croissance</p>
               <div style="margin: 15px 0; padding-top: 15px; border-top: 1px solid #374151;">
-                <p class="contact-text" style="color: #9ca3af; margin: 0 0 8px 0; font-size: clamp(12px, 2vw, 13px); line-height: 1.6; word-wrap: break-word;">📧 info@checkmyenterprise.com | 📞 +221 771970713 / +221 774536704</p>
+                <p class="contact-text" style="color: #9ca3af; margin: 0 0 8px 0; font-size: clamp(12px, 2vw, 13px); line-height: 1.6; word-wrap: break-word;">📧 info@checkmyenterprise.com | 📞 +221 788346969</p>
                 <p class="footer-text" style="color: #6b7280; margin: 0; font-size: clamp(11px, 1.8vw, 12px);"><a href="https://www.checkmyenterprise.com" style="color: #60a5fa; text-decoration: none;">www.checkmyenterprise.com</a></p>
               </div>
               <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #374151;">

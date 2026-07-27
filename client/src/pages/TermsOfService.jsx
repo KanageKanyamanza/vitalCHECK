@@ -211,7 +211,7 @@ const TermsOfService = () => {
 								<strong>Email:</strong> info@checkmyenterprise.com
 							</p>
 							<p className="text-gray-700">
-								<strong>Sénégal:</strong> +221 771970713 | +221 774536704
+								<strong>Sénégal:</strong> +221 788346969
 							</p>
 						</div>
 					</section>

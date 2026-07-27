@@ -195,7 +195,7 @@ const EmailBroadcast = () => {
                 <p className="mb-4 italic text-gray-500">Évaluation Professionnelle d'Entreprise & Conseil en Croissance</p>
                 
                 <div className="border-t border-gray-800 pt-6 space-y-2">
-                  <p className="text-gray-300">📧 info@checkmyenterprise.com | 📞 +221 771970713 / +221 774536704</p>
+                  <p className="text-gray-300">📧 info@checkmyenterprise.com | 📞 +221 788346969</p>
                   <p className="text-[10px] text-gray-500 leading-normal">
                     UBUNTU BUSINESS BUILDERS (UBB) – SARL<br />
                     Dakar, Sénégal<br />
