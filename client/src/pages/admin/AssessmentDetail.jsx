@@ -21,7 +21,8 @@ const AssessmentDetail = () => {
   const { assessmentId } = useParams();
   
   // Utilisation du hook API
-  const { loading, getAssessment, deleteAssessment } = useAdminApi();
+  const [downloadingPdf, setDownloadingPdf] = useState(false);
+  const { loading, getAssessment, deleteAssessment, downloadAssessmentPDF } = useAdminApi();
 
   useEffect(() => {
     fetchAssessment();
@@ -66,12 +67,69 @@ const AssessmentDetail = () => {
     });
   };
 
+  const handleDownloadPDF = async () => {
+    setDownloadingPdf(true);
+    const companyName = assessment.user?.companyName || 'entreprise';
+    const date = new Date(assessment.completedAt).toISOString().split('T')[0];
+    const filename = `vitalCHECK-rapport-${companyName}-${date}.pdf`.replace(/\s+/g, '-');
+    try {
+      await downloadAssessmentPDF(assessmentId, filename);
+      toast.success('Rapport téléchargé');
+    } catch {
+      toast.error('PDF non disponible pour cette évaluation');
+    } finally {
+      setDownloadingPdf(false);
+    }
+  };
+
+  // Compatibilité v1 (status) + v2 (level)
+  const resolveLevel = (status, level) => {
+    if (level) return level;
+    if (status === 'green') return 'stable';
+    if (status === 'amber') return 'vulnerable';
+    if (status === 'red') return 'critique';
+    return null;
+  };
+
+  const getLevelColor = (level) => {
+    switch (level) {
+      case 'haute_performance': return 'text-emerald-600 bg-emerald-100';
+      case 'pret':              return 'text-blue-600 bg-blue-100';
+      case 'stable':            return 'text-yellow-600 bg-yellow-100';
+      case 'vulnerable':        return 'text-amber-600 bg-amber-100';
+      case 'critique':          return 'text-red-600 bg-red-100';
+      default:                  return 'text-gray-600 bg-gray-100';
+    }
+  };
+
+  const getLevelText = (level) => {
+    switch (level) {
+      case 'haute_performance': return 'Haute performance';
+      case 'pret':              return 'Prêt pour la croissance';
+      case 'stable':            return 'Stable';
+      case 'vulnerable':        return 'Vulnérable';
+      case 'critique':          return 'Critique';
+      default:                  return 'N/A';
+    }
+  };
+
+  const getLevelBarColor = (level) => {
+    switch (level) {
+      case 'haute_performance': return 'bg-emerald-500';
+      case 'pret':              return 'bg-blue-500';
+      case 'stable':            return 'bg-yellow-500';
+      case 'vulnerable':        return 'bg-amber-500';
+      case 'critique':          return 'bg-red-500';
+      default:                  return 'bg-gray-400';
+    }
+  };
+
   const getStatusColor = (status) => {
     switch (status) {
       case 'green': return 'text-green-600 bg-green-100';
       case 'amber': return 'text-yellow-600 bg-yellow-100';
-      case 'red': return 'text-red-600 bg-red-100';
-      default: return 'text-gray-600 bg-gray-100';
+      case 'red':   return 'text-red-600 bg-red-100';
+      default:      return 'text-gray-600 bg-gray-100';
     }
   };
 
@@ -79,8 +137,8 @@ const AssessmentDetail = () => {
     switch (status) {
       case 'green': return 'Excellent';
       case 'amber': return 'Moyen';
-      case 'red': return 'Faible';
-      default: return 'N/A';
+      case 'red':   return 'Faible';
+      default:      return 'N/A';
     }
   };
 
@@ -137,7 +195,17 @@ const AssessmentDetail = () => {
                 <p className="text-gray-600">{assessment.user?.companyName} - {assessment.user?.email}</p>
               </div>
             </div>
-            <div className="flex justify-between md:w-auto md:justify-end md:space-x-4 w-full">
+            <div className="flex justify-between md:w-auto md:justify-end md:space-x-3 w-full">
+              {assessment.reportGenerated && (
+                <button
+                  onClick={handleDownloadPDF}
+                  disabled={downloadingPdf}
+                  className="flex items-center px-4 py-2 bg-gray-900 text-white rounded-md hover:bg-gray-700 transition-colors disabled:opacity-50"
+                >
+                  <Download className="h-4 w-4 mr-2" />
+                  {downloadingPdf ? 'Téléchargement...' : 'Télécharger PDF'}
+                </button>
+              )}
               <button
                 onClick={handleSendEmail}
                 className="flex items-center px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
@@ -209,17 +277,23 @@ const AssessmentDetail = () => {
                     {assessment.overallScore}%
                   </div>
                   <div className="mt-2">
-                    <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getStatusColor(assessment.overallStatus)}`}>
-                      {getStatusText(assessment.overallStatus)}
-                    </span>
+                    {(() => {
+                      const level = resolveLevel(assessment.overallStatus, assessment.overallLevel);
+                      return level ? (
+                        <span className={`inline-flex px-3 py-1 text-sm font-semibold rounded-full ${getLevelColor(level)}`}>
+                          {getLevelText(level)}
+                        </span>
+                      ) : (
+                        <span className="inline-flex px-3 py-1 text-sm font-semibold rounded-full text-gray-600 bg-gray-100">
+                          {getStatusText(assessment.overallStatus)}
+                        </span>
+                      );
+                    })()}
                   </div>
                   <div className="mt-4">
                     <div className="w-full bg-gray-200 rounded-full h-3">
                       <div
-                        className={`h-3 rounded-full ${
-                          assessment.overallStatus === 'green' ? 'bg-green-500' :
-                          assessment.overallStatus === 'amber' ? 'bg-yellow-500' : 'bg-red-500'
-                        }`}
+                        className={`h-3 rounded-full ${getLevelBarColor(resolveLevel(assessment.overallStatus, assessment.overallLevel))}`}
                         style={{ width: `${assessment.overallScore}%` }}
                       ></div>
                     </div>
@@ -251,18 +325,24 @@ const AssessmentDetail = () => {
                   
                   <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
                     <div
-                      className={`h-2 rounded-full ${
-                        pillar.status === 'green' ? 'bg-green-500' :
-                        pillar.status === 'amber' ? 'bg-yellow-500' : 'bg-red-500'
-                      }`}
+                      className={`h-2 rounded-full ${getLevelBarColor(resolveLevel(pillar.status, pillar.level))}`}
                       style={{ width: `${pillar.score}%` }}
                     ></div>
                   </div>
-                  
+
                   <div className="mb-3">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(pillar.status)}`}>
-                      {getStatusText(pillar.status)}
-                    </span>
+                    {(() => {
+                      const level = resolveLevel(pillar.status, pillar.level);
+                      return level ? (
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getLevelColor(level)}`}>
+                          {getLevelText(level)}
+                        </span>
+                      ) : (
+                        <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(pillar.status)}`}>
+                          {getStatusText(pillar.status)}
+                        </span>
+                      );
+                    })()}
                   </div>
                   
                   {pillar.recommendations && pillar.recommendations.length > 0 && (
