@@ -272,8 +272,16 @@ export const useAdminApi = () => {
     [downloadFile]
   );
 
-  const exportStatsPDF = useCallback(() => 
-    downloadFile(adminApiService.exportStatsPDF, 'statistiques-rapport.pdf'), 
+  const exportStatsPDF = useCallback(() =>
+    downloadFile(adminApiService.exportStatsPDF, 'statistiques-rapport.pdf'),
+    [downloadFile]
+  );
+
+  const downloadAssessmentPDF = useCallback((assessmentId, filename) =>
+    downloadFile(
+      () => adminApiService.downloadAssessmentPDF(assessmentId),
+      filename || `vitalCHECK-rapport-${assessmentId}.pdf`
+    ),
     [downloadFile]
   );
 
@@ -415,6 +423,7 @@ export const useAdminApi = () => {
     exportAssessmentsPDF,
     exportStatsExcel,
     exportStatsPDF,
+    downloadAssessmentPDF,
     // Notifications
     getNotifications,
     markNotificationAsRead,

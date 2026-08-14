@@ -477,6 +477,34 @@ router.delete('/assessments/:assessmentId', authenticateAdmin, checkPermission('
   }
 });
 
+// Télécharger le PDF d'un rapport individuel
+router.get('/assessments/:assessmentId/pdf', authenticateAdmin, checkPermission('viewAssessments'), async (req, res) => {
+  try {
+    const assessment = await Assessment.findById(req.params.assessmentId)
+      .populate('user', 'companyName email');
+
+    if (!assessment) {
+      return res.status(404).json({ success: false, message: 'Évaluation non trouvée' });
+    }
+
+    if (!assessment.pdfBuffer) {
+      return res.status(404).json({ success: false, message: 'Aucun PDF disponible pour cette évaluation' });
+    }
+
+    const companyName = assessment.user?.companyName || 'entreprise';
+    const date = new Date(assessment.completedAt).toISOString().split('T')[0];
+    const filename = `vitalCHECK-rapport-${companyName}-${date}.pdf`.replace(/\s+/g, '-');
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+    res.send(assessment.pdfBuffer);
+
+  } catch (error) {
+    console.error('Download assessment PDF error:', error);
+    res.status(500).json({ success: false, message: 'Erreur lors du téléchargement du PDF' });
+  }
+});
+
 // Exporter les données (CSV)
 router.get('/export/users', authenticateAdmin, checkPermission('viewUsers'), async (req, res) => {
   try {

@@ -268,6 +268,10 @@ export const adminApiService = {
 	deleteBlog: (id) => adminApi.delete(`/blogs/admin/blogs/${id}`),
 	getBlogStats: () => adminApi.get("/blogs/admin/stats"),
 
+	// Télécharger le PDF d'un rapport individuel
+	downloadAssessmentPDF: (assessmentId) =>
+		adminApi.get(`/admin/assessments/${assessmentId}/pdf`, { responseType: "blob" }),
+
 	// Exports
 	exportUsersExcel: () =>
 		adminApi.get("/admin/export/users/excel", { responseType: "blob" }),

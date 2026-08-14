@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { 
-  ArrowLeft, 
-  Mail, 
-  Trash2, 
-  Calendar,
+import {
+  ArrowLeft,
+  Mail,
+  Trash2,
   Building2,
-  Users,
   FileText,
   TrendingUp,
-  BarChart3
+  BarChart3,
+  Download
 } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { useAdminApi } from '../../hooks/useAdminApi';
@@ -22,7 +21,8 @@ const UserDetail = () => {
   const { userId } = useParams();
   
   // Utilisation du hook API
-  const { loading, getUser, deleteUser } = useAdminApi();
+  const [downloadingPdf, setDownloadingPdf] = useState(null);
+  const { loading, getUser, deleteUser, downloadAssessmentPDF } = useAdminApi();
 
   useEffect(() => {
     fetchUser();
@@ -64,6 +64,21 @@ const UserDetail = () => {
     } catch (error) {
       console.error('Delete user error:', error);
       toast.error('Erreur lors de la suppression');
+    }
+  };
+
+  const handleDownloadPDF = async (assessment) => {
+    setDownloadingPdf(assessment._id);
+    const companyName = user?.companyName || 'entreprise';
+    const date = new Date(assessment.completedAt).toISOString().split('T')[0];
+    const filename = `vitalCHECK-rapport-${companyName}-${date}.pdf`.replace(/\s+/g, '-');
+    try {
+      await downloadAssessmentPDF(assessment._id, filename);
+      toast.success('Rapport téléchargé');
+    } catch {
+      toast.error('PDF non disponible pour cette évaluation');
+    } finally {
+      setDownloadingPdf(null);
     }
   };
 
@@ -280,10 +295,21 @@ const UserDetail = () => {
                       </div>
                       <button
                         onClick={() => navigate(`/admin/assessments/${assessment._id}`)}
-                        className="text-blue-600 hover:text-blue-900"
+                        className="text-blue-600 hover:text-blue-900 text-sm"
                       >
                         Voir les détails
                       </button>
+                      {assessment.reportGenerated && (
+                        <button
+                          onClick={() => handleDownloadPDF(assessment)}
+                          disabled={downloadingPdf === assessment._id}
+                          className="flex items-center gap-1 px-2.5 py-1 bg-gray-900 text-white rounded-lg text-xs font-bold hover:bg-gray-700 transition-colors disabled:opacity-50"
+                          title="Télécharger le rapport PDF"
+                        >
+                          <Download className="h-3.5 w-3.5" />
+                          {downloadingPdf === assessment._id ? '...' : 'PDF'}
+                        </button>
+                      )}
                     </div>
                   </div>
                   
