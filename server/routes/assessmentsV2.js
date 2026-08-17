@@ -11,6 +11,7 @@ const {
 } = require("../utils/scoringV2");
 const { generateV2PDFReport } = require("../utils/pdfGeneratorV2");
 const { sendV2ResultEmail } = require("../utils/emailService");
+const { notifyAdminRegistration, notifyAdminReportPrinted } = require("../utils/adminNotificationService");
 
 const router = express.Router();
 
@@ -151,6 +152,7 @@ router.post(
 				user.accountCreatedAt = new Date();
 				await user.save();
 				accountCreated = true;
+				notifyAdminRegistration(user).catch(err => console.error('[notify] registration:', err.message));
 			}
 
 			const assessment = new Assessment({
@@ -200,6 +202,7 @@ router.post(
 				assessment.pdfGeneratedAt = new Date();
 				assessment.reportGenerated = true;
 				await assessment.save();
+				notifyAdminReportPrinted(user, assessment).catch(err => console.error('[notify] report_printed:', err.message));
 			} catch (pdfError) {
 				console.error("V2 PDF generation error:", pdfError);
 			}
