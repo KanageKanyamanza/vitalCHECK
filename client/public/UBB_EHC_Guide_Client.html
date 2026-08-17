@@ -153,9 +153,11 @@
             color: white;
         }
         
-        .score-red { background-color: #ef4444; }
-        .score-amber { background-color: #f59e0b; }
-        .score-green { background-color: #10b981; }
+        .score-red    { background-color: #ef4444; }
+        .score-amber  { background-color: #f59e0b; }
+        .score-yellow { background-color: #EAB308; }
+        .score-blue   { background-color: #3B82F6; }
+        .score-green  { background-color: #10b981; }
         
         @media print {
             body {
@@ -245,7 +247,7 @@
 
     <h2 id="introduction">1. Qu'est-ce qu'vitalCHECK Enterprise Health Check ?</h2>
     
-    <p><strong>vitalCHECK Enterprise Health Check</strong> est un outil d'évaluation qui vous permet de mesurer la santé globale de votre entreprise. En répondant à 12 questions stratégiques, vous obtenez une analyse complète de 6 domaines clés de votre organisation.</p>
+    <p><strong>vitalCHECK Enterprise Health Check</strong> est un outil d'évaluation qui vous permet de mesurer la santé globale de votre entreprise. En répondant à <strong>25 questions</strong> réparties sur <strong>5 piliers clés</strong>, vous obtenez en environ 6 minutes un score de maturité, un mini-rapport personnalisé et vos premières recommandations d'action.</p>
 
     <div class="success-box">
         <h3>🎯 Pourquoi évaluer votre entreprise ?</h3>
@@ -258,51 +260,57 @@
         </ul>
     </div>
 
-    <h3>Les 6 piliers de la santé d'entreprise</h3>
+    <h3>Les 5 piliers de la santé d'entreprise</h3>
     <ol>
-        <li><strong>💰 Finance & Trésorerie</strong> - Gestion financière et flux de trésorerie</li>
-        <li><strong>⚙️ Opérations & Processus</strong> - Efficacité opérationnelle et organisation</li>
-        <li><strong>📈 Ventes & Marketing</strong> - Stratégies commerciales et de communication</li>
-        <li><strong>👥 Ressources Humaines</strong> - Gestion du personnel et développement</li>
-        <li><strong>🎯 Stratégie & Gouvernance</strong> - Vision d'entreprise et pilotage</li>
-        <li><strong>💻 Technologie & Digital</strong> - Maturité numérique et outils</li>
+        <li><strong>🎯 Leadership & Stratégie</strong> - Vision, objectifs et pilotage de l'entreprise</li>
+        <li><strong>💰 Finance</strong> - Gestion financière, trésorerie et rentabilité</li>
+        <li><strong>📈 Ventes & Marketing</strong> - Stratégies commerciales et acquisition clients</li>
+        <li><strong>⚙️ Opérations</strong> - Efficacité opérationnelle, processus et outils</li>
+        <li><strong>👥 Personnel & Organisation</strong> - Gestion des équipes et développement des compétences</li>
     </ol>
 
     <h2 id="evaluation">2. Comment fonctionne l'évaluation ?</h2>
 
     <h3>Le système de notation</h3>
-    <p>Chaque question vous propose 4 options de réponse, notées de 0 à 3 points :</p>
-    
+    <p>Chaque question vous propose <strong>3 options de réponse</strong> :</p>
+
     <div class="step-box">
         <h4>Exemple de question :</h4>
-        <p><strong>"Avez-vous des états financiers à jour (Bilan, Compte de résultat, Flux de trésorerie) ?"</strong></p>
+        <p><strong>"Avez-vous des objectifs d'entreprise écrits, chiffrés et datés ?"</strong></p>
         <ul>
-            <li><strong>0 point</strong> : Aucun document</li>
-            <li><strong>1 point</strong> : Documents basiques, non mis à jour</li>
-            <li><strong>2 points</strong> : Mis à jour trimestriellement</li>
-            <li><strong>3 points</strong> : Mis à jour mensuellement</li>
+            <li><strong>Oui — 4 points</strong> : Objectifs quantifiés, datés et partagés avec l'équipe</li>
+            <li><strong>Partiellement — 2 points</strong> : Objectifs généraux, non formalisés par écrit</li>
+            <li><strong>Non — 0 point</strong> : Aucun objectif formel défini</li>
         </ul>
     </div>
 
     <h3>Calcul des scores</h3>
     <ul>
-        <li><strong>Score par pilier</strong> : Moyenne des 2 questions × 25 (0-100 points)</li>
-        <li><strong>Score global</strong> : Moyenne de tous les piliers</li>
-        <li><strong>Durée</strong> : Environ 10-15 minutes</li>
+        <li><strong>Score par pilier</strong> : (somme des réponses du pilier / 20) × 100 — soit 5 questions × 4 pts max = 20 pts → score ramené sur 100</li>
+        <li><strong>Score global</strong> : Moyenne des scores des 5 piliers (0-100)</li>
+        <li><strong>Durée estimée</strong> : Environ 6 minutes</li>
     </ul>
 
-    <h3>Les seuils de performance</h3>
+    <h3>Les 5 paliers de maturité</h3>
     <div class="score-example">
-        <span class="score-badge score-red">🔴 Rouge (0-39)</span>
-        <span>Critique - Action immédiate requise</span>
+        <span class="score-badge score-red">Critique (0–39)</span>
+        <span>Risques importants — action immédiate requise</span>
     </div>
     <div class="score-example">
-        <span class="score-badge score-amber">🟡 Ambre (40-69)</span>
-        <span>En développement - Amélioration nécessaire</span>
+        <span class="score-badge score-amber">Vulnérable (40–59)</span>
+        <span>Bases fragiles — plusieurs axes à renforcer en priorité</span>
     </div>
     <div class="score-example">
-        <span class="score-badge score-green">🟢 Vert (70-100)</span>
-        <span>Excellent - Maintien et optimisation</span>
+        <span class="score-badge score-yellow">Stable (60–79)</span>
+        <span>Fondations solides — ajustements ciblés pour progresser</span>
+    </div>
+    <div class="score-example">
+        <span class="score-badge score-blue">Prêt pour la croissance (80–89)</span>
+        <span>Entreprise bien structurée — prête à accélérer</span>
+    </div>
+    <div class="score-example">
+        <span class="score-badge score-green">Haute performance (90–100)</span>
+        <span>Excellente maturité — continuez sur cette lancée !</span>
     </div>
 
     <h2 id="parcours">3. Votre parcours étape par étape</h2>
@@ -313,10 +321,9 @@
         <p>Renseignez les informations de base sur votre entreprise :</p>
         <ul>
             <li>Nom de l'entreprise</li>
-            <li>Secteur d'activité</li>
-            <li>Taille de l'entreprise</li>
+            <li>Taille de l'entreprise (micro, PME, moyenne entreprise)</li>
             <li>Email de contact</li>
-            <li>Langue préférée (Français/English)</li>
+            <li>Langue préférée (Français / English)</li>
         </ul>
         <div class="info-box">
             <p><strong>💡 Conseil :</strong> Choisissez la langue dans laquelle vous vous sentez le plus à l'aise pour réfléchir aux questions stratégiques.</p>
@@ -325,16 +332,15 @@
 
     <div class="step-box">
         <h3><span class="step-number">2</span>Répondre aux questions</h3>
-        <p><strong>Durée :</strong> 10-15 minutes</p>
-        <p>L'évaluation comprend 12 questions réparties en 6 piliers :</p>
+        <p><strong>Durée :</strong> Environ 6 minutes</p>
+        <p>L'évaluation comprend <strong>25 questions</strong> réparties en <strong>5 piliers</strong> :</p>
         <ul>
-            <li>2 questions par pilier</li>
-            <li>Navigation libre (précédent/suivant)</li>
-            <li>Sauvegarde automatique de vos réponses</li>
-            <li>Possibilité de reprendre plus tard</li>
+            <li>5 questions par pilier</li>
+            <li>3 choix de réponse par question : Oui / Partiellement / Non</li>
+            <li>Navigation pilier par pilier, avec barre de progression</li>
         </ul>
         <div class="highlight">
-            <p><strong>⚠️ Important :</strong> Vos réponses sont sauvegardées automatiquement. Si vous interrompez l'évaluation, vous recevrez un lien pour reprendre où vous vous êtes arrêté.</p>
+            <p><strong>💡 Conseil :</strong> Répondez en fonction de la situation réelle et actuelle de votre entreprise, pas de vos projets futurs. L'honnêteté de vos réponses garantit la fiabilité de votre diagnostic.</p>
         </div>
     </div>
 
@@ -365,71 +371,64 @@
     <h2 id="resultats">4. Comprendre vos résultats</h2>
 
     <h3>Le score global</h3>
-    <p>Votre score global (0-100) reflète la santé générale de votre entreprise. Il est calculé comme la moyenne des 6 piliers.</p>
+    <p>Votre score global (0-100) reflète la maturité générale de votre entreprise. Il correspond à la <strong>moyenne des scores des 5 piliers</strong>.</p>
 
     <div class="info-box">
         <h4>Comment interpréter votre score global :</h4>
         <ul>
-            <li><strong>70-100 (Vert)</strong> : Votre entreprise est en excellente santé. Concentrez-vous sur l'optimisation et l'innovation.</li>
-            <li><strong>40-69 (Ambre)</strong> : Votre entreprise a de bonnes bases mais nécessite des améliorations. Identifiez les priorités.</li>
-            <li><strong>0-39 (Rouge)</strong> : Votre entreprise nécessite une attention immédiate. Planifiez des actions correctives urgentes.</li>
+            <li><strong>90-100 — Haute performance</strong> : Excellente maturité organisationnelle sur l'ensemble des piliers. Continuez sur cette lancée !</li>
+            <li><strong>80-89 — Prêt pour la croissance</strong> : Entreprise bien structurée et prête à accélérer son développement.</li>
+            <li><strong>60-79 — Stable</strong> : Bases solides. Quelques ajustements ciblés permettront de passer à la vitesse supérieure.</li>
+            <li><strong>40-59 — Vulnérable</strong> : Fondations fragiles. Plusieurs axes nécessitent une attention prioritaire.</li>
+            <li><strong>0-39 — Critique</strong> : Risques importants qui menacent la pérennité. Une action rapide est nécessaire.</li>
         </ul>
     </div>
 
     <h3>Les scores par pilier</h3>
-    <p>Chaque pilier est évalué indépendamment, vous permettant d'identifier précisément vos forces et faiblesses.</p>
+    <p>Chaque pilier est évalué sur 5 questions et noté sur 100. Vous identifiez ainsi précisément vos forces et vos axes d'amélioration prioritaires.</p>
 
     <div class="step-box">
-        <h4>💰 Finance & Trésorerie</h4>
-        <p>Évalue la gestion financière, la trésorerie et la planification budgétaire.</p>
+        <h4>🎯 Leadership & Stratégie</h4>
+        <p>Évalue la clarté de la vision, la définition des objectifs et la capacité à piloter l'entreprise.</p>
         <ul>
-            <li><strong>Points clés :</strong> États financiers, trésorerie, prévisions</li>
-            <li><strong>Impact :</strong> Stabilité financière et capacité d'investissement</li>
+            <li><strong>Points clés :</strong> Objectifs écrits, analyse SWOT, tableau de bord, plan stratégique</li>
+            <li><strong>Impact :</strong> Cap clair et prise de décision éclairée</li>
         </ul>
     </div>
 
     <div class="step-box">
-        <h4>⚙️ Opérations & Processus</h4>
-        <p>Mesure l'efficacité opérationnelle et la qualité des processus.</p>
+        <h4>💰 Finance</h4>
+        <p>Évalue la santé financière, la gestion de trésorerie et la rentabilité.</p>
         <ul>
-            <li><strong>Points clés :</strong> Processus, qualité, efficacité</li>
-            <li><strong>Impact :</strong> Productivité et satisfaction client</li>
+            <li><strong>Points clés :</strong> États financiers, trésorerie, marges, budget prévisionnel</li>
+            <li><strong>Impact :</strong> Stabilité et capacité d'investissement</li>
         </ul>
     </div>
 
     <div class="step-box">
         <h4>📈 Ventes & Marketing</h4>
-        <p>Analyse les stratégies commerciales et de communication.</p>
+        <p>Analyse les stratégies d'acquisition, de fidélisation et de communication.</p>
         <ul>
-            <li><strong>Points clés :</strong> Stratégie commerciale, marketing, relation client</li>
-            <li><strong>Impact :</strong> Croissance et positionnement</li>
+            <li><strong>Points clés :</strong> Proposition de valeur, canaux d'acquisition, pipeline commercial, taux de conversion</li>
+            <li><strong>Impact :</strong> Croissance du chiffre d'affaires et positionnement marché</li>
         </ul>
     </div>
 
     <div class="step-box">
-        <h4>👥 Ressources Humaines</h4>
-        <p>Évalue la gestion du personnel et le développement des compétences.</p>
+        <h4>⚙️ Opérations</h4>
+        <p>Mesure l'efficacité des processus internes et la qualité de l'exécution.</p>
         <ul>
-            <li><strong>Points clés :</strong> Recrutement, formation, motivation</li>
-            <li><strong>Impact :</strong> Performance et fidélisation</li>
+            <li><strong>Points clés :</strong> Processus documentés, outils de gestion, indicateurs de performance, qualité</li>
+            <li><strong>Impact :</strong> Productivité, réduction des coûts et satisfaction client</li>
         </ul>
     </div>
 
     <div class="step-box">
-        <h4>🎯 Stratégie & Gouvernance</h4>
-        <p>Examine la vision stratégique et les mécanismes de pilotage.</p>
+        <h4>👥 Personnel & Organisation</h4>
+        <p>Évalue la gestion des équipes, le développement des compétences et la culture d'entreprise.</p>
         <ul>
-            <li><strong>Points clés :</strong> Vision, planification, gouvernance</li>
-            <li><strong>Impact :</strong> Direction et cohérence</li>
-        </ul>
-    </div>
-
-    <div class="step-box">
-        <h4>💻 Technologie & Digital</h4>
-        <p>Assesse la maturité numérique et l'utilisation des outils technologiques.</p>
-        <ul>
-            <li><strong>Points clés :</strong> Outils numériques, cybersécurité, innovation</li>
-            <li><strong>Impact :</strong> Compétitivité et efficacité</li>
+            <li><strong>Points clés :</strong> Recrutement, formation, motivation, rôles et responsabilités</li>
+            <li><strong>Impact :</strong> Performance collective et rétention des talents</li>
         </ul>
     </div>
 
@@ -530,12 +529,12 @@
 
     <div class="info-box">
         <h4>❓ Puis-je reprendre mon évaluation plus tard ?</h4>
-        <p><strong>Réponse :</strong> Oui ! Si vous interrompez l'évaluation, vous recevrez un lien par email pour reprendre exactement où vous vous êtes arrêté. Vos réponses sont sauvegardées automatiquement.</p>
+        <p><strong>Réponse :</strong> Le diagnostic dure environ 6 minutes et est conçu pour être complété en une seule session. Une fois soumis, vos résultats sont accessibles à tout moment via le lien reçu par email.</p>
     </div>
 
     <div class="info-box">
         <h4>❓ Combien de temps prend l'évaluation ?</h4>
-        <p><strong>Réponse :</strong> L'évaluation complète prend généralement 10-15 minutes. Prenez le temps de réfléchir à chaque question pour obtenir des résultats précis.</p>
+        <p><strong>Réponse :</strong> L'évaluation complète prend environ 6 minutes. 25 questions avec 3 options de réponse chacune : Oui, Partiellement, Non.</p>
     </div>
 
     <div class="info-box">
@@ -572,7 +571,7 @@
 
     <div class="success-box">
         <h3>🎯 Prêt à évaluer votre entreprise ?</h3>
-        <p>vitalCHECK Enterprise Health Check vous donne les clés pour comprendre et améliorer la santé de votre entreprise. En quelques minutes, vous obtiendrez une vision claire de vos forces et faiblesses, avec des recommandations concrètes pour progresser.</p>
+        <p>vitalCHECK Enterprise Health Check vous donne les clés pour comprendre et améliorer la santé de votre entreprise. En environ 6 minutes, vous obtiendrez votre score de maturité sur 100, le détail de vos 5 piliers, vos risques, vos opportunités et vos premières recommandations concrètes.</p>
         
         <p><strong>Commencez dès maintenant votre évaluation gratuite !</strong></p>
     </div>
@@ -580,8 +579,8 @@
     <hr style="margin: 40px 0; border: none; border-top: 2px solid #e5e7eb;">
     
     <p style="text-align: center; color: #6b7280; font-size: 14px;">
-        <em>Guide Utilisateur vitalCHECK Enterprise Health Check - Version 1.0</em><br>
-        <em>Dernière mise à jour : Septembre 2025</em>
+        <em>Guide Utilisateur vitalCHECK Enterprise Health Check - Version 2.0</em><br>
+        <em>Dernière mise à jour : Août 2026</em>
     </p>
 </body>
 </html>

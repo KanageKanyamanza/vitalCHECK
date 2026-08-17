@@ -846,6 +846,63 @@ const saveOutboundEmail = async (mailOptions, messageId, providedContactId = nul
   }
 };
 
+// Send admin notification emails for dashboard events (registration + report_printed)
+const sendAdminNotificationEmail = async (admins, type, data) => {
+  const levelLabels = {
+    critique: 'Critique',
+    vulnerable: 'Vulnérable',
+    stable: 'Stable',
+    pret: 'Prêt',
+    haute_performance: 'Haute performance',
+  };
+
+  const subjects = {
+    user_registered: `[vitalCHECK] Nouvelle inscription — ${data.user.companyName}`,
+    report_printed: `[vitalCHECK] Rapport généré — ${data.user.companyName}`,
+  };
+
+  const htmlBodies = {
+    user_registered: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h2 style="color: #1e40af;">Nouvelle inscription</h2>
+        <p>Un nouvel utilisateur vient de s'inscrire sur vitalCHECK :</p>
+        <ul style="line-height: 1.8;">
+          <li><strong>Entreprise :</strong> ${data.user.companyName}</li>
+          <li><strong>Email :</strong> ${data.user.email}</li>
+          <li><strong>Taille :</strong> ${data.user.companySize || '—'}</li>
+          <li><strong>Secteur :</strong> ${data.user.sector || '—'}</li>
+        </ul>
+        <p style="color: #6b7280; font-size: 12px;">Notification automatique — vitalCHECK Admin</p>
+      </div>
+    `,
+    report_printed: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
+        <h2 style="color: #1e40af;">Rapport de diagnostic généré</h2>
+        <p>Un rapport a été généré pour :</p>
+        <ul style="line-height: 1.8;">
+          <li><strong>Entreprise :</strong> ${data.user.companyName}</li>
+          <li><strong>Email :</strong> ${data.user.email}</li>
+          <li><strong>Score global :</strong> ${data.assessment.overallScore}/100</li>
+          <li><strong>Niveau :</strong> ${levelLabels[data.assessment.overallLevel] || data.assessment.overallLevel}</li>
+          <li><strong>Date :</strong> ${new Date(data.assessment.completedAt).toLocaleString('fr-FR')}</li>
+        </ul>
+        <p style="color: #6b7280; font-size: 12px;">Notification automatique — vitalCHECK Admin</p>
+      </div>
+    `,
+  };
+
+  const subject = subjects[type] || `[vitalCHECK] Notification admin`;
+  const html = htmlBodies[type] || `<p>Notification de type ${type}</p>`;
+
+  for (const admin of admins) {
+    try {
+      await sendEmail({ to: admin.email, subject, html, skipTracking: true });
+    } catch (err) {
+      console.error(`[adminNotif] email to ${admin.email} failed:`, err.message);
+    }
+  }
+};
+
 module.exports = {
   sendEmail,
   testEmailConfig,
@@ -859,6 +916,7 @@ module.exports = {
   sendV2ResultEmail,
   sendSubscriptionUpgradeEmail,
   sendPasswordResetEmail,
+  sendAdminNotificationEmail,
   emailService: {
     sendEmail,
     sendContactConfirmation,

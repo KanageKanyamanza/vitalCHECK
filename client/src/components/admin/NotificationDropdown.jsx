@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Bell, X, FileText, Clock, ChevronRight } from 'lucide-react';
+import { Bell, X, FileText, Clock, ChevronRight, UserPlus } from 'lucide-react';
 import { useAdminApi } from '../../hooks/useAdminApi';
 
 const NotificationDropdown = () => {
@@ -83,52 +83,41 @@ const NotificationDropdown = () => {
     }
   };
 
+  // Résoudre la route cible selon le type de notification
+  const resolveNotificationTarget = (notification) => {
+    const type = notification.type;
+    const userId = notification.user?.id || notification.user?._id;
+    const assessmentId = notification.assessment?.id || notification.assessment?._id;
+
+    if (type === 'user_registered' && userId) return `/admin/users/${userId}`;
+    if (assessmentId) return `/admin/assessments/${assessmentId}`;
+    if (userId) return `/admin/users/${userId}`;
+    return null;
+  };
+
   // Gérer le clic sur une notification
   const handleNotificationClick = async (notification) => {
+    const notificationId = notification.id || notification._id;
+    const target = resolveNotificationTarget(notification);
+
     try {
-      const notificationId = notification.id || notification._id;
-      const assessmentId = notification.assessment?.id || notification.assessment?._id;
-      
-      if (!notificationId) {
-        console.error('ID de notification manquant:', notification);
-        return;
-      }
-      
-      if (!assessmentId) {
-        console.error('ID d\'évaluation manquant:', notification);
-        return;
-      }
-      
-      // Marquer la notification comme lue côté serveur
-      await markNotificationAsRead(notificationId);
-      
-      // Mettre à jour l'état local
-      setNotifications(prevNotifications => 
-        prevNotifications.map(n => 
-          (n.id || n._id) === notificationId ? { ...n, read: true } : n
-        )
-      );
-      
-      setIsOpen(false);
-      // Naviguer vers les détails de l'évaluation
-      navigate(`/admin/assessments/${assessmentId}`);
-    } catch (error) {
-      console.error('Erreur lors du marquage de la notification:', error);
-      // Mettre à jour l'état local même en cas d'erreur
-      const notificationId = notification.id || notification._id;
       if (notificationId) {
-        setNotifications(prevNotifications => 
-          prevNotifications.map(n => 
-            (n.id || n._id) === notificationId ? { ...n, read: true } : n
-          )
+        await markNotificationAsRead(notificationId);
+        setNotifications(prev =>
+          prev.map(n => (n.id || n._id) === notificationId ? { ...n, read: true } : n)
         );
       }
-      setIsOpen(false);
-      const assessmentId = notification.assessment?.id || notification.assessment?._id;
-      if (assessmentId) {
-        navigate(`/admin/assessments/${assessmentId}`);
+    } catch (error) {
+      console.error('Erreur lors du marquage de la notification:', error);
+      if (notificationId) {
+        setNotifications(prev =>
+          prev.map(n => (n.id || n._id) === notificationId ? { ...n, read: true } : n)
+        );
       }
     }
+
+    setIsOpen(false);
+    if (target) navigate(target);
   };
 
   // Gérer le clic sur le bouton de notification
@@ -218,10 +207,15 @@ const NotificationDropdown = () => {
                     className="p-4 hover:bg-gray-50 cursor-pointer transition-colors group bg-blue-50 border-l-4 border-l-primary-500"
                   >
                     <div className="flex items-start space-x-3">
-                      {/* Icône */}
+                      {/* Icône selon le type */}
                       <div className="flex-shrink-0">
-                        <div className="w-8 h-8 bg-primary-100 rounded-lg flex items-center justify-center">
-                          <FileText className="w-4 h-4 text-primary-600" />
+                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${
+                          notification.type === 'user_registered' ? 'bg-green-100' : 'bg-primary-100'
+                        }`}>
+                          {notification.type === 'user_registered'
+                            ? <UserPlus className="w-4 h-4 text-green-600" />
+                            : <FileText className="w-4 h-4 text-primary-600" />
+                          }
                         </div>
                       </div>
 
@@ -240,21 +234,22 @@ const NotificationDropdown = () => {
                           <Clock className="w-3 h-3 mr-1" />
                           <span>{formatDate(notification.createdAt)}</span>
                         </div>
-                        <div className="flex items-center mt-1 text-xs text-gray-500">
-                          <span className="font-medium">Score:</span>
-                          <span className="ml-1 px-2 py-0.5 bg-gray-100 rounded-full">
-                            {notification.assessment.score}/100
-                          </span>
-                          <span className="ml-2 font-medium">Statut:</span>
-                          <span className={`ml-1 px-2 py-0.5 rounded-full text-xs font-medium ${
-                            notification.assessment.status === 'excellent' ? 'bg-success-100 text-success-800' :
-                            notification.assessment.status === 'good' ? 'bg-primary-100 text-primary-800' :
-                            notification.assessment.status === 'average' ? 'bg-warning-100 text-warning-800' :
-                            'bg-danger-100 text-danger-800'
-                          }`}>
-                            {notification.assessment.status}
-                          </span>
-                        </div>
+                        {notification.assessment && (
+                          <div className="flex items-center mt-1 text-xs text-gray-500">
+                            <span className="font-medium">Score :</span>
+                            <span className="ml-1 px-2 py-0.5 bg-gray-100 rounded-full">
+                              {notification.assessment.score}/100
+                            </span>
+                            {notification.assessment.status && (
+                              <>
+                                <span className="ml-2 font-medium">Niveau :</span>
+                                <span className="ml-1 px-2 py-0.5 bg-primary-100 text-primary-800 rounded-full capitalize">
+                                  {notification.assessment.status}
+                                </span>
+                              </>
+                            )}
+                          </div>
+                        )}
                       </div>
 
                       {/* Flèche */}
