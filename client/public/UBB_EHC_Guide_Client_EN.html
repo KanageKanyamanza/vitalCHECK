@@ -153,9 +153,11 @@
             color: white;
         }
         
-        .score-red { background-color: #ef4444; }
-        .score-amber { background-color: #f59e0b; }
-        .score-green { background-color: #10b981; }
+        .score-red    { background-color: #ef4444; }
+        .score-amber  { background-color: #f59e0b; }
+        .score-yellow { background-color: #EAB308; }
+        .score-blue   { background-color: #3B82F6; }
+        .score-green  { background-color: #10b981; }
         
         @media print {
             body {
@@ -237,7 +239,7 @@
 
     <h2 id="introduction">1. What is vitalCHECK Enterprise Health Check?</h2>
     
-    <p><strong>vitalCHECK Enterprise Health Check</strong> is an assessment tool that allows you to measure the overall health of your business. By answering 12 strategic questions, you get a comprehensive analysis of 6 key areas of your organization.</p>
+    <p><strong>vitalCHECK Enterprise Health Check</strong> is an assessment tool that allows you to measure the overall health of your business. By answering <strong>25 questions</strong> across <strong>5 key pillars</strong>, you get in around 6 minutes a maturity score, a personalized mini-report and your first action recommendations.</p>
 
     <div class="success-box">
         <h3>🎯 Why assess your business?</h3>
@@ -250,51 +252,57 @@
         </ul>
     </div>
 
-    <h3>The 6 pillars of business health</h3>
+    <h3>The 5 pillars of business health</h3>
     <ol>
-        <li><strong>💰 Finance & Cash Flow</strong> - Financial management and cash flow</li>
-        <li><strong>⚙️ Operations & Processes</strong> - Operational efficiency and organization</li>
-        <li><strong>📈 Sales & Marketing</strong> - Commercial and communication strategies</li>
-        <li><strong>👥 Human Resources</strong> - Staff management and development</li>
-        <li><strong>🎯 Strategy & Governance</strong> - Business vision and steering</li>
-        <li><strong>💻 Technology & Digital</strong> - Digital maturity and tools</li>
+        <li><strong>🎯 Leadership & Strategy</strong> - Vision, objectives and business steering</li>
+        <li><strong>💰 Finance</strong> - Financial management, cash flow and profitability</li>
+        <li><strong>📈 Sales & Marketing</strong> - Commercial strategies and customer acquisition</li>
+        <li><strong>⚙️ Operations</strong> - Operational efficiency, processes and tools</li>
+        <li><strong>👥 People & Organization</strong> - Team management and skills development</li>
     </ol>
 
     <h2 id="evaluation">2. How does the assessment work?</h2>
 
     <h3>Scoring system</h3>
-    <p>Each question offers 4 answer options, scored from 0 to 3 points:</p>
-    
+    <p>Each question offers <strong>3 answer options</strong>:</p>
+
     <div class="step-box">
         <h4>Example question:</h4>
-        <p><strong>"Do you have up-to-date financial statements (Balance Sheet, Income Statement, Cash Flow)?"</strong></p>
+        <p><strong>"Do you have written, quantified and dated business objectives?"</strong></p>
         <ul>
-            <li><strong>0 points</strong>: No documents</li>
-            <li><strong>1 point</strong>: Basic documents, not updated</li>
-            <li><strong>2 points</strong>: Updated quarterly</li>
-            <li><strong>3 points</strong>: Updated monthly</li>
+            <li><strong>Yes — 4 points</strong>: Quantified, dated objectives shared with the team</li>
+            <li><strong>Partially — 2 points</strong>: General objectives, not formally written down</li>
+            <li><strong>No — 0 points</strong>: No formal objectives defined</li>
         </ul>
     </div>
 
     <h3>Score calculation</h3>
     <ul>
-        <li><strong>Pillar score</strong>: Average of 2 questions × 25 (0-100 points)</li>
-        <li><strong>Overall score</strong>: Average of all pillars</li>
-        <li><strong>Duration</strong>: About 10-15 minutes</li>
+        <li><strong>Pillar score</strong>: (sum of pillar answers / 20) × 100 — i.e. 5 questions × 4 pts max = 20 pts → score out of 100</li>
+        <li><strong>Overall score</strong>: Average of the 5 pillar scores (0–100)</li>
+        <li><strong>Estimated duration</strong>: About 6 minutes</li>
     </ul>
 
-    <h3>Performance thresholds</h3>
+    <h3>The 5 maturity levels</h3>
     <div class="score-example">
-        <span class="score-badge score-red">🔴 Red (0-39)</span>
-        <span>Critical - Immediate action required</span>
+        <span class="score-badge score-red">Critical (0–39)</span>
+        <span>Significant risks — immediate action required</span>
     </div>
     <div class="score-example">
-        <span class="score-badge score-amber">🟡 Amber (40-69)</span>
-        <span>Developing - Improvement needed</span>
+        <span class="score-badge score-amber">Vulnerable (40–59)</span>
+        <span>Fragile foundations — several areas need priority attention</span>
     </div>
     <div class="score-example">
-        <span class="score-badge score-green">🟢 Green (70-100)</span>
-        <span>Excellent - Maintain and optimize</span>
+        <span class="score-badge score-yellow">Stable (60–79)</span>
+        <span>Solid foundations — targeted adjustments will help move up a gear</span>
+    </div>
+    <div class="score-example">
+        <span class="score-badge score-blue">Growth-Ready (80–89)</span>
+        <span>Well-structured business — ready to accelerate</span>
+    </div>
+    <div class="score-example">
+        <span class="score-badge score-green">High Performance (90–100)</span>
+        <span>Excellent organizational maturity — keep up the great work!</span>
     </div>
 
     <h2 id="journey">3. Your step-by-step journey</h2>
@@ -305,10 +313,9 @@
         <p>Provide basic information about your business:</p>
         <ul>
             <li>Company name</li>
-            <li>Industry sector</li>
-            <li>Company size</li>
+            <li>Company size (micro, SME, mid-size)</li>
             <li>Contact email</li>
-            <li>Preferred language (English/Français)</li>
+            <li>Preferred language (English / Français)</li>
         </ul>
         <div class="info-box">
             <p><strong>💡 Tip:</strong> Choose the language you feel most comfortable with for thinking about strategic questions.</p>
@@ -317,16 +324,15 @@
 
     <div class="step-box">
         <h3><span class="step-number">2</span>Answer the questions</h3>
-        <p><strong>Duration:</strong> 10-15 minutes</p>
-        <p>The assessment includes 12 questions divided into 6 pillars:</p>
+        <p><strong>Duration:</strong> About 6 minutes</p>
+        <p>The assessment includes <strong>25 questions</strong> across <strong>5 pillars</strong>:</p>
         <ul>
-            <li>2 questions per pillar</li>
-            <li>Free navigation (previous/next)</li>
-            <li>Automatic saving of your answers</li>
-            <li>Possibility to resume later</li>
+            <li>5 questions per pillar</li>
+            <li>3 answer choices per question: Yes / Partially / No</li>
+            <li>Pillar-by-pillar navigation with a progress bar</li>
         </ul>
         <div class="highlight">
-            <p><strong>⚠️ Important:</strong> Your answers are automatically saved. If you interrupt the assessment, you'll receive a link to resume where you left off.</p>
+            <p><strong>💡 Tip:</strong> Answer based on your business's current, real situation — not your future plans. Honest answers guarantee the reliability of your diagnostic.</p>
         </div>
     </div>
 
@@ -357,71 +363,64 @@
     <h2 id="results">4. Understanding your results</h2>
 
     <h3>Overall score</h3>
-    <p>Your overall score (0-100) reflects the general health of your business. It's calculated as the average of the 6 pillars.</p>
+    <p>Your overall score (0–100) reflects the maturity of your business. It is the <strong>average of your 5 pillar scores</strong>.</p>
 
     <div class="info-box">
         <h4>How to interpret your overall score:</h4>
         <ul>
-            <li><strong>70-100 (Green)</strong>: Your business is in excellent health. Focus on optimization and innovation.</li>
-            <li><strong>40-69 (Amber)</strong>: Your business has good foundations but needs improvements. Identify priorities.</li>
-            <li><strong>0-39 (Red)</strong>: Your business requires immediate attention. Plan urgent corrective actions.</li>
+            <li><strong>90–100 — High Performance</strong>: Excellent organizational maturity across all key pillars. Keep up the great work!</li>
+            <li><strong>80–89 — Growth-Ready</strong>: Well-structured business, ready to accelerate its development.</li>
+            <li><strong>60–79 — Stable</strong>: Solid foundations. A few targeted adjustments will help you move up a gear.</li>
+            <li><strong>40–59 — Vulnerable</strong>: Fragile foundations. Several areas require priority attention.</li>
+            <li><strong>0–39 — Critical</strong>: Significant risks threatening sustainability. Immediate action is needed.</li>
         </ul>
     </div>
 
     <h3>Scores by pillar</h3>
-    <p>Each pillar is evaluated independently, allowing you to precisely identify your strengths and weaknesses.</p>
+    <p>Each pillar is assessed across 5 questions and scored out of 100, letting you pinpoint your strengths and priority improvement areas.</p>
 
     <div class="step-box">
-        <h4>💰 Finance & Cash Flow</h4>
-        <p>Evaluates financial management, cash flow and budget planning.</p>
+        <h4>🎯 Leadership & Strategy</h4>
+        <p>Assesses clarity of vision, goal-setting and the ability to steer the business.</p>
         <ul>
-            <li><strong>Key points:</strong> Financial statements, cash flow, forecasts</li>
-            <li><strong>Impact:</strong> Financial stability and investment capacity</li>
+            <li><strong>Key points:</strong> Written objectives, SWOT analysis, dashboard, strategic plan</li>
+            <li><strong>Impact:</strong> Clear direction and informed decision-making</li>
         </ul>
     </div>
 
     <div class="step-box">
-        <h4>⚙️ Operations & Processes</h4>
-        <p>Measures operational efficiency and process quality.</p>
+        <h4>💰 Finance</h4>
+        <p>Evaluates financial health, cash flow management and profitability.</p>
         <ul>
-            <li><strong>Key points:</strong> Processes, quality, efficiency</li>
-            <li><strong>Impact:</strong> Productivity and customer satisfaction</li>
+            <li><strong>Key points:</strong> Financial statements, cash flow, margins, budget forecasts</li>
+            <li><strong>Impact:</strong> Stability and investment capacity</li>
         </ul>
     </div>
 
     <div class="step-box">
         <h4>📈 Sales & Marketing</h4>
-        <p>Analyzes commercial and communication strategies.</p>
+        <p>Analyzes customer acquisition, retention and communication strategies.</p>
         <ul>
-            <li><strong>Key points:</strong> Sales strategy, marketing, customer relationship</li>
-            <li><strong>Impact:</strong> Growth and positioning</li>
+            <li><strong>Key points:</strong> Value proposition, acquisition channels, sales pipeline, conversion rate</li>
+            <li><strong>Impact:</strong> Revenue growth and market positioning</li>
         </ul>
     </div>
 
     <div class="step-box">
-        <h4>👥 Human Resources</h4>
-        <p>Evaluates staff management and skills development.</p>
+        <h4>⚙️ Operations</h4>
+        <p>Measures the efficiency of internal processes and quality of execution.</p>
         <ul>
-            <li><strong>Key points:</strong> Recruitment, training, motivation</li>
-            <li><strong>Impact:</strong> Performance and retention</li>
+            <li><strong>Key points:</strong> Documented processes, management tools, KPIs, quality</li>
+            <li><strong>Impact:</strong> Productivity, cost reduction and customer satisfaction</li>
         </ul>
     </div>
 
     <div class="step-box">
-        <h4>🎯 Strategy & Governance</h4>
-        <p>Examines strategic vision and steering mechanisms.</p>
+        <h4>👥 People & Organization</h4>
+        <p>Evaluates team management, skills development and company culture.</p>
         <ul>
-            <li><strong>Key points:</strong> Vision, planning, governance</li>
-            <li><strong>Impact:</strong> Direction and coherence</li>
-        </ul>
-    </div>
-
-    <div class="step-box">
-        <h4>💻 Technology & Digital</h4>
-        <p>Assesses digital maturity and use of technological tools.</p>
-        <ul>
-            <li><strong>Key points:</strong> Digital tools, cybersecurity, innovation</li>
-            <li><strong>Impact:</strong> Competitiveness and efficiency</li>
+            <li><strong>Key points:</strong> Recruitment, training, motivation, roles and responsibilities</li>
+            <li><strong>Impact:</strong> Collective performance and talent retention</li>
         </ul>
     </div>
 
@@ -490,12 +489,12 @@
 
     <div class="info-box">
         <h4>❓ Can I resume my assessment later?</h4>
-        <p><strong>Answer:</strong> Yes! If you interrupt the assessment, you'll receive a link by email to resume exactly where you left off. Your answers are automatically saved.</p>
+        <p><strong>Answer:</strong> The diagnostic takes about 6 minutes and is designed to be completed in one session. Once submitted, your results are accessible at any time via the link sent by email.</p>
     </div>
 
     <div class="info-box">
         <h4>❓ How long does the assessment take?</h4>
-        <p><strong>Answer:</strong> The complete assessment usually takes 10-15 minutes. Take time to think about each question to get accurate results.</p>
+        <p><strong>Answer:</strong> The complete assessment takes about 6 minutes. 25 questions with 3 answer options each: Yes, Partially, No.</p>
     </div>
 
     <div class="info-box">
@@ -532,7 +531,7 @@
 
     <div class="success-box">
         <h3>🎯 Ready to assess your business?</h3>
-        <p>vitalCHECK Enterprise Health Check gives you the keys to understand and improve your business health. In just a few minutes, you'll get a clear view of your strengths and weaknesses, with concrete recommendations to progress.</p>
+        <p>vitalCHECK Enterprise Health Check gives you the keys to understand and improve your business health. In about 6 minutes, you'll get your maturity score out of 100, the breakdown across your 5 pillars, your risks, your opportunities and your first concrete recommendations.</p>
         
         <p><strong>Start your free assessment now!</strong></p>
     </div>
@@ -540,8 +539,8 @@
     <hr style="margin: 40px 0; border: none; border-top: 2px solid #e5e7eb;">
     
     <p style="text-align: center; color: #6b7280; font-size: 14px;">
-        <em>vitalCHECK Enterprise Health Check User Guide - Version 1.0</em><br>
-        <em>Last updated: September 2025</em>
+        <em>vitalCHECK Enterprise Health Check User Guide - Version 2.0</em><br>
+        <em>Last updated: August 2026</em>
     </p>
 </body>
 </html>
