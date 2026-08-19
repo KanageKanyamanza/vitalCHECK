@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
+import axios from "axios";
 import { assessmentV2API } from "../services/api";
 import { getLevelV2ById } from "../utils/colors";
 import useSmoothScroll from "../hooks/useSmoothScroll";
@@ -145,6 +146,14 @@ const SimplifiedResultsPage = () => {
 			if (response.data.success) {
 				setSavedAssessmentId(response.data.assessment.id);
 				setSaved(true);
+
+				// Store JWT if a new account was created — needed to authenticate payment requests
+				if (response.data.account?.created && response.data.clientToken) {
+					localStorage.setItem('clientToken', response.data.clientToken);
+					axios.defaults.headers.common['Authorization'] =
+						`Bearer ${response.data.clientToken}`;
+				}
+
 				toast.success(t("diagnostic.results.reportSentToast"));
 			}
 		} catch (error) {

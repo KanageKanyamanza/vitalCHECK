@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const Admin = require('../models/Admin');
+const User = require('../models/User');
 
 // Middleware d'authentification admin
 const authenticateAdmin = async (req, res, next) => {
@@ -47,7 +48,41 @@ const checkPermission = (permission) => {
   };
 };
 
+// User (client) JWT authentication
+const authenticateClient = async (req, res, next) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({ message: 'Token manquant' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const user = await User.findById(decoded.userId).select('-password');
+
+    if (!user) {
+      return res.status(401).json({ message: 'Utilisateur non trouvé' });
+    }
+
+    // Lazy expiration: if subscription is active but endDate has passed, expire it now
+    const sub = user.subscription;
+    if (sub?.status === 'active' && sub?.endDate && sub.endDate < new Date()) {
+      await User.findByIdAndUpdate(user._id, {
+        'subscription.status': 'expired',
+        isPremium: false,
+      });
+      user.subscription.status = 'expired';
+      user.isPremium = false;
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    return res.status(401).json({ message: 'Token invalide' });
+  }
+};
+
 module.exports = {
   authenticateAdmin,
-  checkPermission
+  checkPermission,
+  authenticateClient,
 };

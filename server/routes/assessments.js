@@ -87,9 +87,25 @@ const checkMonthlyLimit = async (userId) => {
 	const user = await User.findById(userId);
 	if (!user) return { allowed: false, message: "Utilisateur non trouvé" };
 
-	// If user is admin or special, maybe allow unlimited? 
-	// For now, let's stick to plans.
-	const plan = user.subscription?.plan || 'free';
+	// Treat expired subscriptions as free — subscription is no longer active
+	const sub = user.subscription;
+	const isExpired =
+		sub?.status === 'active' &&
+		sub?.endDate &&
+		sub.endDate < new Date();
+
+	if (isExpired) {
+		// Expire lazily in the background
+		User.findByIdAndUpdate(userId, {
+			'subscription.status': 'expired',
+			isPremium: false,
+		}).exec().catch(err =>
+			console.error('[checkMonthlyLimit] expiration update failed:', err.message)
+		);
+	}
+
+	const effectiveStatus = isExpired ? 'expired' : sub?.status;
+	const plan = (effectiveStatus === 'active' ? sub?.plan : null) || 'free';
 	const limit = PLAN_LIMITS[plan] || PLAN_LIMITS.free;
 
 	const startOfMonth = new Date();

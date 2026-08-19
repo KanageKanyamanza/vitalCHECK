@@ -11,6 +11,7 @@ const {
 } = require("../utils/scoringV2");
 const { generateV2PDFReport } = require("../utils/pdfGeneratorV2");
 const { sendV2ResultEmail } = require("../utils/emailService");
+const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 
@@ -221,6 +222,16 @@ router.post(
 				console.error("V2 result email error:", emailError);
 			}
 
+			// Issue a JWT for new accounts so the client can authenticate payment requests
+			let clientToken;
+			if (accountCreated) {
+				clientToken = jwt.sign(
+					{ userId: user._id },
+					process.env.JWT_SECRET,
+					{ expiresIn: "7d" }
+				);
+			}
+
 			res.status(201).json({
 				success: true,
 				assessment: {
@@ -235,6 +246,7 @@ router.post(
 					created: accountCreated,
 					email: user.email,
 				},
+				...(clientToken && { clientToken }),
 			});
 		} catch (error) {
 			console.error("Save v2 assessment error:", error);
