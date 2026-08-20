@@ -148,17 +148,21 @@ router.post('/webhook', async (req, res) => {
     }
 
     // ── Verify PayPal signature ──
-    let signatureValid = false;
-    try {
-      signatureValid = await verifyPayPalWebhook(req.headers, rawBody);
-    } catch (sigErr) {
-      console.error('[webhook] signature verification error:', sigErr.message);
-      return;
-    }
-
-    if (!signatureValid) {
-      console.warn('[webhook] Invalid PayPal signature — event ignored');
-      return;
+    const webhookIdConfigured = !!process.env.PAYPAL_WEBHOOK_ID;
+    if (webhookIdConfigured) {
+      let signatureValid = false;
+      try {
+        signatureValid = await verifyPayPalWebhook(req.headers, rawBody);
+      } catch (sigErr) {
+        console.error('[webhook] signature verification error:', sigErr.message);
+        return;
+      }
+      if (!signatureValid) {
+        console.warn('[webhook] Invalid PayPal signature — event ignored');
+        return;
+      }
+    } else {
+      console.warn('[webhook] PAYPAL_WEBHOOK_ID absent — signature verification skipped (sandbox only)');
     }
 
     const event = JSON.parse(rawBody.toString());
