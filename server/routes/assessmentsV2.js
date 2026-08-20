@@ -9,8 +9,11 @@ const {
 	getLevelLabel,
 	rankPillars,
 } = require("../utils/scoringV2");
-const { generateV2PDFReport } = require("../utils/pdfGeneratorV2");
+const { generateV2PDFReport, generatePremiumV2PDFReport } = require("../utils/pdfGeneratorV2");
 const { sendV2ResultEmail } = require("../utils/emailService");
+const { generatePremiumInsights } = require("../utils/aiInsightsService");
+const { authenticateClient } = require("../middleware/auth");
+const { checkSubscription } = require("../middleware/checkSubscription");
 const jwt = require("jsonwebtoken");
 
 const router = express.Router();
@@ -308,5 +311,62 @@ router.get("/:assessmentId/pdf", async (req, res) => {
 		});
 	}
 });
+
+// GET /api/assessments-v2/:assessmentId/pdf/premium — rapport enrichi IA (abonnement actif requis)
+router.get(
+	"/:assessmentId/pdf/premium",
+	authenticateClient,
+	checkSubscription('paid'),
+	async (req, res) => {
+		try {
+			const assessment = await Assessment.findById(req.params.assessmentId);
+
+			if (!assessment || assessment.version !== "v2") {
+				return res.status(404).json({ success: false, message: "Assessment not found" });
+			}
+
+			// Vérifier que l'assessment appartient à l'utilisateur authentifié
+			if (!assessment.user || assessment.user.toString() !== req.user._id.toString()) {
+				return res.status(403).json({ success: false, message: "Access denied" });
+			}
+
+			// Récupérer ou générer les insights IA (cache dans premiumInsights)
+			let premiumInsights = assessment.premiumInsights;
+			if (!premiumInsights || premiumInsights.fallback === true) {
+				premiumInsights = await generatePremiumInsights(assessment);
+				assessment.premiumInsights = premiumInsights;
+				await assessment.save();
+			}
+
+			// Générer le PDF premium (rapport standard + page IA)
+			const pdfData = {
+				companyName: assessment.companyName,
+				companySize: assessment.companySize,
+				sector: assessment.sector,
+				language: assessment.language,
+				pillarScores: assessment.pillarScores,
+				overallScore: assessment.overallScore,
+				overallLevel: assessment.overallLevel,
+				recommendations: assessment.pillarScores.map((p) => ({
+					pillarId: p.pillarId,
+					pillarName: p.pillarName,
+					recommendations: p.recommendations || [],
+				})),
+				completedAt: assessment.completedAt,
+			};
+
+			const pdfBuffer = await generatePremiumV2PDFReport(pdfData, premiumInsights);
+
+			res.set({
+				"Content-Type": "application/pdf",
+				"Content-Disposition": `attachment; filename="vitalCHECK-rapport-premium.pdf"`,
+			});
+			res.send(pdfBuffer);
+		} catch (error) {
+			console.error("Premium PDF error:", error);
+			res.status(500).json({ success: false, message: "Server error" });
+		}
+	}
+);
 
 module.exports = router;
