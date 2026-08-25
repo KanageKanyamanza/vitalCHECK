@@ -77,7 +77,15 @@ app.use(
 // Les limitations ont été retirées pour éviter de bloquer les clients
 
 // Body parsing middleware
-app.use(express.json({ limit: "10mb" }));
+// Note: rawBody is stored for /payments/webhook signature verification
+app.use(express.json({
+  limit: "10mb",
+  verify: (req, _res, buf) => {
+    if (req.originalUrl.includes('/payments/webhook')) {
+      req.rawBody = buf;
+    }
+  }
+}));
 app.use(express.urlencoded({ extended: true }));
 
 // Cookie parsing middleware
@@ -102,6 +110,7 @@ app.use("/api/chat", require("./routes/chatbot"));
 app.use("/api/notifications", require("./routes/notifications"));
 app.use("/api/newsletters", require("./routes/newsletters"));
 app.use("/api/mailing-contacts", require("./routes/mailing-contacts"));
+app.use("/api/premium-dashboard", require("./routes/premiumDashboard"));
 app.use("/api/messages", require("./routes/messages"));
 app.use("/api", require("./routes/ping"));
 

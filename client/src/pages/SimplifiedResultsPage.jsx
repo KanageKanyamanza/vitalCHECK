@@ -10,13 +10,16 @@ import {
 	TrendingUp,
 	CheckCircle,
 	ListChecks,
+	Sparkles,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
-import { assessmentV2API } from "../services/api";
+import axios from "axios";
+import { assessmentV2API, API_BASE_URL as API_URL } from "../services/api";
 import { getLevelV2ById } from "../utils/colors";
 import useSmoothScroll from "../hooks/useSmoothScroll";
 import SEOHead from "../components/seo/SEOHead";
+import { useClientAuth } from "../context/ClientAuthContext";
 
 const RESULT_STORAGE_KEY = "vitalcheck-v2-result";
 
@@ -28,12 +31,15 @@ const rankPillars = (pillarScores) => {
 	};
 };
 
+const PAID_PLANS = ["standard", "premium", "diagnostic"];
+
 const SimplifiedResultsPage = () => {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const [searchParams] = useSearchParams();
 	const { scrollToTop } = useSmoothScroll();
 	const { t, i18n } = useTranslation();
+	const { user } = useClientAuth();
 
 	const [data, setData] = useState(location.state || null);
 	const [loading, setLoading] = useState(!location.state);
@@ -44,6 +50,12 @@ const SimplifiedResultsPage = () => {
 	const [emailInput, setEmailInput] = useState("");
 	const [saving, setSaving] = useState(false);
 	const [downloading, setDownloading] = useState(false);
+	const [downloadingPremium, setDownloadingPremium] = useState(false);
+
+	// Vrai si l'utilisateur connecté a un abonnement payant actif
+	const isPremiumUser =
+		user?.subscription?.status === "active" &&
+		PAID_PLANS.includes(user?.subscription?.plan);
 
 	// Langue de l'assessment (stockée dans data) ou langue UI courante
 	const language = data?.language || i18n.language?.substring(0, 2) || "fr";
@@ -133,18 +145,30 @@ const SimplifiedResultsPage = () => {
 
 		setSaving(true);
 		try {
-			const response = await assessmentV2API.saveAssessment({
-				answers: data.answers,
-				language,
-				companyName: data.formData?.companyName,
-				email: emailInput.trim(),
-				companySize: data.formData?.companySize,
-				sector: data.formData?.sector || undefined,
-			});
+			const token = localStorage.getItem("clientToken");
+			const response = await assessmentV2API.saveAssessment(
+				{
+					answers: data.answers,
+					language,
+					companyName: data.formData?.companyName,
+					email: emailInput.trim(),
+					companySize: data.formData?.companySize,
+					sector: data.formData?.sector || undefined,
+				},
+				token ? { Authorization: `Bearer ${token}` } : {},
+			);
 
 			if (response.data.success) {
 				setSavedAssessmentId(response.data.assessment.id);
 				setSaved(true);
+
+				// Store JWT if a new account was created — needed to authenticate payment requests
+				if (response.data.account?.created && response.data.clientToken) {
+					localStorage.setItem('clientToken', response.data.clientToken);
+					axios.defaults.headers.common['Authorization'] =
+						`Bearer ${response.data.clientToken}`;
+				}
+
 				toast.success(t("diagnostic.results.reportSentToast"));
 			}
 		} catch (error) {
@@ -190,6 +214,42 @@ const SimplifiedResultsPage = () => {
 	const handlePremiumUpgrade = () => {
 		navigate("/checkout?plan=premium");
 		window.scrollTo({ top: 0, behavior: "smooth" });
+	};
+
+	const handleDownloadPremium = async () => {
+		if (!savedAssessmentId || downloadingPremium) return;
+		setDownloadingPremium(true);
+		try {
+			const token = localStorage.getItem("clientToken");
+			const response = await axios.get(
+				`${API_URL}/assessments-v2/${savedAssessmentId}/pdf/premium`,
+				{ headers: { Authorization: `Bearer ${token}` }, responseType: "blob" },
+			);
+			const blob = new Blob([response.data], { type: "application/pdf" });
+			const url = window.URL.createObjectURL(blob);
+			const link = document.createElement("a");
+			link.href = url;
+			link.download = `vitalCHECK-rapport-premium-${data?.formData?.companyName || "entreprise"}.pdf`;
+			document.body.appendChild(link);
+			link.click();
+			document.body.removeChild(link);
+			window.URL.revokeObjectURL(url);
+			toast.success("Rapport Premium IA téléchargé !");
+		} catch (err) {
+			console.error("Erreur téléchargement rapport premium:", err);
+			const code = err.response?.data?.code;
+			if (code === "SUBSCRIPTION_INACTIVE" || code === "SUBSCRIPTION_EXPIRED" || code === "PLAN_UPGRADE_REQUIRED") {
+				toast.error("Abonnement premium requis pour accéder à ce rapport.");
+			} else if (err.response?.status === 403) {
+				toast.error("Accès refusé — ce diagnostic ne vous appartient pas.");
+			} else if (err.response?.status === 401) {
+				toast.error("Veuillez vous connecter pour télécharger le rapport premium.");
+			} else {
+				toast.error("Erreur lors du téléchargement du rapport premium.");
+			}
+		} finally {
+			setDownloadingPremium(false);
+		}
 	};
 
 	if (loading || !data) {
@@ -433,33 +493,72 @@ const SimplifiedResultsPage = () => {
 								{t("diagnostic.results.emailSectionTitle")}
 							</h3>
 						</div>
-						<p className="text-gray-600 mb-4">
-							{t("diagnostic.results.emailSectionSubtitle")}
-						</p>
-						<form onSubmit={handleSaveAndSend} className="flex flex-col sm:flex-row gap-3">
-							<input
-								type="email"
-								value={emailInput}
-								onChange={(e) => setEmailInput(e.target.value)}
-								placeholder={t("diagnostic.results.emailPlaceholder")}
-								className="input-field flex-1"
-								required
-							/>
-							<button
-								type="submit"
-								disabled={saving}
-								className="btn-primary flex items-center justify-center space-x-2 disabled:opacity-50"
-							>
-								{saving ? (
-									<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-								) : (
-									<>
-										<Mail className="w-4 h-4" />
-										<span>{t("diagnostic.results.sendReportButton")}</span>
-									</>
-								)}
-							</button>
-						</form>
+
+						{/* Email déjà connu → un seul bouton de confirmation */}
+						{emailInput ? (
+							<>
+								<p className="text-gray-600 mb-4">
+									{t("diagnostic.results.emailSectionSubtitle")}
+								</p>
+								<div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+									<div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-700 text-sm flex-1">
+										<Mail className="w-4 h-4 text-gray-400 shrink-0" />
+										<span className="font-medium truncate">{emailInput}</span>
+									</div>
+									<button
+										onClick={handleSaveAndSend}
+										disabled={saving}
+										className="btn-primary flex items-center justify-center space-x-2 disabled:opacity-50 whitespace-nowrap"
+									>
+										{saving ? (
+											<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+										) : (
+											<>
+												<Mail className="w-4 h-4" />
+												<span>{t("diagnostic.results.sendReportButton")}</span>
+											</>
+										)}
+									</button>
+								</div>
+								<button
+									onClick={() => setEmailInput("")}
+									className="mt-2 text-xs text-gray-400 hover:text-gray-600 underline"
+								>
+									Utiliser un autre email
+								</button>
+							</>
+						) : (
+							/* Pas d'email → formulaire complet */
+							<>
+								<p className="text-gray-600 mb-4">
+									{t("diagnostic.results.emailSectionSubtitle")}
+								</p>
+								<form onSubmit={handleSaveAndSend} className="flex flex-col sm:flex-row gap-3">
+									<input
+										type="email"
+										value={emailInput}
+										onChange={(e) => setEmailInput(e.target.value)}
+										placeholder={t("diagnostic.results.emailPlaceholder")}
+										className="input-field flex-1"
+										required
+									/>
+									<button
+										type="submit"
+										disabled={saving}
+										className="btn-primary flex items-center justify-center space-x-2 disabled:opacity-50"
+									>
+										{saving ? (
+											<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+										) : (
+											<>
+												<Mail className="w-4 h-4" />
+												<span>{t("diagnostic.results.sendReportButton")}</span>
+											</>
+										)}
+									</button>
+								</form>
+							</>
+						)}
 					</motion.div>
 				)}
 
@@ -496,35 +595,74 @@ const SimplifiedResultsPage = () => {
 					</motion.div>
 				)}
 
-				{/* Premium CTA */}
-				<motion.div
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ delay: 0.4 }}
-					className="card bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200"
-				>
-					<div className="flex items-center space-x-2 mb-4">
-						<Star className="w-6 h-6 text-purple-500" />
-						<h3 className="text-xl font-bold text-gray-900">
-							{t("diagnostic.results.premiumTitle")}
-						</h3>
-					</div>
-					<ul className="space-y-2 mb-6">
-						{Array.isArray(premiumBenefits) && premiumBenefits.map((benefit, i) => (
-							<li key={i} className="flex items-start space-x-2 text-gray-700">
-								<CheckCircle className="w-4 h-4 text-purple-500 mt-1 flex-shrink-0" />
-								<span>{benefit}</span>
-							</li>
-						))}
-					</ul>
-					<button
-						onClick={handlePremiumUpgrade}
-						className="btn-secondary flex items-center justify-center space-x-2"
+				{/* Bouton Rapport Premium IA — visible uniquement pour les abonnés payants avec diagnostic sauvegardé */}
+				{isPremiumUser && savedAssessmentId && (
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ delay: 0.4 }}
+						className="card border-2 border-green-400 bg-gradient-to-r from-green-50 to-yellow-50"
 					>
-						<Star className="w-4 h-4" />
-						<span>{t("diagnostic.results.premiumCta")}</span>
-					</button>
-				</motion.div>
+						<div className="flex items-center space-x-2 mb-3">
+							<Sparkles className="w-6 h-6 text-green-600" />
+							<h3 className="text-xl font-bold text-gray-900">
+								Votre Rapport Premium IA est disponible
+							</h3>
+						</div>
+						<p className="text-gray-600 mb-5">
+							En tant qu'abonné premium, vous bénéficiez d'une analyse approfondie générée par intelligence artificielle : recommandations personnalisées, plan d'action priorisé et insights stratégiques adaptés à votre secteur.
+						</p>
+						<button
+							onClick={handleDownloadPremium}
+							disabled={downloadingPremium}
+							className="flex items-center space-x-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+						>
+							{downloadingPremium ? (
+								<>
+									<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+									<span>Génération en cours… (10–20 sec)</span>
+								</>
+							) : (
+								<>
+									<Download className="w-5 h-5" />
+									<span>Télécharger mon Rapport Premium IA</span>
+								</>
+							)}
+						</button>
+					</motion.div>
+				)}
+
+				{/* Premium CTA — uniquement pour les non-abonnés */}
+				{!isPremiumUser && (
+					<motion.div
+						initial={{ opacity: 0, y: 20 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ delay: 0.4 }}
+						className="card bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200"
+					>
+						<div className="flex items-center space-x-2 mb-4">
+							<Star className="w-6 h-6 text-purple-500" />
+							<h3 className="text-xl font-bold text-gray-900">
+								{t("diagnostic.results.premiumTitle")}
+							</h3>
+						</div>
+						<ul className="space-y-2 mb-6">
+							{Array.isArray(premiumBenefits) && premiumBenefits.map((benefit, i) => (
+								<li key={i} className="flex items-start space-x-2 text-gray-700">
+									<CheckCircle className="w-4 h-4 text-purple-500 mt-1 flex-shrink-0" />
+									<span>{benefit}</span>
+								</li>
+							))}
+						</ul>
+						<button
+							onClick={handlePremiumUpgrade}
+							className="btn-secondary flex items-center justify-center space-x-2"
+						>
+							<Star className="w-4 h-4" />
+							<span>{t("diagnostic.results.premiumCta")}</span>
+						</button>
+					</motion.div>
+				)}
 			</div>
 		</div>
 	);

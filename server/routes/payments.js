@@ -1,299 +1,291 @@
 const express = require('express');
 const router = express.Router();
+const jwt = require('jsonwebtoken');
 const Payment = require('../models/Payment');
 const Notification = require('../models/Notification');
 const User = require('../models/User');
-const { authenticateAdmin } = require('../utils/auth');
-const { sendPaymentEmail, sendAccountCreatedEmail, sendSubscriptionUpgradeEmail } = require('../utils/emailService');
+const { authenticateAdmin, authenticateClient } = require('../middleware/auth');
+const { verifyPayPalOrder, verifyPayPalWebhook } = require('../utils/paypalService');
+const {
+  sendPaymentEmail,
+  sendAccountCreatedEmail,
+  sendSubscriptionUpgradeEmail,
+} = require('../utils/emailService');
 
-// Enregistrer un nouveau paiement (public - appelé depuis le frontend)
-router.post('/record', async (req, res) => {
+// ──────────────────────────────────────────────────────────────────────────────
+// Shared helpers
+// ──────────────────────────────────────────────────────────────────────────────
+
+// Apply a validated plan to a user and persist the Payment record
+const applyPlanToUser = async ({ user, planId, planName, orderId, amount, currency, paymentDetails, paypalOrderId }) => {
+  const endDate = planId === 'diagnostic'
+    ? null
+    : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
+
+  // Create or find the Payment document (idempotent)
+  let payment = await Payment.findOne({ orderId });
+  if (!payment) {
+    payment = await new Payment({
+      orderId,
+      planId,
+      planName,
+      amount,
+      currency,
+      customerEmail: user.email,
+      paypalOrderId,
+      status: 'completed',
+      paymentDetails,
+    }).save();
+  }
+
+  const wasNewAccount = !user.hasAccount;
+  let tempPassword = null;
+
+  if (!user.hasAccount) {
+    const tmp = new User();
+    tempPassword = tmp.generateTempPassword();
+    user.password = tempPassword;
+    user.tempPassword = tempPassword;
+    user.hasAccount = true;
+    user.accountCreatedAt = new Date();
+  }
+
+  user.subscription = {
+    plan: planId,
+    status: 'active',
+    startDate: new Date(),
+    endDate,
+    paymentId: payment._id,
+  };
+  user.isPremium = ['premium', 'diagnostic'].includes(planId);
+  await user.save();
+
+  // Send email (non-blocking)
   try {
-    const {
-      orderId,
-      planId,
-      planName,
-      amount,
-      currency,
-      customerEmail,
-      paypalOrderId,
-      status,
-      paymentDetails
-    } = req.body;
-
-    // Vérifier si le paiement existe déjà
-    const existingPayment = await Payment.findOne({ orderId });
-    if (existingPayment) {
-      return res.status(200).json({
-        message: 'Payment already recorded',
-        payment: existingPayment
-      });
-    }
-
-    // Créer le paiement
-    const payment = new Payment({
-      orderId,
-      planId,
-      planName,
-      amount,
-      currency,
-      customerEmail,
-      paypalOrderId,
-      status: status || 'pending',
-      paymentDetails
-    });
-
-    await payment.save();
-
-    // Récupérer les données utilisateur depuis paymentDetails si disponibles
-    const userCompanyName = paymentDetails?.userCompanyName || planName;
-    const userEmail = paymentDetails?.userEmail || customerEmail;
-    
-    console.log('🔍 [PAYMENT] User data from payment:', { 
-      userEmail, 
-      userCompanyName, 
-      customerEmail, 
-      planName 
-    });
-
-    // Créer ou mettre à jour le compte utilisateur
-    let user = await User.findOne({ email: userEmail }); // Utiliser l'email utilisateur
-    let tempPassword = null;
-    let accountCreated = false;
-
-    if (!user) {
-      // Créer un nouveau compte utilisateur
-      const userModel = new User();
-      tempPassword = userModel.generateTempPassword();
-      
-      user = new User({
-        email: userEmail, // Utiliser l'email utilisateur
-        password: tempPassword,
-        companyName: userCompanyName, // Utiliser le nom de l'entreprise
-        sector: 'other',
-        companySize: 'sme',
-        subscription: {
-          plan: planId,
-          status: 'active',
-          startDate: new Date(),
-          endDate: planId === 'diagnostic' ? null : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 1 mois pour standard/premium
-          paymentId: payment._id
-        },
-        isPremium: ['premium', 'diagnostic'].includes(planId),
-        hasAccount: true
-      });
-      await user.save();
-      accountCreated = true;
-    } else if (!user.hasAccount) {
-      // L'utilisateur existe mais n'a pas de compte actif, créer un mot de passe
-      const userModel = new User();
-      tempPassword = userModel.generateTempPassword();
-      
-      user.password = tempPassword;
-      // Mettre à jour le nom de l'entreprise si fourni
-      if (userCompanyName && userCompanyName !== planName) {
-        user.companyName = userCompanyName;
-      }
-      user.subscription = {
-        plan: planId,
-        status: 'active',
-        startDate: new Date(),
-        endDate: planId === 'diagnostic' ? null : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 1 mois pour standard/premium
-        paymentId: payment._id
-      };
-      user.isPremium = ['premium', 'diagnostic'].includes(planId);
-      user.hasAccount = true;
-      await user.save();
-      accountCreated = true;
+    if (wasNewAccount && tempPassword) {
+      await sendAccountCreatedEmail(user.email, user.companyName, tempPassword, planName);
     } else {
-      // L'utilisateur a déjà un compte, mettre à jour l'abonnement
-      // Mettre à jour le nom de l'entreprise si fourni
-      if (userCompanyName && userCompanyName !== planName) {
-        user.companyName = userCompanyName;
-      }
-      user.subscription = {
-        plan: planId,
-        status: 'active',
-        startDate: new Date(),
-        endDate: planId === 'diagnostic' ? null : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 1 mois pour standard/premium
-        paymentId: payment._id
-      };
-      user.isPremium = ['premium', 'diagnostic'].includes(planId);
-      await user.save();
+      await sendSubscriptionUpgradeEmail(user.email, user.companyName, planName, planId);
+    }
+  } catch (emailErr) {
+    console.error('[payments] email failed:', emailErr.message);
+  }
+
+  // Admin notification (non-blocking)
+  new Notification({
+    type: 'new_assessment',
+    title: 'Nouveau paiement reçu',
+    message: `Paiement ${amount} ${currency} — plan ${planName} (${user.email})`,
+    user: { id: user._id, name: user.companyName, email: user.email },
+  }).save().catch(err => console.error('[payments] notification failed:', err.message));
+
+  return { payment, user, tempPassword };
+};
+
+// ──────────────────────────────────────────────────────────────────────────────
+// POST /api/payments/record  (authenticated — requires valid client JWT)
+// ──────────────────────────────────────────────────────────────────────────────
+router.post('/record', authenticateClient, async (req, res) => {
+  try {
+    const { orderId, planId, planName, amount, currency = 'USD', paypalOrderId, paymentDetails } = req.body;
+
+    if (!orderId || !planId) {
+      return res.status(400).json({ message: 'orderId et planId requis' });
     }
 
-    // Envoyer l'email selon le contexte
+    // ── 1. Verify the transaction with PayPal servers ──
     try {
-      if (accountCreated && tempPassword) {
-        // NOUVEAU COMPTE - Email avec identifiants
-        await sendAccountCreatedEmail(
-          userEmail, // Utiliser l'email utilisateur
-          user.firstName || user.companyName, // Utiliser le nom de l'entreprise
-          tempPassword,
-          planName
-        );
-        console.log('✅ Email création compte envoyé après paiement à:', userEmail);
-      } else {
-        // COMPTE EXISTANT - Email de mise à jour d'abonnement
-        await sendSubscriptionUpgradeEmail(
-          userEmail, // Utiliser l'email utilisateur
-          user.firstName || user.companyName, // Utiliser le nom de l'entreprise
-          planName,
-          planId
-        );
-        console.log('✅ Email mise à jour abonnement envoyé à:', userEmail);
-      }
-    } catch (emailError) {
-      console.error('❌ Erreur envoi email paiement:', emailError);
-      // Continue même si l'email échoue
-    }
-
-    // Créer une notification pour l'admin
-    try {
-      const notification = new Notification({
-        type: 'payment',
-        title: 'Nouveau paiement reçu',
-        message: `Paiement de ${amount} ${currency} pour le plan ${planName}`,
-        priority: 'high',
-        metadata: {
-          paymentId: payment._id,
-          orderId,
-          planId,
-          amount,
-          customerEmail,
-          accountCreated
-        }
+      await verifyPayPalOrder(orderId, planId);
+    } catch (verifyErr) {
+      console.error('[payments/record] PayPal verification failed:', verifyErr.message);
+      return res.status(402).json({
+        message: 'Transaction PayPal non valide — paiement refusé',
+        detail: verifyErr.message,
       });
-      await notification.save();
-    } catch (notifError) {
-      console.error('Error creating notification:', notifError);
-      // Continue even if notification fails
     }
+
+    // ── 2. The authenticated user is req.user (from JWT) ──
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      return res.status(404).json({ message: 'Utilisateur non trouvé' });
+    }
+
+    // ── 3. Idempotency: already recorded? ──
+    const existing = await Payment.findOne({ orderId });
+    if (existing) {
+      return res.status(200).json({ message: 'Paiement déjà enregistré', payment: existing });
+    }
+
+    // ── 4. Apply plan ──
+    const { payment } = await applyPlanToUser({
+      user, planId, planName, orderId,
+      amount, currency, paymentDetails,
+      paypalOrderId: paypalOrderId || orderId,
+    });
 
     res.status(201).json({
-      message: 'Payment recorded successfully',
+      message: 'Paiement enregistré avec succès',
       payment,
-      accountCreated
     });
-
   } catch (error) {
-    console.error('Error recording payment:', error);
-    res.status(500).json({
-      message: 'Error recording payment',
-      error: error.message
-    });
+    console.error('[payments/record] error:', error);
+    res.status(500).json({ message: 'Erreur serveur', error: error.message });
   }
 });
 
-// Routes admin (protégées)
+// ──────────────────────────────────────────────────────────────────────────────
+// POST /api/payments/webhook  (PayPal webhook — raw body, no auth middleware)
+// ──────────────────────────────────────────────────────────────────────────────
+router.post('/webhook', async (req, res) => {
+  // Respond 200 immediately so PayPal doesn't retry — process asynchronously
+  res.status(200).send('OK');
 
-// Récupérer tous les paiements
+  try {
+    const rawBody = req.rawBody;
+    if (!rawBody) {
+      console.warn('[webhook] rawBody absent — check index.js JSON verify callback');
+      return;
+    }
+
+    // ── Verify PayPal signature ──
+    const webhookIdConfigured = !!process.env.PAYPAL_WEBHOOK_ID;
+    if (webhookIdConfigured) {
+      let signatureValid = false;
+      try {
+        signatureValid = await verifyPayPalWebhook(req.headers, rawBody);
+      } catch (sigErr) {
+        console.error('[webhook] signature verification error:', sigErr.message);
+        return;
+      }
+      if (!signatureValid) {
+        console.warn('[webhook] Invalid PayPal signature — event ignored');
+        return;
+      }
+    } else {
+      console.warn('[webhook] PAYPAL_WEBHOOK_ID absent — signature verification skipped (sandbox only)');
+    }
+
+    const event = JSON.parse(rawBody.toString());
+    console.log('[webhook] Received event:', event.event_type);
+
+    if (event.event_type !== 'PAYMENT.CAPTURE.COMPLETED') return;
+
+    const capture = event.resource;
+    const orderId = capture.supplementary_data?.related_ids?.order_id || capture.id;
+
+    // ── Idempotency: skip if already processed ──
+    if (await Payment.findOne({ orderId })) {
+      console.log('[webhook] Order already recorded, skipping:', orderId);
+      return;
+    }
+
+    // ── Resolve plan from custom_id or description ──
+    const description = (capture.purchase_units?.[0]?.description || '').toLowerCase();
+    let planId = 'standard';
+    if (description.includes('premium')) planId = 'premium';
+    else if (description.includes('diagnostic')) planId = 'diagnostic';
+
+    // ── Find user by payer email ──
+    const payerEmail = event.resource?.payer?.email_address?.toLowerCase();
+    if (!payerEmail) {
+      console.warn('[webhook] No payer email in event');
+      return;
+    }
+
+    let user = await User.findOne({ email: payerEmail });
+    if (!user) {
+      // Create a minimal user account (no password — they'll receive one via email)
+      user = new User({
+        email: payerEmail,
+        companyName: payerEmail,
+        sector: 'other',
+        companySize: 'sme',
+      });
+    }
+
+    const amount = parseFloat(capture.amount?.value || 0);
+
+    await applyPlanToUser({
+      user,
+      planId,
+      planName: planId.charAt(0).toUpperCase() + planId.slice(1),
+      orderId,
+      amount,
+      currency: capture.amount?.currency_code || 'USD',
+      paypalOrderId: capture.id,
+      paymentDetails: capture,
+    });
+
+    console.log(`[webhook] Plan ${planId} applied to ${payerEmail}`);
+  } catch (err) {
+    console.error('[webhook] processing error:', err.message);
+  }
+});
+
+// ──────────────────────────────────────────────────────────────────────────────
+// Admin routes  (all protected)
+// ──────────────────────────────────────────────────────────────────────────────
+
 router.get('/payments', authenticateAdmin, async (req, res) => {
   try {
-    const payments = await Payment.find()
-      .sort({ createdAt: -1 })
-      .lean();
-
+    const payments = await Payment.find().sort({ createdAt: -1 }).lean();
     res.json({ payments });
   } catch (error) {
-    console.error('Error fetching payments:', error);
-    res.status(500).json({
-      message: 'Error fetching payments',
-      error: error.message
-    });
+    console.error('[payments admin list]', error);
+    res.status(500).json({ message: 'Erreur serveur', error: error.message });
   }
 });
 
-// Envoyer un email à un client
 router.post('/payments/:id/send-email', authenticateAdmin, async (req, res) => {
   try {
-    const { id } = req.params;
-    const { subject, message } = req.body;
+    const payment = await Payment.findById(req.params.id);
+    if (!payment) return res.status(404).json({ message: 'Paiement non trouvé' });
 
-    const payment = await Payment.findById(id);
-    if (!payment) {
-      return res.status(404).json({ message: 'Payment not found' });
-    }
+    await sendPaymentEmail(payment.customerEmail, req.body.subject, req.body.message);
 
-    // Envoyer l'email
-    await sendPaymentEmail(payment.customerEmail, subject, message);
-
-    // Mettre à jour le statut de l'email ET marquer comme processed
     payment.emailSent = true;
     payment.emailSentAt = new Date();
-    payment.status = 'processed'; // Automatiquement marquer comme traité
+    payment.status = 'processed';
     await payment.save();
 
-    res.json({
-      message: 'Email sent successfully',
-      payment
-    });
-
+    res.json({ message: 'Email envoyé', payment });
   } catch (error) {
-    console.error('Error sending email:', error);
-    res.status(500).json({
-      message: 'Error sending email',
-      error: error.message
-    });
+    console.error('[payments admin email]', error);
+    res.status(500).json({ message: 'Erreur serveur', error: error.message });
   }
 });
 
-// Mettre à jour le statut d'un paiement
 router.patch('/payments/:id/status', authenticateAdmin, async (req, res) => {
   try {
-    const { id } = req.params;
-    const { status } = req.body;
-
     const payment = await Payment.findByIdAndUpdate(
-      id,
-      { status },
+      req.params.id,
+      { status: req.body.status },
       { new: true }
     );
-
-    if (!payment) {
-      return res.status(404).json({ message: 'Payment not found' });
-    }
-
-    res.json({
-      message: 'Payment status updated',
-      payment
-    });
-
+    if (!payment) return res.status(404).json({ message: 'Paiement non trouvé' });
+    res.json({ message: 'Statut mis à jour', payment });
   } catch (error) {
-    console.error('Error updating payment status:', error);
-    res.status(500).json({
-      message: 'Error updating payment status',
-      error: error.message
-    });
+    console.error('[payments admin status]', error);
+    res.status(500).json({ message: 'Erreur serveur', error: error.message });
   }
 });
 
-// Exporter les paiements en CSV
 router.get('/payments/export', authenticateAdmin, async (req, res) => {
   try {
     const payments = await Payment.find().sort({ createdAt: -1 }).lean();
-
-    // Créer le CSV
     const csvHeader = 'Date,Email,Plan,Montant,Devise,Statut,Email Envoyé,Order ID\n';
     const csvRows = payments.map(p => {
       const date = new Date(p.createdAt).toLocaleDateString('fr-FR');
       return `${date},"${p.customerEmail}","${p.planName}",${p.amount},${p.currency},${p.status},${p.emailSent ? 'Oui' : 'Non'},"${p.orderId}"`;
     }).join('\n');
 
-    const csv = csvHeader + csvRows;
-
     res.setHeader('Content-Type', 'text/csv');
     res.setHeader('Content-Disposition', 'attachment; filename=payments.csv');
-    res.send(csv);
-
+    res.send(csvHeader + csvRows);
   } catch (error) {
-    console.error('Error exporting payments:', error);
-    res.status(500).json({
-      message: 'Error exporting payments',
-      error: error.message
-    });
+    console.error('[payments admin export]', error);
+    res.status(500).json({ message: 'Erreur serveur', error: error.message });
   }
 });
 
 module.exports = router;
-

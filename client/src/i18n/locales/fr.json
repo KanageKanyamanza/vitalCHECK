@@ -1015,6 +1015,29 @@
 			}
 		}
 	},
+	"premiumDashboard": {
+		"title": "Tableau de Bord Premium",
+		"subtitle": "Évolution de vos performances et comparaison de diagnostics",
+		"evolution": {
+			"title": "Évolution des scores",
+			"globalScore": "Score global",
+			"noData": "Aucune donnée disponible"
+		},
+		"comparator": {
+			"title": "Comparateur de diagnostics",
+			"diagA": "Diagnostic A",
+			"diagB": "Diagnostic B",
+			"choose": "Choisir un diagnostic",
+			"selectTwo": "Sélectionnez deux diagnostics pour les comparer"
+		},
+		"export": {
+			"button": "Exporter Excel",
+			"loading": "Export en cours…",
+			"success": "Fichier Excel téléchargé !",
+			"error": "Erreur lors de l'export",
+			"accessDenied": "Accès réservé aux abonnés premium"
+		}
+	},
 	"clientProfile": {
 		"title": "Mon Profil",
 		"tabs": {

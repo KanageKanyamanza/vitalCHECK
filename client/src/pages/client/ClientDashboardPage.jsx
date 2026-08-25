@@ -13,6 +13,7 @@ import {
 	LogOut,
 	Settings,
 	Plus,
+	BarChart2,
 } from "lucide-react";
 import { useClientAuth } from "../../context/ClientAuthContext";
 import { useAssessment } from "../../context/AssessmentContext";
@@ -20,6 +21,9 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 import { API_BASE_URL as API_URL } from "../../services/api";
+import ScoreEvolutionChart from "../../components/premium/ScoreEvolutionChart";
+import DiagnosticComparator from "../../components/premium/DiagnosticComparator";
+import PremiumExportButton from "../../components/premium/PremiumExportButton";
 
 const ClientDashboardPage = () => {
 	const { t } = useTranslation();
@@ -32,6 +36,11 @@ const ClientDashboardPage = () => {
 	const [loading, setLoading] = useState(true);
 	const [paymentFilter, setPaymentFilter] = useState("all"); // 'all', 'active', 'completed'
 	const [downloadingReport, setDownloadingReport] = useState(null); // Track which report is downloading
+
+	// Premium dashboard state
+	const [premiumHistory, setPremiumHistory] = useState([]);
+	const [comparatorA, setComparatorA] = useState(null);
+	const [comparatorB, setComparatorB] = useState(null);
 
 	// Filtrer les paiements selon le filtre sélectionné
 	const filteredPayments = payments.filter((payment) => {
@@ -86,6 +95,21 @@ const ClientDashboardPage = () => {
 				{ headers: { Authorization: `Bearer ${token}` } },
 			);
 			setPayments(paymentsResponse.data.payments || []);
+
+			// Load premium history if user has paid plan
+			const plan = user?.subscription?.plan;
+			const isPaid = plan && plan !== "free";
+			if (isPaid) {
+				try {
+					const premiumRes = await axios.get(`${API_URL}/premium-dashboard/history`, {
+						headers: { Authorization: `Bearer ${token}` },
+					});
+					setPremiumHistory(premiumRes.data.assessments || []);
+				} catch (premiumErr) {
+					// Silently ignore: 403 means subscription not active yet
+					console.warn("[premium-dashboard] history unavailable:", premiumErr.response?.status);
+				}
+			}
 		} catch (error) {
 			console.error("Error loading dashboard data:", error);
 			toast.error("Erreur lors du chargement des données");
@@ -114,9 +138,8 @@ const ClientDashboardPage = () => {
 	};
 
 	const handleNewAssessment = () => {
-		// Nettoyer le contexte d'évaluation avant de commencer une nouvelle évaluation
 		assessmentDispatch({ type: "CLEAR_STORAGE" });
-		navigate("/");
+		navigate("/diagnostic");
 	};
 
 	const handleDownloadReport = async (assessmentId) => {
@@ -594,6 +617,59 @@ const ClientDashboardPage = () => {
 						</motion.div>
 					}
 				</div>
+
+				{/* ── SECTION PREMIUM DASHBOARD ── */}
+				{premiumHistory.length > 0 && (
+					<motion.div
+						initial={{ opacity: 0, y: 24 }}
+						animate={{ opacity: 1, y: 0 }}
+						transition={{ delay: 0.5 }}
+						className="mt-8"
+					>
+						{/* Header */}
+						<div className="flex flex-wrap items-center justify-between gap-4 mb-6">
+							<div className="flex items-center gap-3">
+								<div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-600 to-yellow-400 flex items-center justify-center">
+									<BarChart2 className="w-5 h-5 text-white" />
+								</div>
+								<div>
+									<h2 className="text-xl font-bold text-gray-900">
+										{t("premiumDashboard.title")}
+									</h2>
+									<p className="text-sm text-gray-500">{t("premiumDashboard.subtitle")}</p>
+								</div>
+							</div>
+							<PremiumExportButton t={t} />
+						</div>
+
+						<div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+							{/* Score Evolution Chart */}
+							<div className="bg-white rounded-xl shadow p-6">
+								<h3 className="text-base font-semibold text-gray-800 mb-4 flex items-center gap-2">
+									<TrendingUp className="w-4 h-4 text-green-600" />
+									{t("premiumDashboard.evolution.title")}
+								</h3>
+								<ScoreEvolutionChart assessments={premiumHistory} t={t} />
+							</div>
+
+							{/* Diagnostic Comparator */}
+							<div className="bg-white rounded-xl shadow p-6">
+								<h3 className="text-base font-semibold text-gray-800 mb-4 flex items-center gap-2">
+									<BarChart2 className="w-4 h-4 text-blue-600" />
+									{t("premiumDashboard.comparator.title")}
+								</h3>
+								<DiagnosticComparator
+									assessments={premiumHistory}
+									selectedA={comparatorA}
+									selectedB={comparatorB}
+									onSelectA={setComparatorA}
+									onSelectB={setComparatorB}
+									t={t}
+								/>
+							</div>
+						</div>
+					</motion.div>
+				)}
 			</main>
 		</div>
 	);

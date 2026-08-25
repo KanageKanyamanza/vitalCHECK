@@ -24,6 +24,7 @@ import BlogDetailPage from '../pages/BlogDetailPage'
 import ReportDownloadPage from '../pages/ReportDownloadPage'
 import AdminApp from '../pages/admin/AdminApp'
 import { PingPongTest } from '../components/test'
+import ProtectedRoute from '../components/auth/ProtectedRoute'
 
 const AppRoutes = () => {
   return (
@@ -45,8 +46,16 @@ const AppRoutes = () => {
       <Route path="/forgot-password" element={<ForgotPasswordPage />} />
       <Route path="/reset-password/:token" element={<ResetPasswordPage />} />
       <Route path="/client/register" element={<ClientRegisterPage />} />
-      <Route path="/client/dashboard" element={<ClientDashboardPage />} />
-      <Route path="/client/profile" element={<ClientProfilePage />} />
+      <Route path="/client/dashboard" element={
+        <ProtectedRoute requireAuth>
+          <ClientDashboardPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/client/profile" element={
+        <ProtectedRoute requireAuth>
+          <ClientProfilePage />
+        </ProtectedRoute>
+      } />
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/terms" element={<TermsOfService />} />
       <Route path="/blog" element={<BlogPage />} />
