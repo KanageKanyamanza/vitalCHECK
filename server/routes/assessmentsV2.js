@@ -203,8 +203,7 @@ router.post(
 
 			await assessment.save();
 
-			user.assessments.push(assessment._id);
-			await user.save();
+			await User.findByIdAndUpdate(user._id, { $push: { assessments: assessment._id } });
 
 			// Génération du rapport PDF (2 pages, style Cerclos)
 			let pdfBuffer = null;

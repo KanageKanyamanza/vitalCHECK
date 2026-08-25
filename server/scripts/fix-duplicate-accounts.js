@@ -6,10 +6,9 @@
  */
 
 const mongoose = require('mongoose');
-require('dotenv').config();
 
 async function main() {
-  await mongoose.connect(process.env.MONGODB_URI);
+  await mongoose.connect('mongodb://127.0.0.1:27017/ubb-health-check');
   console.log('✅ MongoDB connecté');
 
   const User       = require('../models/User');
