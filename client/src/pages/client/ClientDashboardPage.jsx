@@ -138,9 +138,8 @@ const ClientDashboardPage = () => {
 	};
 
 	const handleNewAssessment = () => {
-		// Nettoyer le contexte d'évaluation avant de commencer une nouvelle évaluation
 		assessmentDispatch({ type: "CLEAR_STORAGE" });
-		navigate("/");
+		navigate("/diagnostic");
 	};
 
 	const handleDownloadReport = async (assessmentId) => {
