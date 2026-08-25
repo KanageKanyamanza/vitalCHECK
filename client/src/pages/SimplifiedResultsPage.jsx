@@ -484,33 +484,72 @@ const SimplifiedResultsPage = () => {
 								{t("diagnostic.results.emailSectionTitle")}
 							</h3>
 						</div>
-						<p className="text-gray-600 mb-4">
-							{t("diagnostic.results.emailSectionSubtitle")}
-						</p>
-						<form onSubmit={handleSaveAndSend} className="flex flex-col sm:flex-row gap-3">
-							<input
-								type="email"
-								value={emailInput}
-								onChange={(e) => setEmailInput(e.target.value)}
-								placeholder={t("diagnostic.results.emailPlaceholder")}
-								className="input-field flex-1"
-								required
-							/>
-							<button
-								type="submit"
-								disabled={saving}
-								className="btn-primary flex items-center justify-center space-x-2 disabled:opacity-50"
-							>
-								{saving ? (
-									<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-								) : (
-									<>
-										<Mail className="w-4 h-4" />
-										<span>{t("diagnostic.results.sendReportButton")}</span>
-									</>
-								)}
-							</button>
-						</form>
+
+						{/* Email déjà connu → un seul bouton de confirmation */}
+						{emailInput ? (
+							<>
+								<p className="text-gray-600 mb-4">
+									{t("diagnostic.results.emailSectionSubtitle")}
+								</p>
+								<div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
+									<div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-700 text-sm flex-1">
+										<Mail className="w-4 h-4 text-gray-400 shrink-0" />
+										<span className="font-medium truncate">{emailInput}</span>
+									</div>
+									<button
+										onClick={handleSaveAndSend}
+										disabled={saving}
+										className="btn-primary flex items-center justify-center space-x-2 disabled:opacity-50 whitespace-nowrap"
+									>
+										{saving ? (
+											<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+										) : (
+											<>
+												<Mail className="w-4 h-4" />
+												<span>{t("diagnostic.results.sendReportButton")}</span>
+											</>
+										)}
+									</button>
+								</div>
+								<button
+									onClick={() => setEmailInput("")}
+									className="mt-2 text-xs text-gray-400 hover:text-gray-600 underline"
+								>
+									Utiliser un autre email
+								</button>
+							</>
+						) : (
+							/* Pas d'email → formulaire complet */
+							<>
+								<p className="text-gray-600 mb-4">
+									{t("diagnostic.results.emailSectionSubtitle")}
+								</p>
+								<form onSubmit={handleSaveAndSend} className="flex flex-col sm:flex-row gap-3">
+									<input
+										type="email"
+										value={emailInput}
+										onChange={(e) => setEmailInput(e.target.value)}
+										placeholder={t("diagnostic.results.emailPlaceholder")}
+										className="input-field flex-1"
+										required
+									/>
+									<button
+										type="submit"
+										disabled={saving}
+										className="btn-primary flex items-center justify-center space-x-2 disabled:opacity-50"
+									>
+										{saving ? (
+											<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+										) : (
+											<>
+												<Mail className="w-4 h-4" />
+												<span>{t("diagnostic.results.sendReportButton")}</span>
+											</>
+										)}
+									</button>
+								</form>
+							</>
+						)}
 					</motion.div>
 				)}
 
