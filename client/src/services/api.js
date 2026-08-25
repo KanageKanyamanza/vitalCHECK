@@ -189,7 +189,9 @@ export const assessmentV2API = {
 	scoreAssessment: (data) => api.post("/assessments-v2/score", data),
 
 	// Sauvegarder le résultat (crée/lie un compte, génère le PDF, envoie l'email)
-	saveAssessment: (data) => api.post("/assessments-v2/save", data),
+	// extraHeaders optionnel — passe le JWT si l'utilisateur est connecté pour lier au bon compte
+	saveAssessment: (data, extraHeaders = {}) =>
+		api.post("/assessments-v2/save", data, { headers: extraHeaders }),
 
 	// Récupérer un résultat sauvegardé
 	getAssessment: (assessmentId) =>

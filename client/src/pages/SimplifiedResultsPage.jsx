@@ -145,14 +145,18 @@ const SimplifiedResultsPage = () => {
 
 		setSaving(true);
 		try {
-			const response = await assessmentV2API.saveAssessment({
-				answers: data.answers,
-				language,
-				companyName: data.formData?.companyName,
-				email: emailInput.trim(),
-				companySize: data.formData?.companySize,
-				sector: data.formData?.sector || undefined,
-			});
+			const token = localStorage.getItem("clientToken");
+			const response = await assessmentV2API.saveAssessment(
+				{
+					answers: data.answers,
+					language,
+					companyName: data.formData?.companyName,
+					email: emailInput.trim(),
+					companySize: data.formData?.companySize,
+					sector: data.formData?.sector || undefined,
+				},
+				token ? { Authorization: `Bearer ${token}` } : {},
+			);
 
 			if (response.data.success) {
 				setSavedAssessmentId(response.data.assessment.id);
@@ -233,8 +237,13 @@ const SimplifiedResultsPage = () => {
 			toast.success("Rapport Premium IA téléchargé !");
 		} catch (err) {
 			console.error("Erreur téléchargement rapport premium:", err);
-			if (err.response?.status === 403) {
-				toast.error("Abonnement requis pour accéder au rapport premium.");
+			const code = err.response?.data?.code;
+			if (code === "SUBSCRIPTION_INACTIVE" || code === "SUBSCRIPTION_EXPIRED" || code === "PLAN_UPGRADE_REQUIRED") {
+				toast.error("Abonnement premium requis pour accéder à ce rapport.");
+			} else if (err.response?.status === 403) {
+				toast.error("Accès refusé — ce diagnostic ne vous appartient pas.");
+			} else if (err.response?.status === 401) {
+				toast.error("Veuillez vous connecter pour télécharger le rapport premium.");
 			} else {
 				toast.error("Erreur lors du téléchargement du rapport premium.");
 			}

@@ -136,10 +136,29 @@ router.post(
 			const { pillarScores, overallScore, overallLevel } = calculateScoresV2(answers, questionsData);
 			const recommendations = generateRecommendationsV2(answers, pillarScores, questionsData);
 
-			// Trouver ou créer l'utilisateur associé à cet email
-			let user = await User.findOne({ email });
+			// Si l'utilisateur est déjà connecté (JWT présent), lier à son compte existant
+			// Évite la création d'un doublon quand la normalisation email diverge (ex: Gmail dots)
+			let user = null;
 			let accountCreated = false;
 			let tempPassword = null;
+
+			const authHeader = req.headers.authorization;
+			if (authHeader) {
+				try {
+					const token = authHeader.split(" ")[1];
+					const decoded = jwt.verify(token, process.env.JWT_SECRET);
+					if (decoded.userId) {
+						user = await User.findById(decoded.userId);
+					}
+				} catch {
+					// Token invalide ou expiré → fallback sur la recherche par email
+				}
+			}
+
+			if (!user) {
+				// Recherche par email insensible à la casse (sans normalisation Gmail agressive)
+				user = await User.findOne({ email: { $regex: new RegExp(`^${email.replace(/[.+*?^${}()|[\]\\]/g, "\\$&")}$`, "i") } });
+			}
 
 			if (!user) {
 				user = new User({
