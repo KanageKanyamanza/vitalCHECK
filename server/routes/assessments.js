@@ -721,10 +721,11 @@ router.post(
 	},
 );
 
-// Get user's assessments
+// Get user's assessments — pdfBuffer and answers excluded (too heavy for list view)
 router.get("/user/:userId", async (req, res) => {
 	try {
 		const assessments = await Assessment.find({ user: req.params.userId })
+			.select("-pdfBuffer -answers")
 			.sort({ completedAt: -1 })
 			.populate("user", "companyName email");
 

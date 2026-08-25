@@ -142,7 +142,7 @@ router.get('/me', async (req, res) => {
     if (decoded.role === 'admin') {
       // Récupérer les données admin
       const admin = await Admin.findById(decoded.adminId).select('-password');
-      
+
       if (!admin || !admin.isActive) {
         return res.status(401).json({
           success: false,
@@ -159,10 +159,10 @@ router.get('/me', async (req, res) => {
           role: admin.role
         }
       });
-    } else if (decoded.role === 'client') {
-      // Récupérer les données client
+    } else if (decoded.role === 'client' || (!decoded.role && decoded.userId)) {
+      // Tokens avec role:'client' (login normal) ou sans role (issus du diagnostic gratuit)
       const user = await User.findById(decoded.userId).select('-password');
-      
+
       if (!user) {
         return res.status(401).json({
           success: false,
