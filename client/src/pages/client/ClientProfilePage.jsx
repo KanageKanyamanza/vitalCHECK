@@ -8,13 +8,13 @@ import {
   Building2,
   Phone,
   Lock,
-  ArrowLeft,
   Save,
   CreditCard,
   Shield
 } from 'lucide-react'
 import { useClientAuth } from '../../context/ClientAuthContext'
 import toast from 'react-hot-toast'
+import ClientLayout from '../../components/client/ClientLayout'
 
 const ClientProfilePage = () => {
   const { t } = useTranslation()
@@ -99,26 +99,8 @@ const ClientProfilePage = () => {
   const badge = getSubscriptionBadge()
 
   return (
-    <div className="min-h-screen bg-gray-50 py-[60px]">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center">
-            <button
-              onClick={() => navigate('/client/dashboard')}
-              className="mr-4 p-2 hover:bg-gray-100 rounded-lg"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <h1 className="text-2xl font-bold text-gray-900">
-              {t('clientProfile.title')}
-            </h1>
-          </div>
-        </div>
-      </header>
-
-      {/* Main Content */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <ClientLayout>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-7">
         {/* Tabs */}
         <div className="bg-white rounded-lg shadow mb-6">
           <div className="border-b border-gray-200">
@@ -387,8 +369,8 @@ const ClientProfilePage = () => {
             )}
           </div>
         </div>
-      </main>
-    </div>
+      </div>
+    </ClientLayout>
   )
 }
 

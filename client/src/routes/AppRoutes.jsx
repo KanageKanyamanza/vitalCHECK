@@ -14,6 +14,8 @@ import PaymentSuccessPage from '../pages/PaymentSuccessPage'
 import ClientRegisterPage from '../pages/client/ClientRegisterPage'
 import UnifiedLoginPage from '../pages/UnifiedLoginPage'
 import ClientDashboardPage from '../pages/client/ClientDashboardPage'
+import ClientHistoryPage from '../pages/client/ClientHistoryPage'
+import ClientAnalyticsPage from '../pages/client/ClientAnalyticsPage'
 import ClientProfilePage from '../pages/client/ClientProfilePage'
 import ForgotPasswordPage from '../pages/ForgotPasswordPage'
 import ResetPasswordPage from '../pages/ResetPasswordPage'
@@ -49,6 +51,16 @@ const AppRoutes = () => {
       <Route path="/client/dashboard" element={
         <ProtectedRoute requireAuth>
           <ClientDashboardPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/client/history" element={
+        <ProtectedRoute requireAuth>
+          <ClientHistoryPage />
+        </ProtectedRoute>
+      } />
+      <Route path="/client/analytics" element={
+        <ProtectedRoute requireAuth>
+          <ClientAnalyticsPage />
         </ProtectedRoute>
       } />
       <Route path="/client/profile" element={

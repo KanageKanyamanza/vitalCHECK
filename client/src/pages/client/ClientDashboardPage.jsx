@@ -3,17 +3,16 @@ import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
 import {
-	LayoutDashboard,
-	FileText,
-	Download,
-	TrendingUp,
-	Calendar,
-	CreditCard,
-	User,
-	LogOut,
-	Settings,
-	Plus,
-	BarChart2,
+  FileText,
+  Download,
+  TrendingUp,
+  Calendar,
+  CreditCard,
+  LayoutDashboard,
+  BarChart2,
+  Plus,
+  Lock,
+  Zap,
 } from "lucide-react";
 import { useClientAuth } from "../../context/ClientAuthContext";
 import { useAssessment } from "../../context/AssessmentContext";
@@ -21,658 +20,539 @@ import axios from "axios";
 import toast from "react-hot-toast";
 
 import { API_BASE_URL as API_URL } from "../../services/api";
+import ClientLayout from "../../components/client/ClientLayout";
+import KPICard from "../../components/client/KPICard";
 import ScoreEvolutionChart from "../../components/premium/ScoreEvolutionChart";
 import DiagnosticComparator from "../../components/premium/DiagnosticComparator";
 import PremiumExportButton from "../../components/premium/PremiumExportButton";
 
+const PAID_PLANS = ["standard", "premium", "diagnostic"];
+
+// ─── Fade-in wrapper ───────────────────────────────────────────────────────────
+const FadeIn = ({ children, delay = 0 }) => (
+  <motion.div
+    initial={{ opacity: 0, y: 16 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ duration: 0.3, delay }}
+  >
+    {children}
+  </motion.div>
+);
+
+// ─── Main component ────────────────────────────────────────────────────────────
 const ClientDashboardPage = () => {
-	const { t } = useTranslation();
-	const navigate = useNavigate();
-	const { user, logout, loading: authLoading } = useClientAuth();
-	const { dispatch: assessmentDispatch } = useAssessment();
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { user, logout, loading: authLoading } = useClientAuth();
+  const { dispatch: assessmentDispatch } = useAssessment();
 
-	const [assessments, setAssessments] = useState([]);
-	const [payments, setPayments] = useState([]);
-	const [loading, setLoading] = useState(true);
-	const [paymentFilter, setPaymentFilter] = useState("all"); // 'all', 'active', 'completed'
-	const [downloadingReport, setDownloadingReport] = useState(null); // Track which report is downloading
+  const [assessments, setAssessments] = useState([]);
+  const [payments, setPayments] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [paymentFilter, setPaymentFilter] = useState("all");
+  const [downloadingReport, setDownloadingReport] = useState(null);
 
-	// Premium dashboard state
-	const [premiumHistory, setPremiumHistory] = useState([]);
-	const [comparatorA, setComparatorA] = useState(null);
-	const [comparatorB, setComparatorB] = useState(null);
+  // Premium dashboard state
+  const [premiumHistory, setPremiumHistory] = useState([]);
+  const [comparatorA, setComparatorA] = useState(null);
+  const [comparatorB, setComparatorB] = useState(null);
 
-	// Filtrer les paiements selon le filtre sélectionné
-	const filteredPayments = payments.filter((payment) => {
-		if (paymentFilter === "all") return true;
-		if (paymentFilter === "active") return payment.status === "pending";
-		if (paymentFilter === "completed")
-			return payment.status === "completed" || payment.status === "processed";
-		return true;
-	});
+  const isPaidPlan =
+    user?.subscription?.status === "active" &&
+    PAID_PLANS.includes(user?.subscription?.plan);
 
-	// Calculer les statistiques des paiements
-	const paymentStats = {
-		total: payments.length,
-		active: payments.filter((p) => p.status === "pending").length,
-		completed: payments.filter(
-			(p) => p.status === "completed" || p.status === "processed",
-		).length,
-		failed: payments.filter((p) => p.status === "failed").length,
-		totalAmount: payments.reduce((sum, p) => sum + (p.amount || 0), 0),
-	};
+  // ── Filtered & stats ─────────────────────────────────────────────────────────
+  const filteredPayments = payments.filter((p) => {
+    if (paymentFilter === "all") return true;
+    if (paymentFilter === "active") return p.status === "pending";
+    if (paymentFilter === "completed")
+      return p.status === "completed" || p.status === "processed";
+    return true;
+  });
 
-	useEffect(() => {
-		if (!authLoading && !user) {
-			navigate("/login");
-		} else if (user) {
-			loadDashboardData();
-		}
-	}, [user, authLoading, navigate]);
+  const paymentStats = {
+    total: payments.length,
+    active: payments.filter((p) => p.status === "pending").length,
+    completed: payments.filter(
+      (p) => p.status === "completed" || p.status === "processed"
+    ).length,
+    failed: payments.filter((p) => p.status === "failed").length,
+    totalAmount: payments.reduce((sum, p) => sum + (p.amount || 0), 0),
+  };
 
-	const loadDashboardData = async () => {
-		try {
-			setLoading(true);
-			const token = localStorage.getItem("clientToken");
+  // ── Data loading ──────────────────────────────────────────────────────────────
+  useEffect(() => {
+    if (!authLoading && !user) {
+      navigate("/login");
+    } else if (user) {
+      loadDashboardData();
+    }
+  }, [user, authLoading, navigate]);
 
-			// Vérifier que user.id existe
-			if (!user?.id) {
-				console.error("User ID is undefined:", user);
-				toast.error("Erreur: ID utilisateur manquant");
-				return;
-			}
+  const loadDashboardData = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("clientToken");
 
-			// Load assessments
-			const assessmentsResponse = await axios.get(
-				`${API_URL}/assessments/user/${user.id}`,
-				{ headers: { Authorization: `Bearer ${token}` } },
-			);
-			setAssessments(assessmentsResponse.data.assessments || []);
+      if (!user?.id) {
+        toast.error("Erreur: ID utilisateur manquant");
+        return;
+      }
 
-			// Load payments
-			const paymentsResponse = await axios.get(
-				`${API_URL}/client-auth/payments`,
-				{ headers: { Authorization: `Bearer ${token}` } },
-			);
-			setPayments(paymentsResponse.data.payments || []);
+      const [assessmentsRes, paymentsRes] = await Promise.all([
+        axios.get(`${API_URL}/assessments/user/${user.id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+        axios.get(`${API_URL}/client-auth/payments`, {
+          headers: { Authorization: `Bearer ${token}` },
+        }),
+      ]);
 
-			// Load premium history if user has paid plan
-			const plan = user?.subscription?.plan;
-			const isPaid = plan && plan !== "free";
-			if (isPaid) {
-				try {
-					const premiumRes = await axios.get(`${API_URL}/premium-dashboard/history`, {
-						headers: { Authorization: `Bearer ${token}` },
-					});
-					setPremiumHistory(premiumRes.data.assessments || []);
-				} catch (premiumErr) {
-					// Silently ignore: 403 means subscription not active yet
-					console.warn("[premium-dashboard] history unavailable:", premiumErr.response?.status);
-				}
-			}
-		} catch (error) {
-			console.error("Error loading dashboard data:", error);
-			toast.error("Erreur lors du chargement des données");
-		} finally {
-			setLoading(false);
-		}
-	};
+      setAssessments(assessmentsRes.data.assessments || []);
+      setPayments(paymentsRes.data.payments || []);
 
-	const getSubscriptionBadge = () => {
-		const plan = user?.subscription?.plan || "free";
-		const badges = {
-			free: { bg: "bg-gray-100", text: "text-gray-800", label: "GRATUIT" },
-			standard: { bg: "bg-blue-100", text: "text-blue-800", label: "STANDARD" },
-			premium: {
-				bg: "bg-purple-100",
-				text: "text-purple-800",
-				label: "PREMIUM",
-			},
-			diagnostic: {
-				bg: "bg-yellow-100",
-				text: "text-yellow-800",
-				label: "DIAGNOSTIC",
-			},
-		};
-		return badges[plan];
-	};
+      // Load premium history if paid plan
+      if (user?.subscription?.plan && user.subscription.plan !== "free") {
+        try {
+          const premiumRes = await axios.get(
+            `${API_URL}/premium-dashboard/history`,
+            { headers: { Authorization: `Bearer ${token}` } }
+          );
+          setPremiumHistory(premiumRes.data.assessments || []);
+        } catch {
+          // 403 = subscription not yet active, silently ignore
+        }
+      }
+    } catch (error) {
+      console.error("Error loading dashboard data:", error);
+      toast.error("Erreur lors du chargement des données");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-	const handleNewAssessment = () => {
-		assessmentDispatch({ type: "CLEAR_STORAGE" });
-		navigate("/diagnostic");
-	};
+  const handleNewAssessment = () => {
+    assessmentDispatch({ type: "CLEAR_STORAGE" });
+    navigate("/diagnostic");
+  };
 
-	const handleDownloadReport = async (assessmentId) => {
-		setDownloadingReport(assessmentId);
-		try {
-			const token = localStorage.getItem("clientToken");
-			const response = await axios.get(
-				`${API_URL}/reports/download/${assessmentId}`,
-				{
-					headers: {
-						Authorization: `Bearer ${token}`,
-					},
-					responseType: "blob",
-				},
-			);
+  const handleDownloadReport = async (assessmentId) => {
+    setDownloadingReport(assessmentId);
+    try {
+      const token = localStorage.getItem("clientToken");
+      const response = await axios.get(
+        `${API_URL}/reports/download/${assessmentId}`,
+        { headers: { Authorization: `Bearer ${token}` }, responseType: "blob" }
+      );
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `vitalCHECK-Report-${new Date().toISOString().split("T")[0]}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+      toast.success("Rapport téléchargé avec succès !");
+    } catch {
+      toast.error("Erreur lors du téléchargement du rapport");
+    } finally {
+      setDownloadingReport(null);
+    }
+  };
 
-			// Créer un blob URL et déclencher le téléchargement
-			const blob = new Blob([response.data], { type: "application/pdf" });
-			const url = window.URL.createObjectURL(blob);
-			const link = document.createElement("a");
-			link.href = url;
+  // ── Loading state ─────────────────────────────────────────────────────────────
+  if (authLoading || loading) {
+    return (
+      <ClientLayout>
+        <div className="flex items-center justify-center h-full min-h-[60vh]">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-500" />
+        </div>
+      </ClientLayout>
+    );
+  }
 
-			// Générer un nom de fichier avec la date
-			const date = new Date().toISOString().split("T")[0];
-			link.download = `vitalCHECK-Report-${date}.pdf`;
+  // ── Subscription badge config ─────────────────────────────────────────────────
+  const plan = user?.subscription?.plan || "free";
 
-			document.body.appendChild(link);
-			link.click();
-			document.body.removeChild(link);
-			window.URL.revokeObjectURL(url);
+  return (
+    <ClientLayout>
+      <div className="p-5 md:p-7 space-y-7 max-w-7xl mx-auto">
 
-			toast.success("Rapport téléchargé avec succès !");
-		} catch (error) {
-			console.error("Erreur lors du téléchargement:", error);
-			toast.error("Erreur lors du téléchargement du rapport");
-		} finally {
-			setDownloadingReport(null);
-		}
-	};
+        {/* ── KPI Cards ──────────────────────────────────────────────────────── */}
+        <FadeIn delay={0}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+            {/* Subscription */}
+            <KPICard
+              icon={CreditCard}
+              label={t("clientDashboard.subscription.title")}
+              value={plan.toUpperCase()}
+              subLabel={
+                user?.subscription?.status === "active"
+                  ? t("clientDashboard.subscription.active")
+                  : t("clientDashboard.subscription.inactive")
+              }
+              accentClass="border-l-primary-500"
+              action={
+                plan !== "free" ? (
+                  <button
+                    onClick={() => navigate("/pricing")}
+                    className="text-xs text-primary-600 hover:text-primary-700 font-medium"
+                  >
+                    {t("clientDashboard.subscription.manage")} →
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => navigate("/pricing")}
+                    className="text-xs text-accent-600 hover:text-accent-700 font-semibold"
+                  >
+                    {t("clientLayout.upgradeCTA")} →
+                  </button>
+                )
+              }
+            />
 
-	if (authLoading || loading) {
-		return (
-			<div className="min-h-screen flex items-center justify-center bg-gray-50">
-				<div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
-			</div>
-		);
-	}
+            {/* Diagnostics */}
+            <KPICard
+              icon={FileText}
+              label={t("clientDashboard.assessments.title")}
+              value={assessments.length}
+              subLabel={t("clientDashboard.assessments.total")}
+              accentClass="border-l-blue-500"
+              action={
+                <button
+                  onClick={handleNewAssessment}
+                  className="flex items-center gap-1 text-xs text-blue-600 hover:text-blue-700 font-medium"
+                >
+                  <Plus className="w-3 h-3" />
+                  {t("clientDashboard.assessments.new")}
+                </button>
+              }
+            />
 
-	const badge = getSubscriptionBadge();
+            {/* Payments */}
+            <KPICard
+              icon={TrendingUp}
+              label={t("clientDashboard.payments.title")}
+              value={payments.length}
+              subLabel={t("clientDashboard.payments.total")}
+              accentClass="border-l-emerald-500"
+            />
+          </div>
+        </FadeIn>
 
-	return (
-		<div className="min-h-screen bg-gray-50 py-[60px]">
-			{/* Header */}
-			<header className="bg-white shadow-sm border-b border-gray-200">
-				<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-					<div className="flex flex-wrap gap-2 justify-between items-center">
-						<div className="flex flex-wrap sm:grid gap-2">
-							<h1 className="text-2xl font-bold text-gray-900">
-								{t("clientDashboard.welcome")},{" "}
-								{user?.firstName || user?.companyName}!
-							</h1>
-							<div className="flex items-center sm:hidden float-right ml-auto">
-								<button
-									onClick={() => navigate("/client/profile")}
-									className="flex items-center py-2 px-1 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-								>
-									<Settings className="w-4 h-4 mr-2" />
-									<span className="hidden md:inline">
-										{t("clientDashboard.settings")}
-									</span>
-								</button>
-								<button
-									onClick={logout}
-									className="flex items-center py-2 px-1 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-								>
-									<LogOut className="w-4 h-4 mr-2" />
-									<span className="hidden md:inline">
-										{t("clientDashboard.logout")}
-									</span>
-								</button>
-							</div>
-							<p className="text-sm text-gray-600">{user?.email}</p>
-						</div>
-						<div className="hidden sm:flex items-center gap-3">
-							<button
-								onClick={() => navigate("/client/profile")}
-								className="flex items-center px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
-							>
-								<Settings className="w-4 h-4 mr-2" />
-								<span className="hidden md:inline">
-									{t("clientDashboard.settings")}
-								</span>
-							</button>
-							<button
-								onClick={logout}
-								className="flex items-center px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-							>
-								<LogOut className="w-4 h-4 mr-2" />
-								<span className="hidden md:inline">
-									{t("clientDashboard.logout")}
-								</span>
-							</button>
-						</div>
-					</div>
-				</div>
-			</header>
+        {/* ── Premium section (active subscribers with data) ─────────────────── */}
+        {isPaidPlan && premiumHistory.length > 0 && (
+          <FadeIn delay={0.08}>
+            <div>
+              {/* Section header */}
+              <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary-900 to-primary-700 flex items-center justify-center shadow-sm">
+                    <BarChart2 className="w-4 h-4 text-accent-500" />
+                  </div>
+                  <div>
+                    <h2 className="font-bold text-gray-900">
+                      {t("premiumDashboard.title")}
+                    </h2>
+                    <p className="text-xs text-gray-500">
+                      {t("premiumDashboard.subtitle")}
+                    </p>
+                  </div>
+                </div>
+                <PremiumExportButton t={t} />
+              </div>
 
-			{/* Main Content */}
-			<main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-				{/* Stats Cards */}
-				<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-					{/* Subscription Card */}
-					<motion.div
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						className="bg-white rounded-lg shadow p-6"
-					>
-						<div className="flex items-center justify-between mb-4">
-							<div className="flex items-center">
-								<CreditCard className="w-8 h-8 text-primary-600 mr-3" />
-								<h3 className="font-semibold text-gray-900">
-									{t("clientDashboard.subscription.title")}
-								</h3>
-							</div>
-						</div>
-						<div className="space-y-2">
-							<div
-								className={`inline-flex px-3 py-1 rounded-full text-sm font-semibold ${badge.bg} ${badge.text}`}
-							>
-								{badge.label}
-							</div>
-							<p className="text-sm text-gray-600">
-								{user?.subscription?.status === "active" ?
-									t("clientDashboard.subscription.active")
-								:	t("clientDashboard.subscription.inactive")}
-							</p>
-							{user?.subscription?.plan !== "free" && (
-								<button
-									onClick={() => navigate("/pricing")}
-									className="text-sm text-primary-600 hover:text-primary-700 font-medium"
-								>
-									{t("clientDashboard.subscription.manage")} →
-								</button>
-							)}
-						</div>
-					</motion.div>
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                {/* Score evolution */}
+                <div className="bg-white rounded-xl shadow-sm p-6">
+                  <h3 className="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4 text-emerald-600" />
+                    {t("premiumDashboard.evolution.title")}
+                  </h3>
+                  <ScoreEvolutionChart assessments={premiumHistory} t={t} />
+                </div>
 
-					{/* Assessments Card */}
-					<motion.div
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ delay: 0.1 }}
-						className="bg-white rounded-lg shadow p-6"
-					>
-						<div className="flex items-center mb-4">
-							<FileText className="w-8 h-8 text-blue-600 mr-3" />
-							<h3 className="font-semibold text-gray-900">
-								{t("clientDashboard.assessments.title")}
-							</h3>
-						</div>
-						<div className="space-y-2">
-							<div className="text-3xl font-bold text-gray-900">
-								{assessments.length}
-							</div>
-							<p className="text-sm text-gray-600">
-								{t("clientDashboard.assessments.total")}
-							</p>
-							<button
-								onClick={handleNewAssessment}
-								className="text-sm text-primary-600 hover:text-primary-700 font-medium flex items-center"
-							>
-								<Plus className="w-4 h-4 mr-1" />
-								{t("clientDashboard.assessments.new")}
-							</button>
-						</div>
-					</motion.div>
+                {/* Diagnostic comparator */}
+                <div className="bg-white rounded-xl shadow-sm p-6">
+                  <h3 className="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <BarChart2 className="w-4 h-4 text-blue-600" />
+                    {t("premiumDashboard.comparator.title")}
+                  </h3>
+                  <DiagnosticComparator
+                    assessments={premiumHistory}
+                    selectedA={comparatorA}
+                    selectedB={comparatorB}
+                    onSelectA={setComparatorA}
+                    onSelectB={setComparatorB}
+                    t={t}
+                  />
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        )}
 
-					{/* Payments Card */}
-					<motion.div
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ delay: 0.2 }}
-						className="bg-white rounded-lg shadow p-6"
-					>
-						<div className="flex items-center mb-4">
-							<TrendingUp className="w-8 h-8 text-green-600 mr-3" />
-							<h3 className="font-semibold text-gray-900">
-								{t("clientDashboard.payments.title")}
-							</h3>
-						</div>
-						<div className="space-y-2">
-							<div className="text-3xl font-bold text-gray-900">
-								{payments.length}
-							</div>
-							<p className="text-sm text-gray-600">
-								{t("clientDashboard.payments.total")}
-							</p>
-						</div>
-					</motion.div>
-				</div>
+        {/* ── Premium upsell (free users) ────────────────────────────────────── */}
+        {!isPaidPlan && (
+          <FadeIn delay={0.08}>
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+              <div className="h-1.5 bg-gradient-to-r from-primary-900 via-primary-700 to-accent-500" />
+              <div className="p-8 flex flex-col sm:flex-row items-center gap-6">
+                <div className="w-14 h-14 rounded-xl bg-primary-50 flex items-center justify-center shrink-0">
+                  <Lock className="w-6 h-6 text-primary-600/60" />
+                </div>
+                <div className="text-center sm:text-left">
+                  <h3 className="font-bold text-gray-900 mb-1">
+                    {t("clientLayout.premiumUpsell.title")}
+                  </h3>
+                  <p className="text-sm text-gray-500 mb-4 max-w-md">
+                    {t("clientLayout.premiumUpsell.description")}
+                  </p>
+                  <button
+                    onClick={() => navigate("/pricing")}
+                    className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm"
+                  >
+                    <Zap className="w-4 h-4 text-accent-500" />
+                    {t("clientLayout.premiumUpsell.cta")}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        )}
 
-				<div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-					{/* Assessments History */}
-					<motion.div
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ delay: 0.3 }}
-						className="bg-white rounded-lg shadow mb-8"
-					>
-						<div className="p-6 border-b border-gray-200">
-							<h2 className="text-xl font-bold text-gray-900 flex items-center">
-								<FileText className="w-6 h-6 mr-2 text-primary-600" />
-								{t("clientDashboard.history.title")}
-							</h2>
-						</div>
-						<div className="p-6">
-							{assessments.length === 0 ?
-								<div className="text-center py-12">
-									<FileText className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-									<p className="text-gray-500 mb-4">
-										{t("clientDashboard.history.noAssessments")}
-									</p>
-									<button
-										onClick={handleNewAssessment}
-										className="bg-primary-600 hover:bg-primary-700 text-white px-6 py-2 rounded-lg transition-colors"
-									>
-										{t("clientDashboard.history.startFirst")}
-									</button>
-								</div>
-							:	<div className="space-y-4">
-									{assessments.map((assessment) => (
-										<div
-											key={assessment._id}
-											className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
-										>
-											<div className="flex flex-wrap md:flex-row md:items-center md:justify-between gap-4">
-												<div className="flex-1">
-													<h3 className="font-semibold text-gray-900 mb-2">
-														{t("clientDashboard.history.evaluation")} -{" "}
-														{new Date(
-															assessment.completedAt || assessment.startedAt,
-														).toLocaleDateString("fr-FR")}
-													</h3>
-													<div className="flex flex-wrap gap-3 text-sm">
-														<span className="text-gray-600">
-															<Calendar className="w-4 h-4 inline mr-1" />
-															{new Date(
-																assessment.completedAt || assessment.startedAt,
-															).toLocaleDateString("fr-FR")}
-														</span>
-														<span className="font-semibold text-primary-600">
-															{t("clientDashboard.history.score")}:{" "}
-															{assessment.overallScore?.toFixed(0) || "N/A"}/100
-														</span>
-													</div>
-												</div>
-												<div className="grid gap-2 mx-auto">
-													<button
-														onClick={() =>
-															navigate(`/results?id=${assessment._id}`)
-														}
-														className="flex items-center px-4 py-2 text-primary-600 border border-primary-600 hover:bg-primary-50 rounded-lg transition-colors text-sm"
-													>
-														<FileText className="w-4 h-4 mr-2" />
-														{t("clientDashboard.history.viewReport")}
-													</button>
-													<button
-														onClick={() => handleDownloadReport(assessment._id)}
-														disabled={downloadingReport === assessment._id}
-														className="flex items-center px-4 py-2 text-green-600 border border-green-600 hover:bg-green-50 rounded-lg transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed"
-													>
-														{downloadingReport === assessment._id ?
-															<>
-																<div className="w-4 h-4 border-2 border-green-600 border-t-transparent rounded-full animate-spin mr-2" />
-																{t("clientDashboard.history.downloading")}
-															</>
-														:	<>
-																<Download className="w-4 h-4 mr-2" />
-																{t("clientDashboard.history.downloadPDF")}
-															</>
-														}
-													</button>
-												</div>
-											</div>
-										</div>
-									))}
-								</div>
-							}
-						</div>
-					</motion.div>
+        {/* ── Historique diagnostics + paiements (en dernier) ────────────────── */}
+        <FadeIn delay={0.15}>
+          <div id="history-section" className="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
-					{/* Payments History */}
-					{payments.length > 0 ?
-						<motion.div
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ delay: 0.4 }}
-							className="bg-white rounded-lg shadow"
-						>
-							<div className="p-6 border-b border-gray-200">
-								<div className="flex flex-wrap sm:flex-row sm:items-center sm:justify-between gap-4">
-									<h2 className="text-xl font-bold text-gray-900 flex items-center whitespace-nowrap">
-										<CreditCard className="w-6 h-6  mr-2 text-green-600" />
-										{t("clientDashboard.paymentsHistory.title")}
-									</h2>
+            {/* Assessments history */}
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
+                <FileText className="w-5 h-5 text-primary-600" />
+                <h2 className="font-semibold text-gray-900">
+                  {t("clientDashboard.history.title")}
+                </h2>
+                <span className="ml-auto text-sm font-bold text-gray-500 tabular-nums">
+                  {assessments.length}
+                </span>
+              </div>
 
-									{/* Filtres des paiements */}
-									<div className="flex gap-2">
-										<button
-											onClick={() => setPaymentFilter("all")}
-											className={`px-3 whitespace-nowrap py-1 text-sm rounded-full transition-colors ${
-												paymentFilter === "all" ?
-													"bg-blue-100 text-blue-800"
-												:	"bg-gray-100 text-gray-600 hover:bg-gray-200"
-											}`}
-										>
-											{t("clientDashboard.paymentsHistory.all")} (
-											{paymentStats.total})
-										</button>
-										<button
-											onClick={() => setPaymentFilter("active")}
-											className={`px-3 whitespace-nowrap py-1 text-sm rounded-full transition-colors ${
-												paymentFilter === "active" ?
-													"bg-yellow-100 text-yellow-800"
-												:	"bg-gray-100 text-gray-600 hover:bg-gray-200"
-											}`}
-										>
-											{t("clientDashboard.paymentsHistory.active")} (
-											{paymentStats.active})
-										</button>
-										<button
-											onClick={() => setPaymentFilter("completed")}
-											className={`px-3 whitespace-nowrap py-1 text-sm rounded-full transition-colors ${
-												paymentFilter === "completed" ?
-													"bg-green-100 text-green-800"
-												:	"bg-gray-100 text-gray-600 hover:bg-gray-200"
-											}`}
-										>
-											{t("clientDashboard.paymentsHistory.completed")} (
-											{paymentStats.completed})
-										</button>
-									</div>
-								</div>
+              <div className="p-6">
+                {assessments.length === 0 ? (
+                  <div className="text-center py-10">
+                    <FileText className="w-12 h-12 text-gray-200 mx-auto mb-3" />
+                    <p className="text-gray-400 text-sm mb-4">
+                      {t("clientDashboard.history.noAssessments")}
+                    </p>
+                    <button
+                      onClick={handleNewAssessment}
+                      className="bg-primary-500 hover:bg-primary-600 text-white px-5 py-2 rounded-lg text-sm transition-colors"
+                    >
+                      {t("clientDashboard.history.startFirst")}
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-3 max-h-[420px] overflow-y-auto pr-1">
+                    {assessments.map((assessment, idx) => (
+                      <motion.div
+                        key={assessment._id}
+                        initial={{ opacity: 0, x: -8 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: idx * 0.04 }}
+                        className="border border-gray-100 rounded-lg p-4 hover:shadow-sm transition-shadow"
+                      >
+                        <div className="flex flex-wrap items-center gap-3 justify-between">
+                          <div className="min-w-0">
+                            <p className="font-medium text-gray-900 text-sm truncate">
+                              {t("clientDashboard.history.evaluation")} —{" "}
+                              {new Date(
+                                assessment.completedAt || assessment.startedAt
+                              ).toLocaleDateString("fr-FR")}
+                            </p>
+                            <div className="flex items-center gap-3 mt-1 text-xs text-gray-500">
+                              <span className="flex items-center gap-1">
+                                <Calendar className="w-3 h-3" />
+                                {new Date(
+                                  assessment.completedAt || assessment.startedAt
+                                ).toLocaleDateString("fr-FR")}
+                              </span>
+                              <span className="font-semibold text-primary-600">
+                                {t("clientDashboard.history.score")}:{" "}
+                                {assessment.overallScore?.toFixed(0) ?? "N/A"}/100
+                              </span>
+                            </div>
+                          </div>
+                          <div className="flex gap-2 shrink-0">
+                            <button
+                              onClick={() =>
+                                navigate(`/results?id=${assessment._id}`)
+                              }
+                              className="flex items-center gap-1 px-3 py-1.5 text-xs text-primary-600 border border-primary-500 hover:bg-primary-50 rounded-lg transition-colors"
+                            >
+                              <FileText className="w-3 h-3" />
+                              {t("clientDashboard.history.viewReport")}
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleDownloadReport(assessment._id)
+                              }
+                              disabled={downloadingReport === assessment._id}
+                              className="flex items-center gap-1 px-3 py-1.5 text-xs text-emerald-600 border border-emerald-600 hover:bg-emerald-50 rounded-lg transition-colors disabled:opacity-50"
+                            >
+                              {downloadingReport === assessment._id ? (
+                                <div className="w-3 h-3 border border-emerald-600 border-t-transparent rounded-full animate-spin" />
+                              ) : (
+                                <Download className="w-3 h-3" />
+                              )}
+                              {downloadingReport === assessment._id
+                                ? t("clientDashboard.history.downloading")
+                                : t("clientDashboard.history.downloadPDF")}
+                            </button>
+                          </div>
+                        </div>
+                      </motion.div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
 
-								{/* Statistiques des paiements */}
-								<div className="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-4">
-									<div className="bg-blue-50 p-3 rounded-lg">
-										<div className="text-sm text-blue-600 font-medium">
-											{t("clientDashboard.paymentsHistory.stats.total")}
-										</div>
-										<div className="text-lg font-bold text-blue-900">
-											{paymentStats.total}
-										</div>
-									</div>
-									<div className="bg-yellow-50 p-3 rounded-lg">
-										<div className="text-sm text-yellow-600 font-medium">
-											{t("clientDashboard.paymentsHistory.stats.active")}
-										</div>
-										<div className="text-lg font-bold text-yellow-900">
-											{paymentStats.active}
-										</div>
-									</div>
-									<div className="bg-green-50 p-3 rounded-lg">
-										<div className="text-sm text-green-600 font-medium">
-											{t("clientDashboard.paymentsHistory.stats.completed")}
-										</div>
-										<div className="text-lg font-bold text-green-900">
-											{paymentStats.completed}
-										</div>
-									</div>
-									<div className="bg-purple-50 p-3 rounded-lg">
-										<div className="text-sm text-purple-600 font-medium">
-											{t("clientDashboard.paymentsHistory.stats.totalAmount")}
-										</div>
-										<div className="text-lg font-bold text-purple-900">
-											${paymentStats.totalAmount}
-										</div>
-									</div>
-								</div>
-							</div>
-							<div className="p-6">
-								<div className="overflow-x-auto">
-									<table className="min-w-full">
-										<thead className="bg-gray-50">
-											<tr>
-												<th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-													{t("clientDashboard.paymentsHistory.date")}
-												</th>
-												<th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-													{t("clientDashboard.paymentsHistory.plan")}
-												</th>
-												<th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-													{t("clientDashboard.paymentsHistory.amount")}
-												</th>
-												<th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
-													{t("clientDashboard.paymentsHistory.status")}
-												</th>
-											</tr>
-										</thead>
-										<tbody className="divide-y divide-gray-200">
-											{filteredPayments.length > 0 ?
-												filteredPayments.map((payment) => (
-													<tr key={payment._id} className="hover:bg-gray-50">
-														<td className="px-4 py-3 text-sm text-gray-900">
-															{new Date(payment.createdAt).toLocaleDateString(
-																"fr-FR",
-															)}
-														</td>
-														<td className="px-4 py-3 text-sm font-medium text-gray-900">
-															{payment.planName}
-														</td>
-														<td className="px-4 py-3 text-sm text-gray-900">
-															${payment.amount} {payment.currency}
-														</td>
-														<td className="px-4 py-3">
-															<span
-																className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-																	(
-																		payment.status === "completed" ||
-																		payment.status === "processed"
-																	) ?
-																		"bg-green-100 text-green-800"
-																	: payment.status === "pending" ?
-																		"bg-yellow-100 text-yellow-800"
-																	:	"bg-red-100 text-red-800"
-																}`}
-															>
-																{(
-																	payment.status === "completed" ||
-																	payment.status === "processed"
-																) ?
-																	t("clientDashboard.paymentsHistory.completed")
-																: payment.status === "pending" ?
-																	t("clientDashboard.paymentsHistory.pending")
-																:	t("clientDashboard.paymentsHistory.failed")}
-															</span>
-														</td>
-													</tr>
-												))
-											:	<tr>
-													<td
-														colSpan="4"
-														className="px-4 py-8 text-center text-gray-500"
-													>
-														{t("clientDashboard.paymentsHistory.noPayments")}
-													</td>
-												</tr>
-											}
-										</tbody>
-									</table>
-								</div>
-							</div>
-						</motion.div>
-					:	<motion.div
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							transition={{ delay: 0.4 }}
-							className="bg-white rounded-lg shadow"
-						>
-							<div className="p-6 text-center">
-								<CreditCard className="w-12 h-12 mx-auto text-gray-400 mb-4" />
-								<h3 className="text-lg font-medium text-gray-900 mb-2">
-									Aucun paiement
-								</h3>
-								<p className="text-gray-600 mb-4">
-									Vous n'avez pas encore effectué de paiement.
-								</p>
-								<button
-									onClick={() => navigate("/pricing")}
-									className="bg-primary-500 hover:bg-primary-600 text-white px-6 py-2 rounded-lg transition-colors"
-								>
-									Voir nos offres
-								</button>
-							</div>
-						</motion.div>
-					}
-				</div>
+            {/* Payments history */}
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+              <div className="px-6 py-4 border-b border-gray-100">
+                <div className="flex flex-wrap items-center gap-3 justify-between">
+                  <div className="flex items-center gap-2">
+                    <CreditCard className="w-5 h-5 text-emerald-600" />
+                    <h2 className="font-semibold text-gray-900">
+                      {t("clientDashboard.paymentsHistory.title")}
+                    </h2>
+                  </div>
+                  {/* Filter pills */}
+                  <div className="flex gap-1.5 text-xs">
+                    {[
+                      { key: "all", label: t("clientDashboard.paymentsHistory.all"), count: paymentStats.total },
+                      { key: "active", label: t("clientDashboard.paymentsHistory.active"), count: paymentStats.active },
+                      { key: "completed", label: t("clientDashboard.paymentsHistory.completed"), count: paymentStats.completed },
+                    ].map(({ key, label, count }) => (
+                      <button
+                        key={key}
+                        onClick={() => setPaymentFilter(key)}
+                        className={`px-2.5 py-1 rounded-full transition-colors whitespace-nowrap ${
+                          paymentFilter === key
+                            ? "bg-primary-500 text-white"
+                            : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                        }`}
+                      >
+                        {label} ({count})
+                      </button>
+                    ))}
+                  </div>
+                </div>
 
-				{/* ── SECTION PREMIUM DASHBOARD ── */}
-				{premiumHistory.length > 0 && (
-					<motion.div
-						initial={{ opacity: 0, y: 24 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ delay: 0.5 }}
-						className="mt-8"
-					>
-						{/* Header */}
-						<div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-							<div className="flex items-center gap-3">
-								<div className="w-10 h-10 rounded-full bg-gradient-to-br from-green-600 to-yellow-400 flex items-center justify-center">
-									<BarChart2 className="w-5 h-5 text-white" />
-								</div>
-								<div>
-									<h2 className="text-xl font-bold text-gray-900">
-										{t("premiumDashboard.title")}
-									</h2>
-									<p className="text-sm text-gray-500">{t("premiumDashboard.subtitle")}</p>
-								</div>
-							</div>
-							<PremiumExportButton t={t} />
-						</div>
+                {/* Stats mini-row */}
+                {payments.length > 0 && (
+                  <div className="mt-3 grid grid-cols-4 gap-2">
+                    {[
+                      { label: t("clientDashboard.paymentsHistory.stats.total"), value: paymentStats.total, cls: "text-blue-700 bg-blue-50" },
+                      { label: t("clientDashboard.paymentsHistory.stats.active"), value: paymentStats.active, cls: "text-amber-700 bg-amber-50" },
+                      { label: t("clientDashboard.paymentsHistory.stats.completed"), value: paymentStats.completed, cls: "text-emerald-700 bg-emerald-50" },
+                      { label: t("clientDashboard.paymentsHistory.stats.totalAmount"), value: `$${paymentStats.totalAmount}`, cls: "text-purple-700 bg-purple-50" },
+                    ].map(({ label, value, cls }) => (
+                      <div key={label} className={`rounded-lg p-2 text-center ${cls}`}>
+                        <div className="text-xs font-medium leading-none mb-0.5 truncate">{label}</div>
+                        <div className="font-bold text-sm tabular-nums">{value}</div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
 
-						<div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-							{/* Score Evolution Chart */}
-							<div className="bg-white rounded-xl shadow p-6">
-								<h3 className="text-base font-semibold text-gray-800 mb-4 flex items-center gap-2">
-									<TrendingUp className="w-4 h-4 text-green-600" />
-									{t("premiumDashboard.evolution.title")}
-								</h3>
-								<ScoreEvolutionChart assessments={premiumHistory} t={t} />
-							</div>
+              <div className="p-6">
+                {payments.length === 0 ? (
+                  <div className="text-center py-10">
+                    <CreditCard className="w-12 h-12 text-gray-200 mx-auto mb-3" />
+                    <p className="text-gray-400 text-sm mb-4">Aucun paiement</p>
+                    <button
+                      onClick={() => navigate("/pricing")}
+                      className="bg-primary-500 hover:bg-primary-600 text-white px-5 py-2 rounded-lg text-sm transition-colors"
+                    >
+                      Voir nos offres
+                    </button>
+                  </div>
+                ) : (
+                  <div className="overflow-x-auto max-h-[360px] overflow-y-auto">
+                    <table className="min-w-full text-sm">
+                      <thead className="sticky top-0 bg-white">
+                        <tr className="text-left border-b border-gray-100">
+                          <th className="pb-2 pr-4 text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                            {t("clientDashboard.paymentsHistory.date")}
+                          </th>
+                          <th className="pb-2 pr-4 text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                            {t("clientDashboard.paymentsHistory.plan")}
+                          </th>
+                          <th className="pb-2 pr-4 text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                            {t("clientDashboard.paymentsHistory.amount")}
+                          </th>
+                          <th className="pb-2 text-xs font-semibold text-gray-400 uppercase tracking-wide">
+                            {t("clientDashboard.paymentsHistory.status")}
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-50">
+                        {filteredPayments.length > 0 ? (
+                          filteredPayments.map((payment) => (
+                            <tr key={payment._id} className="hover:bg-gray-50 transition-colors">
+                              <td className="py-2.5 pr-4 text-gray-600">
+                                {new Date(payment.createdAt).toLocaleDateString("fr-FR")}
+                              </td>
+                              <td className="py-2.5 pr-4 font-medium text-gray-900">
+                                {payment.planName}
+                              </td>
+                              <td className="py-2.5 pr-4 tabular-nums text-gray-600">
+                                ${payment.amount} {payment.currency}
+                              </td>
+                              <td className="py-2.5">
+                                <span
+                                  className={`inline-flex px-2 py-0.5 text-xs font-semibold rounded-full ${
+                                    payment.status === "completed" ||
+                                    payment.status === "processed"
+                                      ? "bg-emerald-100 text-emerald-700"
+                                      : payment.status === "pending"
+                                      ? "bg-amber-100 text-amber-700"
+                                      : "bg-red-100 text-red-700"
+                                  }`}
+                                >
+                                  {payment.status === "completed" ||
+                                  payment.status === "processed"
+                                    ? t("clientDashboard.paymentsHistory.completed")
+                                    : payment.status === "pending"
+                                    ? t("clientDashboard.paymentsHistory.pending")
+                                    : t("clientDashboard.paymentsHistory.failed")}
+                                </span>
+                              </td>
+                            </tr>
+                          ))
+                        ) : (
+                          <tr>
+                            <td colSpan={4} className="py-8 text-center text-gray-400">
+                              {t("clientDashboard.paymentsHistory.noPayments")}
+                            </td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </FadeIn>
 
-							{/* Diagnostic Comparator */}
-							<div className="bg-white rounded-xl shadow p-6">
-								<h3 className="text-base font-semibold text-gray-800 mb-4 flex items-center gap-2">
-									<BarChart2 className="w-4 h-4 text-blue-600" />
-									{t("premiumDashboard.comparator.title")}
-								</h3>
-								<DiagnosticComparator
-									assessments={premiumHistory}
-									selectedA={comparatorA}
-									selectedB={comparatorB}
-									onSelectA={setComparatorA}
-									onSelectB={setComparatorB}
-									t={t}
-								/>
-							</div>
-						</div>
-					</motion.div>
-				)}
-			</main>
-		</div>
-	);
+
+      </div>
+    </ClientLayout>
+  );
 };
 
 export default ClientDashboardPage;
