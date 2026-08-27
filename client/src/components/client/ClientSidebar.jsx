@@ -168,8 +168,8 @@ const ClientSidebar = ({ isOpen, onClose }) => {
             <NavItem
               icon={BarChart2}
               label={t("clientLayout.nav.advanced")}
-              to="/client/dashboard"
-              active={false}
+              to="/client/analytics"
+              active={isActive("/client/analytics")}
               badge="★"
               onClick={onClose}
             />

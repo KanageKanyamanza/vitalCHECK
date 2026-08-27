@@ -8,6 +8,7 @@ import { useAssessment } from "../../context/AssessmentContext";
 const BREADCRUMBS = {
   "/client/dashboard": ["clientLayout.nav.dashboard"],
   "/client/history":   ["clientLayout.nav.dashboard", "clientLayout.nav.history"],
+  "/client/analytics": ["clientLayout.nav.dashboard", "clientLayout.nav.advanced"],
   "/client/profile":   ["clientLayout.nav.dashboard", "clientLayout.nav.profile"],
 };
 
