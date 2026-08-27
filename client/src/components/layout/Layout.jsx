@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom'
 import { Navbar, BackToTop } from '../navigation'
 import { ChatWidget } from '../chat'
 import { Footer } from './index'
+import PromoPopup from '../ui/PromoPopup'
 
 const Layout = ({ children }) => {
   const location = useLocation()
@@ -26,6 +27,7 @@ const Layout = ({ children }) => {
       {!isShellPage && !isHomePage && <Footer />}
       {!isShellPage && <ChatWidget />}
       {!isShellPage && <BackToTop showAfter={0} />}
+      {!isShellPage && <PromoPopup />}
     </div>
   )
 }
