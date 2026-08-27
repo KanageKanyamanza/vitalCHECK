@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
@@ -49,6 +49,7 @@ const SimplifiedResultsPage = () => {
 	const [saved, setSaved] = useState(!!searchParams.get("assessmentId"));
 	const [emailInput, setEmailInput] = useState("");
 	const [saving, setSaving] = useState(false);
+	const autoSaveAttempted = useRef(false);
 	const [downloading, setDownloading] = useState(false);
 	const [downloadingPremium, setDownloadingPremium] = useState(false);
 
@@ -134,15 +135,8 @@ const SimplifiedResultsPage = () => {
 		navigate("/diagnostic");
 	}, []);
 
-	const handleSaveAndSend = async (e) => {
-		e.preventDefault();
+	const doSave = async (email) => {
 		if (!data || saving) return;
-
-		if (!emailInput.trim()) {
-			toast.error(t("diagnostic.errors.noEmail"));
-			return;
-		}
-
 		setSaving(true);
 		try {
 			const token = localStorage.getItem("clientToken");
@@ -151,7 +145,7 @@ const SimplifiedResultsPage = () => {
 					answers: data.answers,
 					language,
 					companyName: data.formData?.companyName,
-					email: emailInput.trim(),
+					email: email.trim(),
 					companySize: data.formData?.companySize,
 					sector: data.formData?.sector || undefined,
 				},
@@ -177,6 +171,35 @@ const SimplifiedResultsPage = () => {
 		} finally {
 			setSaving(false);
 		}
+	};
+
+	// Pré-remplir l'email depuis location.state (flux normal après questionnaire)
+	useEffect(() => {
+		if (!emailInput) {
+			const email = data?.formData?.email || user?.email || "";
+			if (email) setEmailInput(email);
+		}
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [data?.formData?.email, user?.email]);
+
+	// Auto-envoyer le rapport dès que l'email et les données sont disponibles
+	useEffect(() => {
+		if (autoSaveAttempted.current || saved || saving || !data || !emailInput) return;
+		autoSaveAttempted.current = true;
+		doSave(emailInput);
+	// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [data, emailInput, saved]);
+
+	const handleSaveAndSend = async (e) => {
+		if (e) e.preventDefault();
+		if (!data || saving) return;
+
+		if (!emailInput.trim()) {
+			toast.error(t("diagnostic.errors.noEmail"));
+			return;
+		}
+
+		await doSave(emailInput);
 	};
 
 	const handleDownload = async () => {
