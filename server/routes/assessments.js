@@ -611,9 +611,8 @@ router.post(
 				await assessment.save();
 			}
 
-			// Update user with assessment reference
-			user.assessments.push(assessment._id);
-			await user.save();
+			// Update user with assessment reference (findByIdAndUpdate bypasses pre-save hook)
+			await User.findByIdAndUpdate(user._id, { $push: { assessments: assessment._id } });
 
 			// Créer un compte automatiquement après l'évaluation (si pas déjà de compte)
 			let tempPassword = null;
