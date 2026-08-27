@@ -241,8 +241,89 @@ const ClientDashboardPage = () => {
           </div>
         </FadeIn>
 
-        {/* ── Main 2-column grid ─────────────────────────────────────────────── */}
-        <FadeIn delay={0.08}>
+        {/* ── Premium section (active subscribers with data) ─────────────────── */}
+        {isPaidPlan && premiumHistory.length > 0 && (
+          <FadeIn delay={0.08}>
+            <div>
+              {/* Section header */}
+              <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#13294B] to-[#1a3a66] flex items-center justify-center shadow-sm">
+                    <BarChart2 className="w-4 h-4 text-[#F5A83C]" />
+                  </div>
+                  <div>
+                    <h2 className="font-bold text-gray-900">
+                      {t("premiumDashboard.title")}
+                    </h2>
+                    <p className="text-xs text-gray-500">
+                      {t("premiumDashboard.subtitle")}
+                    </p>
+                  </div>
+                </div>
+                <PremiumExportButton t={t} />
+              </div>
+
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                {/* Score evolution */}
+                <div className="bg-white rounded-xl shadow-sm p-6">
+                  <h3 className="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <TrendingUp className="w-4 h-4 text-emerald-600" />
+                    {t("premiumDashboard.evolution.title")}
+                  </h3>
+                  <ScoreEvolutionChart assessments={premiumHistory} t={t} />
+                </div>
+
+                {/* Diagnostic comparator */}
+                <div className="bg-white rounded-xl shadow-sm p-6">
+                  <h3 className="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2">
+                    <BarChart2 className="w-4 h-4 text-blue-600" />
+                    {t("premiumDashboard.comparator.title")}
+                  </h3>
+                  <DiagnosticComparator
+                    assessments={premiumHistory}
+                    selectedA={comparatorA}
+                    selectedB={comparatorB}
+                    onSelectA={setComparatorA}
+                    onSelectB={setComparatorB}
+                    t={t}
+                  />
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        )}
+
+        {/* ── Premium upsell (free users) ────────────────────────────────────── */}
+        {!isPaidPlan && (
+          <FadeIn delay={0.08}>
+            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
+              <div className="h-1.5 bg-gradient-to-r from-[#13294B] via-[#1a3a66] to-[#F5A83C]" />
+              <div className="p-8 flex flex-col sm:flex-row items-center gap-6">
+                <div className="w-14 h-14 rounded-xl bg-[#13294B]/8 flex items-center justify-center shrink-0">
+                  <Lock className="w-6 h-6 text-[#13294B]/60" />
+                </div>
+                <div className="text-center sm:text-left">
+                  <h3 className="font-bold text-gray-900 mb-1">
+                    {t("clientLayout.premiumUpsell.title")}
+                  </h3>
+                  <p className="text-sm text-gray-500 mb-4 max-w-md">
+                    {t("clientLayout.premiumUpsell.description")}
+                  </p>
+                  <button
+                    onClick={() => navigate("/pricing")}
+                    className="inline-flex items-center gap-2 bg-[#13294B] hover:bg-[#1a3a66] text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm"
+                  >
+                    <Zap className="w-4 h-4 text-[#F5A83C]" />
+                    {t("clientLayout.premiumUpsell.cta")}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </FadeIn>
+        )}
+
+        {/* ── Historique diagnostics + paiements (en dernier) ────────────────── */}
+        <FadeIn delay={0.15}>
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
             {/* Assessments history */}
@@ -468,87 +549,6 @@ const ClientDashboardPage = () => {
           </div>
         </FadeIn>
 
-        {/* ── Premium section (active subscribers with data) ─────────────────── */}
-        {isPaidPlan && premiumHistory.length > 0 && (
-          <FadeIn delay={0.15}>
-            <div>
-              {/* Section header */}
-              <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#13294B] to-[#1a3a66] flex items-center justify-center shadow-sm">
-                    <BarChart2 className="w-4 h-4 text-[#F5A83C]" />
-                  </div>
-                  <div>
-                    <h2 className="font-bold text-gray-900">
-                      {t("premiumDashboard.title")}
-                    </h2>
-                    <p className="text-xs text-gray-500">
-                      {t("premiumDashboard.subtitle")}
-                    </p>
-                  </div>
-                </div>
-                <PremiumExportButton t={t} />
-              </div>
-
-              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-                {/* Score evolution */}
-                <div className="bg-white rounded-xl shadow-sm p-6">
-                  <h3 className="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                    <TrendingUp className="w-4 h-4 text-emerald-600" />
-                    {t("premiumDashboard.evolution.title")}
-                  </h3>
-                  <ScoreEvolutionChart assessments={premiumHistory} t={t} />
-                </div>
-
-                {/* Diagnostic comparator */}
-                <div className="bg-white rounded-xl shadow-sm p-6">
-                  <h3 className="text-sm font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                    <BarChart2 className="w-4 h-4 text-blue-600" />
-                    {t("premiumDashboard.comparator.title")}
-                  </h3>
-                  <DiagnosticComparator
-                    assessments={premiumHistory}
-                    selectedA={comparatorA}
-                    selectedB={comparatorB}
-                    onSelectA={setComparatorA}
-                    onSelectB={setComparatorB}
-                    t={t}
-                  />
-                </div>
-              </div>
-            </div>
-          </FadeIn>
-        )}
-
-        {/* ── Premium upsell (free users or no data yet) ─────────────────────── */}
-        {!isPaidPlan && (
-          <FadeIn delay={0.15}>
-            <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-              {/* Gradient top bar */}
-              <div className="h-1.5 bg-gradient-to-r from-[#13294B] via-[#1a3a66] to-[#F5A83C]" />
-              <div className="p-8 flex flex-col sm:flex-row items-center gap-6">
-                <div className="w-14 h-14 rounded-xl bg-[#13294B]/8 flex items-center justify-center shrink-0">
-                  <Lock className="w-6 h-6 text-[#13294B]/60" />
-                </div>
-                <div className="text-center sm:text-left">
-                  <h3 className="font-bold text-gray-900 mb-1">
-                    {t("clientLayout.premiumUpsell.title")}
-                  </h3>
-                  <p className="text-sm text-gray-500 mb-4 max-w-md">
-                    {t("clientLayout.premiumUpsell.description")}
-                  </p>
-                  <button
-                    onClick={() => navigate("/pricing")}
-                    className="inline-flex items-center gap-2 bg-[#13294B] hover:bg-[#1a3a66] text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm"
-                  >
-                    <Zap className="w-4 h-4 text-[#F5A83C]" />
-                    {t("clientLayout.premiumUpsell.cta")}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </FadeIn>
-        )}
 
       </div>
     </ClientLayout>
