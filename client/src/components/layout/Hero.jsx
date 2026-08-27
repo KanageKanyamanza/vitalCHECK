@@ -80,16 +80,9 @@ const Hero = ({ onStartAssessment }) => {
             className='relative'
           >
 
-            <div className='flex items-center justify-center space-x-2 text-sm text-black mb-12'>
-              <div className='bg-white rounded-t-full h-[300px] w-[150px] p-2 border-2 border-black absolute -bottom-[300px] sm:-bottom-[250px] md:-bottom-[130px] md:left-10 left-2'>
-                <div className='bg-white rounded-t-full h-[280px] w-[130px] p-2 border-2 border-black absolute bottom-0 left-0 right-0 mx-auto'>
-                  <div className='bg-white rounded-t-full h-[260px] w-[110px] p-2 border-2 border-black absolute bottom-0 left-0 right-0 mx-auto'>
-                    <div className='bg-white rounded-t-full h-[240px] w-[90px] p-2 border-2 border-black absolute bottom-0 left-0 right-0 mx-auto'>
-                      
-                    </div>
-                  </div>
-                </div>
-              </div>
+            {/* Placeholder image – à remplacer par une vraie image */}
+            <div className='absolute -bottom-[120px] md:-bottom-[80px] left-2 md:left-10 w-[150px] h-[150px] md:w-[180px] md:h-[180px] rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 flex items-center justify-center text-gray-300 text-xs text-center leading-tight select-none'>
+              Image à<br />ajouter
             </div>
             <div className='absolute md:-top-[40px] left-[170px] sm:left-[250px]'>
             <button
