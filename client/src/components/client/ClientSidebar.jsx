@@ -147,14 +147,9 @@ const ClientSidebar = ({ isOpen, onClose }) => {
         <NavItem
           icon={ClipboardList}
           label={t("clientLayout.nav.history")}
-          to="/client/dashboard#history"
-          active={false}
-          onClick={() => {
-            onClose?.();
-            setTimeout(() => {
-              document.getElementById("history-section")?.scrollIntoView({ behavior: "smooth" });
-            }, 100);
-          }}
+          to="/client/history"
+          active={isActive("/client/history")}
+          onClick={onClose}
         />
         <NavItem
           icon={User}
