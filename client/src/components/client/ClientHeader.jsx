@@ -5,18 +5,16 @@ import { Menu, Plus, Settings, ChevronRight } from "lucide-react";
 import { useClientAuth } from "../../context/ClientAuthContext";
 import { useAssessment } from "../../context/AssessmentContext";
 
-const PAID_PLANS = ["standard", "premium", "diagnostic"];
-
 const BREADCRUMBS = {
   "/client/dashboard": ["clientLayout.nav.dashboard"],
-  "/client/profile": ["clientLayout.nav.dashboard", "clientLayout.nav.profile"],
+  "/client/profile":   ["clientLayout.nav.dashboard", "clientLayout.nav.profile"],
 };
 
 const PLAN_BADGES = {
   free:       { label: "GRATUIT",    cls: "bg-gray-100 text-gray-600" },
-  standard:   { label: "STANDARD",   cls: "bg-blue-100 text-blue-700" },
-  premium:    { label: "PREMIUM",    cls: "bg-purple-100 text-purple-700" },
-  diagnostic: { label: "DIAGNOSTIC", cls: "bg-amber-100 text-amber-700" },
+  standard:   { label: "STANDARD",   cls: "bg-primary-100 text-primary-700" },
+  premium:    { label: "PREMIUM",    cls: "bg-accent-100 text-accent-700" },
+  diagnostic: { label: "DIAGNOSTIC", cls: "bg-secondary-100 text-secondary-700" },
 };
 
 const ClientHeader = ({ onMenuToggle }) => {
@@ -26,7 +24,7 @@ const ClientHeader = ({ onMenuToggle }) => {
   const { user } = useClientAuth();
   const { dispatch: assessmentDispatch } = useAssessment();
 
-  const plan = user?.subscription?.plan || "free";
+  const plan  = user?.subscription?.plan || "free";
   const badge = PLAN_BADGES[plan] || PLAN_BADGES.free;
   const crumbs = BREADCRUMBS[location.pathname] || ["clientLayout.nav.dashboard"];
 
@@ -83,7 +81,7 @@ const ClientHeader = ({ onMenuToggle }) => {
         {/* New diagnostic CTA */}
         <button
           onClick={handleNewAssessment}
-          className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-[#13294B] hover:bg-[#1a3a66] text-white text-sm font-medium transition-colors"
+          className="flex items-center gap-1.5 px-3 py-2 rounded-lg bg-primary-500 hover:bg-primary-600 text-white text-sm font-medium transition-colors"
         >
           <Plus className="w-4 h-4" />
           <span className="hidden sm:inline">{t("clientLayout.newDiagnostic")}</span>

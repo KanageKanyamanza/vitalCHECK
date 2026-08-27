@@ -166,7 +166,7 @@ const ClientDashboardPage = () => {
     return (
       <ClientLayout>
         <div className="flex items-center justify-center h-full min-h-[60vh]">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-[#13294B]" />
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-500" />
         </div>
       </ClientLayout>
     );
@@ -192,19 +192,19 @@ const ClientDashboardPage = () => {
                   ? t("clientDashboard.subscription.active")
                   : t("clientDashboard.subscription.inactive")
               }
-              accentClass="border-l-[#13294B]"
+              accentClass="border-l-primary-500"
               action={
                 plan !== "free" ? (
                   <button
                     onClick={() => navigate("/pricing")}
-                    className="text-xs text-[#13294B] hover:text-[#1a3a66] font-medium"
+                    className="text-xs text-primary-600 hover:text-primary-700 font-medium"
                   >
                     {t("clientDashboard.subscription.manage")} →
                   </button>
                 ) : (
                   <button
                     onClick={() => navigate("/pricing")}
-                    className="text-xs text-[#F5A83C] hover:text-amber-600 font-semibold"
+                    className="text-xs text-accent-600 hover:text-accent-700 font-semibold"
                   >
                     {t("clientLayout.upgradeCTA")} →
                   </button>
@@ -248,8 +248,8 @@ const ClientDashboardPage = () => {
               {/* Section header */}
               <div className="flex flex-wrap items-center justify-between gap-4 mb-5">
                 <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-[#13294B] to-[#1a3a66] flex items-center justify-center shadow-sm">
-                    <BarChart2 className="w-4 h-4 text-[#F5A83C]" />
+                  <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-primary-900 to-primary-700 flex items-center justify-center shadow-sm">
+                    <BarChart2 className="w-4 h-4 text-accent-500" />
                   </div>
                   <div>
                     <h2 className="font-bold text-gray-900">
@@ -297,10 +297,10 @@ const ClientDashboardPage = () => {
         {!isPaidPlan && (
           <FadeIn delay={0.08}>
             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
-              <div className="h-1.5 bg-gradient-to-r from-[#13294B] via-[#1a3a66] to-[#F5A83C]" />
+              <div className="h-1.5 bg-gradient-to-r from-primary-900 via-primary-700 to-accent-500" />
               <div className="p-8 flex flex-col sm:flex-row items-center gap-6">
-                <div className="w-14 h-14 rounded-xl bg-[#13294B]/8 flex items-center justify-center shrink-0">
-                  <Lock className="w-6 h-6 text-[#13294B]/60" />
+                <div className="w-14 h-14 rounded-xl bg-primary-50 flex items-center justify-center shrink-0">
+                  <Lock className="w-6 h-6 text-primary-600/60" />
                 </div>
                 <div className="text-center sm:text-left">
                   <h3 className="font-bold text-gray-900 mb-1">
@@ -311,9 +311,9 @@ const ClientDashboardPage = () => {
                   </p>
                   <button
                     onClick={() => navigate("/pricing")}
-                    className="inline-flex items-center gap-2 bg-[#13294B] hover:bg-[#1a3a66] text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm"
+                    className="inline-flex items-center gap-2 bg-primary-500 hover:bg-primary-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium transition-colors shadow-sm"
                   >
-                    <Zap className="w-4 h-4 text-[#F5A83C]" />
+                    <Zap className="w-4 h-4 text-accent-500" />
                     {t("clientLayout.premiumUpsell.cta")}
                   </button>
                 </div>
@@ -329,7 +329,7 @@ const ClientDashboardPage = () => {
             {/* Assessments history */}
             <div className="bg-white rounded-xl shadow-sm overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-100 flex items-center gap-2">
-                <FileText className="w-5 h-5 text-[#13294B]" />
+                <FileText className="w-5 h-5 text-primary-600" />
                 <h2 className="font-semibold text-gray-900">
                   {t("clientDashboard.history.title")}
                 </h2>
@@ -347,7 +347,7 @@ const ClientDashboardPage = () => {
                     </p>
                     <button
                       onClick={handleNewAssessment}
-                      className="bg-[#13294B] hover:bg-[#1a3a66] text-white px-5 py-2 rounded-lg text-sm transition-colors"
+                      className="bg-primary-500 hover:bg-primary-600 text-white px-5 py-2 rounded-lg text-sm transition-colors"
                     >
                       {t("clientDashboard.history.startFirst")}
                     </button>
@@ -377,7 +377,7 @@ const ClientDashboardPage = () => {
                                   assessment.completedAt || assessment.startedAt
                                 ).toLocaleDateString("fr-FR")}
                               </span>
-                              <span className="font-semibold text-[#13294B]">
+                              <span className="font-semibold text-primary-600">
                                 {t("clientDashboard.history.score")}:{" "}
                                 {assessment.overallScore?.toFixed(0) ?? "N/A"}/100
                               </span>
@@ -388,7 +388,7 @@ const ClientDashboardPage = () => {
                               onClick={() =>
                                 navigate(`/results?id=${assessment._id}`)
                               }
-                              className="flex items-center gap-1 px-3 py-1.5 text-xs text-[#13294B] border border-[#13294B] hover:bg-[#13294B]/5 rounded-lg transition-colors"
+                              className="flex items-center gap-1 px-3 py-1.5 text-xs text-primary-600 border border-primary-500 hover:bg-primary-50 rounded-lg transition-colors"
                             >
                               <FileText className="w-3 h-3" />
                               {t("clientDashboard.history.viewReport")}
@@ -440,7 +440,7 @@ const ClientDashboardPage = () => {
                         onClick={() => setPaymentFilter(key)}
                         className={`px-2.5 py-1 rounded-full transition-colors whitespace-nowrap ${
                           paymentFilter === key
-                            ? "bg-[#13294B] text-white"
+                            ? "bg-primary-500 text-white"
                             : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                         }`}
                       >
@@ -475,7 +475,7 @@ const ClientDashboardPage = () => {
                     <p className="text-gray-400 text-sm mb-4">Aucun paiement</p>
                     <button
                       onClick={() => navigate("/pricing")}
-                      className="bg-[#13294B] hover:bg-[#1a3a66] text-white px-5 py-2 rounded-lg text-sm transition-colors"
+                      className="bg-primary-500 hover:bg-primary-600 text-white px-5 py-2 rounded-lg text-sm transition-colors"
                     >
                       Voir nos offres
                     </button>
