@@ -907,7 +907,9 @@
 	},
 	"clientLayout": {
 		"nav": {
+			"home": "Home",
 			"dashboard": "Dashboard",
+			"history": "Assessment History",
 			"diagnostics": "My Diagnostics",
 			"payments": "Payments",
 			"profile": "My Profile",

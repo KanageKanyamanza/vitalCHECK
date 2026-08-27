@@ -324,7 +324,7 @@ const ClientDashboardPage = () => {
 
         {/* ── Historique diagnostics + paiements (en dernier) ────────────────── */}
         <FadeIn delay={0.15}>
-          <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+          <div id="history-section" className="grid grid-cols-1 xl:grid-cols-2 gap-6">
 
             {/* Assessments history */}
             <div className="bg-white rounded-xl shadow-sm overflow-hidden">

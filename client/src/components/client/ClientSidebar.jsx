@@ -4,12 +4,13 @@ import { useTranslation } from "react-i18next";
 import {
   LayoutDashboard,
   FileText,
-  CreditCard,
   User,
   LogOut,
   BarChart2,
   X,
   Zap,
+  Home,
+  ClipboardList,
 } from "lucide-react";
 import { useClientAuth } from "../../context/ClientAuthContext";
 import logoIcon from "/android-icon-96x96.png";
@@ -124,12 +125,36 @@ const ClientSidebar = ({ isOpen, onClose }) => {
 
       {/* Navigation */}
       <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-1">
+        {/* Retour accueil */}
+        <NavItem
+          icon={Home}
+          label={t("clientLayout.nav.home")}
+          to="/"
+          active={false}
+          onClick={onClose}
+        />
+
+        <div className="my-1 border-t border-white/10" />
+
         <NavItem
           icon={LayoutDashboard}
           label={t("clientLayout.nav.dashboard")}
           to="/client/dashboard"
           active={isActive("/client/dashboard")}
           onClick={onClose}
+        />
+        {/* Historique des évaluations */}
+        <NavItem
+          icon={ClipboardList}
+          label={t("clientLayout.nav.history")}
+          to="/client/dashboard#history"
+          active={false}
+          onClick={() => {
+            onClose?.();
+            setTimeout(() => {
+              document.getElementById("history-section")?.scrollIntoView({ behavior: "smooth" });
+            }, 100);
+          }}
         />
         <NavItem
           icon={User}

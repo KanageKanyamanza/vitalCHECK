@@ -965,7 +965,9 @@
 	},
 	"clientLayout": {
 		"nav": {
+			"home": "Accueil",
 			"dashboard": "Tableau de bord",
+			"history": "Historique des Évaluations",
 			"diagnostics": "Mes Diagnostics",
 			"payments": "Paiements",
 			"profile": "Mon Profil",
