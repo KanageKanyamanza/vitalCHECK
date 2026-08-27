@@ -905,6 +905,26 @@
 			}
 		}
 	},
+	"clientLayout": {
+		"nav": {
+			"dashboard": "Dashboard",
+			"diagnostics": "My Diagnostics",
+			"payments": "Payments",
+			"profile": "My Profile",
+			"advanced": "Advanced Analytics",
+			"premiumSection": "Premium",
+			"advancedSection": "Advanced",
+			"upgradeToPremium": "Go Premium"
+		},
+		"newDiagnostic": "New Diagnostic",
+		"planFree": "FREE",
+		"upgradeCTA": "Upgrade to Premium",
+		"premiumUpsell": {
+			"title": "Premium Analytics Features",
+			"description": "Visualize your score evolution over time, compare diagnostics side by side, and export your data to Excel. Available to active subscribers.",
+			"cta": "Explore Premium Plans"
+		}
+	},
 	"clientDashboard": {
 		"welcome": "Welcome",
 		"settings": "Settings",

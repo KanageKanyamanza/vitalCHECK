@@ -963,6 +963,26 @@
 			}
 		}
 	},
+	"clientLayout": {
+		"nav": {
+			"dashboard": "Tableau de bord",
+			"diagnostics": "Mes Diagnostics",
+			"payments": "Paiements",
+			"profile": "Mon Profil",
+			"advanced": "Analyse Avancée",
+			"premiumSection": "Premium",
+			"advancedSection": "Avancé",
+			"upgradeToPremium": "Passer Premium"
+		},
+		"newDiagnostic": "Nouveau Diagnostic",
+		"planFree": "GRATUIT",
+		"upgradeCTA": "Passer à Premium",
+		"premiumUpsell": {
+			"title": "Fonctionnalités Analytiques Premium",
+			"description": "Visualisez l'évolution de vos scores dans le temps, comparez vos diagnostics côte à côte et exportez vos données en Excel. Réservé aux abonnés actifs.",
+			"cta": "Découvrir les offres Premium"
+		}
+	},
 	"clientDashboard": {
 		"welcome": "Bienvenue",
 		"settings": "Paramètres",
