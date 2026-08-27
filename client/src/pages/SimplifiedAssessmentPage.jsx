@@ -9,6 +9,7 @@ import { SimpleQuestionCard, SimpleProgressBar } from "../components/assessment"
 import { LanguageSelector } from "../components/ui";
 import useSmoothScroll from "../hooks/useSmoothScroll";
 import SEOHead from "../components/seo/SEOHead";
+import { useClientAuth } from "../context/ClientAuthContext";
 
 const PROGRESS_STORAGE_KEY = "vitalcheck-v2-progress";
 const RESULT_STORAGE_KEY = "vitalcheck-v2-result";
@@ -18,6 +19,7 @@ const SimplifiedAssessmentPage = () => {
 	const { scrollToTop } = useSmoothScroll();
 	const { t, i18n } = useTranslation();
 	const language = i18n.language?.substring(0, 2) || "fr";
+	const { user } = useClientAuth();
 
 	const [step, setStep] = useState("intro"); // 'intro' | 'questions'
 	const [formData, setFormData] = useState({
@@ -69,6 +71,17 @@ const SimplifiedAssessmentPage = () => {
 			// Ignorer les erreurs de lecture du stockage
 		}
 	}, []);
+
+	// Pré-remplir les champs depuis le profil utilisateur connecté
+	useEffect(() => {
+		if (!user) return;
+		setFormData((prev) => ({
+			companyName: prev.companyName || user.companyName || "",
+			email:       prev.email       || user.email       || "",
+			companySize: prev.companySize || user.companySize  || "",
+			sector:      prev.sector      || user.sector       || "",
+		}));
+	}, [user]);
 
 	// Sauvegarder la progression à chaque changement
 	useEffect(() => {
