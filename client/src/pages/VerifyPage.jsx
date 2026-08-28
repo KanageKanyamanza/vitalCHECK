@@ -70,6 +70,7 @@ const VerifyPage = () => {
   const { t, i18n } = useTranslation();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [publicBadges, setPublicBadges] = useState([]);
 
   useEffect(() => {
     const fetch = async () => {
@@ -84,6 +85,12 @@ const VerifyPage = () => {
     };
     fetch();
   }, [token]);
+
+  useEffect(() => {
+    axios.get(`${API_URL}/verify/public`)
+      .then((r) => setPublicBadges(r.data?.companies || []))
+      .catch(() => {});
+  }, []);
 
   const status = data?.found === false ? "not_found" : data?.status || "not_found";
   const ui = STATUS_UI[status] || STATUS_UI.not_found;
@@ -233,6 +240,64 @@ const VerifyPage = () => {
             </motion.div>
           )}
         </main>
+
+        {/* Public badge showcase */}
+        {publicBadges.length > 0 && (
+          <section className="px-4 py-10 border-t border-gray-200" style={{ background: "#f4f6fa" }}>
+            <div className="max-w-3xl mx-auto">
+              <p className="text-[11px] font-bold uppercase tracking-widest text-gray-400 text-center mb-6">
+                {t("verify.showcase.title")}
+              </p>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {publicBadges.map((c) => (
+                  <a
+                    key={c.token}
+                    href={`/verify/${c.token}`}
+                    className="group bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:border-green-300 hover:shadow-md transition-all flex flex-col gap-1.5"
+                  >
+                    {/* Mini shield + name */}
+                    <div className="flex items-center gap-2">
+                      <div
+                        className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
+                        style={{ background: `${DARK_GREEN}12` }}
+                      >
+                        <ShieldCheck style={{ width: 14, height: 14, color: DARK_GREEN }} />
+                      </div>
+                      <span className="text-xs font-bold text-gray-900 truncate group-hover:text-green-800 transition-colors">
+                        {c.companyName}
+                      </span>
+                    </div>
+                    {/* Sector */}
+                    {c.sector && (
+                      <p className="text-[10px] text-gray-400 capitalize ml-9 truncate">{c.sector}</p>
+                    )}
+                    {/* Score pill if opted in */}
+                    {c.score?.overall != null && (
+                      <div
+                        className="self-start ml-9 text-[10px] font-bold px-2 py-0.5 rounded-full"
+                        style={{ background: `${YELLOW}30`, color: "#92610a" }}
+                      >
+                        {Math.round(c.score.overall)}/100
+                      </div>
+                    )}
+                    {/* Date */}
+                    {c.completedAt && (
+                      <p className="text-[9px] text-gray-300 ml-9">
+                        {new Date(c.completedAt).toLocaleDateString(
+                          lang === "fr" ? "fr-FR" : "en-US",
+                          { month: "short", year: "numeric" }
+                        )}
+                      </p>
+                    )}
+                  </a>
+                ))}
+              </div>
+              <p className="text-center text-[10px] text-gray-300 mt-6">
+                {t("verify.showcase.cta")}
+              </p>
+            </div>
+          </section>
+        )}
       </div>
     </>
   );

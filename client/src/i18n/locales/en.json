@@ -1420,6 +1420,10 @@
 			"notFoundDesc": "This verification link does not exist or has been removed."
 		},
 		"poweredBy": "Verified by VitalCHECK",
-		"visitSite": "Visit VitalCHECK"
+		"visitSite": "Visit VitalCHECK",
+		"showcase": {
+			"title": "VitalCHECK Certified Companies",
+			"cta": "Get your badge by subscribing to a premium plan at vitalcheck.co"
+		}
 	}
 }

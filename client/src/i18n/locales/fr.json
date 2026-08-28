@@ -1478,6 +1478,10 @@
 			"notFoundDesc": "Ce lien de vérification n'existe pas ou a été supprimé."
 		},
 		"poweredBy": "Vérifié par VitalCHECK",
-		"visitSite": "Visiter VitalCHECK"
+		"visitSite": "Visiter VitalCHECK",
+		"showcase": {
+			"title": "Entreprises certifiées VitalCHECK",
+			"cta": "Obtenez votre badge en souscrivant à un abonnement premium sur vitalcheck.co"
+		}
 	}
 }

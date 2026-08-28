@@ -12,6 +12,64 @@ function assessmentAge(completedAt) {
   return (Date.now() - new Date(completedAt).getTime()) / msPerMonth;
 }
 
+// ── GET /api/verify/public ───────────────────────────────────────────────────
+// Public — returns up to 12 companies with an active, non-revoked badge.
+// Only exposes: companyName, sector, completedAt, score (if showScore), token.
+router.get("/public", async (req, res) => {
+  try {
+    const now = new Date();
+    const cutoff = new Date(now);
+    cutoff.setMonth(cutoff.getMonth() - BADGE_VALIDITY_MONTHS);
+
+    // Find assessments with an active badge completed within 12 months
+    const assessments = await Assessment.find({
+      "badge.active": true,
+      "badge.revokedAt": null,
+      completedAt: { $gte: cutoff },
+      verificationToken: { $ne: null },
+    })
+      .select("companyName sector completedAt overallScore overallLevel badge verificationToken user")
+      .sort({ completedAt: -1 })
+      .limit(20)
+      .lean();
+
+    if (!assessments.length) return res.json({ companies: [] });
+
+    // Verify subscriptions are still active for each
+    const userIds = [...new Set(assessments.map((a) => String(a.user)).filter(Boolean))];
+    const users = await User.find({ _id: { $in: userIds } })
+      .select("_id subscription")
+      .lean();
+    const userMap = Object.fromEntries(users.map((u) => [String(u._id), u]));
+
+    const companies = assessments
+      .filter((a) => {
+        const u = userMap[String(a.user)];
+        const sub = u?.subscription;
+        return (
+          sub?.status === "active" &&
+          PAID_PLANS.includes(sub?.plan) &&
+          (!sub?.endDate || new Date(sub.endDate) > now)
+        );
+      })
+      .slice(0, 12)
+      .map((a) => ({
+        token: a.verificationToken,
+        companyName: a.companyName || null,
+        sector: a.sector || null,
+        completedAt: a.completedAt || null,
+        score: a.badge?.showScore
+          ? { overall: a.overallScore, level: a.overallLevel }
+          : null,
+      }));
+
+    res.json({ companies });
+  } catch (err) {
+    console.error("[verify/public]", err);
+    res.status(500).json({ companies: [] });
+  }
+});
+
 // ── GET /api/verify/:token ────────────────────────────────────────────────────
 // Public — no authentication. Returns only the approved public data.
 // NEVER returns: email, phone, answers, pillar detail, plan/price.
