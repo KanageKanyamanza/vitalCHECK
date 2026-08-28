@@ -136,6 +136,21 @@ const assessmentSchema = new mongoose.Schema({
   },
   premiumInsights: {
     type: mongoose.Schema.Types.Mixed
+  },
+
+  // ── Badge de vérification (premium uniquement) ──────────────────────────────
+  // Token public non-devinable pointant vers /verify/:token
+  verificationToken: {
+    type: String,
+    default: null
+  },
+  badge: {
+    active: { type: Boolean, default: false },
+    activatedAt: { type: Date, default: null },
+    // Option que l'entreprise peut activer pour rendre son score public
+    showScore: { type: Boolean, default: false },
+    // Rempli si le badge est révoqué manuellement
+    revokedAt: { type: Date, default: null }
   }
 });
 
@@ -144,5 +159,7 @@ assessmentSchema.index({ user: 1, completedAt: -1 });
 assessmentSchema.index({ user: 1, status: 1, startedAt: -1 });
 // Create sparse unique index for resumeToken
 assessmentSchema.index({ resumeToken: 1 }, { unique: true, sparse: true });
+// Index for public badge verification (sparse: only indexed when token exists)
+assessmentSchema.index({ verificationToken: 1 }, { unique: true, sparse: true });
 
 module.exports = mongoose.model('Assessment', assessmentSchema);

@@ -11,7 +11,8 @@ const Layout = ({ children }) => {
   // Pages avec leur propre layout (navbar/footer gérés par le composant)
   const isAdminPage = location?.pathname?.startsWith('/admin') || false
   const isClientPage = location?.pathname?.startsWith('/client') || false
-  const isShellPage = isAdminPage || isClientPage
+  const isVerifyPage = location?.pathname?.startsWith('/verify') || false
+  const isShellPage = isAdminPage || isClientPage || isVerifyPage
 
   // Vérifier si on est sur la page d'accueil
   const isHomePage = location?.pathname === '/'

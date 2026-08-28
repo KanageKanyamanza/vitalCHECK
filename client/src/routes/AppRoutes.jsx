@@ -16,7 +16,9 @@ import UnifiedLoginPage from '../pages/UnifiedLoginPage'
 import ClientDashboardPage from '../pages/client/ClientDashboardPage'
 import ClientHistoryPage from '../pages/client/ClientHistoryPage'
 import ClientAnalyticsPage from '../pages/client/ClientAnalyticsPage'
+import ClientBadgePage from '../pages/client/ClientBadgePage'
 import ClientProfilePage from '../pages/client/ClientProfilePage'
+import VerifyPage from '../pages/VerifyPage'
 import ForgotPasswordPage from '../pages/ForgotPasswordPage'
 import ResetPasswordPage from '../pages/ResetPasswordPage'
 import PrivacyPolicy from '../pages/PrivacyPolicy'
@@ -63,6 +65,12 @@ const AppRoutes = () => {
           <ClientAnalyticsPage />
         </ProtectedRoute>
       } />
+      <Route path="/client/badge" element={
+        <ProtectedRoute requireAuth>
+          <ClientBadgePage />
+        </ProtectedRoute>
+      } />
+      <Route path="/verify/:token" element={<VerifyPage />} />
       <Route path="/client/profile" element={
         <ProtectedRoute requireAuth>
           <ClientProfilePage />

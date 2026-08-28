@@ -914,6 +914,7 @@
 			"payments": "Payments",
 			"profile": "My Profile",
 			"advanced": "Advanced Analytics",
+			"badge": "My Badge",
 			"premiumSection": "Premium",
 			"advancedSection": "Advanced",
 			"upgradeToPremium": "Go Premium"
@@ -1366,5 +1367,59 @@
 				"Support from a vitalCHECK expert"
 			]
 		}
+	},
+	"badge": {
+		"pageTitle": "My VitalCHECK Badge",
+		"pageSubtitle": "Generate a badge certifying your diagnostic and share it on your website or documents.",
+		"noBadgeYet": "No badge activated yet",
+		"noBadgeDesc": "Select a completed diagnostic below to generate your verification badge.",
+		"activate": "Activate badge",
+		"activated": "Badge active",
+		"revoke": "Revoke",
+		"revokeConfirm": "Revoke this badge? The verification page will show it as invalid.",
+		"revoked": "Badge revoked",
+		"showScore": "Make my score visible on the public page",
+		"showScoreHint": "By default, only company name and date are visible. Enable this to also show your overall score.",
+		"copyLink": "Copy link",
+		"linkCopied": "Link copied!",
+		"downloadBadge": "Download badge",
+		"verifyPage": "View verification page",
+		"status": {
+			"valid": "Valid",
+			"outdated": "Outdated (> 12 months)",
+			"expired": "Expired",
+			"revoked": "Revoked",
+			"inactive": "Not activated"
+		},
+		"upsell": {
+			"title": "Premium Verification Badge",
+			"desc": "Certify the authenticity of your VitalCHECK diagnostic with a shareable badge backed by a public verification page.",
+			"cta": "Go Premium"
+		},
+		"diagnosticOf": "Diagnostic from",
+		"generatedBy": "Company assessed by"
+	},
+	"verify": {
+		"title": "Diagnostic Verification",
+		"subtitle": "This page certifies that an authentic VitalCHECK diagnostic was performed.",
+		"company": "Company",
+		"date": "Diagnostic date",
+		"sector": "Sector",
+		"score": "Overall score",
+		"level": "Maturity level",
+		"status": {
+			"valid": "Valid diagnostic",
+			"validDesc": "This diagnostic is authentic and up to date.",
+			"outdated": "Diagnostic not up to date",
+			"outdatedDesc": "This diagnostic is more than 12 months old. The company is encouraged to run a new diagnostic.",
+			"expired": "Badge no longer valid",
+			"expiredDesc": "The premium subscription linked to this diagnostic is no longer active.",
+			"revoked": "Badge revoked",
+			"revokedDesc": "This badge has been deactivated by the company.",
+			"notFound": "Invalid link",
+			"notFoundDesc": "This verification link does not exist or has been removed."
+		},
+		"poweredBy": "Verified by VitalCHECK",
+		"visitSite": "Visit VitalCHECK"
 	}
 }

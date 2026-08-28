@@ -972,6 +972,7 @@
 			"payments": "Paiements",
 			"profile": "Mon Profil",
 			"advanced": "Analyse Avancée",
+			"badge": "Mon Badge",
 			"premiumSection": "Premium",
 			"advancedSection": "Avancé",
 			"upgradeToPremium": "Passer Premium"
@@ -1424,5 +1425,59 @@
 				"Accompagnement par un expert vitalCHECK"
 			]
 		}
+	},
+	"badge": {
+		"pageTitle": "Mon Badge VitalCHECK",
+		"pageSubtitle": "Générez un badge attestant votre diagnostic et partagez-le sur votre site ou vos documents.",
+		"noBadgeYet": "Aucun badge activé",
+		"noBadgeDesc": "Choisissez un diagnostic complété ci-dessous pour générer votre badge de vérification.",
+		"activate": "Activer le badge",
+		"activated": "Badge actif",
+		"revoke": "Révoquer",
+		"revokeConfirm": "Révoquer ce badge ? La page de vérification indiquera que le badge n'est plus valide.",
+		"revoked": "Badge révoqué",
+		"showScore": "Rendre mon score visible sur la page publique",
+		"showScoreHint": "Par défaut, seuls le nom et la date sont visibles. Activez cette option pour afficher aussi votre score global.",
+		"copyLink": "Copier le lien",
+		"linkCopied": "Lien copié !",
+		"downloadBadge": "Télécharger le badge",
+		"verifyPage": "Voir la page de vérification",
+		"status": {
+			"valid": "Valide",
+			"outdated": "Obsolète (> 12 mois)",
+			"expired": "Expiré",
+			"revoked": "Révoqué",
+			"inactive": "Non activé"
+		},
+		"upsell": {
+			"title": "Badge de vérification Premium",
+			"desc": "Attestez l'authenticité de votre diagnostic VitalCHECK avec un badge partageable, adossé à une page de vérification publique.",
+			"cta": "Passer Premium"
+		},
+		"diagnosticOf": "Diagnostic du",
+		"generatedBy": "Entreprise évaluée par"
+	},
+	"verify": {
+		"title": "Vérification du diagnostic",
+		"subtitle": "Cette page atteste qu'un diagnostic VitalCHECK authentique a été réalisé.",
+		"company": "Entreprise",
+		"date": "Date du diagnostic",
+		"sector": "Secteur",
+		"score": "Score global",
+		"level": "Niveau de maturité",
+		"status": {
+			"valid": "Diagnostic valide",
+			"validDesc": "Ce diagnostic est authentique et à jour.",
+			"outdated": "Diagnostic non mis à jour",
+			"outdatedDesc": "Ce diagnostic date de plus de 12 mois. L'entreprise est invitée à réaliser un nouveau diagnostic.",
+			"expired": "Badge non valide",
+			"expiredDesc": "L'abonnement premium associé à ce diagnostic n'est plus actif.",
+			"revoked": "Badge révoqué",
+			"revokedDesc": "Ce badge a été désactivé par l'entreprise.",
+			"notFound": "Lien invalide",
+			"notFoundDesc": "Ce lien de vérification n'existe pas ou a été supprimé."
+		},
+		"poweredBy": "Vérifié par VitalCHECK",
+		"visitSite": "Visiter VitalCHECK"
 	}
 }

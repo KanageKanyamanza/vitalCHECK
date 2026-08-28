@@ -9,6 +9,7 @@ const BREADCRUMBS = {
   "/client/dashboard": ["clientLayout.nav.dashboard"],
   "/client/history":   ["clientLayout.nav.dashboard", "clientLayout.nav.history"],
   "/client/analytics": ["clientLayout.nav.dashboard", "clientLayout.nav.advanced"],
+  "/client/badge":     ["clientLayout.nav.dashboard", "clientLayout.nav.badge"],
   "/client/profile":   ["clientLayout.nav.dashboard", "clientLayout.nav.profile"],
 };
 
