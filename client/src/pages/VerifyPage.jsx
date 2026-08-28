@@ -11,8 +11,8 @@ import { API_BASE_URL as API_URL } from "../services/api";
 import SEOHead from "../components/seo/SEOHead";
 import logoIcon from "/android-icon-96x96.png";
 
-const NAVY = "#13294B";
-const GOLD = "#F5A83C";
+const DARK_GREEN = "#14532d";
+const YELLOW = "#F4C542";
 
 const STATUS_UI = {
   valid: {
@@ -105,7 +105,7 @@ const VerifyPage = () => {
       <div className="min-h-screen flex flex-col" style={{ background: "#f4f6fa" }}>
         {/* Header bar */}
         <header
-          style={{ background: NAVY }}
+          style={{ background: DARK_GREEN }}
           className="px-6 py-4 flex items-center justify-between"
         >
           <Link to="/" className="flex items-center gap-2.5 hover:opacity-90 transition-opacity">
@@ -113,7 +113,7 @@ const VerifyPage = () => {
             <div className="leading-none">
               <span className="font-bold text-white text-sm tracking-wide">VitalCHECK</span>
               <br />
-              <span className="text-[10px] font-medium uppercase tracking-widest" style={{ color: GOLD }}>
+              <span className="text-[10px] font-medium uppercase tracking-widest" style={{ color: YELLOW }}>
                 Enterprise Health
               </span>
             </div>
@@ -136,7 +136,7 @@ const VerifyPage = () => {
               {/* Main card */}
               <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
                 {/* Top accent */}
-                <div className="h-1.5" style={{ background: `linear-gradient(to right, ${NAVY}, ${GOLD})` }} />
+                <div className="h-1.5" style={{ background: `linear-gradient(to right, ${DARK_GREEN}, ${YELLOW})` }} />
 
                 <div className="p-8">
                   {/* Status badge */}
@@ -154,9 +154,9 @@ const VerifyPage = () => {
                       <div className="flex items-start gap-3">
                         <div
                           className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-                          style={{ background: `${NAVY}12` }}
+                          style={{ background: `${DARK_GREEN}12` }}
                         >
-                          <Building2 style={{ width: 20, height: 20, color: NAVY }} />
+                          <Building2 style={{ width: 20, height: 20, color: DARK_GREEN }} />
                         </div>
                         <div>
                           <p className="text-xs text-gray-400 uppercase tracking-wide font-semibold">{t("verify.company")}</p>
@@ -171,9 +171,9 @@ const VerifyPage = () => {
                         <div className="flex items-start gap-3">
                           <div
                             className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-                            style={{ background: `${NAVY}12` }}
+                            style={{ background: `${DARK_GREEN}12` }}
                           >
-                            <CalendarDays style={{ width: 20, height: 20, color: NAVY }} />
+                            <CalendarDays style={{ width: 20, height: 20, color: DARK_GREEN }} />
                           </div>
                           <div>
                             <p className="text-xs text-gray-400 uppercase tracking-wide font-semibold">{t("verify.date")}</p>
@@ -192,9 +192,9 @@ const VerifyPage = () => {
                         <div className="flex items-start gap-3">
                           <div
                             className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
-                            style={{ background: `${GOLD}22` }}
+                            style={{ background: `${YELLOW}22` }}
                           >
-                            <BarChart2 style={{ width: 20, height: 20, color: GOLD }} />
+                            <BarChart2 style={{ width: 20, height: 20, color: YELLOW }} />
                           </div>
                           <div>
                             <p className="text-xs text-gray-400 uppercase tracking-wide font-semibold">{t("verify.score")}</p>
@@ -217,7 +217,7 @@ const VerifyPage = () => {
                     <Link
                       to="/"
                       className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors hover:opacity-80"
-                      style={{ background: NAVY, color: "#fff" }}
+                      style={{ background: DARK_GREEN, color: "#fff" }}
                     >
                       <ExternalLink className="w-3.5 h-3.5" />
                       {t("verify.visitSite")}

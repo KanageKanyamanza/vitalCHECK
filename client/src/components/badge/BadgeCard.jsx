@@ -3,9 +3,10 @@ import { useTranslation } from "react-i18next";
 import { Shield, Download } from "lucide-react";
 import logoIcon from "/android-icon-96x96.png";
 
-// Colors matching UBB identity
-const NAVY = "#13294B";
-const GOLD = "#F5A83C";
+// App palette: primary-900 (dark green) + accent-500 (yellow)
+const DARK_GREEN = "#14532d";
+const GREEN = "#00751B";
+const YELLOW = "#F4C542";
 
 /**
  * Renders the badge visual.
@@ -19,7 +20,7 @@ const BadgeCard = ({ companyName, year, verifyUrl }) => {
     <div
       id="badge-export-target"
       style={{
-        background: NAVY,
+        background: DARK_GREEN,
         borderRadius: 16,
         padding: "28px 32px",
         display: "flex",
@@ -39,28 +40,28 @@ const BadgeCard = ({ companyName, year, verifyUrl }) => {
           <div style={{ fontWeight: 800, fontSize: 15, letterSpacing: 1, color: "#fff" }}>
             VitalCHECK
           </div>
-          <div style={{ fontSize: 10, color: GOLD, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1.5 }}>
+          <div style={{ fontSize: 10, color: YELLOW, fontWeight: 600, textTransform: "uppercase", letterSpacing: 1.5 }}>
             Enterprise Health
           </div>
         </div>
       </div>
 
-      {/* Gold divider */}
-      <div style={{ width: "100%", height: 2, background: GOLD, borderRadius: 2 }} />
+      {/* Yellow divider */}
+      <div style={{ width: "100%", height: 2, background: YELLOW, borderRadius: 2 }} />
 
       {/* Shield icon */}
       <div style={{
         width: 56, height: 56, borderRadius: "50%",
-        background: `${GOLD}22`,
-        border: `2px solid ${GOLD}`,
+        background: `${YELLOW}22`,
+        border: `2px solid ${YELLOW}`,
         display: "flex", alignItems: "center", justifyContent: "center",
       }}>
-        <Shield style={{ width: 28, height: 28, color: GOLD }} />
+        <Shield style={{ width: 28, height: 28, color: YELLOW }} />
       </div>
 
       {/* Label */}
       <div style={{ textAlign: "center" }}>
-        <div style={{ fontSize: 11, color: GOLD, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 4 }}>
+        <div style={{ fontSize: 11, color: YELLOW, fontWeight: 700, textTransform: "uppercase", letterSpacing: 1.5, marginBottom: 4 }}>
           {t("badge.generatedBy")}
         </div>
         <div style={{ fontSize: 18, fontWeight: 800, color: "#fff", lineHeight: 1.2 }}>
@@ -71,8 +72,8 @@ const BadgeCard = ({ companyName, year, verifyUrl }) => {
         </div>
       </div>
 
-      {/* Gold divider */}
-      <div style={{ width: "60%", height: 1, background: `${GOLD}55` }} />
+      {/* Yellow divider */}
+      <div style={{ width: "60%", height: 1, background: `${YELLOW}55` }} />
 
       {/* Verify URL */}
       <div style={{
@@ -96,7 +97,7 @@ export const BadgeDownloader = ({ companyName, year, verifyUrl }) => {
     try {
       const html2canvas = (await import("html2canvas")).default;
       const canvas = await html2canvas(ref.current, {
-        backgroundColor: NAVY,
+        backgroundColor: DARK_GREEN,
         scale: 2,
         useCORS: true,
         logging: false,
