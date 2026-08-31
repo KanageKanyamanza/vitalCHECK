@@ -972,6 +972,7 @@
 			"payments": "Paiements",
 			"profile": "Mon Profil",
 			"advanced": "Analyse Avancée",
+			"team": "Mon Équipe",
 			"premiumSection": "Premium",
 			"advancedSection": "Avancé",
 			"upgradeToPremium": "Passer Premium"
@@ -1423,6 +1424,46 @@
 				"Rapport complet avec feuille de route de transformation",
 				"Accompagnement par un expert vitalCHECK"
 			]
+		}
+	},
+	"team": {
+		"title": "Mon Équipe",
+		"members": "Membres",
+		"diagnostics": "Diagnostics de l'équipe",
+		"noDiagnostics": "Aucun diagnostic disponible pour le moment",
+		"noTeam": "Aucune équipe associée à votre compte",
+		"unknownCompany": "Entreprise inconnue",
+		"inviteMember": "Inviter un membre",
+		"inviteEmailPlaceholder": "email@entreprise.com",
+		"sendInvite": "Envoyer l'invitation",
+		"inviteSent": "Invitation envoyée avec succès",
+		"inviteError": "Erreur lors de l'envoi de l'invitation",
+		"removeMember": "Retirer ce membre",
+		"confirmRemove": "Retirer {{name}} de l'équipe ?",
+		"memberRemoved": "Membre retiré de l'équipe",
+		"spotsLeft": "{{count}} place(s) disponible(s)",
+		"maxMembersReached": "Limite de membres atteinte",
+		"premiumRequired": "Accès multi-membres — Premium uniquement",
+		"premiumRequiredDesc": "L'invitation de membres d'équipe est disponible avec un abonnement Premium actif.",
+		"joinSuccess": "Vous avez rejoint l'équipe avec succès",
+		"joinError": "Impossible de rejoindre l'équipe",
+		"joining": "Connexion à l'équipe en cours...",
+		"invite": {
+			"invalid": "Invitation invalide",
+			"invalidDesc": "Ce lien d'invitation n'est pas valide ou a expiré.",
+			"notFound": "Invitation introuvable",
+			"alreadyUsed": "Cette invitation a déjà été utilisée",
+			"expired": "Cette invitation a expiré (valide 48h)",
+			"from": "Invitation de",
+			"toJoin": "pour rejoindre l'équipe",
+			"haveAccount": "J'ai un compte",
+			"noAccount": "Créer un compte",
+			"firstName": "Prénom",
+			"lastName": "Nom",
+			"companyName": "Entreprise",
+			"password": "Mot de passe",
+			"loginAndJoin": "Se connecter et rejoindre",
+			"registerAndJoin": "Créer un compte et rejoindre"
 		}
 	}
 }

@@ -756,6 +756,42 @@ const sendSubscriptionUpgradeEmail = async (to, name, planName, planId) => {
 };
 
 // Send password reset email
+const sendTeamInviteEmail = async ({ to, teamName, inviterName, token }) => {
+  const joinUrl = `${process.env.CLIENT_URL || 'https://checkmyenterprise.com'}/join-team/${token}`;
+
+  const mailOptions = {
+    from: `"vitalCHECK" <${process.env.EMAIL_USER}>`,
+    to,
+    subject: `Invitation à rejoindre l'équipe "${teamName}" — vitalCHECK`,
+    html: createUnifiedEmailTemplate({
+      language: 'fr',
+      title: 'Invitation à rejoindre une équipe',
+      subtitle: `<strong>${inviterName}</strong> vous invite à rejoindre l'espace premium de l'équipe <strong>"${teamName}"</strong> sur vitalCHECK.`,
+      content: `
+        <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.5; color: #4a5568;">
+          En acceptant cette invitation, vous aurez accès aux diagnostics et aux KPI de l'équise au sein du tableau de bord premium vitalCHECK.
+        </p>
+        <div style="background: #f0fdf4; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #00751B;">
+          <p style="margin: 0; color: #14532d; font-size: 14px;">
+            <strong>Ce lien est valable 48 heures.</strong> Passé ce délai, demandez une nouvelle invitation.
+          </p>
+        </div>
+      `,
+      buttons: [
+        {
+          text: 'Accepter l\'invitation',
+          url: joinUrl,
+          primary: true,
+          icon: '👥'
+        }
+      ],
+      note: 'Si vous n\'attendiez pas cette invitation, vous pouvez ignorer cet email en toute sécurité.'
+    }),
+  };
+
+  return sendEmail(mailOptions);
+};
+
 const sendPasswordResetEmail = async (to, name, resetToken) => {
   const resetUrl = `${process.env.CLIENT_URL || 'https://checkmyenterprise.com'}/reset-password/${resetToken}`;
   
@@ -906,6 +942,7 @@ const sendAdminNotificationEmail = async (admins, type, data) => {
 module.exports = {
   sendEmail,
   testEmailConfig,
+  sendTeamInviteEmail,
   sendContactConfirmation,
   sendContactNotification,
   sendPaymentEmail,

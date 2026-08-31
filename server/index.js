@@ -111,6 +111,7 @@ app.use("/api/notifications", require("./routes/notifications"));
 app.use("/api/newsletters", require("./routes/newsletters"));
 app.use("/api/mailing-contacts", require("./routes/mailing-contacts"));
 app.use("/api/premium-dashboard", require("./routes/premiumDashboard"));
+app.use("/api/teams", require("./routes/teams"));
 app.use("/api/messages", require("./routes/messages"));
 app.use("/api", require("./routes/ping"));
 

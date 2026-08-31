@@ -16,7 +16,9 @@ import UnifiedLoginPage from '../pages/UnifiedLoginPage'
 import ClientDashboardPage from '../pages/client/ClientDashboardPage'
 import ClientHistoryPage from '../pages/client/ClientHistoryPage'
 import ClientAnalyticsPage from '../pages/client/ClientAnalyticsPage'
+import ClientTeamPage from '../pages/client/ClientTeamPage'
 import ClientProfilePage from '../pages/client/ClientProfilePage'
+import JoinTeamPage from '../pages/JoinTeamPage'
 import ForgotPasswordPage from '../pages/ForgotPasswordPage'
 import ResetPasswordPage from '../pages/ResetPasswordPage'
 import PrivacyPolicy from '../pages/PrivacyPolicy'
@@ -63,11 +65,17 @@ const AppRoutes = () => {
           <ClientAnalyticsPage />
         </ProtectedRoute>
       } />
+      <Route path="/client/team" element={
+        <ProtectedRoute requireAuth>
+          <ClientTeamPage />
+        </ProtectedRoute>
+      } />
       <Route path="/client/profile" element={
         <ProtectedRoute requireAuth>
           <ClientProfilePage />
         </ProtectedRoute>
       } />
+      <Route path="/join-team/:token" element={<JoinTeamPage />} />
       <Route path="/privacy" element={<PrivacyPolicy />} />
       <Route path="/terms" element={<TermsOfService />} />
       <Route path="/blog" element={<BlogPage />} />

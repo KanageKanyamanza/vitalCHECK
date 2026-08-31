@@ -7,6 +7,7 @@ import {
   User,
   LogOut,
   BarChart2,
+  Users,
   X,
   Zap,
   Home,
@@ -165,14 +166,26 @@ const ClientSidebar = ({ isOpen, onClose }) => {
             {isPremium ? t("clientLayout.nav.premiumSection") : t("clientLayout.nav.advancedSection")}
           </p>
           {isPremium ? (
-            <NavItem
-              icon={BarChart2}
-              label={t("clientLayout.nav.advanced")}
-              to="/client/analytics"
-              active={isActive("/client/analytics")}
-              badge="★"
-              onClick={onClose}
-            />
+            <>
+              <NavItem
+                icon={BarChart2}
+                label={t("clientLayout.nav.advanced")}
+                to="/client/analytics"
+                active={isActive("/client/analytics")}
+                badge="★"
+                onClick={onClose}
+              />
+              {/* Mon équipe — visible uniquement pour premium/diagnostic */}
+              {["premium", "diagnostic"].includes(plan) && (
+                <NavItem
+                  icon={Users}
+                  label={t("clientLayout.nav.team")}
+                  to="/client/team"
+                  active={isActive("/client/team")}
+                  onClick={onClose}
+                />
+              )}
+            </>
           ) : (
             <button
               onClick={() => { onClose?.(); navigate("/pricing"); }}

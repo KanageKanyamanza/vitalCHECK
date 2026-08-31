@@ -914,6 +914,7 @@
 			"payments": "Payments",
 			"profile": "My Profile",
 			"advanced": "Advanced Analytics",
+			"team": "My Team",
 			"premiumSection": "Premium",
 			"advancedSection": "Advanced",
 			"upgradeToPremium": "Go Premium"
@@ -1365,6 +1366,46 @@
 				"Full report with transformation roadmap",
 				"Support from a vitalCHECK expert"
 			]
+		}
+	},
+	"team": {
+		"title": "My Team",
+		"members": "Members",
+		"diagnostics": "Team Diagnostics",
+		"noDiagnostics": "No diagnostics available yet",
+		"noTeam": "No team linked to your account",
+		"unknownCompany": "Unknown company",
+		"inviteMember": "Invite a Member",
+		"inviteEmailPlaceholder": "email@company.com",
+		"sendInvite": "Send Invitation",
+		"inviteSent": "Invitation sent successfully",
+		"inviteError": "Error sending invitation",
+		"removeMember": "Remove this member",
+		"confirmRemove": "Remove {{name}} from the team?",
+		"memberRemoved": "Member removed from the team",
+		"spotsLeft": "{{count}} spot(s) available",
+		"maxMembersReached": "Member limit reached",
+		"premiumRequired": "Multi-member access — Premium only",
+		"premiumRequiredDesc": "Inviting team members is available with an active Premium subscription.",
+		"joinSuccess": "You have successfully joined the team",
+		"joinError": "Unable to join the team",
+		"joining": "Joining team...",
+		"invite": {
+			"invalid": "Invalid invitation",
+			"invalidDesc": "This invitation link is not valid or has expired.",
+			"notFound": "Invitation not found",
+			"alreadyUsed": "This invitation has already been used",
+			"expired": "This invitation has expired (valid 48h)",
+			"from": "Invited by",
+			"toJoin": "to join the team",
+			"haveAccount": "I have an account",
+			"noAccount": "Create an account",
+			"firstName": "First name",
+			"lastName": "Last name",
+			"companyName": "Company",
+			"password": "Password",
+			"loginAndJoin": "Log in and join",
+			"registerAndJoin": "Create account and join"
 		}
 	}
 }
