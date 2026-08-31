@@ -33,18 +33,22 @@ const migrate = async () => {
       // Garde-fou supplémentaire : team peut avoir été remplie entre-temps
       if (user.team) { skipped++; continue; }
 
+      const plan = user.subscription?.plan || 'free';
+      // Multi-members access: premium and diagnostic plans only
+      const maxMembers = ['premium', 'diagnostic'].includes(plan) ? 5 : 1;
+
       const teamData = {
         name:      user.companyName || user.email,
         owner:     user._id,
         members:   [{ user: user._id, role: 'owner', joinedAt: user.createdAt || new Date() }],
         subscription: {
-          plan:      user.subscription?.plan      || 'free',
+          plan:      plan,
           status:    user.subscription?.status    || 'inactive',
           startDate: user.subscription?.startDate || null,
           endDate:   user.subscription?.endDate   || null,
           paymentId: user.subscription?.paymentId || null,
         },
-        maxMembers: 5,
+        maxMembers,
         createdAt:  user.createdAt || new Date(),
       };
 

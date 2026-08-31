@@ -63,10 +63,11 @@ const applyPlanToUser = async ({ user, planId, planName, orderId, amount, curren
   user.isPremium = ['premium', 'diagnostic'].includes(planId);
   await user.save();
 
-  // Sync subscription to the user's team (Phase A+)
+  // Sync subscription to the user's team + update maxMembers by plan (Phase A+)
   if (user.team) {
     try {
-      await Team.findByIdAndUpdate(user.team, { subscription: newSub });
+      const maxMembers = ['premium', 'diagnostic'].includes(planId) ? 5 : 1;
+      await Team.findByIdAndUpdate(user.team, { subscription: newSub, maxMembers });
     } catch (teamErr) {
       console.error('[payments] team subscription sync failed:', teamErr.message);
     }
