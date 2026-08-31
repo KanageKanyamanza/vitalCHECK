@@ -3,6 +3,7 @@ const router = express.Router();
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const User = require("../models/User");
+const Team = require("../models/Team");
 const Payment = require("../models/Payment");
 const {
 	sendWelcomeEmail,
@@ -20,7 +21,7 @@ const authenticateClient = async (req, res, next) => {
 		}
 
 		const decoded = jwt.verify(token, process.env.JWT_SECRET);
-		const user = await User.findById(decoded.userId).select("-password");
+		const user = await User.findById(decoded.userId).select("-password").populate("team");
 
 		if (!user) {
 			return res.status(404).json({ message: "Utilisateur non trouvé" });
@@ -78,6 +79,25 @@ router.post("/register", async (req, res) => {
 				hasAccount: true,
 			});
 			await user.save();
+		}
+
+		// Auto-créer une équipe personnelle si l'utilisateur n'en a pas encore
+		if (!user.team) {
+			try {
+				const team = await Team.create({
+					name: user.companyName || user.email,
+					owner: user._id,
+					members: [{ user: user._id, role: "owner", joinedAt: new Date() }],
+					subscription: user.subscription || { plan: "free", status: "inactive" },
+					maxMembers: 5,
+					createdAt: new Date(),
+				});
+				await User.findByIdAndUpdate(user._id, { team: team._id });
+				user.team = team._id;
+			} catch (teamErr) {
+				console.error("[register] team creation failed:", teamErr.message);
+				// Non-bloquant : l'inscription réussit même si la création d'équipe échoue
+			}
 		}
 
 		// Générer le token

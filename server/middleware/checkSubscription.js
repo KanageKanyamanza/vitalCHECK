@@ -1,9 +1,11 @@
 const User = require('../models/User');
+const Team = require('../models/Team');
 
 const PAID_PLANS = ['standard', 'premium', 'diagnostic'];
 
 /**
  * Middleware factory that verifies an active subscription before granting access.
+ * Phase A+: reads subscription from the user's Team first, falls back to user.subscription.
  *
  * Usage:
  *   router.get('/premium-route', authenticateClient, checkSubscription(), handler)
@@ -24,7 +26,8 @@ const checkSubscription = (requiredPlan = 'paid') => {
       });
     }
 
-    const sub = user.subscription;
+    // Team subscription takes priority; fall back to legacy user.subscription
+    const sub = user.team?.subscription || user.subscription;
 
     if (!sub || sub.status !== 'active') {
       return res.status(403).json({
@@ -40,8 +43,14 @@ const checkSubscription = (requiredPlan = 'paid') => {
         'subscription.status': 'expired',
         isPremium: false,
       }).exec().catch(err =>
-        console.error('[checkSubscription] expiration update failed:', err.message)
+        console.error('[checkSubscription] user expiration failed:', err.message)
       );
+      if (user.team?._id) {
+        Team.findByIdAndUpdate(user.team._id, { 'subscription.status': 'expired' })
+          .exec().catch(err =>
+            console.error('[checkSubscription] team expiration failed:', err.message)
+          );
+      }
 
       return res.status(403).json({
         message: 'Abonnement expiré — veuillez renouveler votre plan',

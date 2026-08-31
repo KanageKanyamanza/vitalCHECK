@@ -57,21 +57,25 @@ const authenticateClient = async (req, res, next) => {
     }
 
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.userId).select('-password');
+    const user = await User.findById(decoded.userId).select('-password').populate('team');
 
     if (!user) {
       return res.status(401).json({ message: 'Utilisateur non trouvé' });
     }
 
-    // Lazy expiration: if subscription is active but endDate has passed, expire it now
-    const sub = user.subscription;
+    // Lazy expiration: read subscription from team (Phase A+) with fallback to user
+    const teamSub = user.team?.subscription;
+    const sub = teamSub || user.subscription;
     if (sub?.status === 'active' && sub?.endDate && sub.endDate < new Date()) {
-      await User.findByIdAndUpdate(user._id, {
-        'subscription.status': 'expired',
-        isPremium: false,
-      });
+      const expireUpdate = { 'subscription.status': 'expired', isPremium: false };
+      await User.findByIdAndUpdate(user._id, expireUpdate);
       user.subscription.status = 'expired';
       user.isPremium = false;
+      if (user.team) {
+        const Team = require('../models/Team');
+        await Team.findByIdAndUpdate(user.team._id, { 'subscription.status': 'expired' });
+        user.team.subscription.status = 'expired';
+      }
     }
 
     req.user = user;

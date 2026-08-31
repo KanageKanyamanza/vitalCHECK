@@ -90,6 +90,11 @@ const userSchema = new mongoose.Schema({
     type: Date,
     select: false
   },
+  team: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Team',
+    default: null,
+  },
   lastLogin: Date,
   createdAt: {
     type: Date,

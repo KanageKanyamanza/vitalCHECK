@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 const Payment = require('../models/Payment');
 const Notification = require('../models/Notification');
 const User = require('../models/User');
+const Team = require('../models/Team');
 const { authenticateAdmin, authenticateClient } = require('../middleware/auth');
 const { verifyPayPalOrder, verifyPayPalWebhook } = require('../utils/paypalService');
 const {
@@ -50,15 +51,26 @@ const applyPlanToUser = async ({ user, planId, planName, orderId, amount, curren
     user.accountCreatedAt = new Date();
   }
 
-  user.subscription = {
+  const newSub = {
     plan: planId,
     status: 'active',
     startDate: new Date(),
     endDate,
     paymentId: payment._id,
   };
+
+  user.subscription = newSub;
   user.isPremium = ['premium', 'diagnostic'].includes(planId);
   await user.save();
+
+  // Sync subscription to the user's team (Phase A+)
+  if (user.team) {
+    try {
+      await Team.findByIdAndUpdate(user.team, { subscription: newSub });
+    } catch (teamErr) {
+      console.error('[payments] team subscription sync failed:', teamErr.message);
+    }
+  }
 
   // Send email (non-blocking)
   try {
