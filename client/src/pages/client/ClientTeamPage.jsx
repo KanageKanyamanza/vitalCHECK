@@ -31,12 +31,18 @@ const ClientTeamPage = () => {
   const loadData = async () => {
     setLoading(true);
     try {
-      const [teamRes, diagRes] = await Promise.allSettled([
-        axios.get(`${API_URL}/teams/me`, authHeaders),
-        axios.get(`${API_URL}/teams/diagnostics`, authHeaders),
-      ]);
-      if (teamRes.status === "fulfilled") setTeam(teamRes.value.data.team);
-      if (diagRes.status === "fulfilled") setDiagnostics(diagRes.value.data.assessments || []);
+      // Load team first (auto-creates if missing), then diagnostics sequentially
+      // so the user.team FK is committed before the diagnostics query reads it.
+      const teamRes = await axios.get(`${API_URL}/teams/me`, authHeaders);
+      setTeam(teamRes.data.team);
+
+      try {
+        const diagRes = await axios.get(`${API_URL}/teams/diagnostics`, authHeaders);
+        setDiagnostics(diagRes.data.assessments || []);
+      } catch {
+        // Non-premium plan: diagnostics endpoint returns 403 — silently ignore
+        setDiagnostics([]);
+      }
     } catch (err) {
       toast.error(t("common.error"));
     } finally {
