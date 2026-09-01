@@ -769,7 +769,7 @@ const sendTeamInviteEmail = async ({ to, teamName, inviterName, token }) => {
       subtitle: `<strong>${inviterName}</strong> vous invite à rejoindre l'espace premium de l'équipe <strong>"${teamName}"</strong> sur vitalCHECK.`,
       content: `
         <p style="margin: 0 0 20px 0; font-size: 16px; line-height: 1.5; color: #4a5568;">
-          En acceptant cette invitation, vous aurez accès aux diagnostics et aux KPI de l'équise au sein du tableau de bord premium vitalCHECK.
+          En acceptant cette invitation, vous aurez accès aux diagnostics et aux KPI de l'équipe au sein du tableau de bord premium vitalCHECK.
         </p>
         <div style="background: #f0fdf4; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #00751B;">
           <p style="margin: 0; color: #14532d; font-size: 14px;">

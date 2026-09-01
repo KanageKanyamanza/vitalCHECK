@@ -1379,6 +1379,7 @@
 		"inviteEmailPlaceholder": "email@company.com",
 		"sendInvite": "Send Invitation",
 		"inviteSent": "Invitation sent successfully",
+		"inviteEmailFailed": "Invitation created but the email could not be sent (check server logs)",
 		"inviteError": "Error sending invitation",
 		"removeMember": "Remove this member",
 		"confirmRemove": "Remove {{name}} from the team?",

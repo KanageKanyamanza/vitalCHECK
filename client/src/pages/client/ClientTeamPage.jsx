@@ -55,9 +55,13 @@ const ClientTeamPage = () => {
     if (!inviteEmail.trim()) return;
     setInviting(true);
     try {
-      await axios.post(`${API_URL}/teams/invite`, { email: inviteEmail }, authHeaders);
-      toast.success(t("team.inviteSent"));
-      setInviteEmail("");
+      const res = await axios.post(`${API_URL}/teams/invite`, { email: inviteEmail }, authHeaders);
+      if (res.data.emailSent === false) {
+        toast.error(t("team.inviteEmailFailed"));
+      } else {
+        toast.success(t("team.inviteSent"));
+        setInviteEmail("");
+      }
     } catch (err) {
       toast.error(err.response?.data?.message || t("common.error"));
     } finally {

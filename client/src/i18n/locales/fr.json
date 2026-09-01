@@ -1437,6 +1437,7 @@
 		"inviteEmailPlaceholder": "email@entreprise.com",
 		"sendInvite": "Envoyer l'invitation",
 		"inviteSent": "Invitation envoyée avec succès",
+		"inviteEmailFailed": "Invitation créée mais l'email n'a pas pu être envoyé (vérifiez les logs serveur)",
 		"inviteError": "Erreur lors de l'envoi de l'invitation",
 		"removeMember": "Retirer ce membre",
 		"confirmRemove": "Retirer {{name}} de l'équipe ?",

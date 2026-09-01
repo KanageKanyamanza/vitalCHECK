@@ -160,6 +160,7 @@ router.post('/invite', authenticateClient, async (req, res) => {
     });
 
     // Send invitation email
+    let emailSent = true;
     try {
       await sendTeamInviteEmail({
         to: normalizedEmail,
@@ -168,10 +169,15 @@ router.post('/invite', authenticateClient, async (req, res) => {
         token,
       });
     } catch (emailErr) {
-      console.error('[teams/invite] email failed:', emailErr.message);
+      console.error('[teams/invite] email failed:', emailErr.message, emailErr.code);
+      emailSent = false;
     }
 
-    res.json({ message: 'Invitation envoyée', email: normalizedEmail });
+    res.json({
+      message: emailSent ? 'Invitation envoyée' : 'Invitation créée mais l\'email n\'a pas pu être envoyé',
+      email: normalizedEmail,
+      emailSent,
+    });
   } catch (err) {
     console.error('[teams/invite]', err);
     res.status(500).json({ message: 'Erreur serveur' });
