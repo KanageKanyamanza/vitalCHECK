@@ -148,7 +148,9 @@ const createUnifiedEmailTemplate = (config) => {
                   <tr>
                     <td class="header-padding" style="background: linear-gradient(135deg, #F4C542 0%, #00751B 100%); padding: 25px 15px; text-align: center; position: relative;">
                       <div style="position: relative; z-index: 2;">
-                        <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="vitalCHECK Logo" class="logo-size" style="width: 60px; height: 60px; max-width: 100%; border-radius: 8px; object-fit: contain; margin-bottom: 10px; display: block; margin-left: auto; margin-right: auto;" />
+                        <div style="display:inline-block;background:rgba(255,255,255,0.15);border-radius:12px;padding:8px 16px;margin-bottom:12px;">
+                          <span style="color:#ffffff;font-size:20px;font-weight:900;letter-spacing:1px;font-family:Arial,sans-serif;">vital<span style="color:#F4C542;">CHECK</span></span>
+                        </div>
                         <h1 class="title-size" style="color: white; margin: 0; font-size: 24px; font-weight: 800; text-shadow: 0 2px 4px rgba(0,0,0,0.1); line-height: 1.2; text-transform: uppercase;">
                           ${title}
                         </h1>
@@ -232,8 +234,10 @@ const createUnifiedEmailTemplate = (config) => {
                   <tr>
                     <td class="footer-padding" style="background: #1a202c; padding: 30px 20px; text-align: center; color: #a0aec0;">
                       <div style="margin-bottom: 15px;">
-                        <img src="https://www.checkmyenterprise.com/ms-icon-310x310.png" alt="vitalCHECK Logo" style="width: 50px; height: 50px; max-width: 100%; border-radius: 8px; object-fit: contain; margin: 0 auto 10px auto; display: block;" />
-                        <div style="color: #e2e8f0; font-weight: 700; font-size: 15px; margin-top: 5px; text-transform: uppercase;">
+                        <div style="margin-bottom:6px;">
+                          <span style="color:#ffffff;font-size:17px;font-weight:900;letter-spacing:1px;font-family:Arial,sans-serif;">vital<span style="color:#F4C542;">CHECK</span></span>
+                        </div>
+                        <div style="color: #e2e8f0; font-weight: 700; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">
                           Enterprise Health Check
                         </div>
                       </div>
