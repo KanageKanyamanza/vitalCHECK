@@ -755,12 +755,10 @@ const sendSubscriptionUpgradeEmail = async (to, name, planName, planId) => {
   return sendEmail(mailOptions);
 };
 
-// Send password reset email
 const sendTeamInviteEmail = async ({ to, teamName, inviterName, token }) => {
   const joinUrl = `${process.env.CLIENT_URL || 'https://checkmyenterprise.com'}/join-team/${token}`;
 
-  const mailOptions = {
-    from: `"vitalCHECK" <${process.env.EMAIL_USER}>`,
+  const emailOptions = {
     to,
     subject: `Invitation à rejoindre l'équipe "${teamName}" — vitalCHECK`,
     html: createUnifiedEmailTemplate({
@@ -779,17 +777,44 @@ const sendTeamInviteEmail = async ({ to, teamName, inviterName, token }) => {
       `,
       buttons: [
         {
-          text: 'Accepter l\'invitation',
+          text: "Accepter l'invitation",
           url: joinUrl,
           primary: true,
           icon: '👥'
         }
       ],
-      note: 'Si vous n\'attendiez pas cette invitation, vous pouvez ignorer cet email en toute sécurité.'
+      note: "Si vous n'attendiez pas cette invitation, vous pouvez ignorer cet email en toute sécurité."
     }),
   };
 
-  return sendEmail(mailOptions);
+  let emailSent = false;
+  let lastError = null;
+
+  // Niveau 1 : IONOS via Nodemailer
+  try {
+    await sendEmail(emailOptions);
+    emailSent = true;
+  } catch (err) {
+    console.error('[TEAM INVITE] Échec IONOS:', err.message, err.code);
+    lastError = err;
+  }
+
+  // Niveau 2 : service externe (EmailJS/SendGrid) en fallback
+  if (!emailSent) {
+    try {
+      await sendEmailExternal(emailOptions);
+      emailSent = true;
+    } catch (err) {
+      console.error('[TEAM INVITE] Échec service externe:', err.message);
+      lastError = err;
+    }
+  }
+
+  if (!emailSent) {
+    throw new Error(`Impossible d'envoyer l'invitation: ${lastError?.message || 'Erreur inconnue'}`);
+  }
+
+  return { success: true };
 };
 
 const sendPasswordResetEmail = async (to, name, resetToken) => {
