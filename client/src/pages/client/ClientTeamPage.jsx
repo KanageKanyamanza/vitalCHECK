@@ -105,7 +105,8 @@ const ClientTeamPage = () => {
     );
   }
 
-  const spotsLeft = team.maxMembers - team.members.length;
+  const memberCount = team.members.filter(m => m.role === "member").length;
+  const spotsLeft = team.maxMembers - memberCount; // owner excluded from count
   const canInvite = team.isOwner && team.hasPremiumMulti && spotsLeft > 0;
 
   return (
@@ -144,7 +145,7 @@ const ClientTeamPage = () => {
                   {t("team.members")}
                 </h2>
                 <span className="text-xs text-gray-400">
-                  {team.members.length}/{team.maxMembers}
+                  {memberCount}/{team.maxMembers} {t("team.members").toLowerCase()}
                 </span>
               </div>
 

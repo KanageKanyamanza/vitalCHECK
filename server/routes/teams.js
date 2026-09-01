@@ -43,9 +43,27 @@ const teamHasPremiumMulti = (team) => {
 
 // ── GET /api/teams/me ─────────────────────────────────────────────────────────
 // Team info + member list (owner + member)
+// Auto-creates a personal team if the user has none (handles accounts pre-migration)
 router.get('/me', authenticateClient, async (req, res) => {
   try {
-    const team = await Team.findById(req.user.team?._id || req.user.team)
+    let teamId = req.user.team?._id || req.user.team;
+
+    // Auto-create personal team if missing (idempotent safety net)
+    if (!teamId) {
+      const plan = req.user.subscription?.plan || 'free';
+      const newTeam = await Team.create({
+        name: req.user.companyName || req.user.email,
+        owner: req.user._id,
+        members: [{ user: req.user._id, role: 'owner', joinedAt: req.user.createdAt || new Date() }],
+        subscription: req.user.subscription || { plan: 'free', status: 'inactive' },
+        maxMembers: ['premium', 'diagnostic'].includes(plan) ? 5 : 1,
+        createdAt: req.user.createdAt || new Date(),
+      });
+      await User.findByIdAndUpdate(req.user._id, { team: newTeam._id });
+      teamId = newTeam._id;
+    }
+
+    const team = await Team.findById(teamId)
       .populate('owner', 'firstName lastName email companyName')
       .populate('members.user', 'firstName lastName email companyName lastLogin');
 
@@ -101,10 +119,11 @@ router.post('/invite', authenticateClient, async (req, res) => {
       });
     }
 
-    const activeMemberCount = fullTeam.members.filter(m => m.role === 'member').length + 1; // +1 owner
-    if (activeMemberCount >= fullTeam.maxMembers) {
+    // maxMembers counts members only (owner excluded)
+    const currentMemberCount = fullTeam.members.filter(m => m.role === 'member').length;
+    if (currentMemberCount >= fullTeam.maxMembers) {
       return res.status(400).json({
-        message: `Limite de membres atteinte (${fullTeam.maxMembers} maximum)`,
+        message: `Limite de membres atteinte (${fullTeam.maxMembers} membres maximum)`,
         code: 'MAX_MEMBERS_REACHED',
       });
     }
@@ -216,8 +235,9 @@ router.post('/join/:token', authenticateClient, async (req, res) => {
       return res.status(400).json({ message: 'Vous êtes déjà membre de cette équipe' });
     }
 
-    // Check maxMembers
-    if (team.members.length >= team.maxMembers) {
+    // maxMembers counts members only (owner excluded)
+    const currentMemberCount = team.members.filter(m => m.role === 'member').length;
+    if (currentMemberCount >= team.maxMembers) {
       return res.status(400).json({ message: 'L\'équipe a atteint sa limite de membres' });
     }
 
