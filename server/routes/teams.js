@@ -305,11 +305,13 @@ router.delete('/members/:userId', authenticateClient, async (req, res) => {
 });
 
 // ── GET /api/teams/diagnostics ────────────────────────────────────────────────
-// Team shared diagnostics — returns team owner's assessments
-// Accessible to both owner and members with active team premium subscription
+// Team shared diagnostics — returns completed assessments for the owner's company only.
+// Accessible to both owner and members with active team premium subscription.
 router.get('/diagnostics', authenticateClient, async (req, res) => {
   try {
-    const team = await Team.findById(req.user.team?._id || req.user.team);
+    const team = await Team.findById(req.user.team?._id || req.user.team)
+      .populate('owner', 'companyName firstName lastName email');
+
     if (!team) return res.status(404).json({ message: 'Équipe introuvable' });
 
     // Verify caller is actually in this team
@@ -320,8 +322,21 @@ router.get('/diagnostics', authenticateClient, async (req, res) => {
       return res.status(403).json({ message: 'Abonnement Premium requis', code: 'PREMIUM_REQUIRED' });
     }
 
-    // Always return the OWNER's assessments (only owner creates diagnostics)
-    const assessments = await Assessment.find({ user: team.owner })
+    // Security: only return COMPLETED diagnostics for THIS company.
+    // Filter by owner's companyName to prevent leaking test/other-company assessments
+    // created under the same user account.
+    const ownerId = team.owner?._id || team.owner;
+    const ownerCompanyName = team.owner?.companyName;
+
+    const filter = {
+      user: ownerId,
+      completedAt: { $exists: true, $ne: null }, // exclude incomplete/abandoned diagnostics
+    };
+    if (ownerCompanyName) {
+      filter.companyName = ownerCompanyName; // strict company isolation
+    }
+
+    const assessments = await Assessment.find(filter)
       .select('companyName sector companySize completedAt overallScore overallLevel pillarScores createdAt')
       .sort({ completedAt: -1 })
       .limit(20)
