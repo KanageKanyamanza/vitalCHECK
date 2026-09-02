@@ -11,6 +11,7 @@ Une application web complète pour évaluer la santé d'entreprise avec la stack
 - **Gestion des Utilisateurs** : Inscription et suivi des évaluations
 - **Recommandations Personnalisées** : Conseils adaptés selon les scores
 - **Support Multilingue** : Interface disponible en anglais et français
+- **Gestion Multi-Équipe** : Invitation de collaborateurs, tableau de bord partagé et historique des diagnostics d'entreprise (compte Premium)
 
 ## 📚 Documentation
 
@@ -26,6 +27,7 @@ Une documentation détaillée de toutes les fonctionnalités du projet (frontend
 - [Notifications](docs/features/notifications.md)
 - [SEO & Analytics](docs/features/seo.md)
 - [Panel d'Administration](docs/features/admin.md)
+- [Gestion Multi-Équipe](docs/features/teams.md)
 
 ## 🏗️ Architecture
 

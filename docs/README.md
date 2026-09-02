@@ -28,6 +28,7 @@ La documentation est organisée par fonctionnalité. Chaque fichier documente l'
 - [Notifications](./features/notifications.md) : Système de notifications push et in-app.
 - [SEO & Analytics](./features/seo.md) : Optimisation pour les moteurs de recherche et suivi.
 - [Panel d'Administration](./features/admin.md) : Gestion globale de l'application.
+- [Gestion Multi-Équipe](./features/teams.md) : Invitation de collaborateurs, tableau de bord partagé et diagnostics d'équipe.
 
 ---
 
