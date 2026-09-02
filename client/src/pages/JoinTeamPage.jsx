@@ -13,7 +13,7 @@ const JoinTeamPage = () => {
   const { token } = useParams();
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { user, token: authToken, login } = useClientAuth();
+  const { user, token: authToken, login, setToken, setUser } = useClientAuth();
 
   const [invite, setInvite] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -77,9 +77,10 @@ const JoinTeamPage = () => {
     try {
       let jwt;
       if (mode === "login") {
-        const res = await axios.post(`${API_URL}/unified-auth/login`, { email, password });
-        jwt = res.data.token;
-        login(jwt, res.data.user);
+        // Use context login — handles token storage + state correctly
+        const result = await login(email, password);
+        if (!result.success) throw new Error(result.error || t("common.error"));
+        jwt = localStorage.getItem("clientToken");
       } else {
         const res = await axios.post(`${API_URL}/client-auth/register`, {
           email,
@@ -91,7 +92,10 @@ const JoinTeamPage = () => {
           sector: "other",
         });
         jwt = res.data.token;
-        login(jwt, res.data.user);
+        // Properly store auth state via context setters
+        localStorage.setItem("clientToken", jwt);
+        setToken(jwt);
+        setUser(res.data.user);
       }
       await handleJoin(jwt);
     } catch (err) {
