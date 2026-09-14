@@ -148,6 +148,7 @@ const SimplifiedResultsPage = () => {
 					email: email.trim(),
 					companySize: data.formData?.companySize,
 					sector: data.formData?.sector || undefined,
+					questionnaireType: data.questionnaireType || "universal",
 				},
 				token ? { Authorization: `Bearer ${token}` } : {},
 			);
@@ -289,7 +290,23 @@ const SimplifiedResultsPage = () => {
 	const { result, formData = {}, completedAt } = data;
 	const { pillarScores, overallScore, overallLevel, recommendations, weakest, strongest } = result;
 
-	const overallLevelInfo = getLevelV2ById(overallLevel, language);
+	// Utilise les niveaux spécifiques au secteur (ex: agriculture) si fournis, sinon les niveaux universels
+	const getLevelInfo = (levelId) => {
+		if (data.levels && Array.isArray(data.levels)) {
+			const found = data.levels.find((l) => l.id === levelId);
+			if (found) {
+				return {
+					id: found.id,
+					color: found.color,
+					label: found.label?.[language] || found.label?.fr || levelId,
+					interpretation: found.interpretation?.[language] || found.interpretation?.fr || "",
+				};
+			}
+		}
+		return getLevelV2ById(levelId, language);
+	};
+
+	const overallLevelInfo = getLevelInfo(overallLevel);
 
 	const dateLocale = language === "en" ? "en-US" : "fr-FR";
 	const dateLabel = new Date(completedAt || Date.now()).toLocaleDateString(dateLocale, {
@@ -393,7 +410,7 @@ const SimplifiedResultsPage = () => {
 					</h3>
 					<div className="space-y-4">
 						{pillarScores.map((pillar) => {
-							const levelInfo = getLevelV2ById(pillar.level, language);
+							const levelInfo = getLevelInfo(pillar.level);
 							return (
 								<div key={pillar.pillarId}>
 									<div className="flex justify-between mb-1 text-sm">
