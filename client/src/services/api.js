@@ -182,8 +182,9 @@ export const reportsAPI = publicApi;
 // API du diagnostic simplifié "Niveau 1" (v2)
 export const assessmentV2API = {
 	// Récupérer les 25 questions (5 piliers x 5 questions)
-	getQuestions: (lang = "fr") =>
-		api.get(`/assessments-v2/questions?lang=${lang}`),
+	// questionnaireType : 'universal' (défaut) ou 'agriculture'
+	getQuestions: (lang = "fr", questionnaireType = "universal") =>
+		api.get(`/assessments-v2/questions?lang=${lang}&questionnaire=${questionnaireType}`),
 
 	// Calculer les scores sans persistance (aucun compte requis)
 	scoreAssessment: (data) => api.post("/assessments-v2/score", data),

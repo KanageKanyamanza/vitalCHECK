@@ -3,6 +3,7 @@ const { body, validationResult } = require("express-validator");
 const User = require("../models/User");
 const Assessment = require("../models/Assessment");
 const questionsDataV2 = require("../data/questions-v2");
+const questionsAgriV1 = require("../data/questions-agri-v1");
 const {
 	calculateScoresV2,
 	generateRecommendationsV2,
@@ -19,9 +20,15 @@ const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 
-// Le contenu anglais sera ajouté en phase 2 : on retombe sur le français en attendant
-const getQuestionsDataV2 = (language) => {
-	if (language === "en" && questionsDataV2.en && questionsDataV2.en.pillars && questionsDataV2.en.pillars.length > 0) {
+// Retourne les données de questions selon la langue et le type de questionnaire
+const getQuestionsDataV2 = (language, questionnaireType = "universal") => {
+	if (questionnaireType === "agriculture") {
+		if (language === "en" && questionsAgriV1.en?.pillars?.length > 0) {
+			return questionsAgriV1.en;
+		}
+		return questionsAgriV1.fr;
+	}
+	if (language === "en" && questionsDataV2.en?.pillars?.length > 0) {
 		return questionsDataV2.en;
 	}
 	return questionsDataV2.fr;
@@ -44,17 +51,26 @@ const sanitizeQuestionsForClient = (data) => ({
 	})),
 });
 
-// GET /api/assessments-v2/questions?lang=fr
+// GET /api/assessments-v2/questions?lang=fr&questionnaire=universal|agriculture
 router.get("/questions", (req, res) => {
 	try {
-		const { lang = "fr" } = req.query;
-		const data = getQuestionsDataV2(lang);
+		const { lang = "fr", questionnaire = "universal" } = req.query;
+		const questionnaireType = questionnaire === "agriculture" ? "agriculture" : "universal";
+		const data = getQuestionsDataV2(lang, questionnaireType);
 
-		res.json({
+		const response = {
 			success: true,
 			data: sanitizeQuestionsForClient(data),
-			language: questionsDataV2.en?.pillars?.length > 0 && lang === "en" ? "en" : "fr",
-		});
+			language: lang,
+			questionnaireType,
+		};
+
+		// Inclure les niveaux spécifiques au questionnaire (agriculture uniquement)
+		if (questionnaireType === "agriculture") {
+			response.levels = questionsAgriV1.levels;
+		}
+
+		res.json(response);
 	} catch (error) {
 		console.error("Get v2 questions error:", error);
 		res.status(500).json({
@@ -67,7 +83,7 @@ router.get("/questions", (req, res) => {
 // POST /api/assessments-v2/score - calcul sans persistance (sans compte requis)
 router.post(
 	"/score",
-	[body("answers").isArray({ min: 1 }), body("language").optional().isString()],
+	[body("answers").isArray({ min: 1 }), body("language").optional().isString(), body("questionnaireType").optional().isString()],
 	(req, res) => {
 		try {
 			const errors = validationResult(req);
@@ -75,8 +91,8 @@ router.post(
 				return res.status(400).json({ errors: errors.array() });
 			}
 
-			const { answers, language = "fr" } = req.body;
-			const questionsData = getQuestionsDataV2(language);
+			const { answers, language = "fr", questionnaireType = "universal" } = req.body;
+			const questionsData = getQuestionsDataV2(language, questionnaireType);
 
 			const { pillarScores, overallScore, overallLevel } = calculateScoresV2(answers, questionsData);
 			const recommendations = generateRecommendationsV2(answers, pillarScores, questionsData);
@@ -114,6 +130,7 @@ router.post(
 		body("email").isEmail().normalizeEmail(),
 		body("companySize").isIn(["micro", "sme", "large-sme"]),
 		body("sector").optional().trim(),
+		body("questionnaireType").optional().isString(),
 	],
 	async (req, res) => {
 		try {
@@ -129,9 +146,10 @@ router.post(
 				email,
 				companySize,
 				sector,
+				questionnaireType = "universal",
 			} = req.body;
 
-			const questionsData = getQuestionsDataV2(language);
+			const questionsData = getQuestionsDataV2(language, questionnaireType);
 
 			// Recalcul des scores côté serveur (ne pas faire confiance au score envoyé par le client)
 			const { pillarScores, overallScore, overallLevel } = calculateScoresV2(answers, questionsData);
@@ -195,6 +213,7 @@ router.post(
 				email,
 				companySize,
 				sector: sector || undefined,
+				questionnaireType: questionnaireType === "agriculture" ? "agriculture" : "universal",
 				language,
 				status: "completed",
 				completedAt: new Date(),

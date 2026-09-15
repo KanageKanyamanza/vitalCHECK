@@ -1317,6 +1317,10 @@
 			"language": "Diagnostic language",
 			"startButton": "Start the diagnostic"
 		},
+		"agri": {
+			"title": "Farm Business Assessment 10+ ha",
+			"subtitle": "Answer 25 questions across 5 key pillars of farm management and instantly get your performance score, strengths and first recommendations."
+		},
 		"sizes": {
 			"micro": "Micro-enterprise (1-9 employees)",
 			"sme": "SME (10-49 employees)",

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, ArrowRight, CheckCircle, Clock } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -16,10 +16,13 @@ const RESULT_STORAGE_KEY = "vitalcheck-v2-result";
 
 const SimplifiedAssessmentPage = () => {
 	const navigate = useNavigate();
+	const [searchParams] = useSearchParams();
 	const { scrollToTop } = useSmoothScroll();
 	const { t, i18n } = useTranslation();
 	const language = i18n.language?.substring(0, 2) || "fr";
 	const { user } = useClientAuth();
+
+	const questionnaireType = searchParams.get("questionnaire") === "agriculture" ? "agriculture" : "universal";
 
 	const [step, setStep] = useState("intro"); // 'intro' | 'questions'
 	const [formData, setFormData] = useState({
@@ -29,19 +32,21 @@ const SimplifiedAssessmentPage = () => {
 		sector: "",
 	});
 	const [questionsData, setQuestionsData] = useState(null);
+	const [sectorLevels, setSectorLevels] = useState(null); // niveaux spécifiques au secteur
 	const [loadingQuestions, setLoadingQuestions] = useState(true);
 	const [answers, setAnswers] = useState([]);
 	const [currentIndex, setCurrentIndex] = useState(0);
 	const [submitting, setSubmitting] = useState(false);
 
-	// Charger (ou recharger) les questions quand la langue change
+	// Charger (ou recharger) les questions quand la langue ou le type de questionnaire change
 	useEffect(() => {
 		const loadQuestions = async () => {
 			setLoadingQuestions(true);
 			try {
-				const response = await assessmentV2API.getQuestions(language);
+				const response = await assessmentV2API.getQuestions(language, questionnaireType);
 				if (response.data.success) {
 					setQuestionsData(response.data.data);
+					setSectorLevels(response.data.levels || null);
 					setAnswers([]);
 					setCurrentIndex(0);
 				}
@@ -54,7 +59,7 @@ const SimplifiedAssessmentPage = () => {
 		};
 
 		loadQuestions();
-	}, [language]);
+	}, [language, questionnaireType]);
 
 	// Restaurer une progression interrompue (rafraîchissement de page)
 	useEffect(() => {
@@ -173,6 +178,7 @@ const SimplifiedAssessmentPage = () => {
 			const response = await assessmentV2API.scoreAssessment({
 				answers,
 				language,
+				questionnaireType,
 			});
 
 			if (response.data.success) {
@@ -181,6 +187,8 @@ const SimplifiedAssessmentPage = () => {
 					formData,
 					answers,
 					language,
+					questionnaireType,
+					...(sectorLevels ? { levels: sectorLevels } : {}),
 				};
 
 				try {
@@ -256,10 +264,14 @@ const SimplifiedAssessmentPage = () => {
 							</span>
 						</div>
 						<h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 mb-2">
-							{t("diagnostic.intro.title")}
+							{questionnaireType === "agriculture"
+								? t("diagnostic.agri.title")
+								: t("diagnostic.intro.title")}
 						</h1>
 						<p className="text-gray-600 mb-6">
-							{t("diagnostic.intro.subtitle")}
+							{questionnaireType === "agriculture"
+								? t("diagnostic.agri.subtitle")
+								: t("diagnostic.intro.subtitle")}
 						</p>
 
 						<form onSubmit={handleStart} className="space-y-5">
