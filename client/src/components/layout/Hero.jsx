@@ -80,11 +80,7 @@ const Hero = ({ onStartAssessment }) => {
             className='relative'
           >
 
-            {/* Placeholder image – à remplacer par une vraie image */}
-            <div className='absolute -bottom-[120px] md:-bottom-[80px] left-2 md:left-10 w-[150px] h-[150px] md:w-[180px] md:h-[180px] rounded-xl border-2 border-dashed border-gray-300 bg-gray-50 flex items-center justify-center text-gray-300 text-xs text-center leading-tight select-none'>
-              Image à<br />ajouter
-            </div>
-            <div className='absolute md:-top-[40px] left-[170px] sm:left-[250px]'>
+            <div className='absolute md:-top-[40px] left-2 sm:left-10'>
             <button
               onClick={onStartAssessment}
               className="bg-accent-500 hover:bg-accent-600 text-white font-semibold text-sm md:text-lg px-6 md:px-12 py-3 md:py-4 rounded-lg flex items-center space-x-2 md:space-x-3 mx-auto transform hover:scale-105 transition-all duration-300 shadow-lg"
