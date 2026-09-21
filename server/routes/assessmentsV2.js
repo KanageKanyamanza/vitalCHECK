@@ -4,6 +4,7 @@ const User = require("../models/User");
 const Assessment = require("../models/Assessment");
 const questionsDataV2 = require("../data/questions-v2");
 const questionsAgriV1 = require("../data/questions-agri-v1");
+const questionsRetailV1 = require("../data/questions-retail-v1");
 const {
 	calculateScoresV2,
 	generateRecommendationsV2,
@@ -20,13 +21,23 @@ const jwt = require("jsonwebtoken");
 
 const router = express.Router();
 
+// Registre des questionnaires sectoriels : ajouter un secteur = ajouter une entrée ici
+const SECTOR_QUESTIONNAIRES = {
+	agriculture: questionsAgriV1,
+	retail: questionsRetailV1,
+};
+
+const isValidQuestionnaireType = (questionnaireType) =>
+	Object.prototype.hasOwnProperty.call(SECTOR_QUESTIONNAIRES, questionnaireType);
+
 // Retourne les données de questions selon la langue et le type de questionnaire
 const getQuestionsDataV2 = (language, questionnaireType = "universal") => {
-	if (questionnaireType === "agriculture") {
-		if (language === "en" && questionsAgriV1.en?.pillars?.length > 0) {
-			return questionsAgriV1.en;
+	const sectorData = SECTOR_QUESTIONNAIRES[questionnaireType];
+	if (sectorData) {
+		if (language === "en" && sectorData.en?.pillars?.length > 0) {
+			return sectorData.en;
 		}
-		return questionsAgriV1.fr;
+		return sectorData.fr;
 	}
 	if (language === "en" && questionsDataV2.en?.pillars?.length > 0) {
 		return questionsDataV2.en;
@@ -51,11 +62,11 @@ const sanitizeQuestionsForClient = (data) => ({
 	})),
 });
 
-// GET /api/assessments-v2/questions?lang=fr&questionnaire=universal|agriculture
+// GET /api/assessments-v2/questions?lang=fr&questionnaire=universal|agriculture|retail
 router.get("/questions", (req, res) => {
 	try {
 		const { lang = "fr", questionnaire = "universal" } = req.query;
-		const questionnaireType = questionnaire === "agriculture" ? "agriculture" : "universal";
+		const questionnaireType = isValidQuestionnaireType(questionnaire) ? questionnaire : "universal";
 		const data = getQuestionsDataV2(lang, questionnaireType);
 
 		const response = {
@@ -65,9 +76,9 @@ router.get("/questions", (req, res) => {
 			questionnaireType,
 		};
 
-		// Inclure les niveaux spécifiques au questionnaire (agriculture uniquement)
-		if (questionnaireType === "agriculture") {
-			response.levels = questionsAgriV1.levels;
+		// Inclure les niveaux spécifiques au secteur (paliers de maturité dédiés)
+		if (SECTOR_QUESTIONNAIRES[questionnaireType]) {
+			response.levels = SECTOR_QUESTIONNAIRES[questionnaireType].levels;
 		}
 
 		res.json(response);
@@ -213,7 +224,7 @@ router.post(
 				email,
 				companySize,
 				sector: sector || undefined,
-				questionnaireType: questionnaireType === "agriculture" ? "agriculture" : "universal",
+				questionnaireType: isValidQuestionnaireType(questionnaireType) ? questionnaireType : "universal",
 				language,
 				status: "completed",
 				completedAt: new Date(),
