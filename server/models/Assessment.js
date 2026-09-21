@@ -84,10 +84,10 @@ const assessmentSchema = new mongoose.Schema({
   sector: {
     type: String
   },
-  // 'universal' = questions-v2.js standard, 'agriculture' = questions-agri-v1.js
+  // 'universal' = questions-v2.js standard, 'agriculture' = questions-agri-v1.js, 'retail' = questions-retail-v1.js
   questionnaireType: {
     type: String,
-    enum: ['universal', 'agriculture'],
+    enum: ['universal', 'agriculture', 'retail'],
     default: 'universal',
   },
   language: {
