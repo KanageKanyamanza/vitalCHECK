@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Clock, ArrowRight, Sprout } from 'lucide-react'
+import { Clock, ArrowRight, Sprout, Store } from 'lucide-react'
 import { Hero } from '../components/layout'
 import { Footer } from '../components/navigation'
 import { SocialShare } from '../components/ui'
@@ -86,6 +86,41 @@ const LandingPage = () => {
             <button
               onClick={() => navigate('/diagnostic?questionnaire=agriculture')}
               className="flex-shrink-0 bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg inline-flex items-center space-x-2 transform hover:scale-105 transition-all duration-300 shadow-md whitespace-nowrap"
+            >
+              <span>Démarrer</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Diagnostic sectoriel Retail */}
+      <div className="py-16 bg-white border-t border-gray-100">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="flex flex-col sm:flex-row items-center gap-8 bg-blue-50 border border-blue-200 rounded-2xl p-8"
+          >
+            <div className="flex-shrink-0 w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+              <Store className="w-8 h-8 text-blue-600" />
+            </div>
+            <div className="flex-1 text-center sm:text-left">
+              <span className="inline-block text-xs font-semibold text-blue-700 uppercase tracking-wide bg-blue-100 px-2 py-1 rounded mb-2">
+                Nouveau · Secteur Commerce de Détail
+              </span>
+              <h3 className="text-xl font-display font-bold text-gray-900 mb-1">
+                Diagnostic Commerce de Détail
+              </h3>
+              <p className="text-sm text-gray-600">
+                25 questions spécifiques aux commerces de détail — pilotage, stocks, finance, client et digitalisation. Résultats instantanés et gratuits.
+              </p>
+            </div>
+            <button
+              onClick={() => navigate('/diagnostic?questionnaire=retail')}
+              className="flex-shrink-0 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg inline-flex items-center space-x-2 transform hover:scale-105 transition-all duration-300 shadow-md whitespace-nowrap"
             >
               <span>Démarrer</span>
               <ArrowRight className="w-4 h-4" />
