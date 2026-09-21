@@ -14,6 +14,10 @@ import { useClientAuth } from "../context/ClientAuthContext";
 const PROGRESS_STORAGE_KEY = "vitalcheck-v2-progress";
 const RESULT_STORAGE_KEY = "vitalcheck-v2-result";
 
+// Types de questionnaires sectoriels supportés côté client (doit rester aligné
+// avec SECTOR_QUESTIONNAIRES côté serveur dans assessmentsV2.js)
+const SECTOR_QUESTIONNAIRE_TYPES = ["agriculture", "retail"];
+
 const SimplifiedAssessmentPage = () => {
 	const navigate = useNavigate();
 	const [searchParams] = useSearchParams();
@@ -22,7 +26,10 @@ const SimplifiedAssessmentPage = () => {
 	const language = i18n.language?.substring(0, 2) || "fr";
 	const { user } = useClientAuth();
 
-	const questionnaireType = searchParams.get("questionnaire") === "agriculture" ? "agriculture" : "universal";
+	const requestedQuestionnaire = searchParams.get("questionnaire");
+	const questionnaireType = SECTOR_QUESTIONNAIRE_TYPES.includes(requestedQuestionnaire)
+		? requestedQuestionnaire
+		: "universal";
 
 	const [step, setStep] = useState("intro"); // 'intro' | 'questions'
 	const [formData, setFormData] = useState({
@@ -264,14 +271,10 @@ const SimplifiedAssessmentPage = () => {
 							</span>
 						</div>
 						<h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 mb-2">
-							{questionnaireType === "agriculture"
-								? t("diagnostic.agri.title")
-								: t("diagnostic.intro.title")}
+							{t([`diagnostic.${questionnaireType}.title`, "diagnostic.intro.title"])}
 						</h1>
 						<p className="text-gray-600 mb-6">
-							{questionnaireType === "agriculture"
-								? t("diagnostic.agri.subtitle")
-								: t("diagnostic.intro.subtitle")}
+							{t([`diagnostic.${questionnaireType}.subtitle`, "diagnostic.intro.subtitle"])}
 						</p>
 
 						<form onSubmit={handleStart} className="space-y-5">

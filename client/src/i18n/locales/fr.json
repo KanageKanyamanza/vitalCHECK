@@ -1375,9 +1375,13 @@
 			"language": "Langue du diagnostic",
 			"startButton": "Démarrer le diagnostic"
 		},
-		"agri": {
+		"agriculture": {
 			"title": "Diagnostic Exploitation Agricole +10 ha",
 			"subtitle": "Répondez à 25 questions réparties sur 5 piliers clés de la gestion agricole et obtenez instantanément votre score de performance, vos points forts et vos premières recommandations."
+		},
+		"retail": {
+			"title": "Diagnostic Commerce de Détail",
+			"subtitle": "Répondez à 25 questions réparties sur 5 piliers clés de la gestion commerciale et obtenez instantanément votre score de performance, vos points forts et vos premières recommandations."
 		},
 		"sizes": {
 			"micro": "Micro-entreprise (1-9 employés)",
