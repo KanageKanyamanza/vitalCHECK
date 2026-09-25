@@ -5,6 +5,7 @@ const Assessment = require("../models/Assessment");
 const questionsDataV2 = require("../data/questions-v2");
 const questionsAgriV1 = require("../data/questions-agri-v1");
 const questionsRetailV1 = require("../data/questions-retail-v1");
+const questionsRestaurantV1 = require("../data/questions-restaurant-v1");
 const {
 	calculateScoresV2,
 	generateRecommendationsV2,
@@ -25,6 +26,7 @@ const router = express.Router();
 const SECTOR_QUESTIONNAIRES = {
 	agriculture: questionsAgriV1,
 	retail: questionsRetailV1,
+	restaurant: questionsRestaurantV1,
 };
 
 const isValidQuestionnaireType = (questionnaireType) =>
@@ -62,7 +64,7 @@ const sanitizeQuestionsForClient = (data) => ({
 	})),
 });
 
-// GET /api/assessments-v2/questions?lang=fr&questionnaire=universal|agriculture|retail
+// GET /api/assessments-v2/questions?lang=fr&questionnaire=universal|agriculture|retail|restaurant
 router.get("/questions", (req, res) => {
 	try {
 		const { lang = "fr", questionnaire = "universal" } = req.query;
