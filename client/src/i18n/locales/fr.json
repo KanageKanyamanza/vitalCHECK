@@ -1383,6 +1383,10 @@
 			"title": "Diagnostic Commerce de Détail",
 			"subtitle": "Répondez à 25 questions réparties sur 5 piliers clés de la gestion commerciale et obtenez instantanément votre score de performance, vos points forts et vos premières recommandations."
 		},
+		"restaurant": {
+			"title": "Diagnostic Restaurant",
+			"subtitle": "Répondez à 25 questions réparties sur 5 piliers clés de la gestion de votre établissement et obtenez instantanément votre score de performance, vos points forts et vos premières recommandations."
+		},
 		"sizes": {
 			"micro": "Micro-entreprise (1-9 employés)",
 			"sme": "PME (10-49 employés)",
@@ -1394,6 +1398,7 @@
 			"services": "Services",
 			"manufacturing": "Industrie / Manufacture",
 			"agriculture": "Agriculture",
+			"restaurant": "Restauration",
 			"healthcare": "Santé",
 			"education": "Éducation",
 			"finance": "Finance",

@@ -16,7 +16,7 @@ const RESULT_STORAGE_KEY = "vitalcheck-v2-result";
 
 // Types de questionnaires sectoriels supportés côté client (doit rester aligné
 // avec SECTOR_QUESTIONNAIRES côté serveur dans assessmentsV2.js)
-const SECTOR_QUESTIONNAIRE_TYPES = ["agriculture", "retail"];
+const SECTOR_QUESTIONNAIRE_TYPES = ["agriculture", "retail", "restaurant"];
 
 const SimplifiedAssessmentPage = () => {
 	const navigate = useNavigate();
@@ -241,6 +241,7 @@ const SimplifiedAssessmentPage = () => {
 		{ value: "services", label: t("diagnostic.sectors.services") },
 		{ value: "manufacturing", label: t("diagnostic.sectors.manufacturing") },
 		{ value: "agriculture", label: t("diagnostic.sectors.agriculture") },
+		{ value: "restaurant", label: t("diagnostic.sectors.restaurant") },
 		{ value: "healthcare", label: t("diagnostic.sectors.healthcare") },
 		{ value: "education", label: t("diagnostic.sectors.education") },
 		{ value: "finance", label: t("diagnostic.sectors.finance") },
