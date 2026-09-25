@@ -233,6 +233,7 @@ const ClientRegisterPage = () => {
                   <option value="services">{t('landing.sectors.services')}</option>
                   <option value="manufacturing">{t('landing.sectors.manufacturing')}</option>
                   <option value="agriculture">{t('landing.sectors.agriculture')}</option>
+                  <option value="restaurant">{t('landing.sectors.restaurant')}</option>
                   <option value="education">{t('landing.sectors.education')}</option>
                   <option value="finance">{t('landing.sectors.finance')}</option>
                   <option value="other">{t('landing.sectors.other')}</option>
