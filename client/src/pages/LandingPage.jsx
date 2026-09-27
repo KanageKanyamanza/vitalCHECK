@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Clock, ArrowRight } from 'lucide-react'
+import { Clock, ArrowRight, HardHat, Truck, Ship } from 'lucide-react'
 import { Hero } from '../components/layout'
 import { Footer } from '../components/navigation'
 import { SocialShare } from '../components/ui'
@@ -41,6 +41,36 @@ const LandingPage = () => {
       badge: 'bg-orange-100 text-orange-800',
       button: 'bg-orange-600 hover:bg-orange-700',
       questionnaire: 'restaurant',
+    },
+    {
+      name: 'Construction',
+      title: 'Diagnostic Construction & BTP',
+      description: '25 questions spécifiques aux entreprises de construction — chiffrage, chantier, trésorerie, matériaux et qualité. Résultats instantanés et gratuits.',
+      icon: HardHat,
+      iconBg: 'bg-amber-50 text-amber-600',
+      badge: 'bg-amber-100 text-amber-800',
+      button: 'bg-amber-700 hover:bg-amber-800',
+      questionnaire: 'construction',
+    },
+    {
+      name: 'Distribution',
+      title: 'Diagnostic Distribution',
+      description: '25 questions spécifiques aux distributeurs et grossistes — réseau commercial, stock, crédit client, marges et digitalisation. Résultats instantanés et gratuits.',
+      icon: Truck,
+      iconBg: 'bg-teal-50 text-teal-600',
+      badge: 'bg-teal-100 text-teal-800',
+      button: 'bg-teal-600 hover:bg-teal-700',
+      questionnaire: 'distribution',
+    },
+    {
+      name: 'Export',
+      title: 'Diagnostic Export',
+      description: '25 questions sur votre capacité à exporter — marchés cibles, conformité, logistique, financement et organisation. Résultats instantanés et gratuits.',
+      icon: Ship,
+      iconBg: 'bg-indigo-50 text-indigo-600',
+      badge: 'bg-indigo-100 text-indigo-800',
+      button: 'bg-indigo-600 hover:bg-indigo-700',
+      questionnaire: 'export',
     },
   ]
 
@@ -105,14 +135,20 @@ const LandingPage = () => {
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 className="flex h-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-lg"
               >
-                <div className="h-48 overflow-hidden bg-gray-100">
-                  <img
-                    src={diagnostic.image}
-                    alt={diagnostic.imageAlt}
-                    loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
-                  />
-                </div>
+                {diagnostic.image ? (
+                  <div className="h-48 overflow-hidden bg-gray-100">
+                    <img
+                      src={diagnostic.image}
+                      alt={diagnostic.imageAlt}
+                      loading="lazy"
+                      className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
+                    />
+                  </div>
+                ) : (
+                  <div className={`flex h-48 items-center justify-center ${diagnostic.iconBg}`} aria-hidden="true">
+                    <diagnostic.icon className="h-16 w-16" strokeWidth={1.5} />
+                  </div>
+                )}
                 <div className="flex flex-1 flex-col p-6">
                   <span className={`mb-3 inline-block w-fit rounded px-2 py-1 text-xs font-semibold uppercase tracking-wide ${diagnostic.badge}`}>
                     Nouveau · Secteur {diagnostic.name}
