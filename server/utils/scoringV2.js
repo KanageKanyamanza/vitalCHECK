@@ -82,19 +82,24 @@ function getLevelFromScore(score) {
 	return LEVELS.find((level) => score >= level.min && score <= level.max) || LEVELS[0];
 }
 
-function getLevelColor(levelId) {
-	const level = LEVELS.find((l) => l.id === levelId);
+// `levels` : paliers spécifiques au secteur (questions-<secteur>-v1.js), sinon paliers génériques
+function findLevel(levelId, levels) {
+	return (Array.isArray(levels) && levels.find((l) => l.id === levelId)) || LEVELS.find((l) => l.id === levelId);
+}
+
+function getLevelColor(levelId, levels) {
+	const level = findLevel(levelId, levels);
 	return level ? level.color : LEVELS[0].color;
 }
 
-function getLevelLabel(levelId, lang = "fr") {
-	const level = LEVELS.find((l) => l.id === levelId);
+function getLevelLabel(levelId, lang = "fr", levels) {
+	const level = findLevel(levelId, levels);
 	if (!level) return LEVELS[0].label[lang] || LEVELS[0].label.fr;
 	return level.label[lang] || level.label.fr;
 }
 
-function getLevelInterpretation(levelId, lang = "fr") {
-	const level = LEVELS.find((l) => l.id === levelId);
+function getLevelInterpretation(levelId, lang = "fr", levels) {
+	const level = findLevel(levelId, levels);
 	if (!level) return LEVELS[0].interpretation[lang] || LEVELS[0].interpretation.fr;
 	return level.interpretation[lang] || level.interpretation.fr;
 }

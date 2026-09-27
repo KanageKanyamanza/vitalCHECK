@@ -38,6 +38,10 @@ const SECTOR_QUESTIONNAIRES = {
 const isValidQuestionnaireType = (questionnaireType) =>
 	Object.prototype.hasOwnProperty.call(SECTOR_QUESTIONNAIRES, questionnaireType);
 
+// Paliers spécifiques au secteur (libellés/interprétations), undefined pour l'universel
+const getSectorLevels = (questionnaireType) =>
+	isValidQuestionnaireType(questionnaireType) ? SECTOR_QUESTIONNAIRES[questionnaireType].levels : undefined;
+
 // Retourne les données de questions selon la langue et le type de questionnaire
 const getQuestionsDataV2 = (language, questionnaireType = "universal") => {
 	const sectorData = SECTOR_QUESTIONNAIRES[questionnaireType];
@@ -123,7 +127,7 @@ router.post(
 					pillarScores,
 					overallScore,
 					overallLevel,
-					overallLevelLabel: getLevelLabel(overallLevel, language),
+					overallLevelLabel: getLevelLabel(overallLevel, language, getSectorLevels(questionnaireType)),
 					recommendations,
 					weakest,
 					strongest,
@@ -169,6 +173,7 @@ router.post(
 			} = req.body;
 
 			const questionsData = getQuestionsDataV2(language, questionnaireType);
+			const sectorLevels = getSectorLevels(questionnaireType);
 
 			// Recalcul des scores côté serveur (ne pas faire confiance au score envoyé par le client)
 			const { pillarScores, overallScore, overallLevel } = calculateScoresV2(answers, questionsData);
@@ -256,6 +261,7 @@ router.post(
 					overallLevel,
 					recommendations,
 					completedAt: assessment.completedAt,
+					levels: sectorLevels,
 				});
 
 				assessment.pdfBuffer = pdfBuffer;
@@ -274,7 +280,7 @@ router.post(
 					email,
 					companyName,
 					overallScore,
-					getLevelLabel(overallLevel, language),
+					getLevelLabel(overallLevel, language, sectorLevels),
 					overallLevel,
 					resultsUrl,
 					pdfBuffer,
@@ -300,7 +306,7 @@ router.post(
 					id: assessment._id,
 					overallScore,
 					overallLevel,
-					overallLevelLabel: getLevelLabel(overallLevel, language),
+					overallLevelLabel: getLevelLabel(overallLevel, language, sectorLevels),
 					pillarScores: assessment.pillarScores,
 					completedAt: assessment.completedAt,
 				},
@@ -412,6 +418,7 @@ router.get(
 					recommendations: p.recommendations || [],
 				})),
 				completedAt: assessment.completedAt,
+				levels: getSectorLevels(assessment.questionnaireType),
 			};
 
 			const pdfBuffer = await generatePremiumV2PDFReport(pdfData, premiumInsights);

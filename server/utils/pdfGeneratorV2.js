@@ -139,14 +139,15 @@ function generateV2HTMLContent(data, options = {}) {
 		overallLevel = "critique",
 		recommendations = [],
 		completedAt = new Date(),
+		levels,
 	} = data;
 
 	const t = TEXTS[language] || TEXTS.fr;
 	const sizeLabels = COMPANY_SIZE_LABELS[language] || COMPANY_SIZE_LABELS.fr;
 
-	const overallColor = getLevelColor(overallLevel);
-	const overallLabel = getLevelLabel(overallLevel, language);
-	const overallInterpretation = getLevelInterpretation(overallLevel, language);
+	const overallColor = getLevelColor(overallLevel, levels);
+	const overallLabel = getLevelLabel(overallLevel, language, levels);
+	const overallInterpretation = getLevelInterpretation(overallLevel, language, levels);
 
 	const { weakest, strongest } = rankPillars(pillarScores);
 
@@ -518,7 +519,7 @@ function generateV2HTMLContent(data, options = {}) {
               <div class="pillar-name">${pillar.pillarName}</div>
               <div class="pillar-score-wrapper">
                 <div class="pillar-bar-bg">
-                  <div class="pillar-bar-fill" style="width: ${pillar.score}%; background: ${getLevelColor(pillar.level)};"></div>
+                  <div class="pillar-bar-fill" style="width: ${pillar.score}%; background: ${getLevelColor(pillar.level, levels)};"></div>
                 </div>
                 <div class="pillar-score-value">${pillar.score}/100</div>
               </div>
@@ -549,7 +550,7 @@ function generateV2HTMLContent(data, options = {}) {
 							(pillar) => `
             <div class="insight-item risk">
               <div class="pillar-title">${pillar.pillarName}</div>
-              <div class="pillar-score">${pillar.score}/100 — ${getLevelLabel(pillar.level, language)}</div>
+              <div class="pillar-score">${pillar.score}/100 — ${getLevelLabel(pillar.level, language, levels)}</div>
               <ul>
                 ${recsFor(pillar.pillarId).map((rec) => `<li>${rec}</li>`).join("")}
               </ul>
@@ -566,7 +567,7 @@ function generateV2HTMLContent(data, options = {}) {
 							(pillar) => `
             <div class="insight-item strength">
               <div class="pillar-title">${pillar.pillarName}</div>
-              <div class="pillar-score">${pillar.score}/100 — ${getLevelLabel(pillar.level, language)}</div>
+              <div class="pillar-score">${pillar.score}/100 — ${getLevelLabel(pillar.level, language, levels)}</div>
             </div>
           `,
 						)
