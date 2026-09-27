@@ -242,6 +242,8 @@ const SimplifiedAssessmentPage = () => {
 		{ value: "manufacturing", label: t("diagnostic.sectors.manufacturing") },
 		{ value: "agriculture", label: t("diagnostic.sectors.agriculture") },
 		{ value: "restaurant", label: t("diagnostic.sectors.restaurant") },
+		{ value: "construction", label: t("diagnostic.sectors.construction") },
+		{ value: "distribution", label: t("diagnostic.sectors.distribution") },
 		{ value: "healthcare", label: t("diagnostic.sectors.healthcare") },
 		{ value: "education", label: t("diagnostic.sectors.education") },
 		{ value: "finance", label: t("diagnostic.sectors.finance") },

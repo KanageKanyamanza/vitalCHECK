@@ -227,6 +227,7 @@
 			"healthcare": "Healthcare",
 			"agriculture": "Agriculture",
 			"restaurant": "Restaurant",
+			"distribution": "Distribution / Wholesale",
 			"education": "Education",
 			"finance": "Finance",
 			"other": "Other"
@@ -1354,6 +1355,8 @@
 			"manufacturing": "Industry / Manufacturing",
 			"agriculture": "Agriculture",
 			"restaurant": "Restaurant",
+			"construction": "Construction",
+			"distribution": "Distribution / Wholesale",
 			"healthcare": "Healthcare",
 			"education": "Education",
 			"finance": "Finance",
