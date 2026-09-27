@@ -1330,6 +1330,18 @@
 			"title": "Restaurant Assessment",
 			"subtitle": "Answer 25 questions across 5 key pillars of your establishment's management and instantly get your performance score, strengths and first recommendations."
 		},
+		"construction": {
+			"title": "Construction Business Assessment",
+			"subtitle": "Answer 25 questions across 5 key pillars of project and site management and instantly get your performance score, strengths and first recommendations."
+		},
+		"distribution": {
+			"title": "Distribution Business Assessment",
+			"subtitle": "Answer 25 questions across 5 key pillars of distribution management and instantly get your performance score, strengths and first recommendations."
+		},
+		"export": {
+			"title": "Export Readiness Assessment",
+			"subtitle": "Answer 25 questions across 5 key pillars of your export capability and instantly get your performance score, strengths and first recommendations."
+		},
 		"sizes": {
 			"micro": "Micro-enterprise (1-9 employees)",
 			"sme": "SME (10-49 employees)",

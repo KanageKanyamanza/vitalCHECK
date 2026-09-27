@@ -6,6 +6,9 @@ const questionsDataV2 = require("../data/questions-v2");
 const questionsAgriV1 = require("../data/questions-agri-v1");
 const questionsRetailV1 = require("../data/questions-retail-v1");
 const questionsRestaurantV1 = require("../data/questions-restaurant-v1");
+const questionsConstructionV1 = require("../data/questions-construction-v1");
+const questionsDistributionV1 = require("../data/questions-distribution-v1");
+const questionsExportV1 = require("../data/questions-export-v1");
 const {
 	calculateScoresV2,
 	generateRecommendationsV2,
@@ -27,6 +30,9 @@ const SECTOR_QUESTIONNAIRES = {
 	agriculture: questionsAgriV1,
 	retail: questionsRetailV1,
 	restaurant: questionsRestaurantV1,
+	construction: questionsConstructionV1,
+	distribution: questionsDistributionV1,
+	export: questionsExportV1,
 };
 
 const isValidQuestionnaireType = (questionnaireType) =>
@@ -64,7 +70,7 @@ const sanitizeQuestionsForClient = (data) => ({
 	})),
 });
 
-// GET /api/assessments-v2/questions?lang=fr&questionnaire=universal|agriculture|retail|restaurant
+// GET /api/assessments-v2/questions?lang=fr&questionnaire=universal|<clé de SECTOR_QUESTIONNAIRES>
 router.get("/questions", (req, res) => {
 	try {
 		const { lang = "fr", questionnaire = "universal" } = req.query;
