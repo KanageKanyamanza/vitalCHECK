@@ -235,21 +235,6 @@ const SimplifiedAssessmentPage = () => {
 		{ value: "large-sme", label: t("diagnostic.sizes.large-sme") },
 	];
 
-	const sectors = [
-		{ value: "technology", label: t("diagnostic.sectors.technology") },
-		{ value: "commerce", label: t("diagnostic.sectors.commerce") },
-		{ value: "services", label: t("diagnostic.sectors.services") },
-		{ value: "manufacturing", label: t("diagnostic.sectors.manufacturing") },
-		{ value: "agriculture", label: t("diagnostic.sectors.agriculture") },
-		{ value: "restaurant", label: t("diagnostic.sectors.restaurant") },
-		{ value: "construction", label: t("diagnostic.sectors.construction") },
-		{ value: "distribution", label: t("diagnostic.sectors.distribution") },
-		{ value: "healthcare", label: t("diagnostic.sectors.healthcare") },
-		{ value: "education", label: t("diagnostic.sectors.education") },
-		{ value: "finance", label: t("diagnostic.sectors.finance") },
-		{ value: "other", label: t("diagnostic.sectors.other") },
-	];
-
 	return (
 		<div className="min-h-screen py-[70px] bg-gray-50">
 			<SEOHead
