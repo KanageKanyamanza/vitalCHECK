@@ -8,7 +8,7 @@ const router = express.Router();
 router.post('/register', [
   body('email').isEmail().normalizeEmail(),
   body('companyName').trim().isLength({ min: 2 }),
-  body('sector').trim().isLength({ min: 2 }),
+  body('sector').optional().trim(),
   body('companySize').isIn(['micro', 'sme', 'large-sme']),
   body('phone').optional().trim().isLength({ min: 6 }).withMessage('Phone number must be at least 6 characters')
 ], async (req, res) => {
@@ -53,7 +53,7 @@ router.post('/register', [
     user = new User({
       email,
       companyName,
-      sector,
+      sector: sector || undefined,
       companySize,
       phone
     });

@@ -73,7 +73,7 @@ router.post("/register", async (req, res) => {
 				firstName,
 				lastName,
 				companyName,
-				sector,
+				sector: sector || undefined,
 				companySize,
 				phone,
 				hasAccount: true,

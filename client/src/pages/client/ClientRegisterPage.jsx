@@ -9,7 +9,7 @@ const ClientRegisterPage = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { register, isAuthenticated, loading: authLoading } = useClientAuth()
-  
+
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -45,7 +45,6 @@ const ClientRegisterPage = () => {
       newErrors.confirmPassword = t('clientAuth.register.errors.passwordMismatch')
     }
     if (!formData.companyName.trim()) newErrors.companyName = t('clientAuth.register.errors.companyNameRequired')
-    if (!formData.sector) newErrors.sector = t('clientAuth.register.errors.sectorRequired')
     if (!formData.companySize) newErrors.companySize = t('clientAuth.register.errors.companySizeRequired')
 
     setErrors(newErrors)
@@ -54,7 +53,7 @@ const ClientRegisterPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    
+
     if (!validate()) return
 
     setLoading(true)
@@ -69,11 +68,11 @@ const ClientRegisterPage = () => {
       companySize: formData.companySize,
       phone: formData.phone
     })
-    
+
     if (result.success) {
       navigate('/client/dashboard')
     }
-    
+
     setLoading(false)
   }
 
@@ -142,9 +141,8 @@ const ClientRegisterPage = () => {
                   name="firstName"
                   value={formData.firstName}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
-                    errors.firstName ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.firstName ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   placeholder={t('clientAuth.register.firstNamePlaceholder')}
                 />
                 {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
@@ -159,9 +157,8 @@ const ClientRegisterPage = () => {
                   name="lastName"
                   value={formData.lastName}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
-                    errors.lastName ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.lastName ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   placeholder={t('clientAuth.register.lastNamePlaceholder')}
                 />
                 {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
@@ -180,9 +177,8 @@ const ClientRegisterPage = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
-                    errors.email ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.email ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   placeholder={t('clientAuth.register.emailPlaceholder')}
                   required
                 />
@@ -202,9 +198,8 @@ const ClientRegisterPage = () => {
                   name="companyName"
                   value={formData.companyName}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
-                    errors.companyName ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.companyName ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   placeholder={t('clientAuth.register.companyNamePlaceholder')}
                   required
                 />
@@ -212,37 +207,8 @@ const ClientRegisterPage = () => {
               {errors.companyName && <p className="text-red-500 text-xs mt-1">{errors.companyName}</p>}
             </div>
 
-            {/* Sector & Size */}
+            {/* Company size */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('clientAuth.register.sector')}
-                </label>
-                <select
-                  name="sector"
-                  value={formData.sector}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
-                    errors.sector ? 'border-red-500' : 'border-gray-300'
-                  }`}
-                  required
-                >
-                  <option value="">{t('clientAuth.register.sectorPlaceholder')}</option>
-                  <option value="technology">{t('landing.sectors.technology')}</option>
-                  <option value="commerce">{t('landing.sectors.commerce')}</option>
-                  <option value="services">{t('landing.sectors.services')}</option>
-                  <option value="manufacturing">{t('landing.sectors.manufacturing')}</option>
-                  <option value="agriculture">{t('landing.sectors.agriculture')}</option>
-                  <option value="restaurant">{t('landing.sectors.restaurant')}</option>
-                  <option value="construction">{t('landing.sectors.construction')}</option>
-                  <option value="distribution">{t('landing.sectors.distribution')}</option>
-                  <option value="education">{t('landing.sectors.education')}</option>
-                  <option value="finance">{t('landing.sectors.finance')}</option>
-                  <option value="other">{t('landing.sectors.other')}</option>
-                </select>
-                {errors.sector && <p className="text-red-500 text-xs mt-1">{errors.sector}</p>}
-              </div>
-
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   {t('clientAuth.register.companySize')}
@@ -251,9 +217,8 @@ const ClientRegisterPage = () => {
                   name="companySize"
                   value={formData.companySize}
                   onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
-                    errors.companySize ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.companySize ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   required
                 >
                   <option value="">{t('clientAuth.register.companySizePlaceholder')}</option>
@@ -295,9 +260,8 @@ const ClientRegisterPage = () => {
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
-                    errors.password ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.password ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   placeholder={t('clientAuth.register.passwordPlaceholder')}
                   required
                 />
@@ -324,9 +288,8 @@ const ClientRegisterPage = () => {
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
-                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${
-                    errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
-                  }`}
+                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
+                    }`}
                   placeholder={t('clientAuth.register.confirmPasswordPlaceholder')}
                   required
                 />
