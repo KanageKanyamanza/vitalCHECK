@@ -36,16 +36,18 @@ const AssessmentForm = ({ onFormSubmit }) => {
         phone: clientUser.phone || ''
       })
       // Mettre à jour le contexte d'évaluation avec les données du client
-      dispatch({ type: 'SET_USER', payload: {
-        id: clientUser.id,
-        companyName: clientUser.companyName,
-        sector: clientUser.sector,
-        companySize: clientUser.companySize,
-        email: clientUser.email,
-        phone: clientUser.phone || ''
-      }})
+      dispatch({
+        type: 'SET_USER', payload: {
+          id: clientUser.id,
+          companyName: clientUser.companyName,
+          sector: clientUser.sector,
+          companySize: clientUser.companySize,
+          email: clientUser.email,
+          phone: clientUser.phone || ''
+        }
+      })
       initializedRef.current = true
-    } 
+    }
     // Sinon, utiliser les données du contexte d'évaluation (si déjà sauvegardées)
     else if (user?.email) {
       setFormData({
@@ -147,7 +149,7 @@ const AssessmentForm = ({ onFormSubmit }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-start">
           {/* Form */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
@@ -156,13 +158,13 @@ const AssessmentForm = ({ onFormSubmit }) => {
             <h2 className="text-2xl font-display font-bold vitalCHECK-gradient-text mb-6">
               {t('landing.form.title')}
             </h2>
-            
+
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
                 <label htmlFor="language" className="block text-sm font-medium text-gray-700 mb-2">
                   {t('landing.form.language')} *
                 </label>
-                <LanguageSelector 
+                <LanguageSelector
                   onLanguageChange={handleLanguageChange}
                 />
                 <p className="text-xs text-gray-500 mt-1">
@@ -184,34 +186,6 @@ const AssessmentForm = ({ onFormSubmit }) => {
                   placeholder={t('landing.form.companyNamePlaceholder')}
                   required
                 />
-              </div>
-
-              <div>
-                <label htmlFor="sector" className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('landing.form.sector')} *
-                </label>
-                <select
-                  id="sector"
-                  name="sector"
-                  value={formData.sector}
-                  onChange={handleInputChange}
-                  className="input-field"
-                  required
-                >
-                  <option value="">{t('landing.form.sectorPlaceholder')}</option>
-                  <option value="technology">{t('landing.sectors.technology')}</option>
-                  <option value="commerce">{t('landing.sectors.commerce')}</option>
-                  <option value="services">{t('landing.sectors.services')}</option>
-                  <option value="manufacturing">{t('landing.sectors.manufacturing')}</option>
-                  <option value="agriculture">{t('landing.sectors.agriculture')}</option>
-                  <option value="restaurant">{t('landing.sectors.restaurant')}</option>
-                  <option value="construction">{t('landing.sectors.construction')}</option>
-                  <option value="distribution">{t('landing.sectors.distribution')}</option>
-                  <option value="healthcare">{t('landing.sectors.healthcare')}</option>
-                  <option value="education">{t('landing.sectors.education')}</option>
-                  <option value="finance">{t('landing.sectors.finance')}</option>
-                  <option value="other">{t('landing.sectors.other')}</option>
-                </select>
               </div>
 
               <div>
@@ -281,7 +255,7 @@ const AssessmentForm = ({ onFormSubmit }) => {
           </motion.div>
 
           {/* Features */}
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.8 }}
@@ -290,9 +264,9 @@ const AssessmentForm = ({ onFormSubmit }) => {
             <h3 className="text-2xl font-bold text-gray-900 mb-6">
               {t('landing.features.title')}
             </h3>
-            
+
             {features.map((feature, index) => (
-              <motion.div 
+              <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

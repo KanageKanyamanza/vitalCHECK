@@ -11,13 +11,18 @@
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
   }
-  
+
   body {
     @apply bg-gradient-to-br from-primary-50 to-accent-50 text-gray-900;
     font-family: 'Inter', system-ui, sans-serif;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: 'Poppins', 'Inter', system-ui, sans-serif;
   }
 }
@@ -26,68 +31,68 @@
   .btn-primary {
     @apply bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
   }
-  
+
   .btn-secondary {
     @apply bg-accent-500 hover:bg-accent-500 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2;
   }
-  
+
   .btn-outline {
     @apply border-2 border-primary-500 text-primary-500 hover:bg-primary-500 hover:text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
   }
-  
+
   .input-field {
-    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-colors duration-200;
+    @apply w-full px-4 py-3 rounded-lg transition-colors duration-200 bg-white text-gray-900 focus:outline-none;
   }
-  
+
   .card {
     @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;
   }
-  
+
   .status-badge {
     @apply inline-flex items-center px-3 py-1 rounded-full text-sm font-medium;
   }
-  
+
   .status-red {
     @apply bg-red-500 text-white;
   }
-  
+
   .status-amber {
     @apply bg-amber-500 text-white;
   }
-  
+
   .status-green {
     @apply bg-green-500 text-white;
   }
-  
+
   /* vitalCHECK Brand Components */
   .vitalCHECK-gradient {
     @apply bg-gradient-to-r from-primary-500 via-accent-500 to-accent-500;
   }
-  
+
   .vitalCHECK-gradient-text {
     @apply bg-primary-600 bg-clip-text text-transparent;
   }
-  
+
   .vitalCHECK-card {
     @apply bg-white/80 backdrop-blur-sm rounded-xl shadow-lg border border-white/20 p-6;
   }
-  
+
   .vitalCHECK-button {
     @apply bg-gradient-to-r from-primary-500 to-accent-500 hover:from-primary-600 hover:to-accent-500 text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
   }
-  
+
   .vitalCHECK-button-outline {
     @apply border-2 border-primary-500 text-primary-600 hover:bg-primary-500 hover:text-white font-semibold py-3 px-8 rounded-lg transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
   }
-  
+
   .vitalCHECK-pattern {
-    background-image: 
+    background-image:
       radial-gradient(circle at 25% 25%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
       radial-gradient(circle at 75% 75%, rgba(251, 195, 80, 0.1) 0%, transparent 50%);
   }
-  
+
   .vitalCHECK-african-pattern {
-    background-image: 
+    background-image:
       linear-gradient(45deg, rgba(59, 130, 246, 0.05) 25%, transparent 25%),
       linear-gradient(-45deg, rgba(251, 195, 80, 0.05) 25%, transparent 25%),
       linear-gradient(45deg, transparent 75%, rgba(251, 195, 80, 0.05) 75%),
@@ -109,13 +114,15 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #fbc350; /* vitalCHECK Orange */
+  background: #fbc350;
+  /* vitalCHECK Orange */
   border-radius: 4px;
   transition: background-color 0.2s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #fbc350; /* Orange-600 */
+  background: #fbc350;
+  /* Orange-600 */
 }
 
 ::-webkit-scrollbar-corner {
@@ -133,7 +140,7 @@
   .safe-area-pb {
     padding-bottom: max(0px, env(safe-area-inset-bottom));
   }
-  
+
   .pb-safe {
     padding-bottom: max(0px, env(safe-area-inset-bottom));
   }

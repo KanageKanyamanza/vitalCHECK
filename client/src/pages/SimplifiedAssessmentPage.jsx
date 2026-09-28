@@ -89,9 +89,9 @@ const SimplifiedAssessmentPage = () => {
 		if (!user) return;
 		setFormData((prev) => ({
 			companyName: prev.companyName || user.companyName || "",
-			email:       prev.email       || user.email       || "",
-			companySize: prev.companySize || user.companySize  || "",
-			sector:      prev.sector      || user.sector       || "",
+			email: prev.email || user.email || "",
+			companySize: prev.companySize || user.companySize || "",
+			sector: prev.sector || user.sector || "",
 		}));
 	}, [user]);
 
@@ -313,26 +313,6 @@ const SimplifiedAssessmentPage = () => {
 									{companySizes.map((size) => (
 										<option key={size.value} value={size.value}>
 											{size.label}
-										</option>
-									))}
-								</select>
-							</div>
-
-							<div>
-								<label htmlFor="sector" className="block text-sm font-medium text-gray-700 mb-2">
-									{t("diagnostic.intro.sector")} {t("common.optional")}
-								</label>
-								<select
-									id="sector"
-									name="sector"
-									value={formData.sector}
-									onChange={handleFormChange}
-									className="input-field"
-								>
-									<option value="">{t("diagnostic.intro.sectorPlaceholder")}</option>
-									{sectors.map((sector) => (
-										<option key={sector.value} value={sector.value}>
-											{sector.label}
 										</option>
 									))}
 								</select>

@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Clock, ArrowRight, HardHat, Truck, Ship } from 'lucide-react'
+import { Clock, ArrowRight } from 'lucide-react'
 import { Hero } from '../components/layout'
 import { Footer } from '../components/navigation'
 import { SocialShare } from '../components/ui'
@@ -46,8 +46,8 @@ const LandingPage = () => {
       name: 'Construction',
       title: 'Diagnostic Construction & BTP',
       description: '25 questions spécifiques aux entreprises de construction — chiffrage, chantier, trésorerie, matériaux et qualité. Résultats instantanés et gratuits.',
-      icon: HardHat,
-      iconBg: 'bg-amber-50 text-amber-600',
+      image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=900&q=85',
+      imageAlt: 'Chantier de construction avec équipement de bâtiment',
       badge: 'bg-amber-100 text-amber-800',
       button: 'bg-amber-700 hover:bg-amber-800',
       questionnaire: 'construction',
@@ -56,8 +56,8 @@ const LandingPage = () => {
       name: 'Distribution',
       title: 'Diagnostic Distribution',
       description: '25 questions spécifiques aux distributeurs et grossistes — réseau commercial, stock, crédit client, marges et digitalisation. Résultats instantanés et gratuits.',
-      icon: Truck,
-      iconBg: 'bg-teal-50 text-teal-600',
+      image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=900&q=85',
+      imageAlt: 'Camions et logistique de distribution',
       badge: 'bg-teal-100 text-teal-800',
       button: 'bg-teal-600 hover:bg-teal-700',
       questionnaire: 'distribution',
@@ -66,8 +66,8 @@ const LandingPage = () => {
       name: 'Export',
       title: 'Diagnostic Export',
       description: '25 questions sur votre capacité à exporter — marchés cibles, conformité, logistique, financement et organisation. Résultats instantanés et gratuits.',
-      icon: Ship,
-      iconBg: 'bg-indigo-50 text-indigo-600',
+      image: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=900&q=85',
+      imageAlt: 'Port et activité d’export maritime',
       badge: 'bg-indigo-100 text-indigo-800',
       button: 'bg-indigo-600 hover:bg-indigo-700',
       questionnaire: 'export',
