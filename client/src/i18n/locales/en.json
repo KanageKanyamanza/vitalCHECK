@@ -1343,6 +1343,10 @@
 			"title": "Export Readiness Assessment",
 			"subtitle": "Answer 25 questions across 5 key pillars of your export capability and instantly get your performance score, strengths and first recommendations."
 		},
+		"manufacturing": {
+			"title": "Manufacturing Business Assessment",
+			"subtitle": "Answer 25 questions across 5 key pillars of your production unit's management and instantly get your performance score, strengths and first recommendations."
+		},
 		"sizes": {
 			"micro": "Micro-enterprise (1-9 employees)",
 			"sme": "SME (10-49 employees)",

@@ -9,6 +9,7 @@ const questionsRestaurantV1 = require("../data/questions-restaurant-v1");
 const questionsConstructionV1 = require("../data/questions-construction-v1");
 const questionsDistributionV1 = require("../data/questions-distribution-v1");
 const questionsExportV1 = require("../data/questions-export-v1");
+const questionsManufacturingV1 = require("../data/questions-manufacturing-v1");
 const {
 	calculateScoresV2,
 	generateRecommendationsV2,
@@ -33,6 +34,7 @@ const SECTOR_QUESTIONNAIRES = {
 	construction: questionsConstructionV1,
 	distribution: questionsDistributionV1,
 	export: questionsExportV1,
+	manufacturing: questionsManufacturingV1,
 };
 
 const isValidQuestionnaireType = (questionnaireType) =>

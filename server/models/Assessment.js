@@ -87,7 +87,7 @@ const assessmentSchema = new mongoose.Schema({
   // 'universal' = questions-v2.js standard ; autres valeurs = server/data/questions-<type>-v1.js
   questionnaireType: {
     type: String,
-    enum: ['universal', 'agriculture', 'retail', 'restaurant', 'construction', 'distribution', 'export'],
+    enum: ['universal', 'agriculture', 'retail', 'restaurant', 'construction', 'distribution', 'export', 'manufacturing'],
     default: 'universal',
   },
   language: {
