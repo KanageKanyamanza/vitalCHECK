@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Clock, ArrowRight } from 'lucide-react'
+import { Clock, ArrowRight, Factory } from 'lucide-react'
 import { Hero } from '../components/layout'
 import { Footer } from '../components/navigation'
 import { SocialShare } from '../components/ui'
@@ -71,6 +71,16 @@ const LandingPage = () => {
       badge: 'bg-indigo-100 text-indigo-800',
       button: 'bg-indigo-600 hover:bg-indigo-700',
       questionnaire: 'export',
+    },
+    {
+      name: 'Industrie',
+      title: 'Diagnostic Industrie & Transformation',
+      description: '25 questions spécifiques aux unités de production — pilotage, production et énergie, matières et maintenance, coût de revient et compétences. Résultats instantanés et gratuits.',
+      icon: Factory,
+      iconBg: 'bg-slate-100 text-slate-600',
+      badge: 'bg-slate-200 text-slate-800',
+      button: 'bg-slate-700 hover:bg-slate-800',
+      questionnaire: 'manufacturing',
     },
   ]
 
