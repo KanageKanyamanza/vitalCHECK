@@ -260,11 +260,18 @@ const UserManagement = () => {
                 className="w-full px-3 py-1.5 bg-gray-50/50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 transition-all text-xs font-bold"
               >
                 <option value="">Tous les secteurs</option>
-                <option value="technologie">Technologie</option>
-                <option value="finance">Finance</option>
-                <option value="sante">Santé</option>
+                <option value="technology">Technologie</option>
+                <option value="commerce">Commerce</option>
+                <option value="services">Services</option>
+                <option value="manufacturing">Industrie / Manufacture</option>
+                <option value="agriculture">Agriculture</option>
+                <option value="restaurant">Restauration</option>
+                <option value="construction">Construction / BTP</option>
+                <option value="distribution">Distribution / Négoce</option>
+                <option value="healthcare">Santé</option>
                 <option value="education">Éducation</option>
-                <option value="autre">Autre</option>
+                <option value="finance">Finance</option>
+                <option value="other">Autre</option>
               </select>
             </div>
 
