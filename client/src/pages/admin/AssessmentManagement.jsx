@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { useAdminApi } from '../../hooks/useAdminApi';
+import { getQuestionnaireLabel } from '../../utils/questionnaireLabels';
 
 const AssessmentManagement = () => {
   const [assessments, setAssessments] = useState([]);
@@ -232,6 +233,7 @@ const AssessmentManagement = () => {
                     <td className="px-4 py-2.5 whitespace-nowrap">
                       <div className="text-xs text-gray-900 leading-none">{assessment.user?.companyName || '—'}</div>
                       <div className="text-[9px] text-primary-600 uppercase mt-0.5">{assessment.user?.sector || 'Non spécifié'}</div>
+                      <div className="text-[9px] text-gray-500 uppercase mt-0.5">Questionnaire : {getQuestionnaireLabel(assessment)}</div>
                     </td>
                     <td className="px-4 py-2.5 whitespace-nowrap">
                       <div className="flex items-center text-xs font-black text-gray-900">
