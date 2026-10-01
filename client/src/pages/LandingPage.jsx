@@ -1,7 +1,7 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { Clock, ArrowRight, Factory } from 'lucide-react'
+import { Clock, ArrowRight } from 'lucide-react'
 import { Hero } from '../components/layout'
 import { Footer } from '../components/navigation'
 import { SocialShare } from '../components/ui'
@@ -73,11 +73,11 @@ const LandingPage = () => {
       questionnaire: 'export',
     },
     {
-      name: 'Industrie',
-      title: 'Diagnostic Industrie & Transformation',
+      name: 'Manufacturing',
+      title: 'Diagnostic Manufacturing',
       description: '25 questions spécifiques aux unités de production — pilotage, production et énergie, matières et maintenance, coût de revient et compétences. Résultats instantanés et gratuits.',
-      icon: Factory,
-      iconBg: 'bg-slate-100 text-slate-600',
+      image: 'https://images.unsplash.com/photo-1565793298595-6a879b1d9492?auto=format&fit=crop&w=900&q=85',
+      imageAlt: 'Ligne de production dans une usine industrielle',
       badge: 'bg-slate-200 text-slate-800',
       button: 'bg-slate-700 hover:bg-slate-800',
       questionnaire: 'manufacturing',

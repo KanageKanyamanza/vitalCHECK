@@ -7,7 +7,7 @@ const QUESTIONNAIRE_LABELS = {
   construction: 'Construction & BTP',
   distribution: 'Distribution',
   export: 'Export',
-  manufacturing: 'Industrie & Transformation',
+  manufacturing: 'Manufacturing',
 };
 
 export const getQuestionnaireLabel = (assessment) => {
