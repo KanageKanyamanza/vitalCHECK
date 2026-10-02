@@ -211,11 +211,65 @@
 			"emailPlaceholder": "your@email.com",
 			"phone": "Phone number",
 			"phonePlaceholder": "+221 XXX XXX XXX",
-			"startButton": "Start here",
-			"startButtonShort": "Start here",
+			"startButton": "CLICK HERE",
+			"startButtonShort": "CLICK HERE",
 			"startAssessment": "Start Assessment",
 			"language": "Language",
 			"languagePlaceholder": "Select language"
+		},
+		"freeDiagnostic": {
+			"duration": "5 to 7 minutes · 100% free",
+			"title": "Discover your business health score",
+			"subtitle": "Answer 25 quick questions and instantly get your overall score, your strengths and your first recommendations.",
+			"button": "Get my free score"
+		},
+		"sectorCards": {
+			"badge": "New · {{name}} Sector",
+			"button": "Start",
+			"items": {
+				"agriculture": {
+					"name": "Agriculture",
+					"title": "Farm Business Assessment 10+ ha",
+					"description": "25 questions tailored to farms — management, finance, markets, production and organization. Instant, free results.",
+					"imageAlt": "Cultivated fields in a farming landscape"
+				},
+				"retail": {
+					"name": "Retail",
+					"title": "Retail Business Assessment",
+					"description": "25 questions tailored to retail shops — management, inventory, finance, customers and digital. Instant, free results.",
+					"imageAlt": "Inside a clothing store"
+				},
+				"restaurant": {
+					"name": "Restaurant",
+					"title": "Restaurant Assessment",
+					"description": "25 questions tailored to restaurants — management, food cost, hygiene, finance and staff. Instant, free results.",
+					"imageAlt": "Restaurant dining room set for service"
+				},
+				"construction": {
+					"name": "Construction",
+					"title": "Construction Business Assessment",
+					"description": "25 questions tailored to construction companies — estimating, site management, cash flow, materials and quality. Instant, free results.",
+					"imageAlt": "Construction site with building equipment"
+				},
+				"distribution": {
+					"name": "Distribution",
+					"title": "Distribution Business Assessment",
+					"description": "25 questions tailored to distributors and wholesalers — sales network, inventory, customer credit, margins and digital. Instant, free results.",
+					"imageAlt": "Trucks and distribution logistics"
+				},
+				"export": {
+					"name": "Export",
+					"title": "Export Readiness Assessment",
+					"description": "25 questions on your export capability — target markets, compliance, logistics, financing and organization. Instant, free results.",
+					"imageAlt": "Port and maritime export activity"
+				},
+				"manufacturing": {
+					"name": "Manufacturing",
+					"title": "Manufacturing Business Assessment",
+					"description": "25 questions tailored to production units — management, production and energy, materials and maintenance, unit cost and skills. Instant, free results.",
+					"imageAlt": "Production line in an industrial plant"
+				}
+			}
 		},
 		"sectors": {
 			"technology": "Technology",

@@ -1,5 +1,6 @@
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { motion } from 'framer-motion'
 import { Clock, ArrowRight } from 'lucide-react'
 import { Hero } from '../components/layout'
@@ -10,74 +11,48 @@ import { getHomePageStructuredData, getWebSiteStructuredData, getBrandOrganizati
 
 const LandingPage = () => {
   const navigate = useNavigate()
+  const { t } = useTranslation()
 
+  // Textes des cartes : landing.sectorCards.items.<questionnaire> (fr.json / en.json)
   const sectorDiagnostics = [
     {
-      name: 'Agriculture',
-      title: 'Diagnostic Exploitation Agricole +10 ha',
-      description: '25 questions spécifiques aux exploitations agricoles — pilotage, finance, marchés, production et organisation. Résultats instantanés et gratuits.',
       image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=85',
-      imageAlt: 'Champs cultivés dans un paysage agricole',
       badge: 'bg-green-100 text-green-800',
       button: 'bg-green-600 hover:bg-green-700',
       questionnaire: 'agriculture',
     },
     {
-      name: 'Commerce de Détail',
-      title: 'Diagnostic Commerce de Détail',
-      description: '25 questions spécifiques aux commerces de détail — pilotage, stocks, finance, client et digitalisation. Résultats instantanés et gratuits.',
       image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=900&q=85',
-      imageAlt: 'Intérieur d’une boutique de prêt-à-porter',
       badge: 'bg-blue-100 text-blue-800',
       button: 'bg-blue-600 hover:bg-blue-700',
       questionnaire: 'retail',
     },
     {
-      name: 'Restauration',
-      title: 'Diagnostic Restaurant',
-      description: '25 questions spécifiques à la restauration — pilotage, food cost, hygiène, finance et personnel. Résultats instantanés et gratuits.',
       image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=900&q=85',
-      imageAlt: 'Salle de restaurant dressée pour le service',
       badge: 'bg-orange-100 text-orange-800',
       button: 'bg-orange-600 hover:bg-orange-700',
       questionnaire: 'restaurant',
     },
     {
-      name: 'Construction',
-      title: 'Diagnostic Construction & BTP',
-      description: '25 questions spécifiques aux entreprises de construction — chiffrage, chantier, trésorerie, matériaux et qualité. Résultats instantanés et gratuits.',
       image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=900&q=85',
-      imageAlt: 'Chantier de construction avec équipement de bâtiment',
       badge: 'bg-amber-100 text-amber-800',
       button: 'bg-amber-700 hover:bg-amber-800',
       questionnaire: 'construction',
     },
     {
-      name: 'Distribution',
-      title: 'Diagnostic Distribution',
-      description: '25 questions spécifiques aux distributeurs et grossistes — réseau commercial, stock, crédit client, marges et digitalisation. Résultats instantanés et gratuits.',
       image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=900&q=85',
-      imageAlt: 'Camions et logistique de distribution',
       badge: 'bg-teal-100 text-teal-800',
       button: 'bg-teal-600 hover:bg-teal-700',
       questionnaire: 'distribution',
     },
     {
-      name: 'Export',
-      title: 'Diagnostic Export',
-      description: '25 questions sur votre capacité à exporter — marchés cibles, conformité, logistique, financement et organisation. Résultats instantanés et gratuits.',
       image: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=900&q=85',
-      imageAlt: 'Port et activité d’export maritime',
       badge: 'bg-indigo-100 text-indigo-800',
       button: 'bg-indigo-600 hover:bg-indigo-700',
       questionnaire: 'export',
     },
     {
-      name: 'Manufacturing',
-      title: 'Diagnostic Manufacturing',
-      description: '25 questions spécifiques aux unités de production — pilotage, production et énergie, matières et maintenance, coût de revient et compétences. Résultats instantanés et gratuits.',
       image: 'https://images.unsplash.com/photo-1565793298595-6a879b1d9492?auto=format&fit=crop&w=900&q=85',
-      imageAlt: 'Ligne de production dans une usine industrielle',
       badge: 'bg-slate-200 text-slate-800',
       button: 'bg-slate-700 hover:bg-slate-800',
       questionnaire: 'manufacturing',
@@ -112,20 +87,19 @@ const LandingPage = () => {
           >
             <div className="inline-flex items-center space-x-2 text-primary-600 mb-3">
               <Clock className="w-5 h-5" />
-              <span className="text-sm font-medium">5 à 7 minutes · 100% gratuit</span>
+              <span className="text-sm font-medium">{t('landing.freeDiagnostic.duration')}</span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 mb-3">
-              Découvrez votre score de santé d'entreprise
+              {t('landing.freeDiagnostic.title')}
             </h2>
             <p className="text-gray-600 max-w-2xl mx-auto mb-6">
-              Répondez à 25 questions rapides et obtenez instantanément votre score
-              global, vos points forts et vos premières recommandations.
+              {t('landing.freeDiagnostic.subtitle')}
             </p>
             <button
               onClick={() => navigate('/diagnostic')}
               className="bg-accent-500 hover:bg-accent-600 text-white font-semibold px-8 py-3 rounded-lg inline-flex items-center space-x-2 transform hover:scale-105 transition-all duration-300 shadow-lg"
             >
-              <span>Obtenir mon score gratuit</span>
+              <span>{t('landing.freeDiagnostic.button')}</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </motion.div>
@@ -136,7 +110,9 @@ const LandingPage = () => {
       <section className="border-t border-gray-100 bg-gray-50 py-16">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {sectorDiagnostics.map((diagnostic, index) => (
+            {sectorDiagnostics.map((diagnostic, index) => {
+              const key = `landing.sectorCards.items.${diagnostic.questionnaire}`
+              return (
               <motion.article
                 key={diagnostic.questionnaire}
                 initial={{ opacity: 0, y: 20 }}
@@ -149,7 +125,7 @@ const LandingPage = () => {
                   <div className="h-48 overflow-hidden bg-gray-100">
                     <img
                       src={diagnostic.image}
-                      alt={diagnostic.imageAlt}
+                      alt={t(`${key}.imageAlt`)}
                       loading="lazy"
                       className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
                     />
@@ -161,24 +137,25 @@ const LandingPage = () => {
                 )}
                 <div className="flex flex-1 flex-col p-6">
                   <span className={`mb-3 inline-block w-fit rounded px-2 py-1 text-xs font-semibold uppercase tracking-wide ${diagnostic.badge}`}>
-                    Nouveau · Secteur {diagnostic.name}
+                    {t('landing.sectorCards.badge', { name: t(`${key}.name`) })}
                   </span>
                   <h3 className="mb-2 text-xl font-display font-bold text-gray-900">
-                    {diagnostic.title}
+                    {t(`${key}.title`)}
                   </h3>
                   <p className="mb-6 flex-1 text-sm leading-6 text-gray-600">
-                    {diagnostic.description}
+                    {t(`${key}.description`)}
                   </p>
                   <button
                     onClick={() => navigate(`/diagnostic?questionnaire=${diagnostic.questionnaire}`)}
                     className={`inline-flex w-full items-center justify-center gap-2 rounded-lg px-5 py-3 font-semibold text-white shadow-sm transition-colors ${diagnostic.button}`}
                   >
-                    <span>Démarrer</span>
+                    <span>{t('landing.sectorCards.button')}</span>
                     <ArrowRight className="h-4 w-4" />
                   </button>
                 </div>
               </motion.article>
-            ))}
+              )
+            })}
           </div>
         </div>
       </section>

@@ -217,6 +217,60 @@
 			"language": "Langue",
 			"languagePlaceholder": "Sélectionnez la langue"
 		},
+		"freeDiagnostic": {
+			"duration": "5 à 7 minutes · 100% gratuit",
+			"title": "Découvrez votre score de santé d'entreprise",
+			"subtitle": "Répondez à 25 questions rapides et obtenez instantanément votre score global, vos points forts et vos premières recommandations.",
+			"button": "Obtenir mon score gratuit"
+		},
+		"sectorCards": {
+			"badge": "Nouveau · Secteur {{name}}",
+			"button": "Démarrer",
+			"items": {
+				"agriculture": {
+					"name": "Agriculture",
+					"title": "Diagnostic Exploitation Agricole +10 ha",
+					"description": "25 questions spécifiques aux exploitations agricoles — pilotage, finance, marchés, production et organisation. Résultats instantanés et gratuits.",
+					"imageAlt": "Champs cultivés dans un paysage agricole"
+				},
+				"retail": {
+					"name": "Commerce de Détail",
+					"title": "Diagnostic Commerce de Détail",
+					"description": "25 questions spécifiques aux commerces de détail — pilotage, stocks, finance, client et digitalisation. Résultats instantanés et gratuits.",
+					"imageAlt": "Intérieur d’une boutique de prêt-à-porter"
+				},
+				"restaurant": {
+					"name": "Restauration",
+					"title": "Diagnostic Restaurant",
+					"description": "25 questions spécifiques à la restauration — pilotage, food cost, hygiène, finance et personnel. Résultats instantanés et gratuits.",
+					"imageAlt": "Salle de restaurant dressée pour le service"
+				},
+				"construction": {
+					"name": "Construction",
+					"title": "Diagnostic Construction & BTP",
+					"description": "25 questions spécifiques aux entreprises de construction — chiffrage, chantier, trésorerie, matériaux et qualité. Résultats instantanés et gratuits.",
+					"imageAlt": "Chantier de construction avec équipement de bâtiment"
+				},
+				"distribution": {
+					"name": "Distribution",
+					"title": "Diagnostic Distribution",
+					"description": "25 questions spécifiques aux distributeurs et grossistes — réseau commercial, stock, crédit client, marges et digitalisation. Résultats instantanés et gratuits.",
+					"imageAlt": "Camions et logistique de distribution"
+				},
+				"export": {
+					"name": "Export",
+					"title": "Diagnostic Export",
+					"description": "25 questions sur votre capacité à exporter — marchés cibles, conformité, logistique, financement et organisation. Résultats instantanés et gratuits.",
+					"imageAlt": "Port et activité d’export maritime"
+				},
+				"manufacturing": {
+					"name": "Manufacturing",
+					"title": "Diagnostic Manufacturing",
+					"description": "25 questions spécifiques aux unités de production — pilotage, production et énergie, matières et maintenance, coût de revient et compétences. Résultats instantanés et gratuits.",
+					"imageAlt": "Ligne de production dans une usine industrielle"
+				}
+			}
+		},
 		"sectors": {
 			"technology": "Technologie",
 			"commerce": "Commerce",
