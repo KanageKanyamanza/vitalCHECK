@@ -213,7 +213,7 @@
 			"phonePlaceholder": "+221 XXX XXX XXX",
 			"startButton": "CLICK HERE",
 			"startButtonShort": "CLICK HERE",
-			"startAssessment": "Start Assessment",
+			"startAssessment": "CLICK HERE",
 			"language": "Language",
 			"languagePlaceholder": "Select language"
 		},
@@ -225,7 +225,7 @@
 		},
 		"sectorCards": {
 			"badge": "New · {{name}} Sector",
-			"button": "Start",
+			"button": "CLICK HERE",
 			"items": {
 				"agriculture": {
 					"name": "Agriculture",
@@ -562,7 +562,7 @@
 		"why": {
 			"title": "Why Contact Us?",
 			"description": "Our experts can help you assess your business and provide personalized solutions.",
-			"startAssessment": "Start Assessment"
+			"startAssessment": "CLICK HERE"
 		},
 		"form": {
 			"title": "Send us a message",
@@ -665,7 +665,7 @@
 		"cta": {
 			"title": "Ready to grow your business?",
 			"subtitle": "Let's build your next chapter together.",
-			"startAssessment": "Start free assessment",
+			"startAssessment": "CLICK HERE",
 			"contactUs": "Contact us"
 		}
 	},
@@ -1006,7 +1006,7 @@
 		"history": {
 			"title": "Assessment History",
 			"noAssessments": "You don't have any assessments yet",
-			"startFirst": "Start my first assessment",
+			"startFirst": "CLICK HERE",
 			"evaluation": "Assessment",
 			"score": "Score",
 			"viewReport": "View report",
@@ -1371,7 +1371,7 @@
 			"emailPlaceholder": "you@company.com",
 			"emailHint": "Your results are displayed immediately. We will use this address to resend your report if needed.",
 			"language": "Diagnostic language",
-			"startButton": "Start the diagnostic"
+			"startButton": "CLICK HERE"
 		},
 		"agriculture": {
 			"title": "Farm Business Assessment 10+ ha",
