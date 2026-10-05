@@ -288,7 +288,7 @@ const SimplifiedResultsPage = () => {
 	}
 
 	const { result, formData = {}, completedAt } = data;
-	const { pillarScores, overallScore, overallLevel, recommendations, weakest, strongest } = result;
+	const { pillarScores, overallScore, overallLevel, recommendations, weakest } = result;
 
 	// Utilise les niveaux spécifiques au secteur (ex: agriculture) si fournis, sinon les niveaux universels
 	const getLevelInfo = (levelId) => {
@@ -317,6 +317,14 @@ const SimplifiedResultsPage = () => {
 
 	const findRecommendations = (pillarId) =>
 		recommendations.find((r) => r.pillarId === pillarId)?.recommendations || [];
+
+	// Risques = piliers Critique/Vulnérable ; points forts = piliers Stable et au-delà (même règle que le PDF)
+	const isAtRisk = (pillar) => ["critique", "vulnerable"].includes(pillar.level);
+	const byScoreAsc = [...pillarScores].sort((a, b) => a.score - b.score);
+	const riskPillars = byScoreAsc.filter(isAtRisk).slice(0, 2);
+	const hasRisks = riskPillars.length > 0;
+	const focusPillars = hasRisks ? riskPillars : weakest;
+	const strengthPillars = [...byScoreAsc].reverse().filter((pillar) => !isAtRisk(pillar)).slice(0, 2);
 
 	const nextSteps = weakest
 		.flatMap((pillar) =>
@@ -445,13 +453,13 @@ const SimplifiedResultsPage = () => {
 				>
 					<div className="card">
 						<div className="flex items-center space-x-2 mb-4">
-							<TrendingDown className="w-5 h-5 text-danger-500" />
+							<TrendingDown className={`w-5 h-5 ${hasRisks ? "text-danger-500" : "text-warning-500"}`} />
 							<h3 className="text-lg font-bold text-gray-900">
-								{t("diagnostic.results.risksTitle")}
+								{hasRisks ? t("diagnostic.results.risksTitle") : t("diagnostic.results.improvementTitle")}
 							</h3>
 						</div>
 						<div className="space-y-4">
-							{weakest.map((pillar) => (
+							{focusPillars.map((pillar) => (
 								<div key={pillar.pillarId}>
 									<div className="font-semibold text-gray-900 mb-1">
 										{pillar.pillarName} — {pillar.score}/100
@@ -462,7 +470,7 @@ const SimplifiedResultsPage = () => {
 												key={i}
 												className="text-sm text-gray-600 flex items-start space-x-2"
 											>
-												<span className="text-danger-500 mt-1">•</span>
+												<span className={`${hasRisks ? "text-danger-500" : "text-warning-500"} mt-1`}>•</span>
 												<span>{rec}</span>
 											</li>
 										))}
@@ -480,7 +488,10 @@ const SimplifiedResultsPage = () => {
 							</h3>
 						</div>
 						<div className="space-y-4">
-							{strongest.map((pillar) => (
+							{strengthPillars.length === 0 && (
+								<p className="text-sm italic text-gray-500">{t("diagnostic.results.noStrengths")}</p>
+							)}
+							{strengthPillars.map((pillar) => (
 								<div key={pillar.pillarId} className="flex items-center justify-between">
 									<span className="font-semibold text-gray-900">
 										{pillar.pillarName}

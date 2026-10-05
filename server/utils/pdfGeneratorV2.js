@@ -45,6 +45,16 @@ const COMPANY_SIZE_LABELS = {
 	},
 };
 
+const RISK_LEVELS = ["critique", "vulnerable"];
+
+// Date en toutes lettres pour éviter l'ambiguïté jour/mois (ex. "October 5, 2026")
+const formatReportDate = (date, language) =>
+	new Date(date).toLocaleDateString(language === "fr" ? "fr-FR" : "en-US", {
+		day: "numeric",
+		month: "long",
+		year: "numeric",
+	});
+
 const TEXTS = {
 	fr: {
 		title: "Diagnostic VitalCHECK – Niveau 1",
@@ -56,7 +66,9 @@ const TEXTS = {
 		globalScore: "Score global",
 		page2Title: "Votre réalité stratégique",
 		topRisks: "Principaux risques identifiés",
+		improvementAreas: "Vos axes d'amélioration",
 		topStrengths: "Vos points forts à valoriser",
+		noStrengths: "Aucun pilier n'atteint encore le palier « Stable » (60/100). Concentrez-vous d'abord sur les actions prioritaires ci-dessous.",
 		nextSteps: "Vos 3 prochaines actions prioritaires",
 		benefitsTitle: "Allez plus loin avec le diagnostic Premium",
 		benefits: [
@@ -80,7 +92,9 @@ const TEXTS = {
 		globalScore: "Global score",
 		page2Title: "Your strategic reality",
 		topRisks: "Main risks identified",
+		improvementAreas: "Your areas for improvement",
 		topStrengths: "Your strengths to leverage",
+		noStrengths: "No pillar has reached the \"Stable\" level (60/100) yet. Focus first on the priority actions below.",
 		nextSteps: "Your 3 priority next steps",
 		benefitsTitle: "Go further with the Premium diagnostic",
 		benefits: [
@@ -149,7 +163,16 @@ function generateV2HTMLContent(data, options = {}) {
 	const overallLabel = getLevelLabel(overallLevel, language, levels);
 	const overallInterpretation = getLevelInterpretation(overallLevel, language, levels);
 
-	const { weakest, strongest } = rankPillars(pillarScores);
+	const { weakest } = rankPillars(pillarScores);
+
+	// Risques = piliers Critique/Vulnérable ; points forts = piliers Stable et au-delà.
+	// Sans pilier à risque, on présente les 2 plus faibles comme axes d'amélioration.
+	const isAtRisk = (p) => RISK_LEVELS.includes(p.level);
+	const byScoreAsc = [...pillarScores].sort((a, b) => a.score - b.score);
+	const riskPillars = byScoreAsc.filter(isAtRisk).slice(0, 2);
+	const hasRisks = riskPillars.length > 0;
+	const focusPillars = hasRisks ? riskPillars : weakest;
+	const strengthPillars = [...byScoreAsc].reverse().filter((p) => !isAtRisk(p)).slice(0, 2);
 
 	// Récupère les recommandations associées à un pilier
 	const recsFor = (pillarId) => {
@@ -163,9 +186,7 @@ function generateV2HTMLContent(data, options = {}) {
 		.filter(Boolean)
 		.slice(0, 3);
 
-	const formattedDate = new Date(completedAt).toLocaleDateString(
-		language === "fr" ? "fr-FR" : "en-US",
-	);
+	const formattedDate = formatReportDate(completedAt, language);
 
 	return `
     <!DOCTYPE html>
@@ -365,6 +386,17 @@ function generateV2HTMLContent(data, options = {}) {
           border-left-color: #10B981;
         }
 
+        .insight-item.improve {
+          border-left-color: #F59E0B;
+        }
+
+        .insight-empty {
+          font-size: 12px;
+          color: #718096;
+          font-style: italic;
+          margin: 0 0 6px 0;
+        }
+
         .insight-item .pillar-title {
           font-weight: 700;
           color: #2d3748;
@@ -544,11 +576,11 @@ function generateV2HTMLContent(data, options = {}) {
         <h2 class="section-title">${t.page2Title}</h2>
 
         <div class="insight-block">
-          <h3 style="font-size: 14px; color: #2d3748; margin-bottom: 6px;">${t.topRisks}</h3>
-          ${weakest
+          <h3 style="font-size: 14px; color: #2d3748; margin-bottom: 6px;">${hasRisks ? t.topRisks : t.improvementAreas}</h3>
+          ${focusPillars
 						.map(
 							(pillar) => `
-            <div class="insight-item risk">
+            <div class="insight-item ${hasRisks ? "risk" : "improve"}">
               <div class="pillar-title">${pillar.pillarName}</div>
               <div class="pillar-score">${pillar.score}/100 — ${getLevelLabel(pillar.level, language, levels)}</div>
               <ul>
@@ -562,7 +594,7 @@ function generateV2HTMLContent(data, options = {}) {
 
         <div class="insight-block">
           <h3 style="font-size: 14px; color: #2d3748; margin-bottom: 6px;">${t.topStrengths}</h3>
-          ${strongest
+          ${strengthPillars.length === 0 ? `<p class="insight-empty">${t.noStrengths}</p>` : strengthPillars
 						.map(
 							(pillar) => `
             <div class="insight-item strength">
@@ -599,7 +631,7 @@ function generateV2HTMLContent(data, options = {}) {
 
         <div class="footer-note">
           <p>${t.footerNote}</p>
-          <p>${t.generatedOn} ${new Date().toLocaleDateString(language === "fr" ? "fr-FR" : "en-US")} — vitalCHECK · UBUNTU BUSINESS BUILDERS (UBB) – SARL · Dakar, Sénégal</p>
+          <p>${t.generatedOn} ${formatReportDate(new Date(), language)} — vitalCHECK · UBUNTU BUSINESS BUILDERS (UBB) – SARL · Dakar, Sénégal</p>
         </div>
       </div>
     </body>
@@ -644,7 +676,7 @@ function generatePremiumPage(data, premiumInsights, language, textsRef) {
 	const std = textsRef || TEXTS[language] || TEXTS.fr;
 	const isFallback = premiumInsights?.fallback === true;
 	const insightHtml = markdownToHtml(premiumInsights?.text || t.fallbackNote);
-	const formattedDate = new Date().toLocaleDateString(language === 'fr' ? 'fr-FR' : 'en-US');
+	const formattedDate = formatReportDate(new Date(), language);
 
 	return `
     <div class="page page-break">
