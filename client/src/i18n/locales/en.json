@@ -1564,7 +1564,18 @@
 				"Prioritized 90-day action plan",
 				"Full report with transformation roadmap",
 				"Support from a vitalCHECK expert"
-			]
+			],
+			"premiumReport": {
+				"title": "Your premium report is ready",
+				"description": "As a premium subscriber, you get an in-depth analysis of your diagnostic based on the UBB audit methodology: personalised recommendations, a prioritised action plan and strategic directions suited to your sector.",
+				"download": "Download my premium report",
+				"generating": "Preparing the report… (10 to 20 seconds)",
+				"downloaded": "Premium report downloaded.",
+				"subscriptionRequired": "A premium subscription is required to access this report.",
+				"forbidden": "Access denied: this diagnostic belongs to another account.",
+				"loginRequired": "Log in to download the premium report.",
+				"downloadError": "The premium report couldn't be downloaded. Try again in a moment."
+			}
 		}
 	},
 	"team": {

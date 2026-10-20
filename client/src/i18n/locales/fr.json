@@ -1622,7 +1622,18 @@
 				"Plan d'action priorisé sur 90 jours",
 				"Rapport complet avec feuille de route de transformation",
 				"Accompagnement par un expert vitalCHECK"
-			]
+			],
+			"premiumReport": {
+				"title": "Votre rapport premium est disponible",
+				"description": "En tant qu'abonné premium, vous recevez une analyse approfondie de votre diagnostic selon la méthodologie d'audit UBB : recommandations personnalisées, plan d'action priorisé et pistes stratégiques adaptées à votre secteur.",
+				"download": "Télécharger mon rapport premium",
+				"generating": "Préparation du rapport… (10 à 20 secondes)",
+				"downloaded": "Rapport premium téléchargé.",
+				"subscriptionRequired": "Un abonnement premium est nécessaire pour accéder à ce rapport.",
+				"forbidden": "Accès refusé : ce diagnostic est lié à un autre compte.",
+				"loginRequired": "Connectez-vous pour télécharger le rapport premium.",
+				"downloadError": "Le rapport premium n'a pas pu être téléchargé. Réessayez dans quelques instants."
+			}
 		}
 	},
 	"team": {

@@ -258,18 +258,18 @@ const SimplifiedResultsPage = () => {
 			link.click();
 			document.body.removeChild(link);
 			window.URL.revokeObjectURL(url);
-			toast.success("Rapport Premium IA téléchargé !");
+			toast.success(t("diagnostic.results.premiumReport.downloaded"));
 		} catch (err) {
 			console.error("Erreur téléchargement rapport premium:", err);
 			const code = err.response?.data?.code;
 			if (code === "SUBSCRIPTION_INACTIVE" || code === "SUBSCRIPTION_EXPIRED" || code === "PLAN_UPGRADE_REQUIRED") {
-				toast.error("Abonnement premium requis pour accéder à ce rapport.");
+				toast.error(t("diagnostic.results.premiumReport.subscriptionRequired"));
 			} else if (err.response?.status === 403) {
-				toast.error("Accès refusé — ce diagnostic ne vous appartient pas.");
+				toast.error(t("diagnostic.results.premiumReport.forbidden"));
 			} else if (err.response?.status === 401) {
-				toast.error("Veuillez vous connecter pour télécharger le rapport premium.");
+				toast.error(t("diagnostic.results.premiumReport.loginRequired"));
 			} else {
-				toast.error("Erreur lors du téléchargement du rapport premium.");
+				toast.error(t("diagnostic.results.premiumReport.downloadError"));
 			}
 		} finally {
 			setDownloadingPremium(false);
@@ -646,7 +646,7 @@ const SimplifiedResultsPage = () => {
 					</motion.div>
 				)}
 
-				{/* Bouton Rapport Premium IA — visible uniquement pour les abonnés payants avec diagnostic sauvegardé */}
+				{/* Bouton Rapport Premium — visible uniquement pour les abonnés payants avec diagnostic sauvegardé */}
 				{isPremiumUser && savedAssessmentId && (
 					<motion.div
 						initial={{ opacity: 0, y: 20 }}
@@ -657,11 +657,11 @@ const SimplifiedResultsPage = () => {
 						<div className="flex items-center space-x-2 mb-3">
 							<Sparkles className="w-6 h-6 text-green-600" />
 							<h3 className="text-xl font-bold text-gray-900">
-								Votre Rapport Premium IA est disponible
+								{t("diagnostic.results.premiumReport.title")}
 							</h3>
 						</div>
 						<p className="text-gray-600 mb-5">
-							En tant qu'abonné premium, vous bénéficiez d'une analyse approfondie générée par intelligence artificielle : recommandations personnalisées, plan d'action priorisé et insights stratégiques adaptés à votre secteur.
+							{t("diagnostic.results.premiumReport.description")}
 						</p>
 						<button
 							onClick={handleDownloadPremium}
@@ -671,12 +671,12 @@ const SimplifiedResultsPage = () => {
 							{downloadingPremium ? (
 								<>
 									<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-									<span>Génération en cours… (10–20 sec)</span>
+									<span>{t("diagnostic.results.premiumReport.generating")}</span>
 								</>
 							) : (
 								<>
 									<Download className="w-5 h-5" />
-									<span>Télécharger mon Rapport Premium IA</span>
+									<span>{t("diagnostic.results.premiumReport.download")}</span>
 								</>
 							)}
 						</button>
