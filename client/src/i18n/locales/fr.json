@@ -354,6 +354,34 @@
 				"description": "Évaluation complète, rapport écrit et présenté, plan d'action stratégique et trois mois de mise en œuvre guidée.",
 				"link": "Découvrir le service de diagnostic"
 			}
+		},
+		"vision": {
+			"title": "Une méthode d'audit, pas un simple questionnaire",
+			"intro": "vitalCHECK est conçu par Ubuntu Business Builders (UBB), société de conseil basée à Dakar qui accompagne les PME dans leur diagnostic, leur stratégie et leur croissance.",
+			"benefits": {
+				"method": {
+					"title": "Une analyse experte",
+					"description": "Chaque réponse est analysée selon la méthodologie d'audit UBB, pensée pour les réalités des PME africaines."
+				},
+				"priorities": {
+					"title": "Des priorités claires",
+					"description": "Vos recommandations dépendent de votre niveau de maturité : vous savez par où commencer."
+				},
+				"privacy": {
+					"title": "Des réponses confidentielles",
+					"description": "Vos informations servent uniquement à établir votre diagnostic.",
+					"link": "Lire notre politique de confidentialité"
+				}
+			},
+			"levels": {
+				"title": "Les 5 niveaux de maturité UBB",
+				"intro": "Votre score sur 100 situe votre entreprise sur cette échelle.",
+				"range": "{{min}} à {{max}}"
+			},
+			"signature": {
+				"quote": "« Ubuntu : je suis parce que nous sommes. » Faire grandir chaque entreprise, c'est faire grandir toute sa communauté.",
+				"author": "L'équipe Ubuntu Business Builders, Dakar"
+			}
 		}
 	},
 	"assessment": {

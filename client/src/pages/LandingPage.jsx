@@ -2,6 +2,7 @@ import React from 'react'
 import { Hero } from '../components/layout'
 import ServicesSection from '../components/landing/ServicesSection'
 import SectorDiagnostics from '../components/landing/SectorDiagnostics'
+import VisionSection from '../components/landing/VisionSection'
 import { Footer } from '../components/navigation'
 import { SocialShare } from '../components/ui'
 import SEOHead from '../components/seo/SEOHead'
@@ -24,6 +25,8 @@ const LandingPage = () => {
       <ServicesSection />
 
       <SectorDiagnostics />
+
+      <VisionSection />
 
       {/* Social Share */}
       <SocialShare
