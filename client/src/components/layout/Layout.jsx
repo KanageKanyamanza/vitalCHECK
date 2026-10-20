@@ -20,7 +20,8 @@ const Layout = ({ children }) => {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {!isShellPage && <Navbar />}
 
-      <main className="flex-1">
+      {/* L'en-tête est fixe : décaler le contenu de sa hauteur */}
+      <main className={`flex-1 ${isShellPage ? '' : 'pt-ubb-header'}`}>
         {children}
       </main>
 

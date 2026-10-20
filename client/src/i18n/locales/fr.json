@@ -23,7 +23,8 @@
 		"userGuide": "Guide d'utilisation",
 		"downloadGuide": "Télécharger le guide",
 		"downloading": "Téléchargement...",
-		"downloadUserGuide": "Télécharger le guide d'utilisation en PDF"
+		"downloadUserGuide": "Télécharger le guide d'utilisation en PDF",
+		"backToTop": "Revenir en haut de la page"
 	},
 	"navigation": {
 		"home": "Accueil",
@@ -36,7 +37,16 @@
 		"blog": "Blog",
 		"userGuide": "Guide",
 		"login": "Connexion",
-		"dashboard": "Dashboard"
+		"dashboard": "Dashboard",
+		"byUbb": "par Ubuntu Business Builders",
+		"startDiagnostic": "Démarrer mon diagnostic gratuit",
+		"startDiagnosticShort": "Diagnostic gratuit",
+		"openMenu": "Ouvrir le menu",
+		"closeMenu": "Fermer le menu",
+		"mainMenu": "Navigation principale",
+		"language": "Langue",
+		"adminDashboard": "Espace admin",
+		"myAccount": "Mon compte"
 	},
 	"results": {
 		"title": "vitalCHECK Enterprise Health Check – Résultats",

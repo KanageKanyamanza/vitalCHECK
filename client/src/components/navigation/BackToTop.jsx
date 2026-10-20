@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ChevronUp } from 'lucide-react'
+import { useTranslation } from 'react-i18next'
 
 const BackToTop = ({ 
   showAfter = 0, // Afficher dès qu'on scroll (0px)
@@ -8,6 +9,7 @@ const BackToTop = ({
   duration = 800,
   className = ''
 }) => {
+  const { t } = useTranslation()
   const [isVisible, setIsVisible] = useState(false)
 
   // Fonction pour faire défiler vers le haut
@@ -49,10 +51,10 @@ const BackToTop = ({
           exit={{ opacity: 0, scale: 0.5, y: 20 }}
           transition={{ duration: 0.3, ease: "easeOut" }}
           onClick={scrollToTop}
-          className={`fixed sm:bottom-10 bottom-24 right-3 z-40 bg-accent-500 text-black p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-accent-200 ${className}`}
+          className={`ubb-focus fixed bottom-5 right-3 z-40 sm:bottom-10 flex h-12 w-12 items-center justify-center rounded-full border border-ubb-navy-900/10 bg-white text-ubb-navy-900 shadow-ubb-md transition-colors duration-200 hover:bg-ubb-navy-50 ${className}`}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
-          aria-label="Retour en haut"
+          aria-label={t('common.backToTop')}
         >
           <ChevronUp className="w-6 h-6" />
         </motion.button>

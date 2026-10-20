@@ -123,16 +123,6 @@ const Footer = () => {
 		// { label: t('footer.terms'), href: '/terms' }
 	];
 
-	const handleScrollToSection = (sectionId) => {
-		window.scrollTo({
-			top:
-				sectionId === "terms" ? 0
-				: sectionId === "privacy" ? 0
-				: document.getElementById(sectionId).offsetTop,
-			behavior: "smooth",
-		});
-	};
-
 	const handleNavigation = (path, scrollToId = null) => {
 		navigate(path);
 		// Si on a un scrollToId, attendre un peu que la page se charge puis scroll vers la section
@@ -157,202 +147,190 @@ const Footer = () => {
 	};
 
 	return (
-		<footer className="bg-primary-600 text-white">
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-1">
-				{/* Section Newsletter - En haut du footer */}
-				<div className="mb-16 pb-12 border-b border-primary-500">
-					<div className="max-w-4xl mx-auto">
-						<div className="text-center mb-8">
-							<h3 className="text-3xl md:text-4xl font-bold mb-3">
-								{t("footer.newsletter.title")}
-							</h3>
-							<p className="text-primary-100 text-base md:text-lg mb-2">
-								{t("footer.newsletter.subtitle")}
-							</p>
-							<p className="text-primary-200 text-sm md:text-base">
-								{t("footer.newsletter.description")}
-							</p>
-						</div>
-
-						{/* Formulaire Newsletter */}
-						<form
-							onSubmit={handleNewsletterSubmit}
-							className="max-w-2xl mx-auto"
-						>
-							<div className="flex flex-col sm:flex-row gap-4">
-								<div className="flex-1">
-									<input
-										type="email"
-										value={email}
-										onChange={(e) => setEmail(e.target.value)}
-										placeholder={t("footer.newsletter.emailPlaceholder")}
-										disabled={isSubscribing || isSubscribed}
-										className="w-full px-6 py-4 rounded-lg bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-accent-500 focus:ring-offset-2 focus:ring-offset-primary-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all text-lg"
-									/>
-								</div>
-								<button
-									type="submit"
-									disabled={isSubscribing || isSubscribed || !email.trim()}
-									className={`px-8 py-4 rounded-lg font-semibold text-base transition-all duration-200 flex items-center justify-center gap-2 ${
-										isSubscribed ?
-											"bg-green-500 text-white cursor-default"
-										:	"bg-accent-500 hover:bg-accent-600 text-white disabled:opacity-50 disabled:cursor-not-allowed"
-									}`}
-								>
-									{isSubscribed ?
-										<>
-											<CheckCircle className="w-5 h-5" />
-											{t("footer.newsletter.success")}
-										</>
-									: isSubscribing ?
-										<>
-											<div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-											{t("footer.newsletter.subscribing")}
-										</>
-									:	<>
-											<Send className="w-5 h-5" />
-											{t("footer.newsletter.subscribe")}
-										</>
-									}
-								</button>
-							</div>
-						</form>
-					</div>
-				</div>
-
-				{/* Contenu principal du footer */}
-				<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-					{/* Logo et Description */}
-					<div className="lg:col-span-2">
-						<div className="flex items-center space-x-3 mb-4">
-							<div className="w-10 h-10 rounded-xl flex items-center justify-center shadow-lg overflow-hidden">
-								<Link to="/admin" className="cursor-default">
-									<img
-										src={logoIcon}
-										alt="vitalCHECK Logo"
-										className="w-full h-full object-contain"
-									/>
-								</Link>
-							</div>
-							<div className="flex flex-col">
-								<span className="text-white font-medium">
-									Enterprise Health Check
-								</span>
-							</div>
-						</div>
-						<p className="text-white mb-6 max-w-md">
-							{t("footer.description")}
+		<footer className="bg-ubb-navy-950 font-text text-white">
+			{/* Newsletter */}
+			<div className="border-b border-white/10">
+				<div className="ubb-container grid gap-8 py-12 sm:py-14 lg:grid-cols-2 lg:items-center">
+					<div>
+						<h2 className="ubb-heading text-ubb-subtitle text-white">
+							{t("footer.newsletter.subtitle")}
+						</h2>
+						<p className="mt-2 max-w-ubb-prose text-ubb-body text-ubb-navy-200">
+							{t("footer.newsletter.description")}
 						</p>
+					</div>
 
-						{/* Social Links */}
-						<div className="flex space-x-4 mb-4">
-							{socialLinks.map((social, index) => (
+					<form onSubmit={handleNewsletterSubmit} noValidate>
+						<label htmlFor="footer-newsletter-email" className="sr-only">
+							{t("footer.newsletter.emailPlaceholder")}
+						</label>
+						<div className="flex flex-col gap-3 sm:flex-row">
+							<input
+								id="footer-newsletter-email"
+								type="email"
+								autoComplete="email"
+								value={email}
+								onChange={(e) => setEmail(e.target.value)}
+								placeholder={t("footer.newsletter.emailPlaceholder")}
+								disabled={isSubscribing || isSubscribed}
+								className="ubb-input flex-1 border-transparent focus-visible:ring-offset-ubb-navy-950 disabled:opacity-60"
+							/>
+							<button
+								type="submit"
+								disabled={isSubscribing || isSubscribed || !email.trim()}
+								className="ubb-btn ubb-btn-primary focus-visible:ring-offset-ubb-navy-950"
+							>
+								{isSubscribed ?
+									<>
+										<CheckCircle className="h-5 w-5" aria-hidden="true" />
+										{t("footer.newsletter.success")}
+									</>
+								: isSubscribing ?
+									<>
+										<span
+											className="h-5 w-5 animate-spin rounded-full border-2 border-ubb-navy-900 border-t-transparent"
+											aria-hidden="true"
+										/>
+										{t("footer.newsletter.subscribing")}
+									</>
+								:	<>
+										<Send className="h-5 w-5" aria-hidden="true" />
+										{t("footer.newsletter.subscribe")}
+									</>
+								}
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+
+			{/* Contenu principal */}
+			<div className="ubb-container grid gap-10 py-12 sm:grid-cols-2 lg:grid-cols-12 lg:gap-8">
+				{/* Marque */}
+				<div className="sm:col-span-2 lg:col-span-5">
+					<div className="flex items-center gap-3">
+						{/* Le logo du pied de page reste l'accès discret à l'administration */}
+						<Link to="/admin" className="cursor-default" tabIndex={-1}>
+							<img
+								src={logoIcon}
+								alt=""
+								width="40"
+								height="40"
+								className="h-10 w-10 rounded-ubb-chip bg-white object-contain p-0.5"
+							/>
+						</Link>
+						<span className="flex flex-col leading-none">
+							<span className="font-heading text-xl font-bold">vitalCHECK</span>
+							<span className="mt-1 text-sm text-ubb-navy-200">
+								{t("navigation.byUbb")}
+							</span>
+						</span>
+					</div>
+					<p className="mt-5 max-w-md text-ubb-body text-ubb-navy-200">
+						{t("footer.description")}
+					</p>
+
+					<ul className="mt-6 flex gap-2">
+						{socialLinks.map((social) => (
+							<li key={social.label}>
 								<a
-									key={index}
 									href={social.href}
-									className="w-10 h-10 bg-accent-500 rounded-lg flex items-center justify-center hover:bg-accent-600 transition-colors duration-200"
+									target="_blank"
+									rel="noopener noreferrer"
 									aria-label={social.label}
+									className="ubb-focus flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white transition-colors hover:border-ubb-gold-500 hover:text-ubb-gold-500 focus-visible:ring-offset-ubb-navy-950"
 								>
-									<social.icon className="w-5 h-5 text-white" />
+									<social.icon className="h-5 w-5" aria-hidden="true" />
 								</a>
-							))}
-						</div>
-						<div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 text-white/80 text-xs">
-							<div className="flex flex-col mb-4 md:mb-0">
-								<span className="font-semibold text-white">
-									{t("company.name")}
-								</span>
-								<div className="flex flex-wrap gap-x-4">
-									<span>{t("company.address")}</span>
-									<span>{t("company.rccm")}</span>
-									<span>{t("company.ninea")}</span>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					{/* Liens Rapides */}
-					<div>
-						<h3 className="text-lg font-semibold mb-4">
-							{t("footer.quickLinks")}
-						</h3>
-						<ul className="space-y-3">
-							{quickLinks.map((link, index) => (
-								<li key={index}>
-									{(
-										link.href &&
-										typeof link.href === "string" &&
-										link.href.startsWith("/")
-									) ?
-										<button
-											onClick={() => handleNavigation(link.href, link.scrollTo)}
-											className="text-white hover:text-gray-800 transition-colors duration-200 text-left"
-										>
-											{link.label}
-										</button>
-									:	<button
-											onClick={() => handleScrollToSection(link.scrollTo)}
-											className="text-white hover:text-gray-800 transition-colors duration-200 text-left"
-										>
-											{link.label}
-										</button>
-									}
-								</li>
-							))}
-							{/* Guide d'utilisation */}
-							<li>
-								<UserGuideButton variant="footer" />
 							</li>
-						</ul>
-					</div>
-
-					{/* Contact Info */}
-					<div>
-						<h3 className="text-lg font-semibold mb-4">
-							{t("footer.contact")}
-						</h3>
-						<div className="space-y-3">
-							<div className="flex items-center space-x-3">
-								<Mail className="w-5 h-5 text-accent-500" />
-								<span className="text-white">info@checkmyenterprise.com</span>
-							</div>
-							<div className="space-y-2">
-								<div className="flex items-center space-x-3">
-									<Phone className="w-5 h-5 text-accent-500" />
-									<div className="text-white">
-										<div className="text-sm">🇸🇳 +221 788346969</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						{/* Install PWA Button */}
-						<div className="flex md:justify-end mt-10">
-							<InstallPWAButton />
-						</div>
-					</div>
+						))}
+					</ul>
 				</div>
 
-				{/* Bottom Bar */}
-				<div className="border-t border-gray-300 mt-4 pt-8">
-					<div className="flex flex-col md:flex-row justify-between items-center">
-						<p className="text-white text-sm">
-							&copy; {currentYear} vitalCHECK Enterprise Health Check.{" "}
-							{t("footer.allRightsReserved")}
+				{/* Liens rapides */}
+				<div className="lg:col-span-3">
+					<h2 className="font-heading text-base font-semibold text-white">
+						{t("footer.quickLinks")}
+					</h2>
+					<ul className="mt-4 space-y-1">
+						{quickLinks.map((link) => (
+							<li key={link.label}>
+								<button
+									onClick={() => handleNavigation(link.href, link.scrollTo)}
+									className="ubb-focus min-h-[44px] rounded text-left text-ubb-navy-200 transition-colors hover:text-white focus-visible:ring-offset-ubb-navy-950"
+								>
+									{link.label}
+								</button>
+							</li>
+						))}
+						<li>
+							<UserGuideButton
+								variant="footer"
+								className="min-h-[44px] focus-visible:ring-offset-ubb-navy-950"
+							/>
+						</li>
+					</ul>
+				</div>
+
+				{/* Contact */}
+				<div className="lg:col-span-4">
+					<h2 className="font-heading text-base font-semibold text-white">
+						{t("footer.contact")}
+					</h2>
+					<ul className="mt-4 space-y-1">
+						<li>
+							<a
+								href="mailto:info@checkmyenterprise.com"
+								className="ubb-focus inline-flex min-h-[44px] items-center gap-3 rounded text-ubb-navy-200 hover:text-white focus-visible:ring-offset-ubb-navy-950"
+							>
+								<Mail className="h-5 w-5 text-ubb-gold-500" aria-hidden="true" />
+								info@checkmyenterprise.com
+							</a>
+						</li>
+						<li>
+							<a
+								href="tel:+221788346969"
+								className="ubb-focus inline-flex min-h-[44px] items-center gap-3 rounded text-ubb-navy-200 hover:text-white focus-visible:ring-offset-ubb-navy-950"
+							>
+								<Phone className="h-5 w-5 text-ubb-gold-500" aria-hidden="true" />
+								+221 78 834 69 69
+							</a>
+						</li>
+						<li className="flex min-h-[44px] items-center gap-3 text-ubb-navy-200">
+							<MapPin className="h-5 w-5 text-ubb-gold-500" aria-hidden="true" />
+							{t("footer.location")}
+						</li>
+					</ul>
+					<div className="mt-6">
+						<InstallPWAButton />
+					</div>
+				</div>
+			</div>
+
+			{/* Mentions légales */}
+			<div className="border-t border-white/10">
+				<div className="ubb-container flex flex-col gap-4 py-6 text-ubb-small text-ubb-navy-300 md:flex-row md:items-center md:justify-between">
+					<div>
+						<p>
+							&copy; {currentYear} {t("company.name")}. {t("footer.allRightsReserved")}
 						</p>
-						<div className="flex items-center space-x-6 mt-4 md:mt-0">
-							<button
-								onClick={() => handleNavigation("/terms")}
-								className="text-white hover:text-gray-800 text-sm transition-colors duration-200"
-							>
-								{t("footer.terms")}
-							</button>
-							<button
-								onClick={() => handleNavigation("/privacy")}
-								className="text-white hover:text-gray-800 text-sm transition-colors duration-200"
-							>
-								{t("footer.privacy")}
-							</button>
-						</div>
+						<p className="mt-1">
+							{t("company.rccm")} / {t("company.ninea")}
+						</p>
+					</div>
+					<div className="flex gap-6">
+						<button
+							onClick={() => handleNavigation("/terms")}
+							className="ubb-focus min-h-[44px] rounded hover:text-white focus-visible:ring-offset-ubb-navy-950"
+						>
+							{t("footer.terms")}
+						</button>
+						<button
+							onClick={() => handleNavigation("/privacy")}
+							className="ubb-focus min-h-[44px] rounded hover:text-white focus-visible:ring-offset-ubb-navy-950"
+						>
+							{t("footer.privacy")}
+						</button>
 					</div>
 				</div>
 			</div>

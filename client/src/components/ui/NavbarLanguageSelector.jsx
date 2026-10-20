@@ -1,87 +1,116 @@
-import React, { useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Check, ChevronDown } from 'lucide-react'
 
-const NavbarLanguageSelector = ({ onLanguageChange, className = '', isScrolled = false }) => {
+const LANGUAGE_CODES = ['fr', 'en']
+
+/**
+ * Sélecteur de langue de l'en-tête.
+ * - variant "dropdown" (desktop) : bouton + liste déroulante
+ * - variant "segmented" (menu mobile) : deux boutons côte à côte
+ */
+const NavbarLanguageSelector = ({ onLanguageChange, className = '', variant = 'dropdown' }) => {
   const { t, i18n } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
+  const containerRef = useRef(null)
 
-  const languages = [
-    { code: 'en', name: t('languages.en'), flag: '🇬🇧' },
-    { code: 'fr', name: t('languages.fr'), flag: '🇫🇷' }
-  ]
-
-  const currentLanguage = i18n.language || 'fr'
-  const selectedLang = languages.find(lang => lang.code === currentLanguage) || languages[0]
+  const currentLanguage = (i18n.language || 'fr').slice(0, 2)
 
   const handleLanguageSelect = async (languageCode) => {
     setIsOpen(false)
-    
-    // Change i18n language first
     await i18n.changeLanguage(languageCode)
-    
-    // Then notify parent component to update global state
     if (onLanguageChange) {
       onLanguageChange(languageCode)
     }
   }
 
-  return (
-    <div className={`relative ${className}`}>
-      <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center space-x-2 px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200 ${
-          isScrolled 
-            ? 'text-gray-700 hover:text-primary-600 hover:bg-gray-50' 
-            : 'text-white/90 hover:text-white hover:bg-white/10'
-        }`}
+  // Fermer la liste au clic extérieur ou avec Échap
+  useEffect(() => {
+    if (!isOpen) return
+    const handleClick = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) setIsOpen(false)
+    }
+    const handleKey = (e) => e.key === 'Escape' && setIsOpen(false)
+    document.addEventListener('mousedown', handleClick)
+    document.addEventListener('keydown', handleKey)
+    return () => {
+      document.removeEventListener('mousedown', handleClick)
+      document.removeEventListener('keydown', handleKey)
+    }
+  }, [isOpen])
+
+  if (variant === 'segmented') {
+    return (
+      <div
+        role="group"
+        aria-label={t('navigation.language')}
+        className={`inline-flex rounded-full bg-ubb-navy-50 p-1 ${className}`}
       >
-        <span className="text-lg">{selectedLang.flag}</span>
-        <span className="hidden sm:block">{selectedLang.name}</span>
-        <ChevronDown 
-          className={`w-3 h-3 transition-transform duration-200 ${
-            isOpen ? '' : 'rotate-180'
-          }`} 
+        {LANGUAGE_CODES.map((code) => (
+          <button
+            key={code}
+            type="button"
+            lang={code}
+            onClick={() => handleLanguageSelect(code)}
+            aria-pressed={code === currentLanguage}
+            className={`ubb-focus min-h-[44px] rounded-full px-4 font-text text-sm font-semibold transition-colors ${
+              code === currentLanguage
+                ? 'bg-ubb-navy-900 text-white'
+                : 'text-ubb-ink hover:bg-white'
+            }`}
+          >
+            {t(`languages.${code}`)}
+          </button>
+        ))}
+      </div>
+    )
+  }
+
+  return (
+    <div ref={containerRef} className={`relative ${className}`}>
+      <button
+        type="button"
+        onClick={() => setIsOpen((open) => !open)}
+        aria-expanded={isOpen}
+        aria-haspopup="true"
+        aria-label={t('navigation.language')}
+        className="ubb-focus inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-3 font-text text-sm font-semibold uppercase text-ubb-ink hover:bg-ubb-navy-50"
+      >
+        {currentLanguage}
+        <ChevronDown
+          className={`h-4 w-4 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          aria-hidden="true"
         />
       </button>
 
       <AnimatePresence>
         {isOpen && (
-          <>
-            {/* Backdrop */}
-            <div 
-              className="fixed inset-0 z-10" 
-              onClick={() => setIsOpen(false)}
-            />
-            
-            {/* Dropdown */}
-            <motion.div
-              initial={{ opacity: 0, y: -10, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -10, scale: 0.95 }}
-              transition={{ duration: 0.2 }}
-              className="absolute bottom-full right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-20 min-w-[120px]"
-            >
-              {languages.map((language) => (
+          <motion.ul
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -6 }}
+            transition={{ duration: 0.15 }}
+            className="absolute right-0 top-full z-20 mt-2 min-w-[150px] overflow-hidden rounded-ubb-field border border-ubb-navy-900/10 bg-white py-1 shadow-ubb-md"
+          >
+            {LANGUAGE_CODES.map((code) => (
+              <li key={code}>
                 <button
-                  key={language.code}
-                  onClick={() => handleLanguageSelect(language.code)}
-                  className={`w-full flex items-center justify-between px-3 py-2 text-sm text-left hover:bg-gray-50 transition-colors duration-200 ${
-                    language.code === currentLanguage ? 'bg-primary-50 text-primary-600' : 'text-gray-700'
+                  type="button"
+                  lang={code}
+                  onClick={() => handleLanguageSelect(code)}
+                  className={`flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left font-text text-sm hover:bg-ubb-navy-50 focus:bg-ubb-navy-50 focus:outline-none ${
+                    code === currentLanguage ? 'font-semibold text-ubb-ink' : 'text-ubb-ink-muted'
                   }`}
                 >
-                  <div className="flex items-center space-x-2">
-                    <span className="text-lg">{language.flag}</span>
-                    <span>{language.name}</span>
-                  </div>
-                  {language.code === currentLanguage && (
-                    <Check className="w-3 h-3 text-primary-500" />
+                  {t(`languages.${code}`)}
+                  {code === currentLanguage && (
+                    <Check className="h-4 w-4 text-ubb-gold-ink" aria-hidden="true" />
                   )}
                 </button>
-              ))}
-            </motion.div>
-          </>
+              </li>
+            ))}
+          </motion.ul>
         )}
       </AnimatePresence>
     </div>

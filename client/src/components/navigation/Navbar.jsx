@@ -1,28 +1,35 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { useNavigate, useLocation } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { LogIn, User, LayoutDashboard } from "lucide-react";
+import { LogIn, User, LayoutDashboard, Menu, X } from "lucide-react";
 import { NavbarLanguageSelector, UserGuideButton } from "../ui";
+import { Button } from "../ui/ds";
 import { useAssessment } from "../../context/AssessmentContext";
 import { useClientAuth } from "../../context/ClientAuthContext";
 import logoIcon from "/android-icon-96x96.png";
+
+const NAV_LINKS = [
+	{ path: "/", key: "navigation.home" },
+	{ path: "/about", key: "navigation.about" },
+	{ path: "/pricing", key: "navigation.pricing" },
+	{ path: "/blog", key: "navigation.blog" },
+	{ path: "/contact", key: "navigation.contact" },
+];
 
 const Navbar = () => {
 	const { t } = useTranslation();
 	const navigate = useNavigate();
 	const location = useLocation();
 	const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+	const [isScrolled, setIsScrolled] = useState(false);
 
 	// Vérification sécurisée du contexte Assessment
-	let state, dispatch;
+	let dispatch;
 	try {
-		const context = useAssessment();
-		state = context;
-		dispatch = context.dispatch;
+		dispatch = useAssessment().dispatch;
 	} catch (error) {
 		console.warn("AssessmentContext not available in Navbar:", error.message);
-		state = { language: "fr" };
 		dispatch = () => {};
 	}
 
@@ -30,391 +37,218 @@ const Navbar = () => {
 	const { user: clientUser, isAuthenticated } = useClientAuth();
 
 	// Admin Auth Context (depuis localStorage)
-	const adminToken = localStorage.getItem("adminToken");
-	const adminData = localStorage.getItem("adminData");
-	const isAdminAuthenticated = !!adminToken;
+	const isAdminAuthenticated = !!localStorage.getItem("adminToken");
+
+	// Ombre de l'en-tête dès qu'on quitte le haut de page
+	useEffect(() => {
+		const handleScroll = () => setIsScrolled(window.scrollY > 8);
+		handleScroll();
+		window.addEventListener("scroll", handleScroll, { passive: true });
+		return () => window.removeEventListener("scroll", handleScroll);
+	}, []);
+
+	// Fermer le menu à chaque changement de page
+	useEffect(() => {
+		setIsMobileMenuOpen(false);
+	}, [location.pathname]);
+
+	// Menu mobile ouvert : bloquer le scroll de la page et fermer avec Échap
+	useEffect(() => {
+		if (!isMobileMenuOpen) return;
+		const previousOverflow = document.body.style.overflow;
+		document.body.style.overflow = "hidden";
+		const handleKey = (e) => e.key === "Escape" && setIsMobileMenuOpen(false);
+		window.addEventListener("keydown", handleKey);
+		return () => {
+			document.body.style.overflow = previousOverflow;
+			window.removeEventListener("keydown", handleKey);
+		};
+	}, [isMobileMenuOpen]);
 
 	const handleLanguageChange = (language) => {
-		// Mettre à jour la langue dans le contexte global
-		if (dispatch) {
-			dispatch({ type: "SET_LANGUAGE", payload: language });
+		dispatch({ type: "SET_LANGUAGE", payload: language });
+	};
+
+	const isActive = (path) => location.pathname === path;
+
+	const handleSmartLogin = () => {
+		if (localStorage.getItem("adminToken")) {
+			navigate("/admin/dashboard");
+		} else if (localStorage.getItem("clientToken")) {
+			navigate("/client/dashboard");
+		} else {
+			navigate("/login");
 		}
-	};
-
-	const isActive = (path) => {
-		return location.pathname === path;
-	};
-
-	const handleDesktopNavigation = (path) => {
-		navigate(path);
-	};
-
-	const toggleMobileMenu = () => {
-		setIsMobileMenuOpen(!isMobileMenuOpen);
-	};
-
-	const closeMobileMenu = () => {
 		setIsMobileMenuOpen(false);
 	};
 
-	const handleSmartLogin = () => {
-		// Vérifier si l'utilisateur a déjà un token admin
-		const adminToken = localStorage.getItem("adminToken");
-		const clientToken = localStorage.getItem("clientToken");
+	const accountLabel =
+		isAdminAuthenticated ? t("navigation.adminDashboard")
+		: isAuthenticated && clientUser ?
+			clientUser.firstName || clientUser.companyName || t("navigation.myAccount")
+		:	t("navigation.login");
 
-		if (adminToken) {
-			// Si admin token existe, rediriger vers admin dashboard
-			handleDesktopNavigation("/admin/dashboard");
-		} else if (clientToken) {
-			// Si client token existe, rediriger vers client dashboard
-			handleDesktopNavigation("/client/dashboard");
-		} else {
-			// Aucun token, rediriger vers la page de connexion unifiée
-			handleDesktopNavigation("/login");
-		}
-	};
-
-	const handleSmartLoginMobile = () => {
-		// Vérifier si l'utilisateur a déjà un token admin
-		const adminToken = localStorage.getItem("adminToken");
-		const clientToken = localStorage.getItem("clientToken");
-
-		if (adminToken) {
-			// Si admin token existe, rediriger vers admin dashboard
-			handleNavigation("/admin/dashboard");
-		} else if (clientToken) {
-			// Si client token existe, rediriger vers client dashboard
-			handleNavigation("/client/dashboard");
-		} else {
-			// Aucun token, rediriger vers la page de connexion unifiée
-			handleNavigation("/login");
-		}
-	};
-
-	const handleNavigation = (path) => {
-		navigate(path);
-		closeMobileMenu();
-	};
-
-	// Plus de transparence - background solide
+	const AccountIcon =
+		isAdminAuthenticated ? LayoutDashboard
+		: isAuthenticated && clientUser ? User
+		: LogIn;
 
 	return (
-		<motion.nav
-			initial={{ y: 100, opacity: 0 }}
-			animate={{ y: 0, opacity: 1 }}
-			transition={{ duration: 0.5 }}
-			className="fixed w-[90%] mx-auto rounded-full bottom-7 left-0 right-0 z-50 transition-all duration-300 
-          bg-white shadow-lg border-t border-gray-200"
+		<>
+		<header
+			className={`fixed inset-x-0 top-0 z-50 h-ubb-header bg-white/95 backdrop-blur transition-shadow duration-200 ${
+				isScrolled || isMobileMenuOpen ?
+					"shadow-ubb-sm"
+				:	"border-b border-ubb-navy-900/[0.06]"
+			}`}
 		>
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-				<div className="flex justify-between items-center h-14">
-					{/* Logo et titre */}
-					<div className="flex items-center space-x-3">
-						<div
-							className="flex items-center cursor-pointer"
-							onClick={() => handleDesktopNavigation("/")}
-						>
-							<div className="w-10 h-10 rounded-lg flex items-center justify-center shadow-lg overflow-hidden">
-								<img
-									src={logoIcon}
-									alt="vitalCHECK Logo"
-									className="w-full h-full object-contain"
+			<nav
+				className="ubb-container flex h-full items-center justify-between gap-3"
+				aria-label={t("navigation.mainMenu")}
+			>
+				{/* Logo */}
+				<Link
+					to="/"
+					className="ubb-focus -ml-1 flex shrink-0 items-center gap-2.5 rounded-ubb-chip p-1"
+				>
+					<img
+						src={logoIcon}
+						alt=""
+						width="36"
+						height="36"
+						className="h-9 w-9 rounded-ubb-chip object-contain"
+					/>
+					<span className="flex flex-col leading-none">
+						<span className="font-heading text-lg font-bold tracking-tight text-ubb-ink">
+							vitalCHECK
+						</span>
+						<span className="mt-0.5 font-text text-xs text-ubb-ink-muted">
+							{t("navigation.byUbb")}
+						</span>
+					</span>
+				</Link>
+
+				{/* Liens desktop */}
+				<ul className="hidden items-center gap-1 lg:flex">
+					{NAV_LINKS.map(({ path, key }) => (
+						<li key={path}>
+							<Link
+								to={path}
+								aria-current={isActive(path) ? "page" : undefined}
+								className={`ubb-focus relative rounded-ubb-chip px-3 py-2 font-text text-[0.95rem] font-medium transition-colors ${
+									isActive(path) ?
+										"text-ubb-ink after:absolute after:inset-x-3 after:-bottom-0.5 after:h-0.5 after:rounded-full after:bg-ubb-gold-500"
+									:	"text-ubb-ink-muted hover:text-ubb-ink"
+								}`}
+							>
+								{t(key)}
+							</Link>
+						</li>
+					))}
+				</ul>
+
+				{/* Actions */}
+				<div className="flex items-center gap-2">
+					<div className="hidden lg:block">
+						<NavbarLanguageSelector onLanguageChange={handleLanguageChange} />
+					</div>
+
+					<button
+						type="button"
+						onClick={handleSmartLogin}
+						className="ubb-focus hidden min-h-[44px] items-center gap-2 rounded-full px-4 font-text text-sm font-semibold text-ubb-ink hover:bg-ubb-navy-50 lg:inline-flex"
+					>
+						<AccountIcon className="h-4 w-4" aria-hidden="true" />
+						<span className="max-w-[10rem] truncate">{accountLabel}</span>
+					</button>
+
+					<Button to="/diagnostic" size="sm" className="hidden min-[420px]:inline-flex">
+						<span className="lg:hidden">{t("navigation.startDiagnosticShort")}</span>
+						<span className="hidden lg:inline">{t("navigation.startDiagnostic")}</span>
+					</Button>
+
+					{/* Bouton menu mobile */}
+					<button
+						type="button"
+						onClick={() => setIsMobileMenuOpen((open) => !open)}
+						className="ubb-focus inline-flex h-11 w-11 items-center justify-center rounded-full text-ubb-ink hover:bg-ubb-navy-50 lg:hidden"
+						aria-expanded={isMobileMenuOpen}
+						aria-controls="ubb-mobile-menu"
+						aria-label={
+							isMobileMenuOpen ? t("navigation.closeMenu") : t("navigation.openMenu")
+						}
+					>
+						{isMobileMenuOpen ?
+							<X className="h-6 w-6" aria-hidden="true" />
+						:	<Menu className="h-6 w-6" aria-hidden="true" />}
+					</button>
+				</div>
+			</nav>
+		</header>
+
+			{/* Menu mobile : panneau plein écran sous l'en-tête.
+			    Hors du <header> : son backdrop-filter piégerait le position: fixed. */}
+			<AnimatePresence>
+				{isMobileMenuOpen && (
+					<motion.div
+						id="ubb-mobile-menu"
+						initial={{ opacity: 0, y: -8 }}
+						animate={{ opacity: 1, y: 0 }}
+						exit={{ opacity: 0, y: -8 }}
+						transition={{ duration: 0.2, ease: "easeOut" }}
+						className="fixed inset-x-0 bottom-0 top-ubb-header z-40 overflow-y-auto bg-white lg:hidden"
+					>
+						<div className="ubb-container flex min-h-full flex-col gap-6 pb-8 pt-4">
+							<ul className="flex flex-col">
+								{NAV_LINKS.map(({ path, key }) => (
+									<li key={path} className="border-b border-ubb-navy-900/[0.07]">
+										<Link
+											to={path}
+											aria-current={isActive(path) ? "page" : undefined}
+											onClick={() => setIsMobileMenuOpen(false)}
+											className={`ubb-focus flex min-h-[56px] items-center justify-between font-heading text-xl font-semibold ${
+												isActive(path) ? "text-ubb-ink" : "text-ubb-ink/80"
+											}`}
+										>
+											{t(key)}
+											{isActive(path) && (
+												<span className="h-2 w-2 rounded-full bg-ubb-gold-500" aria-hidden="true" />
+											)}
+										</Link>
+									</li>
+								))}
+								<li className="border-b border-ubb-navy-900/[0.07]">
+									<UserGuideButton
+										variant="menu"
+										className="min-h-[56px] w-full font-heading text-xl font-semibold"
+									/>
+								</li>
+							</ul>
+
+							<div className="flex items-center justify-between gap-4">
+								<span className="font-text text-sm font-semibold text-ubb-ink-muted">
+									{t("navigation.language")}
+								</span>
+								<NavbarLanguageSelector
+									variant="segmented"
+									onLanguageChange={handleLanguageChange}
 								/>
 							</div>
-							<div className="flex ms-1 ">
-								<span className="text-[11px] sm:text-md md:text-lg font-display  text-primary-500 font-bold">
-									vitalCHECK
-								</span>
+
+							<div className="mt-auto flex flex-col gap-3">
+								<Button to="/diagnostic" size="lg" className="w-full">
+									{t("navigation.startDiagnostic")}
+								</Button>
+								<Button variant="outline" onClick={handleSmartLogin} className="w-full">
+									<AccountIcon className="h-4 w-4" aria-hidden="true" />
+									{accountLabel}
+								</Button>
 							</div>
 						</div>
-					</div>
-
-					{/* Navigation et sélecteur de langue */}
-					<div className="flex items-center space-x-6">
-						{/* Navigation desktop */}
-						<div className="hidden md:flex items-center space-x-6">
-							<button
-								onClick={() => handleDesktopNavigation("/")}
-								className={`text-sm font-medium transition-colors duration-200 ${
-									isActive("/") ?
-										"text-primary-600 border-b-2 border-primary-600 pb-1"
-									:	"text-gray-600 hover:text-primary-600"
-								}`}
-							>
-								{t("navigation.home")}
-							</button>
-
-							<button
-								onClick={() => handleDesktopNavigation("/about")}
-								className={`text-sm font-medium transition-colors duration-200 ${
-									isActive("/about") ?
-										"text-primary-600 border-b-2 border-primary-600 pb-1"
-									:	"text-gray-600 hover:text-primary-600"
-								}`}
-							>
-								{t("navigation.about")}
-							</button>
-
-							<button
-								onClick={() => handleDesktopNavigation("/blog")}
-								className={`text-sm font-medium transition-colors duration-200 ${
-									isActive("/blog") ?
-										"text-primary-600 border-b-2 border-primary-600 pb-1"
-									:	"text-gray-600 hover:text-primary-600"
-								}`}
-							>
-								Blog
-							</button>
-
-							<button
-								onClick={() => handleDesktopNavigation("/pricing")}
-								className={`text-sm font-medium transition-colors duration-200 ${
-									isActive("/pricing") ?
-										"text-primary-600 border-b-2 border-primary-600 pb-1"
-									:	"text-gray-600 hover:text-primary-600"
-								}`}
-							>
-								{t("navigation.pricing")}
-							</button>
-
-							<button
-								onClick={() => handleDesktopNavigation("/contact")}
-								className={`text-sm font-medium transition-colors duration-200 ${
-									isActive("/contact") ?
-										"text-primary-600 border-b-2 border-primary-600 pb-1"
-									:	"text-gray-600 hover:text-primary-600"
-								}`}
-							>
-								{t("navigation.contact")}
-							</button>
-
-							{/* Guide d'utilisation */}
-							<UserGuideButton variant="navbar" />
-
-							{location.pathname === "/assessment" && (
-								<button
-									onClick={() => handleDesktopNavigation("/assessment")}
-									className={`text-sm font-medium transition-colors duration-200 ${
-										isActive("/assessment") ?
-											"text-primary-600 border-b-2 border-primary-600 pb-1"
-										:	"text-gray-600 hover:text-primary-600"
-									}`}
-								>
-									{t("navigation.assessment")}
-								</button>
-							)}
-
-							{location.pathname === "/results" && (
-								<button
-									onClick={() => handleDesktopNavigation("/results")}
-									className={`text-sm font-medium transition-colors duration-200 ${
-										isActive("/results") ?
-											"text-primary-600 border-b-2 border-primary-600 pb-1"
-										:	"text-gray-600 hover:text-primary-600"
-									}`}
-								>
-									{t("navigation.results")}
-								</button>
-							)}
-						</div>
-
-						{/* Sélecteur de langue - Toujours visible */}
-						<NavbarLanguageSelector
-							onLanguageChange={handleLanguageChange}
-							isScrolled={true}
-						/>
-
-						{/* Smart Login/Dashboard Button - Desktop */}
-						<div className="hidden md:flex">
-							<button
-								onClick={handleSmartLogin}
-								className="flex items-center space-x-2 px-4 py-2 border-2 border-primary-600 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors duration-200 font-medium"
-							>
-								{isAdminAuthenticated ?
-									<>
-										<LayoutDashboard className="w-4 h-4" />
-										<span className="text-sm">Admin Dashboard</span>
-									</>
-								: isAuthenticated && clientUser ?
-									<>
-										<User className="w-4 h-4" />
-										<span className="text-sm">
-											{clientUser.firstName ||
-												clientUser.companyName ||
-												"Mon Compte"}
-										</span>
-									</>
-								:	<>
-										<LogIn className="w-4 h-4" />
-										<span className="text-sm">{t("navigation.login")}</span>
-									</>
-								}
-							</button>
-						</div>
-
-						{/* Bouton hamburger mobile */}
-						<button
-							onClick={toggleMobileMenu}
-							className="md:hidden p-2 rounded-lg text-gray-600 hover:text-primary-600 hover:bg-gray-100 transition-colors duration-200"
-							aria-label="Toggle mobile menu"
-						>
-							<svg
-								className="w-6 h-6"
-								fill="none"
-								stroke="currentColor"
-								viewBox="0 0 24 24"
-							>
-								{isMobileMenuOpen ?
-									<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M6 18L18 6M6 6l12 12"
-									/>
-								:	<path
-										strokeLinecap="round"
-										strokeLinejoin="round"
-										strokeWidth={2}
-										d="M4 6h16M4 12h16M4 18h16"
-									/>
-								}
-							</svg>
-						</button>
-					</div>
-				</div>
-
-				{/* Menu mobile */}
-				<AnimatePresence>
-					{isMobileMenuOpen && (
-						<motion.div
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							exit={{ opacity: 0, y: 20 }}
-							transition={{ duration: 0.3, ease: "easeInOut" }}
-							className="md:hidden fixed bottom-16 left-0 right-0 z-40"
-						>
-							<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-7">
-								<div className="bg-white border border-gray-200 shadow-lg rounded-xl px-4 py-4 space-y-3">
-									{/* Liens de navigation mobile */}
-									<button
-										onClick={() => handleNavigation("/")}
-										className={`w-full text-left px-3 py-2 rounded-lg font-medium transition-colors duration-200 ${
-											isActive("/") ?
-												"text-primary-600 bg-primary-50"
-											:	"text-gray-600 hover:text-primary-600 hover:bg-gray-50"
-										}`}
-									>
-										{t("navigation.home")}
-									</button>
-
-									<button
-										onClick={() => handleNavigation("/about")}
-										className={`w-full text-left px-3 py-2 rounded-lg font-medium transition-colors duration-200 ${
-											isActive("/about") ?
-												"text-primary-600 bg-primary-50"
-											:	"text-gray-600 hover:text-primary-600 hover:bg-gray-50"
-										}`}
-									>
-										{t("navigation.about")}
-									</button>
-
-									<button
-										onClick={() => handleNavigation("/blog")}
-										className={`w-full text-left px-3 py-2 rounded-lg font-medium transition-colors duration-200 ${
-											isActive("/blog") ?
-												"text-primary-600 bg-primary-50"
-											:	"text-gray-600 hover:text-primary-600 hover:bg-gray-50"
-										}`}
-									>
-										Blog
-									</button>
-
-									<button
-										onClick={() => handleNavigation("/pricing")}
-										className={`w-full text-left px-3 py-2 rounded-lg font-medium transition-colors duration-200 ${
-											isActive("/pricing") ?
-												"text-primary-600 bg-primary-50"
-											:	"text-gray-600 hover:text-primary-600 hover:bg-gray-50"
-										}`}
-									>
-										{t("navigation.pricing")}
-									</button>
-
-									<button
-										onClick={() => handleNavigation("/contact")}
-										className={`w-full text-left px-3 py-2 rounded-lg font-medium transition-colors duration-200 ${
-											isActive("/contact") ?
-												"text-primary-600 bg-primary-50"
-											:	"text-gray-600 hover:text-primary-600 hover:bg-gray-50"
-										}`}
-									>
-										{t("navigation.contact")}
-									</button>
-
-									{/* Guide d'utilisation mobile */}
-									<div className="px-3 py-2">
-										<UserGuideButton
-											variant="default"
-											className="text-gray-600 hover:text-primary-600 transition-colors duration-200"
-										/>
-									</div>
-
-									{/* Smart Login Button - Mobile */}
-									<button
-										onClick={handleSmartLoginMobile}
-										className="w-full text-left px-3 py-2 rounded-lg font-medium border-2 border-primary-600 text-primary-600 hover:bg-primary-50 transition-colors duration-200 flex items-center"
-									>
-										{isAdminAuthenticated ?
-											<>
-												<LayoutDashboard className="w-4 h-4 mr-2" />
-												Admin Dashboard
-											</>
-										: isAuthenticated && clientUser ?
-											<>
-												<User className="w-4 h-4 mr-2" />
-												{clientUser.firstName ||
-													clientUser.companyName ||
-													"Mon Compte"}
-											</>
-										:	<>
-												<LogIn className="w-4 h-4 mr-2" />
-												{t("navigation.login")}
-											</>
-										}
-									</button>
-
-									{location.pathname === "/assessment" && (
-										<button
-											onClick={() => handleNavigation("/assessment")}
-											className={`w-full text-left px-3 py-2 rounded-lg font-medium transition-colors duration-200 ${
-												isActive("/assessment") ?
-													"text-primary-600 bg-primary-50"
-												:	"text-gray-600 hover:text-primary-600 hover:bg-gray-50"
-											}`}
-										>
-											{t("navigation.assessment")}
-										</button>
-									)}
-
-									{location.pathname === "/results" && (
-										<button
-											onClick={() => handleNavigation("/results")}
-											className={`w-full text-left px-3 py-2 rounded-lg font-medium transition-colors duration-200 ${
-												isActive("/results") ?
-													"text-primary-600 bg-primary-50"
-												:	"text-gray-600 hover:text-primary-600 hover:bg-gray-50"
-											}`}
-										>
-											{t("navigation.results")}
-										</button>
-									)}
-								</div>
-							</div>
-						</motion.div>
-					)}
-				</AnimatePresence>
-			</div>
-		</motion.nav>
+					</motion.div>
+				)}
+			</AnimatePresence>
+		</>
 	);
 };
 

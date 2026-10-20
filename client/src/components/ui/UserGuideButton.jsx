@@ -19,7 +19,9 @@ const UserGuideButton = ({ variant = 'default', className = '' }) => {
   const getVariantClasses = () => {
     switch (variant) {
       case 'footer':
-        return 'text-white hover:text-gray-200 transition-colors duration-200 text-left';
+        return 'ubb-focus rounded text-ubb-navy-200 hover:text-white transition-colors duration-200 text-left';
+      case 'menu':
+        return 'ubb-focus flex items-center justify-between text-left text-ubb-ink/80 hover:text-ubb-ink';
       case 'navbar':
         return 'text-gray-600 hover:text-primary-600 transition-colors duration-200';
       case 'button':
@@ -54,6 +56,15 @@ const UserGuideButton = ({ variant = 'default', className = '' }) => {
           {getIcon()}
           <span>{getText()}</span>
         </div>
+      </button>
+    );
+  }
+
+  if (variant === 'menu') {
+    return (
+      <button onClick={handleDownloadGuide} className={`${getVariantClasses()} ${className}`} title={btnTitle}>
+        <span>{t('common.userGuide', "Guide d'utilisation")}</span>
+        <Download className="w-5 h-5 text-ubb-ink-muted" aria-hidden="true" />
       </button>
     );
   }
