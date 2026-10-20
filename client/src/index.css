@@ -87,6 +87,10 @@
     @apply ubb-focus block min-h-[48px] w-full rounded-ubb-field border border-ubb-navy-900/20 bg-white px-4 py-3 font-text text-base text-ubb-ink placeholder:text-ubb-ink-muted/70 transition-colors hover:border-ubb-navy-900/35 focus-visible:border-ubb-navy-900;
   }
 
+  .ubb-input[aria-invalid='true'] {
+    @apply border-red-600 hover:border-red-600;
+  }
+
   .ubb-label {
     @apply mb-1.5 block font-text text-sm font-semibold text-ubb-ink;
   }

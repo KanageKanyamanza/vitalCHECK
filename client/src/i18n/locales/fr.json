@@ -382,6 +382,30 @@
 				"quote": "« Ubuntu : je suis parce que nous sommes. » Faire grandir chaque entreprise, c'est faire grandir toute sa communauté.",
 				"author": "L'équipe Ubuntu Business Builders, Dakar"
 			}
+		},
+		"contact": {
+			"title": "Parlons de votre entreprise",
+			"intro": "Une question sur le diagnostic, un besoin d'accompagnement ou un projet de partenariat ? L'équipe UBB vous répond.",
+			"requiredHint": "Tous les champs sont obligatoires, sauf mention contraire.",
+			"optional": "(facultatif)",
+			"phonePlaceholder": "+221 77 000 00 00",
+			"messagePlaceholder": "Présentez-nous votre entreprise et votre besoin.",
+			"subject": "Page d'accueil : {{type}}",
+			"errors": {
+				"name": "Indiquez votre nom.",
+				"email": "Indiquez votre adresse email.",
+				"emailInvalid": "Cette adresse email n'est pas valide. Exemple : nom@entreprise.com",
+				"message": "Écrivez votre message."
+			},
+			"sent": {
+				"title": "Message envoyé",
+				"again": "Envoyer un autre message"
+			},
+			"cta": {
+				"title": "Pas encore prêt à nous écrire ?",
+				"text": "Commencez par le diagnostic gratuit : en quelques minutes, vous saurez où en est votre entreprise.",
+				"button": "Démarrer mon diagnostic gratuit"
+			}
 		}
 	},
 	"assessment": {

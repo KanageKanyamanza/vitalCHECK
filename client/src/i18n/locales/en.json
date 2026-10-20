@@ -382,6 +382,30 @@
 				"quote": "“Ubuntu: I am because we are.” Helping each business grow means helping its whole community grow.",
 				"author": "The Ubuntu Business Builders team, Dakar"
 			}
+		},
+		"contact": {
+			"title": "Let's talk about your business",
+			"intro": "A question about the diagnostic, a need for support or a partnership idea? The UBB team will get back to you.",
+			"requiredHint": "All fields are required unless marked otherwise.",
+			"optional": "(optional)",
+			"phonePlaceholder": "+221 77 000 00 00",
+			"messagePlaceholder": "Tell us about your business and what you need.",
+			"subject": "Homepage: {{type}}",
+			"errors": {
+				"name": "Enter your name.",
+				"email": "Enter your email address.",
+				"emailInvalid": "This email address isn't valid. Example: name@company.com",
+				"message": "Write your message."
+			},
+			"sent": {
+				"title": "Message sent",
+				"again": "Send another message"
+			},
+			"cta": {
+				"title": "Not ready to write to us yet?",
+				"text": "Start with the free diagnostic: in a few minutes, you'll know where your business stands.",
+				"button": "Start my free diagnostic"
+			}
 		}
 	},
 	"assessment": {
