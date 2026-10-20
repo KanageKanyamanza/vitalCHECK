@@ -50,7 +50,7 @@
   }
 
   .ubb-btn {
-    @apply ubb-focus inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full px-6 py-3 font-text text-base font-semibold leading-tight transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-60;
+    @apply ubb-focus inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full px-6 py-3 text-center font-text text-base font-semibold leading-tight transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-60;
   }
 
   .ubb-btn-sm {
@@ -58,7 +58,7 @@
   }
 
   .ubb-btn-lg {
-    @apply min-h-[56px] px-8 py-4 text-lg;
+    @apply min-h-[56px] px-6 py-4 text-base sm:px-8 sm:text-lg;
   }
 
   /* CTA principal : fond or, texte navy (7.3:1) */

@@ -1,98 +1,113 @@
 import React from 'react'
-import { motion } from 'framer-motion'
+import { motion, useReducedMotion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
-import { ArrowRight, CheckCircle } from 'lucide-react'
-import bgHero from '../../assets/bg-hero-1.png'
-import { BsFillPentagonFill } from "react-icons/bs";
-import { BsPentagon } from "react-icons/bs";
+import { Check } from 'lucide-react'
+import { Button, Container } from '../ui/ds'
+import HeroScoreCard from '../landing/HeroScoreCard'
+import heroImage from '../../assets/landing/hero-consultation.webp'
+import heroImageSmall from '../../assets/landing/hero-consultation-640.webp'
 
-const Hero = ({ onStartAssessment }) => {
+const REASSURANCE_KEYS = ['free', 'questions', 'instant']
+
+const Hero = () => {
   const { t } = useTranslation()
+  const reduceMotion = useReducedMotion()
+
+  // Une seule séquence d'entrée, orchestrée au chargement
+  const enter = (delay) =>
+    reduceMotion
+      ? {}
+      : {
+          initial: { opacity: 0, y: 14 },
+          animate: { opacity: 1, y: 0 },
+          transition: { duration: 0.5, delay, ease: 'easeOut' },
+        }
 
   return (
-    <div 
-    // className="min-h-screen bg-cover bg-center bg-no-repeat relative flex items-center pt-16"
-    className="min-h-screen bg-cover bg-center bg-no-repeat relative flex overflow-hidden"
-
-    // style={{ backgroundImage: `url(${bgHero})` }}
+    <section
+      aria-labelledby="hero-title"
+      className="relative overflow-hidden rounded-b-[2rem] bg-ubb-navy-900 text-white sm:rounded-b-[3rem]"
     >
-      {/* Hero Content */}
-      <div className="max-w-7xl min-h-[100vh] bg-white/95 mx-auto pb-[50px] relative z-10 w-full">
-        <div className='md:flex'>
-        <div className="text-center pt-16">
-          <motion.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className=" font-display font-bold mb-2 mt-1"
+      {/* Lumière douce en haut à droite : profondeur sans motif décoratif */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_85%_10%,rgb(var(--ubb-navy-700)/0.9),transparent_70%)]"
+      />
+
+      <Container className="relative grid items-center gap-12 pb-16 pt-10 sm:pb-20 sm:pt-14 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:pb-24 lg:pt-20">
+        <div>
+          <motion.h1
+            id="hero-title"
+            {...enter(0)}
+            className="ubb-heading max-w-[16ch] text-ubb-display text-white"
           >
-            <span className="text-accent-500 text-5xl  sm:text-6xl">{t('landing.title1')}<BsFillPentagonFill className='inline-block size-7 md:mt-1' /><BsPentagon className='inline-block text-black size-7 -ml-3 md:mt-1 ' /></span>
-            <br />
-            <span className="text-primary-500 ml-4 text-3xl ">{t('landing.title2')}</span>
+            {t('landing.hero.title')}
           </motion.h1>
-          
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-xl text-black max-w-3xl px-2 mx-auto font-semibold"
+
+          <motion.p
+            {...enter(0.1)}
+            className="mt-5 max-w-ubb-prose font-text text-ubb-lead text-ubb-navy-200"
           >
-            {t('landing.subtitle1')}
+            {t('landing.hero.subtitle')}
           </motion.p>
-          
-          <motion.p 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="text-xl text-gray-900 mb-2 max-w-3xl px-2 mx-auto"
-            dangerouslySetInnerHTML={{ __html: t('landing.subtitle2') }}
-          />
 
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
-            className="flex items-center justify-center space-x-2 text-sm text-black mb-12"
+          <motion.div
+            {...enter(0.2)}
+            className="mt-8 flex flex-col items-stretch gap-4 sm:flex-row sm:items-center sm:gap-6"
           >
-            <CheckCircle className="w-4 h-4 text-green-400" />
-            <span className='uppercase'>{t('landing.badge')}</span>
-          </motion.div>
-
-        </div>
-
-        {/* Hero Image */}
-        <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.5 }}
-         className='relative w-full h-[40vh] sm:h-[60vh] md:h-[80vh] md:mt-3'>
-            <img src={bgHero} alt="vitalCHECK" className='w-full h-full object-fill' />
-        </motion.div>
-        
-        
-
-        </div>
-        {/* CTA Button */}
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className='relative'
-          >
-
-            <div className='absolute md:-top-[40px] left-2 sm:left-10'>
-            <button
-              onClick={onStartAssessment}
-              className="bg-accent-500 hover:bg-accent-600 text-white font-semibold text-sm md:text-lg px-6 md:px-12 py-3 md:py-4 rounded-lg flex items-center space-x-2 md:space-x-3 mx-auto transform hover:scale-105 transition-all duration-300 shadow-lg"
+            <Button
+              to="/diagnostic"
+              size="lg"
+              className="sm:whitespace-nowrap focus-visible:ring-offset-ubb-navy-900"
             >
-              <span className="hidden md:inline">{t('landing.form.startButton')}</span>
-              <span className="md:hidden">{t('landing.form.startButtonShort')}</span>
-              <ArrowRight className="w-4 h-4 md:w-5 md:h-5" />
-            </button>
-            </div>
+              {t('landing.hero.cta')}
+            </Button>
+            <a
+              href="#services"
+              className="ubb-focus inline-flex min-h-[44px] items-center justify-center rounded font-text font-semibold text-white sm:whitespace-nowrap underline decoration-ubb-gold-500 decoration-2 underline-offset-[6px] hover:decoration-white focus-visible:ring-offset-ubb-navy-900"
+            >
+              {t('landing.hero.ctaSecondary')}
+            </a>
           </motion.div>
-      </div>
-    </div>
+
+          <motion.ul
+            {...enter(0.3)}
+            className="mt-8 flex flex-wrap gap-x-6 gap-y-2 font-text text-sm text-ubb-navy-100"
+          >
+            {REASSURANCE_KEYS.map((key) => (
+              <li key={key} className="flex items-center gap-2">
+                <Check className="h-4 w-4 text-ubb-gold-500" strokeWidth={3} aria-hidden="true" />
+                {t(`landing.hero.reassurance.${key}`)}
+              </li>
+            ))}
+          </motion.ul>
+        </div>
+
+        {/* Photo + carte score qui la chevauche */}
+        <motion.div
+          {...(reduceMotion
+            ? {}
+            : {
+                initial: { opacity: 0 },
+                animate: { opacity: 1 },
+                transition: { duration: 0.6, delay: 0.15 },
+              })}
+          className="relative pb-10 sm:pb-12 lg:pb-0"
+        >
+          <img
+            src={heroImage}
+            srcSet={`${heroImageSmall} 640w, ${heroImage} 1000w`}
+            sizes="(min-width: 1024px) 520px, 100vw"
+            width="1000"
+            height="667"
+            alt={t('landing.hero.imageAlt')}
+            fetchpriority="high"
+            className="aspect-[4/3] w-full rounded-ubb-panel md:aspect-[16/9] lg:aspect-[4/3] object-cover object-[30%_center] shadow-ubb-lg"
+          />
+          <HeroScoreCard className="absolute -bottom-2 left-4 right-4 sm:left-6 sm:right-auto sm:w-80 lg:-bottom-8 lg:-left-10" />
+        </motion.div>
+      </Container>
+    </section>
   )
 }
 

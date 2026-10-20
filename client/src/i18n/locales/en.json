@@ -300,6 +300,23 @@
 			"micro": "Micro (1-9 employees)",
 			"sme": "SME (10-49 employees)",
 			"large-sme": "Large SME (50+ employees)"
+		},
+		"hero": {
+			"title": "Is your business ready to grow?",
+			"subtitle": "In 5 to 7 minutes, measure your SME's health with the UBB audit methodology: a clear score, your strengths and personalised recommendations.",
+			"cta": "Start my free diagnostic",
+			"ctaSecondary": "See what you get",
+			"reassurance": {
+				"free": "100% free",
+				"questions": "25 questions",
+				"instant": "Instant result"
+			},
+			"imageAlt": "A consultant and a business owner reviewing a diagnostic report together",
+			"scoreCard": {
+				"label": "Sample result",
+				"levelOf": "Level {{level}} of {{total}}",
+				"chartLabel": "Pentagon of the 5 maturity levels, level {{level}} reached: {{name}}"
+			}
 		}
 	},
 	"assessment": {

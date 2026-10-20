@@ -59,10 +59,6 @@ const LandingPage = () => {
     },
   ]
 
-  const handleStartAssessment = () => {
-    navigate('/diagnostic')
-  }
-
   return (
     <div>
       <SEOHead
@@ -74,7 +70,7 @@ const LandingPage = () => {
       />
 
       {/* Hero Section */}
-      <Hero onStartAssessment={handleStartAssessment} />
+      <Hero />
 
       {/* Diagnostic gratuit "Niveau 1" */}
       <div className="bg-primary-50 py-16">

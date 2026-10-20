@@ -300,6 +300,23 @@
 			"micro": "Micro (1-9 employés)",
 			"sme": "PME (10-49 employés)",
 			"large-sme": "Grande PME (50+ employés)"
+		},
+		"hero": {
+			"title": "Votre entreprise est-⁠elle prête à grandir ?",
+			"subtitle": "En 5 à 7 minutes, mesurez la santé de votre PME grâce à la méthodologie d'audit UBB : un score clair, vos points forts et des recommandations personnalisées.",
+			"cta": "Démarrer mon diagnostic gratuit",
+			"ctaSecondary": "Voir ce que vous obtenez",
+			"reassurance": {
+				"free": "100 % gratuit",
+				"questions": "25 questions",
+				"instant": "Résultat immédiat"
+			},
+			"imageAlt": "Une consultante et un dirigeant d'entreprise analysent ensemble un rapport de diagnostic",
+			"scoreCard": {
+				"label": "Exemple de résultat",
+				"levelOf": "Niveau {{level}} sur {{total}}",
+				"chartLabel": "Pentagone des 5 niveaux de maturité, niveau {{level}} atteint : {{name}}"
+			}
 		}
 	},
 	"assessment": {
