@@ -279,6 +279,13 @@
 					"description": "25 questions tailored to production units — management, production and energy, materials and maintenance, unit cost and skills. Instant, free results.",
 					"imageAlt": "Production line in an industrial plant"
 				}
+			},
+			"title": "A diagnostic built for your sector",
+			"intro": "Choose your activity: 25 questions specific to your trade, instant and free results.",
+			"other": {
+				"title": "Your activity isn't listed?",
+				"description": "The general diagnostic works for any SME, whatever its sector.",
+				"button": "Take the general diagnostic"
 			}
 		},
 		"sectors": {
@@ -316,6 +323,36 @@
 				"label": "Sample result",
 				"levelOf": "Level {{level}} of {{total}}",
 				"chartLabel": "Pentagon of the 5 maturity levels, level {{level}} reached: {{name}}"
+			}
+		},
+		"services": {
+			"title": "What vitalCHECK does for you",
+			"intro": "Start for free, then go as far as your business needs.",
+			"free": {
+				"title": "The free diagnostic",
+				"description": "25 questions on your business fundamentals, analysed with the UBB audit methodology.",
+				"points": {
+					"score": "Your health score out of 100",
+					"level": "Your maturity level, among the 5 UBB levels",
+					"recommendations": "Your strengths and your first recommendations"
+				},
+				"cta": "Start my free diagnostic",
+				"meta": "5 to 7 minutes, no commitment"
+			},
+			"sectors": {
+				"title": "Sector diagnostics",
+				"description": "Agriculture, retail, restaurants, construction, distribution, export or manufacturing: questions designed for your trade.",
+				"link": "Choose my sector"
+			},
+			"followUp": {
+				"title": "Follow-up and detailed report",
+				"description": "With a subscription, retake your diagnostic, track how your score evolves and get personalised recommendations in a PDF report.",
+				"link": "See subscriptions"
+			},
+			"expert": {
+				"title": "Support from a UBB expert",
+				"description": "Full assessment, written and presented report, strategic action plan and three months of guided implementation.",
+				"link": "Discover the diagnostic service"
 			}
 		}
 	},

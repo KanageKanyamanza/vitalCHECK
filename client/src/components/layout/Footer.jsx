@@ -117,7 +117,7 @@ const Footer = () => {
 
 	const quickLinks = [
 		{ label: t("footer.about"), href: "/about" },
-		{ label: t("footer.services"), href: "/about", scrollTo: "what-we-do" },
+		{ label: t("footer.services"), href: "/", scrollTo: "services" },
 		{ label: t("footer.contact"), href: "/contact" },
 		// { label: t('footer.privacy'), href: '/privacy' },
 		// { label: t('footer.terms'), href: '/terms' }

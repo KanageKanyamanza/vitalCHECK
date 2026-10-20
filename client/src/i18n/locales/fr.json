@@ -279,6 +279,13 @@
 					"description": "25 questions spécifiques aux unités de production — pilotage, production et énergie, matières et maintenance, coût de revient et compétences. Résultats instantanés et gratuits.",
 					"imageAlt": "Ligne de production dans une usine industrielle"
 				}
+			},
+			"title": "Un diagnostic pensé pour votre secteur",
+			"intro": "Choisissez votre activité : 25 questions spécifiques à votre métier, résultats immédiats et gratuits.",
+			"other": {
+				"title": "Votre activité n'est pas dans la liste ?",
+				"description": "Le diagnostic général s'adapte à toutes les PME, quel que soit leur secteur.",
+				"button": "Faire le diagnostic général"
 			}
 		},
 		"sectors": {
@@ -316,6 +323,36 @@
 				"label": "Exemple de résultat",
 				"levelOf": "Niveau {{level}} sur {{total}}",
 				"chartLabel": "Pentagone des 5 niveaux de maturité, niveau {{level}} atteint : {{name}}"
+			}
+		},
+		"services": {
+			"title": "Ce que vitalCHECK fait pour vous",
+			"intro": "Commencez gratuitement, puis allez aussi loin que votre entreprise en a besoin.",
+			"free": {
+				"title": "Le diagnostic gratuit",
+				"description": "25 questions sur les fondamentaux de votre entreprise, analysées selon la méthodologie d'audit UBB.",
+				"points": {
+					"score": "Votre score de santé sur 100",
+					"level": "Votre niveau de maturité, parmi les 5 niveaux UBB",
+					"recommendations": "Vos points forts et vos premières recommandations"
+				},
+				"cta": "Démarrer mon diagnostic gratuit",
+				"meta": "5 à 7 minutes, sans engagement"
+			},
+			"sectors": {
+				"title": "Diagnostics sectoriels",
+				"description": "Agriculture, commerce, restauration, BTP, distribution, export ou manufacturing : des questions conçues pour votre métier.",
+				"link": "Choisir mon secteur"
+			},
+			"followUp": {
+				"title": "Suivi et rapport détaillé",
+				"description": "Avec un abonnement, refaites votre diagnostic, suivez l'évolution de votre score et recevez des recommandations personnalisées dans un rapport PDF.",
+				"link": "Voir les abonnements"
+			},
+			"expert": {
+				"title": "Accompagnement par un expert UBB",
+				"description": "Évaluation complète, rapport écrit et présenté, plan d'action stratégique et trois mois de mise en œuvre guidée.",
+				"link": "Découvrir le service de diagnostic"
 			}
 		}
 	},
