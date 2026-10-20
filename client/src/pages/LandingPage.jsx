@@ -1,4 +1,5 @@
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import { Hero } from '../components/layout'
 import ServicesSection from '../components/landing/ServicesSection'
 import SectorDiagnostics from '../components/landing/SectorDiagnostics'
@@ -10,17 +11,18 @@ import SEOHead from '../components/seo/SEOHead'
 import { getHomePageStructuredData, getWebSiteStructuredData, getBrandOrganizationStructuredData } from '../utils/seoData'
 
 const LandingPage = () => {
+  const { t } = useTranslation()
+
   return (
     <div>
       <SEOHead
-        title="vitalCHECK Enterprise Health Check - Évaluez la santé de votre entreprise"
-        description="Évaluez la santé organisationnelle de votre entreprise africaine avec vitalCHECK. Évaluation gratuite de 10 minutes avec recommandations personnalisées et rapport détaillé."
-        keywords="entreprise, santé organisationnelle, évaluation, vitalCHECK, Afrique, business, conseil, croissance, PME, diagnostic, management, finance, opérations, marketing, RH, gouvernance, technologie"
+        title={t('landing.seo.title')}
+        description={t('landing.seo.description')}
+        keywords={t('landing.seo.keywords')}
         url="/"
         structuredData={[getWebSiteStructuredData(), getBrandOrganizationStructuredData(), getHomePageStructuredData()]}
       />
 
-      {/* Hero Section */}
       <Hero />
 
       <ServicesSection />
@@ -33,8 +35,8 @@ const LandingPage = () => {
 
       {/* Social Share */}
       <SocialShare
-        title="vitalCHECK Enterprise Health Check - Évaluez la santé de votre entreprise"
-        description="Évaluation gratuite de 10 minutes avec recommandations personnalisées et rapport détaillé."
+        title={t('landing.seo.title')}
+        description={t('landing.seo.shareDescription')}
       />
 
       {/* Footer */}

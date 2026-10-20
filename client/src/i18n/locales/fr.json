@@ -195,11 +195,6 @@
 		}
 	},
 	"landing": {
-		"title1": "vitalCHECK",
-		"title2": "Enterprise Health Check",
-		"subtitle1": "Votre entreprise est-elle prête à grandir ?",
-		"subtitle2": "Effectuez cette évaluation <span class='text-green-500 font-bold uppercase'>GRATUITE</span> de 10 minutes et découvrez le score de santé de votre entreprise",
-		"badge": "Gratuit • Résultats instantanés",
 		"features": {
 			"title": "Ce que vous obtiendrez :",
 			"complete": "Évaluation Complète",
@@ -227,14 +222,7 @@
 			"language": "Langue",
 			"languagePlaceholder": "Sélectionnez la langue"
 		},
-		"freeDiagnostic": {
-			"duration": "5 à 7 minutes · 100% gratuit",
-			"title": "Découvrez votre score de santé d'entreprise",
-			"subtitle": "Répondez à 25 questions rapides et obtenez instantanément votre score global, vos points forts et vos premières recommandations.",
-			"button": "Obtenir mon score gratuit"
-		},
 		"sectorCards": {
-			"badge": "Nouveau · Secteur {{name}}",
 			"button": "Démarrer",
 			"items": {
 				"agriculture": {
@@ -406,6 +394,12 @@
 				"text": "Commencez par le diagnostic gratuit : en quelques minutes, vous saurez où en est votre entreprise.",
 				"button": "Démarrer mon diagnostic gratuit"
 			}
+		},
+		"seo": {
+			"title": "vitalCHECK Enterprise Health Check - Évaluez la santé de votre entreprise",
+			"description": "Évaluez la santé organisationnelle de votre entreprise africaine avec vitalCHECK. Diagnostic gratuit de 5 à 7 minutes avec recommandations personnalisées et rapport détaillé.",
+			"keywords": "entreprise, santé organisationnelle, évaluation, vitalCHECK, Afrique, business, conseil, croissance, PME, diagnostic, management, finance, opérations, marketing, RH, gouvernance, technologie",
+			"shareDescription": "Diagnostic gratuit de 5 à 7 minutes avec recommandations personnalisées et rapport détaillé."
 		}
 	},
 	"assessment": {

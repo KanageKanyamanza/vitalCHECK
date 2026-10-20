@@ -135,9 +135,9 @@ const Navbar = () => {
 							<Link
 								to={path}
 								aria-current={isActive(path) ? "page" : undefined}
-								className={`ubb-focus relative rounded-ubb-chip px-3 py-2 font-text text-[0.95rem] font-medium transition-colors ${
+								className={`ubb-focus relative inline-flex min-h-[44px] items-center rounded-ubb-chip px-3 font-text text-[0.95rem] font-medium transition-colors ${
 									isActive(path) ?
-										"text-ubb-ink after:absolute after:inset-x-3 after:-bottom-0.5 after:h-0.5 after:rounded-full after:bg-ubb-gold-500"
+										"text-ubb-ink after:absolute after:inset-x-3 after:bottom-1.5 after:h-0.5 after:rounded-full after:bg-ubb-gold-500"
 									:	"text-ubb-ink-muted hover:text-ubb-ink"
 								}`}
 							>
