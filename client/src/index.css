@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
+@import './styles/tokens.css';
 
 @tailwind base;
 @tailwind components;
@@ -28,6 +29,68 @@
 }
 
 @layer components {
+  /* ── Design system UBB (docs/design-system.md) ───────────────────────── */
+  .ubb-container {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .ubb-section {
+    @apply py-16 sm:py-20 lg:py-24;
+    scroll-margin-top: var(--ubb-header-h);
+  }
+
+  .ubb-heading {
+    @apply font-heading text-ubb-ink;
+    font-optical-sizing: auto;
+    text-wrap: balance;
+  }
+
+  .ubb-focus {
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-ubb-gold-500 focus-visible:ring-offset-2 focus-visible:ring-offset-white;
+  }
+
+  .ubb-btn {
+    @apply ubb-focus inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full px-6 py-3 font-text text-base font-semibold leading-tight transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .ubb-btn-sm {
+    @apply min-h-[44px] px-5 py-2.5 text-sm;
+  }
+
+  .ubb-btn-lg {
+    @apply min-h-[56px] px-8 py-4 text-lg;
+  }
+
+  /* CTA principal : fond or, texte navy (7.3:1) */
+  .ubb-btn-primary {
+    @apply bg-ubb-gold-500 text-ubb-navy-900 hover:bg-ubb-gold-600;
+  }
+
+  .ubb-btn-secondary {
+    @apply bg-ubb-navy-900 text-white hover:bg-ubb-navy-800;
+  }
+
+  .ubb-btn-outline {
+    @apply border border-ubb-navy-900/20 bg-white text-ubb-navy-900 hover:border-ubb-navy-900/40 hover:bg-ubb-navy-50;
+  }
+
+  /* Bouton discret sur fond navy */
+  .ubb-btn-on-dark {
+    @apply border border-white/30 text-white hover:bg-white/10 focus-visible:ring-offset-ubb-navy-900;
+  }
+
+  .ubb-card {
+    @apply rounded-ubb-card border border-ubb-navy-900/[0.07] bg-white shadow-ubb-sm;
+  }
+
+  .ubb-input {
+    @apply ubb-focus block min-h-[48px] w-full rounded-ubb-field border border-ubb-navy-900/20 bg-white px-4 py-3 font-text text-base text-ubb-ink placeholder:text-ubb-ink-muted/70 transition-colors hover:border-ubb-navy-900/35 focus-visible:border-ubb-navy-900;
+  }
+
+  .ubb-label {
+    @apply mb-1.5 block font-text text-sm font-semibold text-ubb-ink;
+  }
+
   .btn-primary {
     @apply bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
   }

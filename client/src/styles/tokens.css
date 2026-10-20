@@ -1,0 +1,60 @@
+/*
+ * Design system UBB — source unique des valeurs de design.
+ * Les couleurs sont stockées en canaux RGB pour permettre l'opacité Tailwind
+ * (ex : bg-ubb-navy-900/80). Tailwind les référence dans tailwind.config.js.
+ * Documentation : docs/design-system.md
+ */
+:root {
+  /* Navy — couleur primaire (900 = #13294B) */
+  --ubb-navy-50: 244 246 250;   /* #F4F6FA */
+  --ubb-navy-100: 232 236 243;  /* #E8ECF3 — navy soft / mist */
+  --ubb-navy-200: 211 221 236;  /* #D3DDEC */
+  --ubb-navy-300: 181 197 222;  /* #B5C5DE */
+  --ubb-navy-400: 138 162 201;  /* #8AA2C9 */
+  --ubb-navy-500: 90 123 176;   /* #5A7BB0 */
+  --ubb-navy-600: 58 95 153;    /* #3A5F99 */
+  --ubb-navy-700: 39 74 128;    /* #274A80 */
+  --ubb-navy-800: 28 57 102;    /* #1C3966 */
+  --ubb-navy-900: 19 41 75;     /* #13294B */
+  --ubb-navy-950: 11 26 49;     /* #0B1A31 */
+
+  /* Or — accent. Jamais en texte sur fond clair (contraste 2:1) : utiliser gold-ink. */
+  --ubb-gold-50: 254 245 231;   /* #FEF5E7 */
+  --ubb-gold-100: 252 227 190;  /* #FCE3BE */
+  --ubb-gold-300: 248 196 120;  /* #F8C478 */
+  --ubb-gold-500: 245 168 60;   /* #F5A83C */
+  --ubb-gold-600: 232 151 42;   /* #E8972A — survol */
+  --ubb-gold-ink: 160 97 15;    /* #A0610F — or lisible sur blanc (≈5:1) */
+
+  /* Texte */
+  --ubb-ink: 19 41 75;          /* #13294B — 14.5:1 sur blanc */
+  --ubb-ink-muted: 75 91 118;   /* #4B5B76 — 6.9:1 sur blanc, 5.8:1 sur mist */
+
+  /* Surfaces */
+  --ubb-paper: 255 255 255;
+  --ubb-paper-soft: 247 249 252; /* #F7F9FC */
+
+  /* Typographie */
+  --ubb-font-heading: 'Bricolage Grotesque', 'Figtree', system-ui, sans-serif;
+  --ubb-font-text: 'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Rayons — hiérarchisés : puce < champ < carte, boutons en pilule */
+  --ubb-radius-chip: 8px;
+  --ubb-radius-field: 12px;
+  --ubb-radius-card: 20px;
+  --ubb-radius-panel: 28px;
+
+  /* Ombres teintées navy */
+  --ubb-shadow-sm: 0 1px 2px rgb(19 41 75 / 0.06), 0 4px 12px -4px rgb(19 41 75 / 0.08);
+  --ubb-shadow-md: 0 2px 4px rgb(19 41 75 / 0.05), 0 16px 32px -12px rgb(19 41 75 / 0.18);
+  --ubb-shadow-lg: 0 4px 8px rgb(19 41 75 / 0.06), 0 32px 64px -24px rgb(19 41 75 / 0.28);
+
+  /* Hauteur de l'en-tête fixe (sert au décalage du contenu et des ancres) */
+  --ubb-header-h: 64px;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --ubb-header-h: 76px;
+  }
+}
