@@ -1,11 +1,11 @@
 import React from 'react'
 
-// Fonds de section : alterner clair / mist / navy donne le rythme de la page
+// Fonds de section : alterner clair / mist / vert donne le rythme de la page
 const TONES = {
   white: 'bg-white text-ubb-ink',
   soft: 'bg-ubb-paper-soft text-ubb-ink',
   mist: 'bg-ubb-mist text-ubb-ink',
-  navy: 'bg-ubb-navy-900 text-white',
+  brand: 'bg-ubb-brand-900 text-white',
 }
 
 export const Container = ({ as: Tag = 'div', className = '', children, ...props }) => (
@@ -47,7 +47,7 @@ export const SectionHeading = ({
       {intro && (
         <p
           className={`mt-4 max-w-ubb-prose font-text text-ubb-lead ${isCenter ? 'mx-auto' : ''} ${
-            onDark ? 'text-ubb-navy-200' : 'text-ubb-ink-muted'
+            onDark ? 'text-ubb-brand-200' : 'text-ubb-ink-muted'
           }`}
         >
           {intro}

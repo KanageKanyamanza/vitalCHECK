@@ -6,7 +6,7 @@ const PADDINGS = {
   lg: 'p-6 sm:p-8',
 }
 
-/** Carte du design system UBB : fond blanc, rayon carte, ombre teintée navy. */
+/** Carte du design system UBB : fond blanc, rayon carte, ombre teintée. */
 const Card = ({ as: Tag = 'div', padding = 'md', className = '', children, ...props }) => (
   <Tag className={`ubb-card ${PADDINGS[padding]} ${className}`} {...props}>
     {children}

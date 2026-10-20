@@ -7,7 +7,7 @@ Référence pour toutes les phases de la refonte. Direction : **« Mix UBB »** 
 | Fichier | Rôle |
 |---|---|
 | `client/src/styles/tokens.css` | **Source unique** : variables CSS (couleurs en canaux RGB, polices, rayons, ombres) |
-| `client/tailwind.config.js` | Expose les tokens sous le préfixe `ubb` (`bg-ubb-navy-900`, `text-ubb-title`, `rounded-ubb-card`…) |
+| `client/tailwind.config.js` | Expose les tokens sous le préfixe `ubb` (`bg-ubb-brand-900`, `text-ubb-title`, `rounded-ubb-card`…) |
 | `client/src/index.css` | Classes de composants `.ubb-*` (boutons, cartes, champs, sections) |
 | `client/src/utils/colors.js` | Export `ubb` : mêmes valeurs en hex pour les graphiques et PDF |
 | `client/src/components/ui/ds/` | Composants React : `Button`, `Card`, `Section`, `Container`, `SectionHeading` |
@@ -16,24 +16,29 @@ L'ancienne palette (`primary-*`, `accent-*`, `vitalCHECK-*`) reste en place pour
 
 ## Couleurs
 
+Ce sont les couleurs vitalCHECK du projet : le vert `#00751B` et le jaune `#F4C542` (déjà définis dans `tailwind.config.js`).
+
 | Token Tailwind | Hex | Usage |
 |---|---|---|
-| `ubb-navy-900` (`ubb-navy`, `ubb-ink`) | `#13294B` | Texte principal, fonds forts, bouton secondaire |
-| `ubb-navy-800` | `#1C3966` | Survol sur navy, dégradés du hero |
-| `ubb-navy-100` (`ubb-mist`) | `#E8ECF3` | Sections de respiration |
-| `ubb-navy-50` | `#F4F6FA` | Survol léger |
-| `ubb-paper-soft` | `#F7F9FC` | Fond alternatif très clair |
-| `ubb-gold-500` (`ubb-gold`) | `#F5A83C` | Fond du CTA principal, accents sur navy |
-| `ubb-gold-600` | `#E8972A` | Survol du CTA |
-| `ubb-gold-ink` | `#A0610F` | Or **en texte** sur fond clair |
-| `ubb-ink-muted` | `#4B5B76` | Texte secondaire |
+| `ubb-brand-900` (`ubb-brand`) | `#00751B` | Vert vitalCHECK : fonds forts (hero, vision), bouton secondaire, focus |
+| `ubb-brand-950` | `#004A12` | Vert profond : pied de page, texte sur fond jaune |
+| `ubb-brand-800` | `#1A8A33` | Survol sur vert |
+| `ubb-brand-200` | `#DCF0E0` | Texte clair sur fond vert |
+| `ubb-brand-100` (`ubb-mist`) | `#EAF6EC` | Sections de respiration |
+| `ubb-accent-500` (`ubb-accent`) | `#F4C542` | Jaune vitalCHECK : fond du CTA principal, icônes sur vert |
+| `ubb-accent-600` | `#E5B22A` | Survol du CTA |
+| `ubb-accent-ink` | `#8A6300` | Jaune foncé **en texte** sur fond clair |
+| `ubb-ink` | `#0F2416` | Texte principal |
+| `ubb-ink-muted` | `#4A5D50` | Texte secondaire |
 
 ### Règles de contraste (WCAG AA)
 
-- Navy sur blanc : 14.5:1 · navy sur mist : 12.3:1 · `ink-muted` sur blanc : 6.9:1.
-- Or `#F5A83C` sur navy : 7.3:1 → OK pour texte ou icône sur fond navy.
-- **Or `#F5A83C` sur blanc : 2:1 → interdit pour du texte.** Utiliser `text-ubb-gold-ink`.
-- **Jamais de texte blanc sur fond or.** Le CTA or porte un texte navy.
+- Blanc sur vert `#00751B` : 5.9:1 · `brand-200` sur vert : 5:1 · `ink-muted` sur blanc : 7.1:1.
+- CTA jaune : texte `brand-950` sur `#F4C542` = 6.5:1.
+- **Jaune `#F4C542` sur blanc : 1.6:1 → interdit pour du texte.** Utiliser `text-ubb-accent-ink`.
+- **Jamais de texte blanc sur fond jaune.**
+- Jaune sur vert : 3.6:1 → réservé aux icônes et éléments graphiques, pas au texte courant.
+- Anneau de focus : vert sur fond clair ; jaune sur fond vert (`focus-visible:ring-ubb-accent-500`).
 
 ## Typographie
 

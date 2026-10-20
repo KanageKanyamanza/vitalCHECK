@@ -16,7 +16,7 @@ const VisionSection = () => {
   const lang = (i18n.language || 'fr').slice(0, 2)
 
   return (
-    <Section id="vision" tone="navy" aria-labelledby="vision-title">
+    <Section id="vision" tone="brand" aria-labelledby="vision-title">
       <Container>
         <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-16">
           <div>
@@ -30,21 +30,21 @@ const VisionSection = () => {
             <ul className="mt-10 space-y-7">
               {BENEFITS.map(({ key, icon: Icon }) => (
                 <li key={key} className="flex gap-4">
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-ubb-field bg-white/10 text-ubb-gold-500">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-ubb-field bg-white/10 text-ubb-accent-500">
                     <Icon className="h-5 w-5" aria-hidden="true" />
                   </span>
                   <div>
                     <h3 className="font-heading text-lg font-semibold text-white">
                       {t(`landing.vision.benefits.${key}.title`)}
                     </h3>
-                    <p className="mt-1 max-w-ubb-prose font-text text-ubb-body text-ubb-navy-200">
+                    <p className="mt-1 max-w-ubb-prose font-text text-ubb-body text-ubb-brand-200">
                       {t(`landing.vision.benefits.${key}.description`)}
                       {key === 'privacy' && (
                         <>
                           {' '}
                           <Link
                             to="/privacy"
-                            className="ubb-focus rounded font-semibold text-white underline decoration-ubb-gold-500 underline-offset-4 hover:decoration-white focus-visible:ring-offset-ubb-navy-900"
+                            className="ubb-focus rounded font-semibold text-white underline decoration-ubb-accent-500 underline-offset-4 hover:decoration-white focus-visible:ring-ubb-accent-500 focus-visible:ring-offset-ubb-brand-900"
                           >
                             {t('landing.vision.benefits.privacy.link')}
                           </Link>
@@ -62,14 +62,14 @@ const VisionSection = () => {
             <h3 className="font-heading text-ubb-subtitle text-white">
               {t('landing.vision.levels.title')}
             </h3>
-            <p className="mt-2 font-text text-ubb-small text-ubb-navy-200">
+            <p className="mt-2 font-text text-ubb-small text-ubb-brand-200">
               {t('landing.vision.levels.intro')}
             </p>
 
             <ol className="mt-6 divide-y divide-white/10">
               {LEVELS_V2.map((level, index) => (
                 <li key={level.id} className="flex items-center gap-4 py-3.5">
-                  <span className="w-5 shrink-0 font-heading text-sm font-semibold text-ubb-navy-300">
+                  <span className="w-5 shrink-0 font-heading text-sm font-semibold text-ubb-brand-200">
                     {index + 1}
                   </span>
                   <span
@@ -80,7 +80,7 @@ const VisionSection = () => {
                   <span className="flex-1 font-text font-semibold text-white">
                     {level.label[lang] || level.label.fr}
                   </span>
-                  <span className="font-text text-sm tabular-nums text-ubb-navy-200">
+                  <span className="font-text text-sm tabular-nums text-ubb-brand-200">
                     {t('landing.vision.levels.range', { min: level.min, max: level.max })}
                   </span>
                 </li>
@@ -94,7 +94,7 @@ const VisionSection = () => {
           <blockquote className="max-w-3xl font-heading text-ubb-subtitle font-medium text-white">
             {t('landing.vision.signature.quote')}
           </blockquote>
-          <figcaption className="mt-4 font-text text-ubb-body text-ubb-navy-200">
+          <figcaption className="mt-4 font-text text-ubb-body text-ubb-brand-200">
             {t('landing.vision.signature.author')}
           </figcaption>
         </figure>

@@ -67,10 +67,10 @@ const SectorDiagnostics = () => {
                   height="360"
                   loading="lazy"
                   decoding="async"
-                  className="aspect-[16/9] w-full bg-ubb-navy-100 object-cover"
+                  className="aspect-[16/9] w-full bg-ubb-brand-100 object-cover"
                 />
                 <div className="flex flex-1 flex-col p-5">
-                  <p className="font-text text-ubb-small font-semibold text-ubb-gold-ink">
+                  <p className="font-text text-ubb-small font-semibold text-ubb-accent-ink">
                     {t(`${key}.name`)}
                   </p>
                   <h3 className="ubb-heading mt-1 text-lg font-semibold leading-snug">
@@ -94,7 +94,7 @@ const SectorDiagnostics = () => {
           })}
 
           {/* Toute autre activité : diagnostic général */}
-          <li className="flex w-[82%] shrink-0 snap-start flex-col justify-between rounded-ubb-card border-2 border-dashed border-ubb-navy-900/15 p-5 sm:w-[45%] lg:w-auto">
+          <li className="flex w-[82%] shrink-0 snap-start flex-col justify-between rounded-ubb-card border-2 border-dashed border-ubb-brand-900/15 p-5 sm:w-[45%] lg:w-auto">
             <div>
               <h3 className="ubb-heading text-lg font-semibold leading-snug">
                 {t('landing.sectorCards.other.title')}

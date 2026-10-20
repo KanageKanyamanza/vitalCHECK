@@ -1,38 +1,38 @@
 /*
  * Design system UBB — source unique des valeurs de design.
  * Les couleurs sont stockées en canaux RGB pour permettre l'opacité Tailwind
- * (ex : bg-ubb-navy-900/80). Tailwind les référence dans tailwind.config.js.
+ * (ex : bg-ubb-brand-900/80). Tailwind les référence dans tailwind.config.js.
  * Documentation : docs/design-system.md
  */
 :root {
-  /* Navy — couleur primaire (900 = #13294B) */
-  --ubb-navy-50: 244 246 250;   /* #F4F6FA */
-  --ubb-navy-100: 232 236 243;  /* #E8ECF3 — navy soft / mist */
-  --ubb-navy-200: 211 221 236;  /* #D3DDEC */
-  --ubb-navy-300: 181 197 222;  /* #B5C5DE */
-  --ubb-navy-400: 138 162 201;  /* #8AA2C9 */
-  --ubb-navy-500: 90 123 176;   /* #5A7BB0 */
-  --ubb-navy-600: 58 95 153;    /* #3A5F99 */
-  --ubb-navy-700: 39 74 128;    /* #274A80 */
-  --ubb-navy-800: 28 57 102;    /* #1C3966 */
-  --ubb-navy-900: 19 41 75;     /* #13294B */
-  --ubb-navy-950: 11 26 49;     /* #0B1A31 */
+  /* Vert vitalCHECK — couleur de marque (900 = #00751B, le vert du projet) */
+  --ubb-brand-50: 244 250 245;   /* #F4FAF5 */
+  --ubb-brand-100: 234 246 236;  /* #EAF6EC — mist, sections de respiration */
+  --ubb-brand-200: 220 240 224;  /* #DCF0E0 — texte clair sur fond vert (5:1) */
+  --ubb-brand-300: 196 230 203;  /* #C4E6CB */
+  --ubb-brand-400: 163 215 174;  /* #A3D7AE */
+  --ubb-brand-500: 122 196 138;  /* #7AC48A */
+  --ubb-brand-600: 79 174 99;    /* #4FAE63 */
+  --ubb-brand-700: 46 154 69;    /* #2E9A45 — lumière du hero */
+  --ubb-brand-800: 26 138 51;    /* #1A8A33 — survol sur vert */
+  --ubb-brand-900: 0 117 27;     /* #00751B — vert vitalCHECK, 5.9:1 avec le blanc */
+  --ubb-brand-950: 0 74 18;      /* #004A12 — vert profond (pied de page, texte sur jaune) */
 
-  /* Or — accent. Jamais en texte sur fond clair (contraste 2:1) : utiliser gold-ink. */
-  --ubb-gold-50: 254 245 231;   /* #FEF5E7 */
-  --ubb-gold-100: 252 227 190;  /* #FCE3BE */
-  --ubb-gold-300: 248 196 120;  /* #F8C478 */
-  --ubb-gold-500: 245 168 60;   /* #F5A83C */
-  --ubb-gold-600: 232 151 42;   /* #E8972A — survol */
-  --ubb-gold-ink: 160 97 15;    /* #A0610F — or lisible sur blanc (≈5:1) */
+  /* Jaune vitalCHECK — accent. Jamais en texte sur fond clair : utiliser accent-ink. */
+  --ubb-accent-50: 254 250 235;  /* #FEFAEB */
+  --ubb-accent-100: 253 240 196; /* #FDF0C4 */
+  --ubb-accent-300: 248 217 122; /* #F8D97A */
+  --ubb-accent-500: 244 197 66;  /* #F4C542 — jaune vitalCHECK */
+  --ubb-accent-600: 229 178 42;  /* #E5B22A — survol */
+  --ubb-accent-ink: 138 99 0;    /* #8A6300 — jaune foncé lisible sur blanc (5.4:1) */
 
   /* Texte */
-  --ubb-ink: 19 41 75;          /* #13294B — 14.5:1 sur blanc */
-  --ubb-ink-muted: 75 91 118;   /* #4B5B76 — 6.9:1 sur blanc, 5.8:1 sur mist */
+  --ubb-ink: 15 36 22;           /* #0F2416 — quasi noir teinté vert */
+  --ubb-ink-muted: 74 93 80;     /* #4A5D50 — 7.1:1 sur blanc */
 
   /* Surfaces */
   --ubb-paper: 255 255 255;
-  --ubb-paper-soft: 247 249 252; /* #F7F9FC */
+  --ubb-paper-soft: 248 250 248; /* #F8FAF8 */
 
   /* Typographie */
   --ubb-font-heading: 'Bricolage Grotesque', 'Figtree', system-ui, sans-serif;
@@ -45,9 +45,9 @@
   --ubb-radius-panel: 28px;
 
   /* Ombres teintées navy */
-  --ubb-shadow-sm: 0 1px 2px rgb(19 41 75 / 0.06), 0 4px 12px -4px rgb(19 41 75 / 0.08);
-  --ubb-shadow-md: 0 2px 4px rgb(19 41 75 / 0.05), 0 16px 32px -12px rgb(19 41 75 / 0.18);
-  --ubb-shadow-lg: 0 4px 8px rgb(19 41 75 / 0.06), 0 32px 64px -24px rgb(19 41 75 / 0.28);
+  --ubb-shadow-sm: 0 1px 2px rgb(15 36 22 / 0.06), 0 4px 12px -4px rgb(15 36 22 / 0.08);
+  --ubb-shadow-md: 0 2px 4px rgb(15 36 22 / 0.05), 0 16px 32px -12px rgb(15 36 22 / 0.18);
+  --ubb-shadow-lg: 0 4px 8px rgb(15 36 22 / 0.06), 0 32px 64px -24px rgb(15 36 22 / 0.28);
 
   /* Hauteur de l'en-tête fixe (sert au décalage du contenu et des ancres) */
   --ubb-header-h: 64px;

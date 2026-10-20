@@ -45,7 +45,7 @@ const NavbarLanguageSelector = ({ onLanguageChange, className = '', variant = 'd
       <div
         role="group"
         aria-label={t('navigation.language')}
-        className={`inline-flex rounded-full bg-ubb-navy-50 p-1 ${className}`}
+        className={`inline-flex rounded-full bg-ubb-brand-50 p-1 ${className}`}
       >
         {LANGUAGE_CODES.map((code) => (
           <button
@@ -56,7 +56,7 @@ const NavbarLanguageSelector = ({ onLanguageChange, className = '', variant = 'd
             aria-pressed={code === currentLanguage}
             className={`ubb-focus min-h-[44px] rounded-full px-4 font-text text-sm font-semibold transition-colors ${
               code === currentLanguage
-                ? 'bg-ubb-navy-900 text-white'
+                ? 'bg-ubb-brand-900 text-white'
                 : 'text-ubb-ink hover:bg-white'
             }`}
           >
@@ -75,7 +75,7 @@ const NavbarLanguageSelector = ({ onLanguageChange, className = '', variant = 'd
         aria-expanded={isOpen}
         aria-haspopup="true"
         aria-label={t('navigation.language')}
-        className="ubb-focus inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-3 font-text text-sm font-semibold uppercase text-ubb-ink hover:bg-ubb-navy-50"
+        className="ubb-focus inline-flex min-h-[44px] items-center gap-1.5 rounded-full px-3 font-text text-sm font-semibold uppercase text-ubb-ink hover:bg-ubb-brand-50"
       >
         {currentLanguage}
         <ChevronDown
@@ -91,7 +91,7 @@ const NavbarLanguageSelector = ({ onLanguageChange, className = '', variant = 'd
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -6 }}
             transition={{ duration: 0.15 }}
-            className="absolute right-0 top-full z-20 mt-2 min-w-[150px] overflow-hidden rounded-ubb-field border border-ubb-navy-900/10 bg-white py-1 shadow-ubb-md"
+            className="absolute right-0 top-full z-20 mt-2 min-w-[150px] overflow-hidden rounded-ubb-field border border-ubb-brand-900/10 bg-white py-1 shadow-ubb-md"
           >
             {LANGUAGE_CODES.map((code) => (
               <li key={code}>
@@ -99,13 +99,13 @@ const NavbarLanguageSelector = ({ onLanguageChange, className = '', variant = 'd
                   type="button"
                   lang={code}
                   onClick={() => handleLanguageSelect(code)}
-                  className={`flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left font-text text-sm hover:bg-ubb-navy-50 focus:bg-ubb-navy-50 focus:outline-none ${
+                  className={`flex w-full items-center justify-between gap-3 px-4 py-2.5 text-left font-text text-sm hover:bg-ubb-brand-50 focus:bg-ubb-brand-50 focus:outline-none ${
                     code === currentLanguage ? 'font-semibold text-ubb-ink' : 'text-ubb-ink-muted'
                   }`}
                 >
                   {t(`languages.${code}`)}
                   {code === currentLanguage && (
-                    <Check className="h-4 w-4 text-ubb-gold-ink" aria-hidden="true" />
+                    <Check className="h-4 w-4 text-ubb-accent-ink" aria-hidden="true" />
                   )}
                 </button>
               </li>

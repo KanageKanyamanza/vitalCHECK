@@ -19,7 +19,7 @@ const UserGuideButton = ({ variant = 'default', className = '' }) => {
   const getVariantClasses = () => {
     switch (variant) {
       case 'footer':
-        return 'ubb-focus rounded text-ubb-navy-200 hover:text-white transition-colors duration-200 text-left';
+        return 'ubb-focus rounded text-ubb-brand-200 hover:text-white transition-colors duration-200 text-left';
       case 'menu':
         return 'ubb-focus flex items-center justify-between text-left text-ubb-ink/80 hover:text-ubb-ink';
       case 'navbar':

@@ -99,7 +99,7 @@ const Navbar = () => {
 			className={`fixed inset-x-0 top-0 z-50 h-ubb-header bg-white/95 backdrop-blur transition-shadow duration-200 ${
 				isScrolled || isMobileMenuOpen ?
 					"shadow-ubb-sm"
-				:	"border-b border-ubb-navy-900/[0.06]"
+				:	"border-b border-ubb-brand-900/[0.06]"
 			}`}
 		>
 			<nav
@@ -137,7 +137,7 @@ const Navbar = () => {
 								aria-current={isActive(path) ? "page" : undefined}
 								className={`ubb-focus relative inline-flex min-h-[44px] items-center rounded-ubb-chip px-3 font-text text-[0.95rem] font-medium transition-colors ${
 									isActive(path) ?
-										"text-ubb-ink after:absolute after:inset-x-3 after:bottom-1.5 after:h-0.5 after:rounded-full after:bg-ubb-gold-500"
+										"text-ubb-ink after:absolute after:inset-x-3 after:bottom-1.5 after:h-0.5 after:rounded-full after:bg-ubb-accent-500"
 									:	"text-ubb-ink-muted hover:text-ubb-ink"
 								}`}
 							>
@@ -156,7 +156,7 @@ const Navbar = () => {
 					<button
 						type="button"
 						onClick={handleSmartLogin}
-						className="ubb-focus hidden min-h-[44px] items-center gap-2 rounded-full px-4 font-text text-sm font-semibold text-ubb-ink hover:bg-ubb-navy-50 lg:inline-flex"
+						className="ubb-focus hidden min-h-[44px] items-center gap-2 rounded-full px-4 font-text text-sm font-semibold text-ubb-ink hover:bg-ubb-brand-50 lg:inline-flex"
 					>
 						<AccountIcon className="h-4 w-4" aria-hidden="true" />
 						<span className="max-w-[10rem] truncate">{accountLabel}</span>
@@ -171,7 +171,7 @@ const Navbar = () => {
 					<button
 						type="button"
 						onClick={() => setIsMobileMenuOpen((open) => !open)}
-						className="ubb-focus inline-flex h-11 w-11 items-center justify-center rounded-full text-ubb-ink hover:bg-ubb-navy-50 lg:hidden"
+						className="ubb-focus inline-flex h-11 w-11 items-center justify-center rounded-full text-ubb-ink hover:bg-ubb-brand-50 lg:hidden"
 						aria-expanded={isMobileMenuOpen}
 						aria-controls="ubb-mobile-menu"
 						aria-label={
@@ -201,7 +201,7 @@ const Navbar = () => {
 						<div className="ubb-container flex min-h-full flex-col gap-6 pb-8 pt-4">
 							<ul className="flex flex-col">
 								{NAV_LINKS.map(({ path, key }) => (
-									<li key={path} className="border-b border-ubb-navy-900/[0.07]">
+									<li key={path} className="border-b border-ubb-brand-900/[0.07]">
 										<Link
 											to={path}
 											aria-current={isActive(path) ? "page" : undefined}
@@ -212,12 +212,12 @@ const Navbar = () => {
 										>
 											{t(key)}
 											{isActive(path) && (
-												<span className="h-2 w-2 rounded-full bg-ubb-gold-500" aria-hidden="true" />
+												<span className="h-2 w-2 rounded-full bg-ubb-accent-500" aria-hidden="true" />
 											)}
 										</Link>
 									</li>
 								))}
-								<li className="border-b border-ubb-navy-900/[0.07]">
+								<li className="border-b border-ubb-brand-900/[0.07]">
 									<UserGuideButton
 										variant="menu"
 										className="min-h-[56px] w-full font-heading text-xl font-semibold"

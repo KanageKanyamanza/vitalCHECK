@@ -26,12 +26,12 @@ const Hero = () => {
   return (
     <section
       aria-labelledby="hero-title"
-      className="relative overflow-hidden rounded-b-[2rem] bg-ubb-navy-900 text-white sm:rounded-b-[3rem]"
+      className="relative overflow-hidden rounded-b-[2rem] bg-ubb-brand-900 text-white sm:rounded-b-[3rem]"
     >
       {/* Lumière douce en haut à droite : profondeur sans motif décoratif */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_85%_10%,rgb(var(--ubb-navy-700)/0.9),transparent_70%)]"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_85%_10%,rgb(var(--ubb-brand-700)/0.9),transparent_70%)]"
       />
 
       <Container className="relative grid items-center gap-12 pb-16 pt-10 sm:pb-20 sm:pt-14 lg:grid-cols-[1.05fr_1fr] lg:gap-16 lg:pb-24 lg:pt-20">
@@ -46,7 +46,7 @@ const Hero = () => {
 
           <motion.p
             {...enter(0.1)}
-            className="mt-5 max-w-ubb-prose font-text text-ubb-lead text-ubb-navy-200"
+            className="mt-5 max-w-ubb-prose font-text text-ubb-lead text-ubb-brand-200"
           >
             {t('landing.hero.subtitle')}
           </motion.p>
@@ -58,13 +58,13 @@ const Hero = () => {
             <Button
               to="/diagnostic"
               size="lg"
-              className="sm:whitespace-nowrap focus-visible:ring-offset-ubb-navy-900"
+              className="sm:whitespace-nowrap focus-visible:ring-ubb-accent-500 focus-visible:ring-offset-ubb-brand-900"
             >
               {t('landing.hero.cta')}
             </Button>
             <a
               href="#services"
-              className="ubb-focus inline-flex min-h-[44px] items-center justify-center rounded font-text font-semibold text-white sm:whitespace-nowrap underline decoration-ubb-gold-500 decoration-2 underline-offset-[6px] hover:decoration-white focus-visible:ring-offset-ubb-navy-900"
+              className="ubb-focus inline-flex min-h-[44px] items-center justify-center rounded font-text font-semibold text-white sm:whitespace-nowrap underline decoration-ubb-accent-500 decoration-2 underline-offset-[6px] hover:decoration-white focus-visible:ring-ubb-accent-500 focus-visible:ring-offset-ubb-brand-900"
             >
               {t('landing.hero.ctaSecondary')}
             </a>
@@ -72,11 +72,11 @@ const Hero = () => {
 
           <motion.ul
             {...enter(0.3)}
-            className="mt-8 flex flex-wrap gap-x-6 gap-y-2 font-text text-sm text-ubb-navy-100"
+            className="mt-8 flex flex-wrap gap-x-6 gap-y-2 font-text text-sm text-ubb-brand-100"
           >
             {REASSURANCE_KEYS.map((key) => (
               <li key={key} className="flex items-center gap-2">
-                <Check className="h-4 w-4 text-ubb-gold-500" strokeWidth={3} aria-hidden="true" />
+                <Check className="h-4 w-4 text-ubb-accent-500" strokeWidth={3} aria-hidden="true" />
                 {t(`landing.hero.reassurance.${key}`)}
               </li>
             ))}

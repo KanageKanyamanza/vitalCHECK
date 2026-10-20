@@ -147,7 +147,7 @@ const Footer = () => {
 	};
 
 	return (
-		<footer className="bg-ubb-navy-950 font-text text-white">
+		<footer className="bg-ubb-brand-950 font-text text-white">
 			{/* Newsletter */}
 			<div className="border-b border-white/10">
 				<div className="ubb-container grid gap-8 py-12 sm:py-14 lg:grid-cols-2 lg:items-center">
@@ -155,7 +155,7 @@ const Footer = () => {
 						<h2 className="ubb-heading text-ubb-subtitle text-white">
 							{t("footer.newsletter.subtitle")}
 						</h2>
-						<p className="mt-2 max-w-ubb-prose text-ubb-body text-ubb-navy-200">
+						<p className="mt-2 max-w-ubb-prose text-ubb-body text-ubb-brand-200">
 							{t("footer.newsletter.description")}
 						</p>
 					</div>
@@ -173,12 +173,12 @@ const Footer = () => {
 								onChange={(e) => setEmail(e.target.value)}
 								placeholder={t("footer.newsletter.emailPlaceholder")}
 								disabled={isSubscribing || isSubscribed}
-								className="ubb-input flex-1 border-transparent focus-visible:ring-offset-ubb-navy-950 disabled:opacity-60"
+								className="ubb-input flex-1 border-transparent focus-visible:ring-ubb-accent-500 focus-visible:ring-offset-ubb-brand-950 disabled:opacity-60"
 							/>
 							<button
 								type="submit"
 								disabled={isSubscribing || isSubscribed || !email.trim()}
-								className="ubb-btn ubb-btn-primary focus-visible:ring-offset-ubb-navy-950"
+								className="ubb-btn ubb-btn-primary focus-visible:ring-ubb-accent-500 focus-visible:ring-offset-ubb-brand-950"
 							>
 								{isSubscribed ?
 									<>
@@ -188,7 +188,7 @@ const Footer = () => {
 								: isSubscribing ?
 									<>
 										<span
-											className="h-5 w-5 animate-spin rounded-full border-2 border-ubb-navy-900 border-t-transparent"
+											className="h-5 w-5 animate-spin rounded-full border-2 border-ubb-brand-900 border-t-transparent"
 											aria-hidden="true"
 										/>
 										{t("footer.newsletter.subscribing")}
@@ -221,12 +221,12 @@ const Footer = () => {
 						</Link>
 						<span className="flex flex-col leading-none">
 							<span className="font-heading text-xl font-bold">vitalCHECK</span>
-							<span className="mt-1 text-sm text-ubb-navy-200">
+							<span className="mt-1 text-sm text-ubb-brand-200">
 								{t("navigation.byUbb")}
 							</span>
 						</span>
 					</div>
-					<p className="mt-5 max-w-md text-ubb-body text-ubb-navy-200">
+					<p className="mt-5 max-w-md text-ubb-body text-ubb-brand-200">
 						{t("footer.description")}
 					</p>
 
@@ -238,7 +238,7 @@ const Footer = () => {
 									target="_blank"
 									rel="noopener noreferrer"
 									aria-label={social.label}
-									className="ubb-focus flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white transition-colors hover:border-ubb-gold-500 hover:text-ubb-gold-500 focus-visible:ring-offset-ubb-navy-950"
+									className="ubb-focus flex h-11 w-11 items-center justify-center rounded-full border border-white/20 text-white transition-colors hover:border-ubb-accent-500 hover:text-ubb-accent-500 focus-visible:ring-ubb-accent-500 focus-visible:ring-offset-ubb-brand-950"
 								>
 									<social.icon className="h-5 w-5" aria-hidden="true" />
 								</a>
@@ -257,7 +257,7 @@ const Footer = () => {
 							<li key={link.label}>
 								<button
 									onClick={() => handleNavigation(link.href, link.scrollTo)}
-									className="ubb-focus min-h-[44px] rounded text-left text-ubb-navy-200 transition-colors hover:text-white focus-visible:ring-offset-ubb-navy-950"
+									className="ubb-focus min-h-[44px] rounded text-left text-ubb-brand-200 transition-colors hover:text-white focus-visible:ring-ubb-accent-500 focus-visible:ring-offset-ubb-brand-950"
 								>
 									{link.label}
 								</button>
@@ -266,7 +266,7 @@ const Footer = () => {
 						<li>
 							<UserGuideButton
 								variant="footer"
-								className="min-h-[44px] focus-visible:ring-offset-ubb-navy-950"
+								className="min-h-[44px] focus-visible:ring-ubb-accent-500 focus-visible:ring-offset-ubb-brand-950"
 							/>
 						</li>
 					</ul>
@@ -281,23 +281,23 @@ const Footer = () => {
 						<li>
 							<a
 								href="mailto:info@checkmyenterprise.com"
-								className="ubb-focus inline-flex min-h-[44px] items-center gap-3 rounded text-ubb-navy-200 hover:text-white focus-visible:ring-offset-ubb-navy-950"
+								className="ubb-focus inline-flex min-h-[44px] items-center gap-3 rounded text-ubb-brand-200 hover:text-white focus-visible:ring-ubb-accent-500 focus-visible:ring-offset-ubb-brand-950"
 							>
-								<Mail className="h-5 w-5 text-ubb-gold-500" aria-hidden="true" />
+								<Mail className="h-5 w-5 text-ubb-accent-500" aria-hidden="true" />
 								info@checkmyenterprise.com
 							</a>
 						</li>
 						<li>
 							<a
 								href="tel:+221788346969"
-								className="ubb-focus inline-flex min-h-[44px] items-center gap-3 rounded text-ubb-navy-200 hover:text-white focus-visible:ring-offset-ubb-navy-950"
+								className="ubb-focus inline-flex min-h-[44px] items-center gap-3 rounded text-ubb-brand-200 hover:text-white focus-visible:ring-ubb-accent-500 focus-visible:ring-offset-ubb-brand-950"
 							>
-								<Phone className="h-5 w-5 text-ubb-gold-500" aria-hidden="true" />
+								<Phone className="h-5 w-5 text-ubb-accent-500" aria-hidden="true" />
 								+221 78 834 69 69
 							</a>
 						</li>
-						<li className="flex min-h-[44px] items-center gap-3 text-ubb-navy-200">
-							<MapPin className="h-5 w-5 text-ubb-gold-500" aria-hidden="true" />
+						<li className="flex min-h-[44px] items-center gap-3 text-ubb-brand-200">
+							<MapPin className="h-5 w-5 text-ubb-accent-500" aria-hidden="true" />
 							{t("footer.location")}
 						</li>
 					</ul>
@@ -309,7 +309,7 @@ const Footer = () => {
 
 			{/* Mentions légales */}
 			<div className="border-t border-white/10">
-				<div className="ubb-container flex flex-col gap-4 py-6 text-ubb-small text-ubb-navy-300 md:flex-row md:items-center md:justify-between">
+				<div className="ubb-container flex flex-col gap-4 py-6 text-ubb-small text-ubb-brand-300 md:flex-row md:items-center md:justify-between">
 					<div>
 						<p>
 							&copy; {currentYear} {t("company.name")}. {t("footer.allRightsReserved")}
@@ -321,13 +321,13 @@ const Footer = () => {
 					<div className="flex gap-6">
 						<button
 							onClick={() => handleNavigation("/terms")}
-							className="ubb-focus min-h-[44px] rounded hover:text-white focus-visible:ring-offset-ubb-navy-950"
+							className="ubb-focus min-h-[44px] rounded hover:text-white focus-visible:ring-ubb-accent-500 focus-visible:ring-offset-ubb-brand-950"
 						>
 							{t("footer.terms")}
 						</button>
 						<button
 							onClick={() => handleNavigation("/privacy")}
-							className="ubb-focus min-h-[44px] rounded hover:text-white focus-visible:ring-offset-ubb-navy-950"
+							className="ubb-focus min-h-[44px] rounded hover:text-white focus-visible:ring-ubb-accent-500 focus-visible:ring-offset-ubb-brand-950"
 						>
 							{t("footer.privacy")}
 						</button>

@@ -16,13 +16,13 @@ const pentagonPoints = (radius) =>
     return `${(CENTER + radius * Math.cos(angle)).toFixed(2)},${(CENTER + radius * Math.sin(angle)).toFixed(2)}`
   }).join(' ')
 
-// Du niveau 1 (centre) au niveau 5 (extérieur) : les niveaux atteints sont dorés
-const REACHED_FILLS = ['#E8972A', '#F5A83C', '#F8C478', '#FCE3BE', '#FEF5E7']
-const PENDING_FILL = '#E8ECF3'
+// Du niveau 1 (centre) au niveau 5 (extérieur) : les niveaux atteints sont en jaune vitalCHECK
+const REACHED_FILLS = ['#E5B22A', '#F4C542', '#F8D97A', '#FDF0C4', '#FEFAEB']
+const PENDING_FILL = '#EAF6EC'
 
 /**
  * Signature visuelle de la landing : les 5 niveaux de maturité UBB
- * représentés en pentagones concentriques, le niveau atteint en or.
+ * représentés en pentagones concentriques, le niveau atteint en jaune.
  */
 const HeroScoreCard = ({ className = '' }) => {
   const { t, i18n } = useTranslation()

@@ -53,7 +53,7 @@ const SocialShare = ({ url, title, description }) => {
   ]
 
   return (
-    <div className="border-t border-ubb-navy-900/[0.06] bg-white py-8">
+    <div className="border-t border-ubb-brand-900/[0.06] bg-white py-8">
       <div className="ubb-container">
         <div className="text-center md:text-left">
           <h2 className="mb-4 font-heading text-lg font-semibold text-ubb-ink">
@@ -87,7 +87,7 @@ const SocialShare = ({ url, title, description }) => {
             {/* Copy Link Button */}
             <button
               onClick={handleCopyLink}
-              className="ubb-focus group relative flex h-11 w-11 items-center justify-center rounded-full bg-ubb-mist text-ubb-ink shadow-ubb-sm transition-colors hover:bg-ubb-navy-200"
+              className="ubb-focus group relative flex h-11 w-11 items-center justify-center rounded-full bg-ubb-mist text-ubb-ink shadow-ubb-sm transition-colors hover:bg-ubb-brand-200"
               aria-label={copied ? t('socialShare.copied') : t('socialShare.copyLink')}
               title={t('socialShare.copyLink')}
             >

@@ -690,7 +690,7 @@ const ChatWidget = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.3, ease: "easeOut" }}
                     onClick={handleToggle}
-                    className={`ubb-focus fixed ${buttonBottom} right-3 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-ubb-gold-500 text-ubb-navy-900 shadow-ubb-md transition-colors duration-200 hover:bg-ubb-gold-600`}
+                    className={`ubb-focus fixed ${buttonBottom} right-3 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-ubb-brand-900 text-white shadow-ubb-md transition-colors duration-200 hover:bg-ubb-brand-800`}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
                     aria-label={t('chatbot.openChat')}

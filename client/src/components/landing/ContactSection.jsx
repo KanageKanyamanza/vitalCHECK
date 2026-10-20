@@ -91,30 +91,30 @@ const ContactSection = () => {
             <li>
               <a
                 href="mailto:info@checkmyenterprise.com"
-                className="ubb-focus inline-flex min-h-[44px] items-center gap-3 rounded text-ubb-ink hover:text-ubb-navy-700"
+                className="ubb-focus inline-flex min-h-[44px] items-center gap-3 rounded text-ubb-ink hover:text-ubb-brand-700"
               >
-                <Mail className="h-5 w-5 text-ubb-gold-ink" aria-hidden="true" />
+                <Mail className="h-5 w-5 text-ubb-accent-ink" aria-hidden="true" />
                 info@checkmyenterprise.com
               </a>
             </li>
             <li>
               <a
                 href="tel:+221788346969"
-                className="ubb-focus inline-flex min-h-[44px] items-center gap-3 rounded text-ubb-ink hover:text-ubb-navy-700"
+                className="ubb-focus inline-flex min-h-[44px] items-center gap-3 rounded text-ubb-ink hover:text-ubb-brand-700"
               >
-                <Phone className="h-5 w-5 text-ubb-gold-ink" aria-hidden="true" />
+                <Phone className="h-5 w-5 text-ubb-accent-ink" aria-hidden="true" />
                 +221 78 834 69 69
               </a>
             </li>
           </ul>
 
           {/* CTA final : ceux qui ne sont pas prêts à écrire peuvent commencer seuls */}
-          <div className="mt-10 rounded-ubb-card bg-ubb-navy-900 p-6 text-white sm:p-8 lg:mt-auto">
+          <div className="mt-10 rounded-ubb-card bg-ubb-brand-900 p-6 text-white sm:p-8 lg:mt-auto">
             <p className="font-heading text-ubb-subtitle">{t('landing.contact.cta.title')}</p>
-            <p className="mt-2 font-text text-ubb-body text-ubb-navy-200">
+            <p className="mt-2 font-text text-ubb-body text-ubb-brand-200">
               {t('landing.contact.cta.text')}
             </p>
-            <Button to="/diagnostic" className="mt-6 w-full sm:w-auto focus-visible:ring-offset-ubb-navy-900">
+            <Button to="/diagnostic" className="mt-6 w-full sm:w-auto focus-visible:ring-ubb-accent-500 focus-visible:ring-offset-ubb-brand-900">
               {t('landing.contact.cta.button')}
             </Button>
           </div>
