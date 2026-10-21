@@ -1604,6 +1604,24 @@
 			"timeLeft_one": "About {{count}} minute left",
 			"timeLeft_other": "About {{count}} minutes left",
 			"lastMinute": "Less than a minute left"
+		},
+		"pillarBreak": {
+			"title": "Pillar done: {{name}}",
+			"encouragement": {
+				"0": "Great start! The foundations of your diagnostic are in place.",
+				"1": "You're making good progress: two pillars already covered.",
+				"2": "More than halfway there. Two more pillars and your score will be ready.",
+				"3": "Final stretch: just one pillar left before your score."
+			},
+			"nextLabel": "Next: pillar {{number}} of {{total}}",
+			"nextMeta_one": "{{count}} question, about 1 minute",
+			"nextMeta_other": "{{count}} questions, about 1 minute",
+			"continue": "Continue",
+			"back": "Previous question",
+			"count_one": "{{count}} of {{total}} pillars done",
+			"count_other": "{{count}} of {{total}} pillars done",
+			"pentagonLabel_one": "{{count}} of {{total}} pillars done",
+			"pentagonLabel_other": "{{count}} of {{total}} pillars done"
 		}
 	},
 	"team": {

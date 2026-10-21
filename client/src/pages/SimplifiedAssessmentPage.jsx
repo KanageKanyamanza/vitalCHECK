@@ -8,6 +8,7 @@ import toast from "react-hot-toast";
 import { assessmentV2API } from "../services/api";
 import DiagnosticQuestion from "../components/assessment/DiagnosticQuestion";
 import DiagnosticProgress from "../components/assessment/DiagnosticProgress";
+import PillarTransition from "../components/assessment/PillarTransition";
 import DiagnosticHeader from "../components/assessment/DiagnosticHeader";
 import DiagnosticIntro from "../components/assessment/DiagnosticIntro";
 import { useAssessment } from "../context/AssessmentContext";
@@ -69,6 +70,7 @@ const SimplifiedAssessmentPage = () => {
 	);
 	const [submitting, setSubmitting] = useState(false);
 	const [direction, setDirection] = useState(1); // 1 : vers la suite, -1 : retour
+	const [pillarBreak, setPillarBreak] = useState(null); // index du pilier qui vient d'être terminé
 	const reduceMotion = useReducedMotion();
 	const autoAdvanceRef = useRef(null);
 	const answersRef = useRef(answers);
@@ -179,9 +181,24 @@ const SimplifiedAssessmentPage = () => {
 
 	const goToQuestion = (index, dir) => {
 		clearTimeout(autoAdvanceRef.current);
+		setPillarBreak(null);
 		setDirection(dir);
 		setCurrentIndex(index);
 		window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+	};
+
+	// Vers la question suivante, avec une respiration quand un pilier se termine
+	const goForwardFrom = (index) => {
+		const here = flatQuestions[index];
+		const next = flatQuestions[index + 1];
+		if (here && next && next.pillarIndex !== here.pillarIndex) {
+			clearTimeout(autoAdvanceRef.current);
+			setDirection(1);
+			setPillarBreak(here.pillarIndex);
+			window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+		} else {
+			goToQuestion(index + 1, 1);
+		}
 	};
 
 	const handleAnswerSelect = (questionId, value, { viaPointer = false } = {}) => {
@@ -199,7 +216,7 @@ const SimplifiedAssessmentPage = () => {
 		// (le temps de voir la sélection). Jamais sur la dernière question ni au clavier.
 		clearTimeout(autoAdvanceRef.current);
 		if (viaPointer && !isLastQuestion) {
-			autoAdvanceRef.current = setTimeout(() => goToQuestion(currentIndex + 1, 1), AUTO_ADVANCE_MS);
+			autoAdvanceRef.current = setTimeout(() => goForwardFrom(currentIndex), AUTO_ADVANCE_MS);
 		}
 	};
 
@@ -216,7 +233,7 @@ const SimplifiedAssessmentPage = () => {
 		if (!canProceed) return;
 
 		if (currentIndex < totalQuestions - 1) {
-			goToQuestion(currentIndex + 1, 1);
+			goForwardFrom(currentIndex);
 		} else {
 			handleSubmit();
 		}
@@ -329,7 +346,7 @@ const SimplifiedAssessmentPage = () => {
 					<div className="ubb-container max-w-3xl pb-32 pt-6 sm:pb-12 sm:pt-10" onKeyDown={handleQuestionKeyDown}>
 						<AnimatePresence mode="wait" initial={false} custom={direction}>
 							<motion.div
-								key={currentQuestion.id}
+								key={pillarBreak !== null ? `break-${pillarBreak}` : currentQuestion.id}
 								custom={direction}
 								variants={questionVariants}
 								initial={reduceMotion ? false : "enter"}
@@ -337,38 +354,55 @@ const SimplifiedAssessmentPage = () => {
 								exit={reduceMotion ? undefined : "exit"}
 								transition={{ duration: 0.22, ease: "easeOut" }}
 							>
-								<DiagnosticQuestion
-									question={currentQuestion}
-									selectedAnswer={currentAnswer?.answer}
-									onAnswerSelect={handleAnswerSelect}
-								/>
+								{pillarBreak !== null ? (
+									<PillarTransition
+										pillarIndex={pillarBreak}
+										pillarNames={pillarNames}
+										nextPillarQuestionCount={
+											flatQuestions.filter((q) => q.pillarIndex === pillarBreak + 1).length
+										}
+										onContinue={() => goToQuestion(currentIndex + 1, 1)}
+										onBack={() => {
+											setDirection(-1);
+											setPillarBreak(null);
+										}}
+									/>
+								) : (
+									<DiagnosticQuestion
+										question={currentQuestion}
+										selectedAnswer={currentAnswer?.answer}
+										onAnswerSelect={handleAnswerSelect}
+									/>
+								)}
 							</motion.div>
 						</AnimatePresence>
 
-						{currentIndex === 0 && !canProceed && (
+						{pillarBreak === null && currentIndex === 0 && !canProceed && (
 							<p className="mt-4 text-center font-text text-ubb-small text-ubb-ink-muted">
 								{t("diagnostic.questions.hint")}
 							</p>
 						)}
 
 						{/* Navigation : barre fixée en bas sur mobile (zone du pouce), sous la carte au-delà */}
-						<div className="fixed inset-x-0 bottom-0 z-30 border-t border-ubb-brand-900/[0.08] bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur sm:static sm:mt-8 sm:border-0 sm:bg-transparent sm:pb-0 sm:backdrop-blur-none">
-							<div className="ubb-container flex items-center gap-3 py-3 sm:px-0 sm:py-0">
-								<Button variant="outline" onClick={handlePrevious} className="shrink-0">
-									<ArrowLeft className="h-4 w-4" aria-hidden="true" />
-									{t("diagnostic.questions.previous")}
-								</Button>
-								<Button
-									variant="secondary"
-									onClick={handleNext}
-									disabled={!canProceed || submitting}
-									className="flex-1 sm:ml-auto sm:flex-none"
-								>
-									{isLastQuestion ? t("diagnostic.questions.seeResults") : t("diagnostic.questions.next")}
-									<ArrowRight className="h-4 w-4" aria-hidden="true" />
-								</Button>
+						{pillarBreak === null && (
+							<div className="fixed inset-x-0 bottom-0 z-30 border-t border-ubb-brand-900/[0.08] bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur sm:static sm:mt-8 sm:border-0 sm:bg-transparent sm:pb-0 sm:backdrop-blur-none">
+								<div className="ubb-container flex items-center gap-3 py-3 sm:px-0 sm:py-0">
+									<Button variant="outline" onClick={handlePrevious} className="shrink-0">
+										<ArrowLeft className="h-4 w-4" aria-hidden="true" />
+										{t("diagnostic.questions.previous")}
+									</Button>
+									<Button
+										variant="secondary"
+										onClick={handleNext}
+										disabled={!canProceed || submitting}
+										className="flex-1 sm:ml-auto sm:flex-none"
+									>
+										{isLastQuestion ? t("diagnostic.questions.seeResults") : t("diagnostic.questions.next")}
+										<ArrowRight className="h-4 w-4" aria-hidden="true" />
+									</Button>
+								</div>
 							</div>
-						</div>
+						)}
 					</div>
 				</>
 			)}

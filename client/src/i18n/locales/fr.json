@@ -1662,6 +1662,24 @@
 			"timeLeft_one": "Environ {{count}} minute restante",
 			"timeLeft_other": "Environ {{count}} minutes restantes",
 			"lastMinute": "Moins d'une minute restante"
+		},
+		"pillarBreak": {
+			"title": "Pilier terminé : {{name}}",
+			"encouragement": {
+				"0": "Bon début ! Les bases de votre diagnostic sont posées.",
+				"1": "Vous avancez bien : déjà deux piliers analysés.",
+				"2": "Plus de la moitié est faite. Encore deux piliers et votre score sera prêt.",
+				"3": "Dernière ligne droite : plus qu'un pilier avant votre score."
+			},
+			"nextLabel": "À suivre : pilier {{number}} sur {{total}}",
+			"nextMeta_one": "{{count}} question, environ 1 minute",
+			"nextMeta_other": "{{count}} questions, environ 1 minute",
+			"continue": "Continuer",
+			"back": "Question précédente",
+			"count_one": "{{count}} pilier sur {{total}} terminé",
+			"count_other": "{{count}} piliers sur {{total}} terminés",
+			"pentagonLabel_one": "{{count}} pilier terminé sur {{total}}",
+			"pentagonLabel_other": "{{count}} piliers terminés sur {{total}}"
 		}
 	},
 	"team": {
