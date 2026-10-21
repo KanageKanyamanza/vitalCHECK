@@ -1595,6 +1595,14 @@
 			"titleSector": "{{sector}} diagnostic",
 			"quit": "Exit",
 			"quitHint": "Your progress stays saved on this device for the session"
+		},
+		"progress": {
+			"pillar": "Pillar {{current}} of {{total}}",
+			"question": "Question {{current}} of {{total}}",
+			"announce": "{{pillar}}: {{name}}. {{question}}.",
+			"timeLeft_one": "About {{count}} minute left",
+			"timeLeft_other": "About {{count}} minutes left",
+			"lastMinute": "Less than a minute left"
 		}
 	},
 	"team": {

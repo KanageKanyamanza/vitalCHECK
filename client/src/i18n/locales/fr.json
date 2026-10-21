@@ -1653,6 +1653,14 @@
 			"titleSector": "Diagnostic {{sector}}",
 			"quit": "Quitter",
 			"quitHint": "Votre progression reste enregistrée sur cet appareil pendant la session"
+		},
+		"progress": {
+			"pillar": "Pilier {{current}} sur {{total}}",
+			"question": "Question {{current}} sur {{total}}",
+			"announce": "{{pillar}} : {{name}}. {{question}}.",
+			"timeLeft_one": "Environ {{count}} minute restante",
+			"timeLeft_other": "Environ {{count}} minutes restantes",
+			"lastMinute": "Moins d'une minute restante"
 		}
 	},
 	"team": {

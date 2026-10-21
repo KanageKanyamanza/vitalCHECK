@@ -5,7 +5,8 @@ import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { assessmentV2API } from "../services/api";
-import { SimpleQuestionCard, SimpleProgressBar } from "../components/assessment";
+import { SimpleQuestionCard } from "../components/assessment";
+import DiagnosticProgress from "../components/assessment/DiagnosticProgress";
 import DiagnosticHeader from "../components/assessment/DiagnosticHeader";
 import DiagnosticIntro from "../components/assessment/DiagnosticIntro";
 import { useAssessment } from "../context/AssessmentContext";
@@ -126,6 +127,7 @@ const SimplifiedAssessmentPage = () => {
 	const isLastQuestion = currentIndex === totalQuestions - 1;
 	const currentAnswer = answers.find((a) => a.questionId === currentQuestion?.id);
 	const canProceed = currentAnswer !== undefined;
+	const answeredIds = new Set(answers.map((a) => a.questionId));
 
 	const handleFormChange = (e) => {
 		const { name, value } = e.target;
@@ -272,15 +274,16 @@ const SimplifiedAssessmentPage = () => {
 
 			{step === "questions" && currentQuestion && (
 				<>
-					<DiagnosticHeader title={headerTitle} />
+					<DiagnosticHeader title={headerTitle}>
+						<DiagnosticProgress
+							questions={flatQuestions}
+							currentIndex={currentIndex}
+							answeredIds={answeredIds}
+							pillarNames={pillarNames}
+						/>
+					</DiagnosticHeader>
 
 					<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-						<SimpleProgressBar
-							current={currentIndex + 1}
-							total={totalQuestions}
-							pillars={pillarNames}
-							currentPillarIndex={currentQuestion.pillarIndex}
-						/>
 
 						<AnimatePresence mode="wait">
 							<motion.div

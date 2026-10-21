@@ -2,19 +2,13 @@ import React from 'react'
 import { motion, useReducedMotion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { LEVELS_V2, getLevelV2 } from '../../utils/colors'
+import { PENTAGON_CENTER, pentagonPoints } from '../ui/ds/Pentagon'
 
 // Score d'exemple affiché sur la landing (clairement présenté comme un exemple)
 const SAMPLE_SCORE = 72
 
-const CENTER = 60
+const CENTER = PENTAGON_CENTER
 const RING_STEP = 11
-
-// Sommets d'un pentagone régulier, pointe en haut
-const pentagonPoints = (radius) =>
-  Array.from({ length: 5 }, (_, i) => {
-    const angle = (-90 + i * 72) * (Math.PI / 180)
-    return `${(CENTER + radius * Math.cos(angle)).toFixed(2)},${(CENTER + radius * Math.sin(angle)).toFixed(2)}`
-  }).join(' ')
 
 // Du niveau 1 (centre) au niveau 5 (extérieur) : les niveaux atteints sont en jaune vitalCHECK
 const REACHED_FILLS = ['#E5B22A', '#F4C542', '#F8D97A', '#FDF0C4', '#FEFAEB']
