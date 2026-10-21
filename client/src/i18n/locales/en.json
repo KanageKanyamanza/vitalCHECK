@@ -1549,7 +1549,8 @@
 			"answers": "{{current}} / {{total}} answers",
 			"previous": "Previous",
 			"next": "Next",
-			"seeResults": "See my results"
+			"seeResults": "See my results",
+			"hint": "Tap an answer: the next question appears automatically."
 		},
 		"results": {
 			"pageTitle": "Your results",

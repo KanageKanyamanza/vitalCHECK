@@ -35,7 +35,7 @@ const DiagnosticProgress = ({ questions, currentIndex, answeredIds, pillarNames 
   })
 
   return (
-    <div className="ubb-container pb-3 pt-1">
+    <div className="ubb-container max-w-3xl pb-3 pt-1">
       {/* Annonce pour les lecteurs d'écran à chaque nouvelle question */}
       <p className="sr-only" aria-live="polite">
         {t('diagnostic.progress.announce', {

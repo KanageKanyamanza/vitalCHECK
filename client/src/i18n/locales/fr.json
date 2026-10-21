@@ -1607,7 +1607,8 @@
 			"answers": "{{current}} / {{total}} réponses",
 			"previous": "Précédent",
 			"next": "Suivant",
-			"seeResults": "Voir mes résultats"
+			"seeResults": "Voir mes résultats",
+			"hint": "Touchez une réponse : la question suivante s'affiche automatiquement."
 		},
 		"results": {
 			"pageTitle": "Vos résultats",

@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Check } from 'lucide-react'
 
 /**
@@ -8,9 +8,16 @@ import { Check } from 'lucide-react'
  * onAnswerSelect(questionId, value, { viaPointer }) : `viaPointer` vaut true pour un choix
  * au doigt ou à la souris (le parcours avance alors tout seul), false au clavier
  * (les flèches changent la sélection sans quitter la question).
+ * À l'affichage, le focus va sur l'énoncé (focusOnMount).
  */
-const DiagnosticQuestion = forwardRef(({ question, selectedAnswer, onAnswerSelect }, headingRef) => {
+const DiagnosticQuestion = ({ question, selectedAnswer, onAnswerSelect, focusOnMount = true }) => {
   const pointerRef = useRef(false)
+  const headingRef = useRef(null)
+
+  // Nouvelle question : focus sur l'énoncé (lecteurs d'écran, clavier) sans faire défiler
+  useEffect(() => {
+    if (focusOnMount) headingRef.current?.focus({ preventScroll: true })
+  }, [focusOnMount])
 
   if (!question) return null
 
@@ -83,8 +90,6 @@ const DiagnosticQuestion = forwardRef(({ question, selectedAnswer, onAnswerSelec
       </div>
     </fieldset>
   )
-})
-
-DiagnosticQuestion.displayName = 'DiagnosticQuestion'
+}
 
 export default DiagnosticQuestion
