@@ -5,7 +5,7 @@ import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { assessmentV2API } from "../services/api";
-import { SimpleQuestionCard } from "../components/assessment";
+import DiagnosticQuestion from "../components/assessment/DiagnosticQuestion";
 import DiagnosticProgress from "../components/assessment/DiagnosticProgress";
 import DiagnosticHeader from "../components/assessment/DiagnosticHeader";
 import DiagnosticIntro from "../components/assessment/DiagnosticIntro";
@@ -293,9 +293,8 @@ const SimplifiedAssessmentPage = () => {
 								exit={{ opacity: 0, x: -20 }}
 								transition={{ duration: 0.3 }}
 							>
-								<SimpleQuestionCard
+								<DiagnosticQuestion
 									question={currentQuestion}
-									pillarName={currentQuestion.pillarName}
 									selectedAnswer={currentAnswer?.answer}
 									onAnswerSelect={handleAnswerSelect}
 								/>

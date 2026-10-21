@@ -37,7 +37,7 @@ const SectorPicker = ({ value, onChange, name = 'questionnaire' }) => {
           return (
             <label
               key={type}
-              className={`relative flex min-h-[48px] cursor-pointer items-center gap-2 rounded-ubb-field border px-3 py-2 font-text text-sm font-semibold sm:gap-1.5 sm:px-2.5 sm:text-[0.8125rem] transition-colors focus-within:ring-2 focus-within:ring-ubb-brand-900 focus-within:ring-offset-2 ${
+              className={`relative flex min-h-[48px] cursor-pointer items-center gap-2 rounded-ubb-field border px-3 py-2 font-text text-sm font-semibold sm:gap-1.5 sm:px-2.5 sm:text-[0.8125rem] transition-colors has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-ubb-brand-900 has-[:focus-visible]:ring-offset-2 ${
                 checked
                   ? 'border-ubb-brand-900 bg-ubb-brand-50 text-ubb-brand-950'
                   : 'border-ubb-brand-900/15 bg-white text-ubb-ink hover:border-ubb-brand-900/40'
