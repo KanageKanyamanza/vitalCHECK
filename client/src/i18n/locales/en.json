@@ -1622,6 +1622,20 @@
 			"count_other": "{{count}} of {{total}} pillars done",
 			"pentagonLabel_one": "{{count}} of {{total}} pillars done",
 			"pentagonLabel_other": "{{count}} of {{total}} pillars done"
+		},
+		"analysis": {
+			"title": "Analysing your answers",
+			"subtitle": "Using the UBB audit methodology. This only takes a few seconds.",
+			"steps": {
+				"reading_one": "Reading your answer",
+				"reading_other": "Reading your {{count}} answers",
+				"scoring": "Calculating your score for each pillar",
+				"recommendations": "Preparing your recommendations"
+			},
+			"errorTitle": "The analysis couldn't be completed",
+			"errorText": "Your answers are safely kept on this device. Check your internet connection, then try again.",
+			"retry": "Try again",
+			"back": "Back to the questions"
 		}
 	},
 	"team": {

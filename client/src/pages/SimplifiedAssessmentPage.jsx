@@ -9,6 +9,7 @@ import { assessmentV2API } from "../services/api";
 import DiagnosticQuestion from "../components/assessment/DiagnosticQuestion";
 import DiagnosticProgress from "../components/assessment/DiagnosticProgress";
 import PillarTransition from "../components/assessment/PillarTransition";
+import AnalysisScreen from "../components/assessment/AnalysisScreen";
 import DiagnosticHeader from "../components/assessment/DiagnosticHeader";
 import DiagnosticIntro from "../components/assessment/DiagnosticIntro";
 import { useAssessment } from "../context/AssessmentContext";
@@ -24,6 +25,9 @@ const questionVariants = {
 	center: { opacity: 1, x: 0 },
 	exit: (dir) => ({ opacity: 0, x: dir * -24 }),
 };
+
+// Durée minimale de l'écran d'analyse, pour qu'il ne se réduise pas à un flash
+const MIN_ANALYSIS_MS = 1500;
 
 // Délai avant le passage automatique à la question suivante (le temps de voir la sélection)
 const AUTO_ADVANCE_MS = 450;
@@ -59,7 +63,7 @@ const SimplifiedAssessmentPage = () => {
 		: "universal";
 
 	const [saved] = useState(readSavedProgress);
-	const [step, setStep] = useState(saved.step || "intro"); // 'intro' | 'questions'
+	const [step, setStep] = useState(saved.step || "intro"); // 'intro' | 'questions' | 'analysis'
 	const [formData, setFormData] = useState(saved.formData || EMPTY_FORM);
 	const [questionsData, setQuestionsData] = useState(null);
 	const [sectorLevels, setSectorLevels] = useState(null); // niveaux spécifiques au secteur
@@ -71,6 +75,7 @@ const SimplifiedAssessmentPage = () => {
 	const [submitting, setSubmitting] = useState(false);
 	const [direction, setDirection] = useState(1); // 1 : vers la suite, -1 : retour
 	const [pillarBreak, setPillarBreak] = useState(null); // index du pilier qui vient d'être terminé
+	const [analysisStatus, setAnalysisStatus] = useState("running"); // 'running' | 'error'
 	const reduceMotion = useReducedMotion();
 	const autoAdvanceRef = useRef(null);
 	const answersRef = useRef(answers);
@@ -126,7 +131,8 @@ const SimplifiedAssessmentPage = () => {
 		try {
 			sessionStorage.setItem(
 				PROGRESS_STORAGE_KEY,
-				JSON.stringify({ step, formData, answers, currentIndex, language }),
+				// L'analyse n'est jamais reprise telle quelle : après un rafraîchissement on revient aux questions
+				JSON.stringify({ step: step === "analysis" ? "questions" : step, formData, answers, currentIndex, language }),
 			);
 		} catch {
 			// Ignorer les erreurs d'écriture du stockage
@@ -251,12 +257,18 @@ const SimplifiedAssessmentPage = () => {
 		if (submitting) return;
 
 		setSubmitting(true);
+		setAnalysisStatus("running");
+		setStep("analysis");
+		window.scrollTo({ top: 0 });
 		try {
-			const response = await assessmentV2API.scoreAssessment({
-				answers,
-				language,
-				questionnaireType,
-			});
+			const [response] = await Promise.all([
+				assessmentV2API.scoreAssessment({
+					answers,
+					language,
+					questionnaireType,
+				}),
+				new Promise((resolve) => setTimeout(resolve, MIN_ANALYSIS_MS)),
+			]);
 
 			if (response.data.success) {
 				const payload = {
@@ -278,11 +290,12 @@ const SimplifiedAssessmentPage = () => {
 				scrollToTop(400);
 				navigate("/diagnostic/resultats", { state: payload });
 			} else {
-				toast.error(t("diagnostic.errors.scoreError"));
+				setAnalysisStatus("error");
 			}
 		} catch (error) {
 			console.error("Erreur de calcul des scores v2:", error);
-			toast.error(t("diagnostic.errors.scoreError"));
+			// Les réponses restent en mémoire et dans la session : l'écran propose de réessayer
+			setAnalysisStatus("error");
 		} finally {
 			setSubmitting(false);
 		}
@@ -403,6 +416,20 @@ const SimplifiedAssessmentPage = () => {
 								</div>
 							</div>
 						)}
+					</div>
+				</>
+			)}
+
+			{step === "analysis" && (
+				<>
+					<DiagnosticHeader title={headerTitle} />
+					<div className="ubb-container max-w-3xl py-8 sm:py-12">
+						<AnalysisScreen
+							status={analysisStatus}
+							answeredCount={answers.length}
+							onRetry={handleSubmit}
+							onBack={() => setStep("questions")}
+						/>
 					</div>
 				</>
 			)}

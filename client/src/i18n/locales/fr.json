@@ -1680,6 +1680,20 @@
 			"count_other": "{{count}} piliers sur {{total}} terminés",
 			"pentagonLabel_one": "{{count}} pilier terminé sur {{total}}",
 			"pentagonLabel_other": "{{count}} piliers terminés sur {{total}}"
+		},
+		"analysis": {
+			"title": "Analyse de vos réponses",
+			"subtitle": "Selon la méthodologie d'audit UBB. Cela ne prend que quelques secondes.",
+			"steps": {
+				"reading_one": "Lecture de votre réponse",
+				"reading_other": "Lecture de vos {{count}} réponses",
+				"scoring": "Calcul de votre score par pilier",
+				"recommendations": "Préparation de vos recommandations"
+			},
+			"errorTitle": "L'analyse n'a pas pu aboutir",
+			"errorText": "Vos réponses sont bien gardées sur cet appareil. Vérifiez votre connexion internet, puis réessayez.",
+			"retry": "Réessayer",
+			"back": "Revenir aux questions"
 		}
 	},
 	"team": {
