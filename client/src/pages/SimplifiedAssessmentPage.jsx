@@ -325,7 +325,7 @@ const SimplifiedAssessmentPage = () => {
 			<SEOHead
 				title={t("diagnostic.meta.title")}
 				description={t("diagnostic.meta.description")}
-				keywords="diagnostic gratuit, score entreprise, santé organisationnelle, vitalCHECK, PME"
+				keywords={t("diagnostic.meta.keywords")}
 				url="/diagnostic"
 			/>
 

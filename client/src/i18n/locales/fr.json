@@ -1508,7 +1508,8 @@
 			"title": "Diagnostic gratuit - vitalCHECK",
 			"description": "Obtenez en 5 à 7 minutes un score de santé organisationnelle gratuit pour votre entreprise, avec recommandations immédiates.",
 			"resultsTitle": "Vos résultats - vitalCHECK",
-			"resultsDescription": "Découvrez votre score de santé organisationnelle et vos premières recommandations vitalCHECK."
+			"resultsDescription": "Découvrez votre score de santé organisationnelle et vos premières recommandations vitalCHECK.",
+			"keywords": "diagnostic gratuit, score entreprise, santé organisationnelle, vitalCHECK, PME"
 		},
 		"loading": {
 			"questions": "Chargement du diagnostic...",
@@ -1516,17 +1517,13 @@
 		},
 		"errors": {
 			"loadFailed": "Impossible de charger le diagnostic. Veuillez réessayer.",
-			"requiredFields": "Merci de remplir tous les champs obligatoires",
 			"noQuestions": "Le diagnostic n'a pas pu être chargé. Veuillez réessayer.",
-			"scoreError": "Une erreur est survenue lors du calcul des résultats",
 			"saveError": "Une erreur est survenue. Veuillez réessayer.",
 			"noEmail": "Merci de renseigner votre email",
 			"resultsNotFound": "Résultats introuvables",
 			"reportNotReady": "Le rapport PDF n'est pas encore disponible."
 		},
 		"intro": {
-			"duration": "5 à 7 minutes",
-			"free": "100% gratuit",
 			"title": "Votre score de santé d'entreprise gratuit",
 			"subtitle": "Répondez à 25 questions rapides réparties sur 5 piliers clés et obtenez instantanément votre score global, vos points forts et vos premières recommandations.",
 			"companyName": "Nom de l'entreprise",
@@ -1534,7 +1531,6 @@
 			"companySize": "Taille de l'entreprise",
 			"companySizePlaceholder": "Sélectionnez une taille",
 			"sector": "Votre secteur d'activité",
-			"sectorPlaceholder": "Préférez ne pas préciser",
 			"email": "Adresse email",
 			"emailPlaceholder": "vous@entreprise.com",
 			"emailHint": "Vos résultats s'affichent immédiatement. Cette adresse nous permettra de vous renvoyer votre rapport si besoin.",
@@ -1604,7 +1600,6 @@
 		},
 		"questions": {
 			"header": "Diagnostic gratuit",
-			"answers": "{{current}} / {{total}} réponses",
 			"previous": "Précédent",
 			"next": "Suivant",
 			"seeResults": "Voir mes résultats",
