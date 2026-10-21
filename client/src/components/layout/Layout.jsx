@@ -11,7 +11,10 @@ const Layout = ({ children }) => {
   // Pages avec leur propre layout (navbar/footer gérés par le composant)
   const isAdminPage = location?.pathname?.startsWith('/admin') || false
   const isClientPage = location?.pathname?.startsWith('/client') || false
-  const isShellPage = isAdminPage || isClientPage
+  // Parcours du diagnostic : mode « focus », la page gère son propre en-tête
+  // (pas de navbar, de pied de page ni de boutons flottants pendant les questions)
+  const isFocusPage = location?.pathname === '/diagnostic'
+  const isShellPage = isAdminPage || isClientPage || isFocusPage
 
   // Vérifier si on est sur la page d'accueil
   const isHomePage = location?.pathname === '/'

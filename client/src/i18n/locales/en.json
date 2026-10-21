@@ -1475,13 +1475,27 @@
 			"companyNamePlaceholder": "Ex: My Company Ltd",
 			"companySize": "Company size",
 			"companySizePlaceholder": "Select a size",
-			"sector": "Industry",
+			"sector": "Your sector",
 			"sectorPlaceholder": "Prefer not to say",
 			"email": "Email address",
 			"emailPlaceholder": "you@company.com",
 			"emailHint": "Your results are displayed immediately. We will use this address to resend your report if needed.",
 			"language": "Diagnostic language",
-			"startButton": "CLICK HERE"
+			"startButton": "CLICK HERE",
+			"reassurance": {
+				"time": "5 to 7 minutes, one question at a time",
+				"free": "100% free, no commitment",
+				"noFigures": "No figures needed: you answer yes, partly or no"
+			},
+			"sectorHint": "The questions adapt to your trade.",
+			"sectorUniversal": "All activities",
+			"aboutCompany": "Your business",
+			"errors": {
+				"companyName": "Enter your company name.",
+				"companySize": "Choose your company size.",
+				"email": "Enter your email address.",
+				"emailInvalid": "This email address isn't valid. Example: name@company.com"
+			}
 		},
 		"agriculture": {
 			"title": "Farm Business Assessment 10+ ha",
@@ -1576,6 +1590,11 @@
 				"loginRequired": "Log in to download the premium report.",
 				"downloadError": "The premium report couldn't be downloaded. Try again in a moment."
 			}
+		},
+		"header": {
+			"titleSector": "{{sector}} diagnostic",
+			"quit": "Exit",
+			"quitHint": "Your progress stays saved on this device for the session"
 		}
 	},
 	"team": {

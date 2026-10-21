@@ -1533,13 +1533,27 @@
 			"companyNamePlaceholder": "Ex: Ma Société SARL",
 			"companySize": "Taille de l'entreprise",
 			"companySizePlaceholder": "Sélectionnez une taille",
-			"sector": "Secteur d'activité",
+			"sector": "Votre secteur d'activité",
 			"sectorPlaceholder": "Préférez ne pas préciser",
 			"email": "Adresse email",
 			"emailPlaceholder": "vous@entreprise.com",
 			"emailHint": "Vos résultats s'affichent immédiatement. Cette adresse nous permettra de vous renvoyer votre rapport si besoin.",
 			"language": "Langue du diagnostic",
-			"startButton": "Démarrer le diagnostic"
+			"startButton": "Démarrer le diagnostic",
+			"reassurance": {
+				"time": "5 à 7 minutes, une question à la fois",
+				"free": "100 % gratuit, sans engagement",
+				"noFigures": "Aucun chiffre demandé : vous répondez par oui, partiellement ou non"
+			},
+			"sectorHint": "Les questions s'adaptent à votre métier.",
+			"sectorUniversal": "Toutes activités",
+			"aboutCompany": "Votre entreprise",
+			"errors": {
+				"companyName": "Indiquez le nom de votre entreprise.",
+				"companySize": "Choisissez la taille de votre entreprise.",
+				"email": "Indiquez votre adresse email.",
+				"emailInvalid": "Cette adresse email n'est pas valide. Exemple : nom@entreprise.com"
+			}
 		},
 		"agriculture": {
 			"title": "Diagnostic Exploitation Agricole +10 ha",
@@ -1634,6 +1648,11 @@
 				"loginRequired": "Connectez-vous pour télécharger le rapport premium.",
 				"downloadError": "Le rapport premium n'a pas pu être téléchargé. Réessayez dans quelques instants."
 			}
+		},
+		"header": {
+			"titleSector": "Diagnostic {{sector}}",
+			"quit": "Quitter",
+			"quitHint": "Votre progression reste enregistrée sur cet appareil pendant la session"
 		}
 	},
 	"team": {

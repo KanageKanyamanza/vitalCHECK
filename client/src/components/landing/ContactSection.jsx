@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { toast } from 'react-hot-toast'
 import { Mail, Phone, CheckCircle2 } from 'lucide-react'
-import { Button, Section, Container, SectionHeading } from '../ui/ds'
+import { Button, Section, Container, SectionHeading, FormField as Field } from '../ui/ds'
 import { API_BASE_URL } from '../../services/api'
 
 const INQUIRY_TYPES = ['general', 'assessment', 'premium', 'technical', 'partnership', 'other']
@@ -17,22 +17,6 @@ const DEFAULT_VALUES = {
   inquiryType: 'general',
   message: '',
 }
-
-// Champ de formulaire : libellé, message d'erreur relié pour les lecteurs d'écran
-const Field = ({ id, label, optional, error, children }) => (
-  <div>
-    <label htmlFor={id} className="ubb-label">
-      {label}
-      {optional && <span className="ml-1 font-normal text-ubb-ink-muted">{optional}</span>}
-    </label>
-    {children}
-    {error && (
-      <p id={`${id}-error`} role="alert" className="mt-1.5 font-text text-sm font-medium text-red-700">
-        {error}
-      </p>
-    )}
-  </div>
-)
 
 const ContactSection = () => {
   const { t } = useTranslation()

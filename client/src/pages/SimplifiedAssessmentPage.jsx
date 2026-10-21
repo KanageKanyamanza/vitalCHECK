@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, CheckCircle, Clock } from "lucide-react";
+import { ArrowLeft, ArrowRight, CheckCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { assessmentV2API } from "../services/api";
 import { SimpleQuestionCard, SimpleProgressBar } from "../components/assessment";
-import { LanguageSelector } from "../components/ui";
+import DiagnosticHeader from "../components/assessment/DiagnosticHeader";
+import DiagnosticIntro from "../components/assessment/DiagnosticIntro";
+import { useAssessment } from "../context/AssessmentContext";
 import useSmoothScroll from "../hooks/useSmoothScroll";
 import SEOHead from "../components/seo/SEOHead";
 import { useClientAuth } from "../context/ClientAuthContext";
@@ -20,11 +22,12 @@ const SECTOR_QUESTIONNAIRE_TYPES = ["agriculture", "retail", "restaurant", "cons
 
 const SimplifiedAssessmentPage = () => {
 	const navigate = useNavigate();
-	const [searchParams] = useSearchParams();
+	const [searchParams, setSearchParams] = useSearchParams();
 	const { scrollToTop } = useSmoothScroll();
 	const { t, i18n } = useTranslation();
 	const language = i18n.language?.substring(0, 2) || "fr";
 	const { user } = useClientAuth();
+	const { dispatch } = useAssessment();
 
 	const requestedQuestionnaire = searchParams.get("questionnaire");
 	const questionnaireType = SECTOR_QUESTIONNAIRE_TYPES.includes(requestedQuestionnaire)
@@ -129,14 +132,20 @@ const SimplifiedAssessmentPage = () => {
 		setFormData((prev) => ({ ...prev, [name]: value }));
 	};
 
-	const handleStart = (e) => {
-		e.preventDefault();
+	// Le secteur choisi à l'accueil pilote le paramètre ?questionnaire= (qui recharge les questions)
+	const handleSectorChange = (type) => {
+		const next = new URLSearchParams(searchParams);
+		if (type === "universal") next.delete("questionnaire");
+		else next.set("questionnaire", type);
+		setSearchParams(next, { replace: true });
+	};
 
-		if (!formData.companyName.trim() || !formData.email.trim() || !formData.companySize) {
-			toast.error(t("diagnostic.errors.requiredFields"));
-			return;
-		}
+	const handleLanguageChange = (lang) => {
+		dispatch({ type: "SET_LANGUAGE", payload: lang });
+	};
 
+	// Les champs sont validés par DiagnosticIntro avant l'appel
+	const handleStart = () => {
 		if (!questionsData) {
 			toast.error(t("diagnostic.errors.noQuestions"));
 			return;
@@ -218,25 +227,27 @@ const SimplifiedAssessmentPage = () => {
 		}
 	};
 
-	if (loadingQuestions) {
+	// Écran de chargement uniquement au tout premier chargement
+	if (loadingQuestions && !questionsData) {
 		return (
 			<div className="min-h-screen flex items-center justify-center">
 				<div className="text-center">
-					<div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-					<p className="text-gray-600">{t("diagnostic.loading.questions")}</p>
+					<div className="w-12 h-12 border-4 border-ubb-brand-900 border-t-transparent rounded-full animate-spin mx-auto mb-4" aria-hidden="true"></div>
+					<p className="font-text text-ubb-ink-muted" role="status">{t("diagnostic.loading.questions")}</p>
 				</div>
 			</div>
 		);
 	}
 
-	const companySizes = [
-		{ value: "micro", label: t("diagnostic.sizes.micro") },
-		{ value: "sme", label: t("diagnostic.sizes.sme") },
-		{ value: "large-sme", label: t("diagnostic.sizes.large-sme") },
-	];
+	const headerTitle =
+		questionnaireType === "universal"
+			? t("diagnostic.questions.header")
+			: t("diagnostic.header.titleSector", {
+					sector: t(`landing.sectorCards.items.${questionnaireType}.name`),
+				});
 
 	return (
-		<div className="min-h-screen py-[70px] bg-gray-50">
+		<div className="min-h-screen bg-ubb-paper-soft">
 			<SEOHead
 				title={t("diagnostic.meta.title")}
 				description={t("diagnostic.meta.description")}
@@ -245,110 +256,23 @@ const SimplifiedAssessmentPage = () => {
 			/>
 
 			{step === "intro" && (
-				<div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-					<motion.div
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ duration: 0.5 }}
-						className="card"
-					>
-						<div className="flex items-center space-x-2 text-primary-600 mb-3">
-							<Clock className="w-5 h-5" />
-							<span className="text-sm font-medium">
-								{t("diagnostic.intro.duration")} · {t("diagnostic.intro.free")}
-							</span>
-						</div>
-						<h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 mb-2">
-							{t([`diagnostic.${questionnaireType}.title`, "diagnostic.intro.title"])}
-						</h1>
-						<p className="text-gray-600 mb-6">
-							{t([`diagnostic.${questionnaireType}.subtitle`, "diagnostic.intro.subtitle"])}
-						</p>
-
-						<form onSubmit={handleStart} className="space-y-5">
-							<div>
-								<label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-2">
-									{t("diagnostic.intro.companyName")} *
-								</label>
-								<input
-									type="text"
-									id="companyName"
-									name="companyName"
-									value={formData.companyName}
-									onChange={handleFormChange}
-									className="input-field"
-									placeholder={t("diagnostic.intro.companyNamePlaceholder")}
-									required
-								/>
-							</div>
-
-							<div>
-								<label htmlFor="companySize" className="block text-sm font-medium text-gray-700 mb-2">
-									{t("diagnostic.intro.companySize")} *
-								</label>
-								<select
-									id="companySize"
-									name="companySize"
-									value={formData.companySize}
-									onChange={handleFormChange}
-									className="input-field"
-									required
-								>
-									<option value="">{t("diagnostic.intro.companySizePlaceholder")}</option>
-									{companySizes.map((size) => (
-										<option key={size.value} value={size.value}>
-											{size.label}
-										</option>
-									))}
-								</select>
-							</div>
-
-							<div>
-								<label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-									{t("diagnostic.intro.email")} *
-								</label>
-								<input
-									type="email"
-									id="email"
-									name="email"
-									value={formData.email}
-									onChange={handleFormChange}
-									className="input-field"
-									placeholder={t("diagnostic.intro.emailPlaceholder")}
-									required
-								/>
-								<p className="text-xs text-gray-500 mt-1">
-									{t("diagnostic.intro.emailHint")}
-								</p>
-							</div>
-
-							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-2">
-									{t("diagnostic.intro.language")}
-								</label>
-								<LanguageSelector />
-							</div>
-
-							<button type="submit" className="btn-primary w-full justify-center">
-								{t("diagnostic.intro.startButton")}
-							</button>
-						</form>
-					</motion.div>
-				</div>
+				<>
+					<DiagnosticHeader title={headerTitle} />
+					<DiagnosticIntro
+						questionnaireType={questionnaireType}
+						onSectorChange={handleSectorChange}
+						onLanguageChange={handleLanguageChange}
+						formData={formData}
+						onFormChange={handleFormChange}
+						onStart={handleStart}
+						questionsReady={!loadingQuestions && !!questionsData}
+					/>
+				</>
 			)}
 
 			{step === "questions" && currentQuestion && (
 				<>
-					<div className="bg-white shadow-sm">
-						<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-							<div className="flex items-center justify-between">
-								<span className="sm:text-lg font-bold text-gray-900">
-									{t("diagnostic.questions.header")}
-								</span>
-								<div className="text-lg text-gray-600">{formData.companyName}</div>
-							</div>
-						</div>
-					</div>
+					<DiagnosticHeader title={headerTitle} />
 
 					<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 						<SimpleProgressBar

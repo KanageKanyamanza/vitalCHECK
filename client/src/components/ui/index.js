@@ -9,4 +9,4 @@ export { default as UserGuideButton } from './UserGuideButton';
 export { default as SocialShare } from './SocialShare';
 
 // Design system UBB
-export { Button, Card, Section, Container, SectionHeading } from './ds';
+export { Button, Card, Section, Container, SectionHeading, FormField } from './ds';
