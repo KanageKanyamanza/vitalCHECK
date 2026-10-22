@@ -1512,7 +1512,9 @@
 				"companySize": "Choose your company size.",
 				"email": "Enter your email address.",
 				"emailInvalid": "This email address isn't valid. Example: name@company.com"
-			}
+			},
+			"panelTitle": "Five pillars, one clear score",
+			"panelText": "Answer one question at a time: your diagnostic builds up pillar by pillar."
 		},
 		"agriculture": {
 			"title": "Farm Business Assessment 10+ ha",

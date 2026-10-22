@@ -8,15 +8,16 @@ import { SCENES } from '../../illustrations/scenes'
  *
  * - `scene` : clé d'illustration (components/illustrations/scenes.jsx)
  * - `panelTitle` / `panelText` : message de réassurance affiché sous l'illustration
+ * - `offset` : hauteur de l'en-tête au-dessus (par défaut celle de la navbar du site)
  * - `width` : largeur max de la colonne du formulaire ("md" par défaut, "xl" pour les longs formulaires)
  */
 const WIDTHS = { md: 'max-w-md', lg: 'max-w-lg', xl: 'max-w-2xl' }
 
-const AuthLayout = ({ scene, title, subtitle, panelTitle, panelText, width = 'md', children, titleId = 'auth-title' }) => {
+const AuthLayout = ({ scene, title, subtitle, panelTitle, panelText, width = 'md', children, titleId = 'auth-title', offset = 'var(--ubb-header-h)' }) => {
   const Scene = SCENES[scene]
 
   return (
-    <div className="grid min-h-[calc(100vh-var(--ubb-header-h))] lg:grid-cols-2">
+    <div className="grid min-h-[calc(100vh-var(--auth-offset))] lg:grid-cols-2" style={{ '--auth-offset': offset }}>
       {/* Formulaire */}
       <section aria-labelledby={titleId} className="flex items-center justify-center bg-ubb-paper-soft px-4 py-10 sm:px-8 lg:bg-white lg:px-12">
         <div className={`w-full ${WIDTHS[width]}`}>
@@ -34,7 +35,7 @@ const AuthLayout = ({ scene, title, subtitle, panelTitle, panelText, width = 'md
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_80%_0%,rgb(var(--ubb-brand-700)/0.8),transparent_70%)]"
         />
-        <div className="sticky top-[var(--ubb-header-h)] flex min-h-[calc(100vh-var(--ubb-header-h))] flex-col items-center justify-center px-12 py-12">
+        <div className="sticky top-[var(--auth-offset)] flex min-h-[calc(100vh-var(--auth-offset))] flex-col items-center justify-center px-12 py-12">
           <div className="relative w-full max-w-[460px]">{Scene && <Scene />}</div>
           {(panelTitle || panelText) && (
             <div className="relative mt-4 max-w-sm text-center">

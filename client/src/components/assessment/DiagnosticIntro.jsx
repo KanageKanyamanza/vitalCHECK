@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Clock, Gift, ListChecks } from 'lucide-react'
-import { Button, FormField } from '../ui/ds'
+import { AuthLayout, Button, FormField } from '../ui/ds'
 import { NavbarLanguageSelector } from '../ui'
 import SectorPicker from './SectorPicker'
 
@@ -70,18 +70,19 @@ const DiagnosticIntro = ({
   })
 
   return (
-    <div className="ubb-container max-w-2xl py-8 sm:py-12">
-      <h1 className="ubb-heading text-ubb-title">
-        {t([`diagnostic.${questionnaireType}.title`, 'diagnostic.intro.title'])}
-      </h1>
-      <p className="mt-3 max-w-ubb-prose font-text text-ubb-lead text-ubb-ink-muted">
-        {t([`diagnostic.${questionnaireType}.subtitle`, 'diagnostic.intro.subtitle'])}
-      </p>
-
-      <ul className="mt-6 grid gap-3 sm:grid-cols-3">
+    <AuthLayout
+      scene="diagnostic"
+      width="xl"
+      offset="4rem"
+      title={t([`diagnostic.${questionnaireType}.title`, 'diagnostic.intro.title'])}
+      subtitle={t([`diagnostic.${questionnaireType}.subtitle`, 'diagnostic.intro.subtitle'])}
+      panelTitle={t('diagnostic.intro.panelTitle')}
+      panelText={t('diagnostic.intro.panelText')}
+    >
+      <ul className="flex flex-wrap gap-2">
         {REASSURANCE.map(({ key, icon: Icon }) => (
-          <li key={key} className="flex items-start gap-3 rounded-ubb-field bg-ubb-mist px-4 py-3">
-            <Icon className="mt-0.5 h-5 w-5 shrink-0 text-ubb-brand-900" aria-hidden="true" />
+          <li key={key} className="inline-flex items-center gap-2 rounded-full bg-ubb-mist px-4 py-2.5">
+            <Icon className="h-4 w-4 shrink-0 text-ubb-brand-900" aria-hidden="true" />
             <span className="font-text text-sm font-medium text-ubb-ink">
               {t(`diagnostic.intro.reassurance.${key}`)}
             </span>
@@ -89,7 +90,7 @@ const DiagnosticIntro = ({
         ))}
       </ul>
 
-      <form onSubmit={handleSubmit} noValidate className="ubb-card mt-8 space-y-7 p-5 sm:p-8">
+      <form onSubmit={handleSubmit} noValidate className="mt-8 space-y-7">
         <SectorPicker value={questionnaireType} onChange={onSectorChange} />
 
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -146,7 +147,7 @@ const DiagnosticIntro = ({
           {questionsReady ? t('diagnostic.intro.startButton') : t('diagnostic.loading.questions')}
         </Button>
       </form>
-    </div>
+    </AuthLayout>
   )
 }
 

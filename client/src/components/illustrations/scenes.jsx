@@ -329,10 +329,82 @@ export const ContactScene = () => {
   )
 }
 
+/** Diagnostic : le pentagone se remplit pilier après pilier, avec une horloge (quelques minutes). */
+export const DiagnosticScene = () => {
+  const reduce = useReducedMotion()
+  const float = useFloat(7, 5)
+  const v = pentagonVertices(128, 0)
+  const cx = 240
+  const cy = 225
+  return (
+    <Frame label="diagnostic">
+      <motion.g {...useReveal(0)}>
+        <g transform={`translate(${cx} ${cy})`}>
+          {v.map(([x, y], i) => {
+            const [nx, ny] = v[(i + 1) % 5]
+            return (
+              <motion.polygon
+                key={i}
+                points={`0,0 ${x.toFixed(1)},${y.toFixed(1)} ${nx.toFixed(1)},${ny.toFixed(1)}`}
+                stroke={C.white}
+                strokeWidth="5"
+                strokeLinejoin="round"
+                initial={reduce ? { fill: C.yellow } : { fill: C.mist }}
+                animate={{ fill: C.yellow }}
+                transition={{ duration: 0.5, delay: 0.6 + i * 0.55 }}
+              />
+            )
+          })}
+        </g>
+        {/* Une coche par pilier, au bord du pentagone */}
+        {pentagonVertices(128, 0).map(([x, y], i) => (
+          <motion.g
+            key={`c${i}`}
+            initial={reduce ? false : { scale: 0, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.4, delay: 0.9 + i * 0.55, ease: 'backOut' }}
+            style={{ transformOrigin: `${cx + x * 1.18}px ${cy + y * 1.18}px` }}
+          >
+            <circle cx={cx + x * 1.18} cy={cy + y * 1.18} r="17" fill={C.white} />
+            <path
+              d={`M ${cx + x * 1.18 - 7} ${cy + y * 1.18} l 5 5 l 9 -10`}
+              fill="none"
+              stroke={C.green}
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            />
+          </motion.g>
+        ))}
+      </motion.g>
+
+      {/* Horloge */}
+      <motion.g {...float}>
+        <circle cx="404" cy="86" r="34" fill={C.white} />
+        <circle cx="404" cy="86" r="26" fill="none" stroke={C.mist2} strokeWidth="5" />
+        <motion.line
+          x1="404"
+          y1="86"
+          x2="404"
+          y2="68"
+          stroke={C.greenDark}
+          strokeWidth="5"
+          strokeLinecap="round"
+          style={{ transformOrigin: '404px 86px' }}
+          animate={reduce ? undefined : { rotate: 360 }}
+          transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
+        />
+        <line x1="404" y1="86" x2="416" y2="92" stroke={C.yellow} strokeWidth="5" strokeLinecap="round" />
+      </motion.g>
+    </Frame>
+  )
+}
+
 export const SCENES = {
   login: LoginScene,
   register: RegisterScene,
   recovery: RecoveryScene,
   team: TeamScene,
   contact: ContactScene,
+  diagnostic: DiagnosticScene,
 }

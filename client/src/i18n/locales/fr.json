@@ -1570,7 +1570,9 @@
 				"companySize": "Choisissez la taille de votre entreprise.",
 				"email": "Indiquez votre adresse email.",
 				"emailInvalid": "Cette adresse email n'est pas valide. Exemple : nom@entreprise.com"
-			}
+			},
+			"panelTitle": "Cinq piliers, un score clair",
+			"panelText": "Répondez au rythme d'une question à la fois : votre diagnostic se construit pilier après pilier."
 		},
 		"agriculture": {
 			"title": "Diagnostic Exploitation Agricole +10 ha",
