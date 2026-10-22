@@ -293,9 +293,46 @@ export const TeamScene = () => {
   )
 }
 
+/** Contact : une enveloppe scellée du pentagone et des bulles de discussion. */
+export const ContactScene = () => {
+  const reduce = useReducedMotion()
+  const floatA = useFloat(9, 4.5)
+  const floatB = useFloat(7, 5.5, 1.2)
+  const dots = reduce
+    ? {}
+    : { animate: { opacity: [0.3, 1, 0.3] }, transition: { duration: 1.4, repeat: Infinity } }
+  return (
+    <Frame label="contact">
+      <motion.g {...useReveal(0)}>
+        {/* Enveloppe */}
+        <rect x="100" y="190" width="280" height="190" rx="22" fill={C.white} />
+        <path d="M100 212 a22 22 0 0 1 22 -22 h236 a22 22 0 0 1 22 22 l-140 98 z" fill={C.mist} />
+        <path d="M100 212 L240 310 L380 212" fill="none" stroke={C.mist2} strokeWidth="5" strokeLinejoin="round" />
+        <Pentagon cx={240} cy={312} r={26} done={5} />
+      </motion.g>
+
+      {/* Bulle jaune */}
+      <motion.g {...floatA}>
+        <path d="M290 78 h96 a18 18 0 0 1 18 18 v34 a18 18 0 0 1 -18 18 h-52 l-24 22 v-22 h-20 a18 18 0 0 1 -18 -18 v-34 a18 18 0 0 1 18 -18 z" fill={C.yellow} />
+        <rect x="306" y="100" width="64" height="8" rx="4" fill={C.greenDark} opacity="0.8" />
+        <rect x="306" y="118" width="40" height="8" rx="4" fill={C.greenDark} opacity="0.45" />
+      </motion.g>
+
+      {/* Bulle blanche (points d'écriture) */}
+      <motion.g {...floatB}>
+        <path d="M72 108 h86 a16 16 0 0 1 16 16 v28 a16 16 0 0 1 -16 16 h-62 l-20 18 v-18 h-4 a16 16 0 0 1 -16 -16 v-28 a16 16 0 0 1 16 -16 z" fill={C.white} />
+        {[0, 1, 2].map((i) => (
+          <motion.circle key={i} cx={96 + i * 22} cy="138" r="6" fill={C.green} {...dots} transition={reduce ? undefined : { ...dots.transition, delay: i * 0.25 }} />
+        ))}
+      </motion.g>
+    </Frame>
+  )
+}
+
 export const SCENES = {
   login: LoginScene,
   register: RegisterScene,
   recovery: RecoveryScene,
   team: TeamScene,
+  contact: ContactScene,
 }

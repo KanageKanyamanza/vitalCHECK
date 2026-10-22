@@ -28,19 +28,21 @@ const AuthLayout = ({ scene, title, subtitle, panelTitle, panelText, width = 'md
         </div>
       </section>
 
-      {/* Illustration (décorative) */}
-      <aside className="relative hidden overflow-hidden bg-ubb-brand-900 lg:flex lg:flex-col lg:items-center lg:justify-center lg:px-12 lg:py-12">
+      {/* Illustration (décorative) : reste centrée dans l'écran pendant le défilement du formulaire */}
+      <aside className="relative hidden overflow-clip bg-ubb-brand-900 lg:block">
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_70%_50%_at_80%_0%,rgb(var(--ubb-brand-700)/0.8),transparent_70%)]"
         />
-        <div className="relative w-full max-w-[460px]">{Scene && <Scene />}</div>
-        {(panelTitle || panelText) && (
-          <div className="relative mt-4 max-w-sm text-center">
-            {panelTitle && <p className="font-heading text-2xl font-semibold text-white">{panelTitle}</p>}
-            {panelText && <p className="mt-2 font-text text-ubb-body text-ubb-brand-200">{panelText}</p>}
-          </div>
-        )}
+        <div className="sticky top-[var(--ubb-header-h)] flex min-h-[calc(100vh-var(--ubb-header-h))] flex-col items-center justify-center px-12 py-12">
+          <div className="relative w-full max-w-[460px]">{Scene && <Scene />}</div>
+          {(panelTitle || panelText) && (
+            <div className="relative mt-4 max-w-sm text-center">
+              {panelTitle && <p className="font-heading text-2xl font-semibold text-white">{panelTitle}</p>}
+              {panelText && <p className="mt-2 font-text text-ubb-body text-ubb-brand-200">{panelText}</p>}
+            </div>
+          )}
+        </div>
       </aside>
     </div>
   )

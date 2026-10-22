@@ -703,6 +703,22 @@
 				"partnership": "Partnership",
 				"other": "Other"
 			}
+		},
+		"seo": {
+			"title": "Contact - vitalCHECK | Let's talk about your business",
+			"description": "A question about the diagnostic, a need for support or a partnership? Write to the vitalCHECK team, we reply quickly."
+		},
+		"errors": {
+			"name": "Enter your name.",
+			"email": "Enter your email address.",
+			"emailInvalid": "This email address isn't valid. Example: name@company.com",
+			"inquiryType": "Choose the type of request.",
+			"subject": "Enter the subject of your request.",
+			"message": "Write your message."
+		},
+		"sent": {
+			"title": "Message sent",
+			"again": "Send another message"
 		}
 	},
 	"about": {
