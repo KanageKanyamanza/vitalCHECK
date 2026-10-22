@@ -1243,20 +1243,21 @@
 		"otherMethodTitle": "Pay another way"
 	},
 	"paymentSuccess": {
-		"title": "Payment Successful!",
+		"title": "Payment successful",
 		"subtitle": "Thank you for your purchase. Your payment has been processed successfully.",
-		"orderDetails": "Order Details",
+		"orderDetails": "Order details",
 		"orderId": "Order ID",
 		"plan": "Plan",
 		"status": "Status",
 		"completed": "Completed",
-		"nextSteps": "What's Next?",
+		"nextSteps": "What's next?",
 		"confirmationEmail": "You will receive a confirmation email shortly with your payment summary.",
 		"accessInfo": "Our experts will contact you within 24 hours to arrange your services.",
 		"support": "All your deliverables will be sent directly to your email.",
-		"backToHome": "Back to Home",
-		"contactSupport": "Contact Support",
-		"needHelp": "Need help?"
+		"backToHome": "Back to home",
+		"contactSupport": "Contact support",
+		"needHelp": "Need help?",
+		"goToDashboard": "Go to my dashboard"
 	},
 	"pricing": {
 		"title": "vitalCHECK Pricing",

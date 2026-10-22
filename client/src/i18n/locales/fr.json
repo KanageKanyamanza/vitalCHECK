@@ -1301,20 +1301,21 @@
 		"otherMethodTitle": "Payer autrement"
 	},
 	"paymentSuccess": {
-		"title": "Paiement Réussi !",
+		"title": "Paiement réussi",
 		"subtitle": "Merci pour votre achat. Votre paiement a été traité avec succès.",
 		"orderDetails": "Détails de la commande",
 		"orderId": "ID de commande",
 		"plan": "Plan",
 		"status": "Statut",
 		"completed": "Terminé",
-		"nextSteps": "Et Maintenant ?",
+		"nextSteps": "Et maintenant ?",
 		"confirmationEmail": "Vous recevrez sous peu un email de confirmation avec le récapitulatif de votre paiement.",
 		"accessInfo": "Nos experts vous contacteront sous 24h pour organiser vos services.",
 		"support": "Tous vos livrables vous seront envoyés directement par email.",
 		"backToHome": "Retour à l'accueil",
-		"contactSupport": "Contacter le Support",
-		"needHelp": "Besoin d'aide ?"
+		"contactSupport": "Contacter le support",
+		"needHelp": "Besoin d'aide ?",
+		"goToDashboard": "Accéder à mon espace"
 	},
 	"pricing": {
 		"title": "Tarifs vitalCHECK",
