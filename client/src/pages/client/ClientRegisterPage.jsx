@@ -174,7 +174,7 @@ const ClientRegisterPage = () => {
       <div className="mt-8 flex flex-col gap-1 border-t border-ubb-brand-900/[0.08] pt-6 font-text text-ubb-small text-ubb-ink-muted">
         <p>
           {t('clientAuth.register.hasAccount')}{' '}
-          <Link to="/login" className="ubb-focus rounded font-semibold text-ubb-brand-900 underline underline-offset-4">
+          <Link to="/login" className="ubb-focus inline-flex min-h-[44px] items-center rounded font-semibold text-ubb-brand-900 underline underline-offset-4">
             {t('clientAuth.register.login')}
           </Link>
         </p>
