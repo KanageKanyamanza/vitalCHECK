@@ -1734,7 +1734,10 @@
 			"companyName": "Entreprise",
 			"password": "Mot de passe",
 			"loginAndJoin": "Se connecter et rejoindre",
-			"registerAndJoin": "Créer un compte et rejoindre"
+			"registerAndJoin": "Créer un compte et rejoindre",
+			"panelTitle": "Travaillez ensemble sur le même diagnostic",
+			"panelText": "Votre équipe partage les résultats et suit la progression de l'entreprise.",
+			"modeLabel": "Avez-vous déjà un compte ?"
 		}
 	},
 	"auth": {

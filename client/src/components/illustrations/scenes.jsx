@@ -249,8 +249,53 @@ export const RecoveryScene = () => {
   )
 }
 
+/** Équipe : 5 personnes reliées autour du pentagone. */
+export const TeamScene = () => {
+  const reduce = useReducedMotion()
+  const float = useFloat(5, 5)
+  const spots = pentagonVertices(138, 0).map(([x, y]) => [240 + x, 215 + y])
+  const tones = [C.yellow, C.greenMid, C.yellowSoft, C.green, C.yellow]
+  return (
+    <Frame label="team">
+      {spots.map(([x, y], i) => (
+        <motion.line
+          key={`l${i}`}
+          x1="240"
+          y1="215"
+          x2={x}
+          y2={y}
+          stroke={C.mist2}
+          strokeWidth="4"
+          strokeLinecap="round"
+          strokeDasharray="2 10"
+          initial={reduce ? false : { pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 0.8, delay: 0.3 + i * 0.12 }}
+        />
+      ))}
+      <motion.g {...float}>
+        <Pentagon cx={240} cy={215} r={52} done={5} />
+      </motion.g>
+      {spots.map(([x, y], i) => (
+        <motion.g
+          key={i}
+          initial={reduce ? false : { scale: 0, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.5, delay: 0.5 + i * 0.15, ease: 'easeOut' }}
+          style={{ transformOrigin: `${x}px ${y}px` }}
+        >
+          <circle cx={x} cy={y} r="32" fill={C.white} />
+          <circle cx={x} cy={y - 6} r="10" fill={tones[i]} />
+          <path d={`M ${x - 18} ${y + 22} a 18 15 0 0 1 36 0 z`} fill={tones[i]} />
+        </motion.g>
+      ))}
+    </Frame>
+  )
+}
+
 export const SCENES = {
   login: LoginScene,
   register: RegisterScene,
   recovery: RecoveryScene,
+  team: TeamScene,
 }

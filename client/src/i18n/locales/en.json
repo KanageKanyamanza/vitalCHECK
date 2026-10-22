@@ -1676,7 +1676,10 @@
 			"companyName": "Company",
 			"password": "Password",
 			"loginAndJoin": "Log in and join",
-			"registerAndJoin": "Create account and join"
+			"registerAndJoin": "Create account and join",
+			"panelTitle": "Work together on the same diagnostic",
+			"panelText": "Your team shares the results and follows the company's progress.",
+			"modeLabel": "Do you already have an account?"
 		}
 	},
 	"auth": {
