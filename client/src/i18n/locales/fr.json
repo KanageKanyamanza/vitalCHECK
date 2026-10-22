@@ -1736,5 +1736,31 @@
 			"loginAndJoin": "Se connecter et rejoindre",
 			"registerAndJoin": "Créer un compte et rejoindre"
 		}
+	},
+	"auth": {
+		"common": {
+			"email": "Adresse email",
+			"emailPlaceholder": "vous@entreprise.com",
+			"password": "Mot de passe",
+			"showPassword": "Afficher le mot de passe",
+			"hidePassword": "Masquer le mot de passe"
+		},
+		"login": {
+			"title": "Connexion",
+			"subtitle": "Accédez à votre espace client ou administrateur.",
+			"panelTitle": "Votre santé d'entreprise, suivie dans le temps",
+			"panelText": "Retrouvez vos scores, vos piliers et vos recommandations au même endroit.",
+			"passwordPlaceholder": "Votre mot de passe",
+			"forgot": "Mot de passe oublié ?",
+			"submit": "Se connecter",
+			"loading": "Connexion en cours...",
+			"invalid": "Email ou mot de passe incorrect. Vérifiez vos informations et réessayez.",
+			"successAdmin": "Connexion administrateur réussie",
+			"successClient": "Connexion réussie",
+			"detectedAdmin": "Compte administrateur détecté",
+			"detectedClient": "Compte client détecté",
+			"newHere": "Nouveau sur vitalCHECK ?",
+			"createAccount": "Créer un compte client"
+		}
 	}
 }
