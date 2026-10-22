@@ -1703,6 +1703,43 @@
 			"detectedClient": "Client account detected",
 			"newHere": "New to vitalCHECK?",
 			"createAccount": "Create a client account"
+		},
+		"register": {
+			"panelTitle": "Create your space in a minute",
+			"panelText": "Keep the history of your diagnostics and follow your business's growth."
+		},
+		"forgot": {
+			"title": "Forgot your password?",
+			"subtitle": "Enter your email address and we'll send you a link to choose a new one.",
+			"panelTitle": "Your account stays protected",
+			"panelText": "The reset link is personal and temporary.",
+			"submit": "Send the link",
+			"loading": "Sending...",
+			"sentTitle": "Check your inbox",
+			"sentText": "If an account exists for {{email}}, a reset link has just been sent.",
+			"sentHint": "Check your spam folder if you can't find it.",
+			"sentToast": "Reset email sent",
+			"error": "The email couldn't be sent. Try again in a moment.",
+			"backToLogin": "Back to login"
+		},
+		"reset": {
+			"title": "New password",
+			"subtitle": "Choose a password you don't use anywhere else.",
+			"newPassword": "New password",
+			"confirm": "Confirm password",
+			"hint": "At least 6 characters.",
+			"tooShort": "The password must be at least 6 characters long.",
+			"mismatch": "The two passwords don't match.",
+			"submit": "Save password",
+			"loading": "Saving...",
+			"successToast": "Password reset",
+			"error": "The password couldn't be reset. Try again.",
+			"invalidTitle": "Invalid or expired link",
+			"invalidText": "This reset link is no longer valid. Request a new one.",
+			"newLink": "Request a new link",
+			"successTitle": "Password changed",
+			"successText": "You'll be redirected to the login page in a few seconds.",
+			"goToLogin": "Log in"
 		}
 	}
 }

@@ -1761,6 +1761,43 @@
 			"detectedClient": "Compte client détecté",
 			"newHere": "Nouveau sur vitalCHECK ?",
 			"createAccount": "Créer un compte client"
+		},
+		"register": {
+			"panelTitle": "Créez votre espace en une minute",
+			"panelText": "Gardez l'historique de vos diagnostics et suivez la croissance de votre entreprise."
+		},
+		"forgot": {
+			"title": "Mot de passe oublié ?",
+			"subtitle": "Entrez votre adresse email : nous vous envoyons un lien pour en choisir un nouveau.",
+			"panelTitle": "Votre compte reste protégé",
+			"panelText": "Le lien de réinitialisation est personnel et temporaire.",
+			"submit": "Envoyer le lien",
+			"loading": "Envoi en cours...",
+			"sentTitle": "Vérifiez votre boîte mail",
+			"sentText": "Si un compte existe pour {{email}}, un lien de réinitialisation vient d'être envoyé.",
+			"sentHint": "Pensez à regarder dans vos courriers indésirables si vous ne le voyez pas.",
+			"sentToast": "Email de réinitialisation envoyé",
+			"error": "L'email n'a pas pu être envoyé. Réessayez dans un instant.",
+			"backToLogin": "Retour à la connexion"
+		},
+		"reset": {
+			"title": "Nouveau mot de passe",
+			"subtitle": "Choisissez un mot de passe que vous n'utilisez pas ailleurs.",
+			"newPassword": "Nouveau mot de passe",
+			"confirm": "Confirmer le mot de passe",
+			"hint": "6 caractères minimum.",
+			"tooShort": "Le mot de passe doit contenir au moins 6 caractères.",
+			"mismatch": "Les deux mots de passe ne correspondent pas.",
+			"submit": "Enregistrer le mot de passe",
+			"loading": "Enregistrement...",
+			"successToast": "Mot de passe réinitialisé",
+			"error": "Le mot de passe n'a pas pu être réinitialisé. Réessayez.",
+			"invalidTitle": "Lien invalide ou expiré",
+			"invalidText": "Ce lien de réinitialisation n'est plus valable. Demandez-en un nouveau.",
+			"newLink": "Demander un nouveau lien",
+			"successTitle": "Mot de passe modifié",
+			"successText": "Vous allez être redirigé vers la connexion dans quelques secondes.",
+			"goToLogin": "Se connecter"
 		}
 	}
 }

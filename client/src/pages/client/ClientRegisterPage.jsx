@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
-import { User, Mail, Lock, Building2, Phone, Eye, EyeOff, UserPlus, ArrowRight } from 'lucide-react'
 import { useClientAuth } from '../../context/ClientAuthContext'
+import { AuthLayout, Button, FormField, PasswordInput } from '../../components/ui/ds'
 
 const ClientRegisterPage = () => {
   const { t } = useTranslation()
@@ -21,10 +20,17 @@ const ClientRegisterPage = () => {
     companySize: '',
     phone: ''
   })
-  const [showPassword, setShowPassword] = useState(false)
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [errors, setErrors] = useState({})
+  const focusFirstError = useRef(false)
+
+  // Après un envoi refusé, le focus va sur le premier champ en erreur
+  useEffect(() => {
+    if (!focusFirstError.current) return
+    focusFirstError.current = false
+    const first = Object.keys(errors).find((key) => errors[key])
+    if (first) document.getElementById(`register-${first}`)?.focus()
+  }, [errors])
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -54,7 +60,10 @@ const ClientRegisterPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
-    if (!validate()) return
+    if (!validate()) {
+      focusFirstError.current = true
+      return
+    }
 
     setLoading(true)
 
@@ -92,254 +101,88 @@ const ClientRegisterPage = () => {
 
   if (authLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      <div className="flex min-h-[60vh] items-center justify-center" role="status" aria-label={t('common.processing')}>
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-ubb-brand-900 border-t-transparent" />
       </div>
     )
   }
 
+  const field = (name) => ({
+    id: `register-${name}`,
+    name,
+    value: formData[name],
+    onChange: handleChange,
+    'aria-invalid': errors[name] ? 'true' : 'false',
+    'aria-describedby': errors[name] ? `register-${name}-error` : undefined,
+  })
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-50 via-white to-secondary-50 flex items-center justify-center px-4 py-24">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-2xl w-full"
-      >
-        {/* Header */}
-        <div className="text-center mb-8">
-          <motion.div
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2 }}
-          >
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-2">
-              {t('clientAuth.register.title')}
-            </h1>
-            <p className="text-gray-600">
-              {t('clientAuth.register.subtitle')}
-            </p>
-          </motion.div>
+    <AuthLayout
+      scene="register"
+      width="xl"
+      title={t('clientAuth.register.title')}
+      subtitle={t('clientAuth.register.subtitle')}
+      panelTitle={t('auth.register.panelTitle')}
+      panelText={t('auth.register.panelText')}
+    >
+      <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <FormField id="register-firstName" label={t('clientAuth.register.firstName')} error={errors.firstName}>
+            <input type="text" autoComplete="given-name" className="ubb-input" placeholder={t('clientAuth.register.firstNamePlaceholder')} required {...field('firstName')} />
+          </FormField>
+          <FormField id="register-lastName" label={t('clientAuth.register.lastName')} error={errors.lastName}>
+            <input type="text" autoComplete="family-name" className="ubb-input" placeholder={t('clientAuth.register.lastNamePlaceholder')} required {...field('lastName')} />
+          </FormField>
         </div>
 
-        {/* Register Form */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.3 }}
-          className="bg-white rounded-2xl shadow-xl p-8"
-        >
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Name Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('clientAuth.register.firstName')}
-                </label>
-                <input
-                  type="text"
-                  name="firstName"
-                  value={formData.firstName}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.firstName ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                  placeholder={t('clientAuth.register.firstNamePlaceholder')}
-                />
-                {errors.firstName && <p className="text-red-500 text-xs mt-1">{errors.firstName}</p>}
-              </div>
+        <FormField id="register-email" label={t('clientAuth.register.email')} error={errors.email}>
+          <input type="email" autoComplete="email" inputMode="email" className="ubb-input" placeholder={t('clientAuth.register.emailPlaceholder')} required {...field('email')} />
+        </FormField>
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('clientAuth.register.lastName')}
-                </label>
-                <input
-                  type="text"
-                  name="lastName"
-                  value={formData.lastName}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.lastName ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                  placeholder={t('clientAuth.register.lastNamePlaceholder')}
-                />
-                {errors.lastName && <p className="text-red-500 text-xs mt-1">{errors.lastName}</p>}
-              </div>
-            </div>
+        <FormField id="register-companyName" label={t('clientAuth.register.companyName')} error={errors.companyName}>
+          <input type="text" autoComplete="organization" className="ubb-input" placeholder={t('clientAuth.register.companyNamePlaceholder')} required {...field('companyName')} />
+        </FormField>
 
-            {/* Email */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('clientAuth.register.email')}
-              </label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.email ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                  placeholder={t('clientAuth.register.emailPlaceholder')}
-                  required
-                />
-              </div>
-              {errors.email && <p className="text-red-500 text-xs mt-1">{errors.email}</p>}
-            </div>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <FormField id="register-companySize" label={t('clientAuth.register.companySize')} error={errors.companySize}>
+            <select className="ubb-input" required {...field('companySize')}>
+              <option value="">{t('clientAuth.register.companySizePlaceholder')}</option>
+              <option value="micro">{t('landing.sizes.micro')}</option>
+              <option value="sme">{t('landing.sizes.sme')}</option>
+              <option value="large-sme">{t('landing.sizes.large-sme')}</option>
+            </select>
+          </FormField>
+          <FormField id="register-phone" label={t('clientAuth.register.phone')} optional={t('common.optional')}>
+            <input type="tel" autoComplete="tel" inputMode="tel" className="ubb-input" placeholder={t('clientAuth.register.phonePlaceholder')} {...field('phone')} />
+          </FormField>
+        </div>
 
-            {/* Company Info */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('clientAuth.register.companyName')}
-              </label>
-              <div className="relative">
-                <Building2 className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="text"
-                  name="companyName"
-                  value={formData.companyName}
-                  onChange={handleChange}
-                  className={`w-full pl-10 pr-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.companyName ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                  placeholder={t('clientAuth.register.companyNamePlaceholder')}
-                  required
-                />
-              </div>
-              {errors.companyName && <p className="text-red-500 text-xs mt-1">{errors.companyName}</p>}
-            </div>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <FormField id="register-password" label={t('clientAuth.register.password')} error={errors.password}>
+            <PasswordInput autoComplete="new-password" placeholder={t('clientAuth.register.passwordPlaceholder')} required {...field('password')} />
+          </FormField>
+          <FormField id="register-confirmPassword" label={t('clientAuth.register.confirmPassword')} error={errors.confirmPassword}>
+            <PasswordInput autoComplete="new-password" placeholder={t('clientAuth.register.confirmPasswordPlaceholder')} required {...field('confirmPassword')} />
+          </FormField>
+        </div>
 
-            {/* Company size */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  {t('clientAuth.register.companySize')}
-                </label>
-                <select
-                  name="companySize"
-                  value={formData.companySize}
-                  onChange={handleChange}
-                  className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.companySize ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                  required
-                >
-                  <option value="">{t('clientAuth.register.companySizePlaceholder')}</option>
-                  <option value="micro">{t('landing.sizes.micro')}</option>
-                  <option value="sme">{t('landing.sizes.sme')}</option>
-                  <option value="large-sme">{t('landing.sizes.large-sme')}</option>
-                </select>
-                {errors.companySize && <p className="text-red-500 text-xs mt-1">{errors.companySize}</p>}
-              </div>
-            </div>
+        <Button type="submit" size="lg" disabled={loading} className="w-full">
+          {loading ? t('common.processing') : t('clientAuth.register.submit')}
+        </Button>
+      </form>
 
-            {/* Phone */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('clientAuth.register.phone')} {t('common.optional')}
-              </label>
-              <div className="relative">
-                <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type="tel"
-                  name="phone"
-                  value={formData.phone}
-                  onChange={handleChange}
-                  className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                  placeholder={t('clientAuth.register.phonePlaceholder')}
-                />
-              </div>
-            </div>
-
-            {/* Password */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('clientAuth.register.password')}
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.password ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                  placeholder={t('clientAuth.register.passwordPlaceholder')}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-              {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
-            </div>
-
-            {/* Confirm Password */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                {t('clientAuth.register.confirmPassword')}
-              </label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-                <input
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  className={`w-full pl-10 pr-12 py-3 border rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent ${errors.confirmPassword ? 'border-red-500' : 'border-gray-300'
-                    }`}
-                  placeholder={t('clientAuth.register.confirmPasswordPlaceholder')}
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-              {errors.confirmPassword && <p className="text-red-500 text-xs mt-1">{errors.confirmPassword}</p>}
-            </div>
-
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {loading ? (
-                <>
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                  {t('common.processing')}
-                </>
-              ) : (
-                <>
-                  <UserPlus className="w-5 h-5 mr-2" />
-                  {t('clientAuth.register.submit')}
-                </>
-              )}
-            </button>
-          </form>
-
-          {/* Links */}
-          <div className="mt-6 text-center space-y-3">
-            <p className="text-sm text-gray-600">
-              {t('clientAuth.register.hasAccount')}{' '}
-              <Link to="/login" className="text-primary-600 hover:text-primary-700 font-semibold">
-                {t('clientAuth.register.login')}
-              </Link>
-            </p>
-            <Link to="/" className="flex items-center justify-center text-sm text-gray-500 hover:text-gray-700">
-              <ArrowRight className="w-4 h-4 mr-1 rotate-180" />
-              {t('clientAuth.register.backToHome')}
-            </Link>
-          </div>
-        </motion.div>
-      </motion.div>
-    </div>
+      <div className="mt-8 flex flex-col gap-1 border-t border-ubb-brand-900/[0.08] pt-6 font-text text-ubb-small text-ubb-ink-muted">
+        <p>
+          {t('clientAuth.register.hasAccount')}{' '}
+          <Link to="/login" className="ubb-focus rounded font-semibold text-ubb-brand-900 underline underline-offset-4">
+            {t('clientAuth.register.login')}
+          </Link>
+        </p>
+        <Link to="/" className="ubb-focus inline-flex min-h-[44px] items-center rounded underline underline-offset-4 hover:text-ubb-ink">
+          {t('clientAuth.register.backToHome')}
+        </Link>
+      </div>
+    </AuthLayout>
   )
 }
 
