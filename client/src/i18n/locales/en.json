@@ -1269,7 +1269,8 @@
 				"currency": "FCFA",
 				"period": "",
 				"description": "Discovery and pre-qualification",
-				"button": "Start for free"
+				"button": "Start for free",
+				"label": "Free"
 			},
 			"standard": {
 				"name": "STANDARD",
@@ -1281,7 +1282,8 @@
 				"annualPeriod": "/year",
 				"description": "Continuous improvement and tracking",
 				"button": "Select",
-				"popular": "Most popular"
+				"popular": "Most popular",
+				"label": "Standard"
 			},
 			"premium": {
 				"name": "PREMIUM",
@@ -1294,7 +1296,8 @@
 				"oneShotPrice": "199 €",
 				"oneShotFCFA": "130,000 FCFA",
 				"description": "Consulting and financing",
-				"button": "Select"
+				"button": "Select",
+				"label": "Premium"
 			},
 			"diagnostic": {
 				"name": "DIAGNOSTIC SERVICE",
@@ -1305,7 +1308,8 @@
 				"includes": "Each engagement concludes with a strategic action plan followed by three months of guided implementation.",
 				"retainer": "At the end of the intervention, clients pay a performance-based retainer equal to 1.5% of the sales increase generated through the program, payable over a 12-month period.",
 				"button": "Request Diagnostic Service",
-				"special": "Special Pack"
+				"special": "Special Pack",
+				"label": "Diagnostic service"
 			}
 		},
 		"enterpriseRecommendations": {
@@ -1397,6 +1401,13 @@
 			"emailSupport": "Response within 24h",
 			"whatsappSupport": "Priority response",
 			"phoneSupport": "Dedicated support"
+		},
+		"card": {
+			"annual": "or {{price}} {{currency}}{{period}} (2 months free)",
+			"noCard": "No credit card needed",
+			"included": "Included:",
+			"everythingIn": "Everything in {{plan}}, plus:",
+			"billingNote": "Secure online payment with PayPal, billed monthly. Amounts in CFA francs (FCFA)."
 		}
 	},
 	"chatbot": {

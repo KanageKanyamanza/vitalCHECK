@@ -1327,7 +1327,8 @@
 				"currency": "FCFA",
 				"period": "",
 				"description": "Découverte et préqualification",
-				"button": "Commencer gratuitement"
+				"button": "Commencer gratuitement",
+				"label": "Gratuit"
 			},
 			"standard": {
 				"name": "STANDARD",
@@ -1339,7 +1340,8 @@
 				"annualPeriod": "/an",
 				"description": "Amélioration continue et suivi",
 				"button": "Sélectionner",
-				"popular": "Plus populaire"
+				"popular": "Plus populaire",
+				"label": "Standard"
 			},
 			"premium": {
 				"name": "PREMIUM",
@@ -1352,7 +1354,8 @@
 				"oneShotPrice": "199 €",
 				"oneShotFCFA": "130 000 FCFA",
 				"description": "Consulting et financement",
-				"button": "Sélectionner"
+				"button": "Sélectionner",
+				"label": "Premium"
 			},
 			"diagnostic": {
 				"name": "SERVICE DE DIAGNOSTIC",
@@ -1363,7 +1366,8 @@
 				"includes": "Chaque engagement se termine par un plan d'action stratégique suivi de trois mois de mise en œuvre guidée.",
 				"retainer": "À la fin de l'intervention, les clients paient une commission de performance égale à 1,5% de l'augmentation des ventes générée par le programme, payable sur une période de 12 mois.",
 				"button": "Demander le Service de Diagnostic",
-				"special": "Pack Spécial"
+				"special": "Pack Spécial",
+				"label": "Service de diagnostic"
 			}
 		},
 		"enterpriseRecommendations": {
@@ -1455,6 +1459,13 @@
 			"emailSupport": "Réponse sous 24h",
 			"whatsappSupport": "Réponse prioritaire",
 			"phoneSupport": "Support dédié"
+		},
+		"card": {
+			"annual": "ou {{price}} {{currency}}{{period}} (2 mois offerts)",
+			"noCard": "Sans carte bancaire",
+			"included": "Inclus :",
+			"everythingIn": "Tout le plan {{plan}}, plus :",
+			"billingNote": "Paiement en ligne sécurisé par PayPal, facturé au mois. Montants en francs CFA (FCFA)."
 		}
 	},
 	"chatbot": {
