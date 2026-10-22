@@ -10,7 +10,7 @@ const FREE_POINTS = ['score', 'level', 'recommendations']
 const OFFERS = [
   { key: 'sectors', icon: LayoutGrid, href: '#secteurs' },
   { key: 'followUp', icon: LineChart, to: '/pricing' },
-  { key: 'expert', icon: UserCheck, to: '/pricing' },
+  { key: 'expert', icon: UserCheck, to: '/pricing#service-diagnostic' },
 ]
 
 const offerLinkClass =

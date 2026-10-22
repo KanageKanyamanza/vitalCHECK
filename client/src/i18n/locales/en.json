@@ -1408,6 +1408,11 @@
 			"included": "Included:",
 			"everythingIn": "Everything in {{plan}}, plus:",
 			"billingNote": "Secure online payment with PayPal, billed monthly. Amounts in CFA francs (FCFA)."
+		},
+		"service": {
+			"badge": "Support from a UBB expert",
+			"feeTitle": "Performance fee",
+			"question": "Ask a question before ordering"
 		}
 	},
 	"chatbot": {

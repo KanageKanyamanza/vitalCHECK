@@ -1,19 +1,32 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { Helmet } from 'react-helmet-async'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
-import { Check, X, Star } from 'lucide-react'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { Check, X } from 'lucide-react'
 import { SocialShare } from '../components/ui'
 import { Section, Container } from '../components/ui/ds'
 import PlanCard from '../components/pricing/PlanCard'
+import DiagnosticServiceOffer from '../components/pricing/DiagnosticServiceOffer'
 import { PLAN_IDS, POPULAR_PLAN, ENTERPRISE_TYPES, SUPPORT } from '../components/pricing/planData'
 
 const PricingPage = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const enterpriseTypes = ENTERPRISE_TYPES
+
+  // Lien direct vers une section (ex. /pricing#service-diagnostic depuis la landing).
+  // App.jsx remonte en haut (défilement fluide) à chaque changement de page : on attend
+  // la fin de ce retour avant de descendre vers la section.
+  useEffect(() => {
+    if (!location.hash) return
+    const timer = setTimeout(() => {
+      document.getElementById(location.hash.slice(1))?.scrollIntoView({ block: 'start' })
+    }, 600)
+    return () => clearTimeout(timer)
+  }, [location.hash])
 
   const handleContactClick = () => {
     navigate('/contact')
@@ -64,89 +77,7 @@ const PricingPage = () => {
           </Container>
         </Section>
 
-        {/* Special Diagnostic Service Pack */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
-            className="relative"
-          >
-            {/* Special Badge */}
-            <div className="absolute -top-4 left-1/2 transform -translate-x-1/2 z-10">
-              <div className="bg-yellow-400 text-gray-900 px-6 py-2 rounded-full text-sm font-semibold flex items-center shadow-lg">
-                <Star className="w-4 h-4 mr-2 fill-current" />
-                {t('pricing.plans.diagnostic.special')}
-              </div>
-            </div>
-
-            {/* Diagnostic Service Card */}
-            <div className="relative bg-yellow-50 rounded-2xl border-4 border-yellow-400 p-8 md:p-12 shadow-2xl">
-              <div className="max-w-4xl mx-auto">
-                <div className="text-center mb-8">
-                  <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">
-                    {t('pricing.plans.diagnostic.name')}
-                  </h2>
-                  <p className="text-xl text-yellow-800 font-semibold mb-6">
-                    {t('pricing.plans.diagnostic.subtitle')}
-                  </p>
-                  
-                  {/* Pricing */}
-                  <div className="flex flex-wrap justify-center items-center gap-4 mb-6">
-                    <div className="bg-white rounded-lg px-6 py-3 shadow-md">
-                      <span className="text-3xl md:text-4xl font-bold text-yellow-600">
-                        {t('pricing.plans.diagnostic.price')}
-                      </span>
-                    </div>
-                    <div className="text-gray-600 font-semibold">{t('pricing.common.or')}</div>
-                    <div className="bg-white rounded-lg px-6 py-3 shadow-md">
-                      <span className="text-3xl md:text-4xl font-bold text-yellow-600">
-                        {t('pricing.plans.diagnostic.alternativePrice')}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Description */}
-                <div className="space-y-6 text-left">
-                  <div className="bg-white/80 rounded-lg p-6 shadow-md">
-                    <p className="text-gray-700 leading-relaxed">
-                      {t('pricing.plans.diagnostic.description')}
-                    </p>
-                  </div>
-
-                  <div className="bg-white/80 rounded-lg p-6 shadow-md">
-                    <div className="flex items-start space-x-3">
-                      <Check className="w-6 h-6 text-green-600 flex-shrink-0 mt-1" />
-                      <p className="text-gray-700 leading-relaxed">
-                        {t('pricing.plans.diagnostic.includes')}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="bg-yellow-100 rounded-lg p-6 shadow-md border-2 border-yellow-300">
-                    <div className="flex items-start space-x-3">
-                      <Star className="w-6 h-6 text-yellow-600 flex-shrink-0 mt-1 fill-current" />
-                      <p className="text-gray-800 leading-relaxed font-medium">
-                        {t('pricing.plans.diagnostic.retainer')}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                {/* CTA Button */}
-                <div className="mt-8 text-center">
-                  <button
-                    onClick={() => navigate('/checkout?plan=diagnostic')}
-                    className="bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-4 px-8 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 text-lg"
-                  >
-                    {t('pricing.plans.diagnostic.button')}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        </div>
+        <DiagnosticServiceOffer />
 
         {/* Features Comparison Table */}
         <div className="bg-white py-16">

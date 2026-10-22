@@ -1466,6 +1466,11 @@
 			"included": "Inclus :",
 			"everythingIn": "Tout le plan {{plan}}, plus :",
 			"billingNote": "Paiement en ligne sécurisé par PayPal, facturé au mois. Montants en francs CFA (FCFA)."
+		},
+		"service": {
+			"badge": "Accompagnement par un expert UBB",
+			"feeTitle": "Commission de performance",
+			"question": "Poser une question avant de commander"
 		}
 	},
 	"chatbot": {
