@@ -1234,7 +1234,13 @@
 		"contactUsForPayment": "Contact us to arrange payment by bank transfer or discuss other payment options.",
 		"contactUs": "Contact Us",
 		"securePayment": "🔒 Secure payment protected by SSL encryption",
-		"invalidPlan": "Invalid plan selected. Redirecting..."
+		"invalidPlan": "Invalid plan selected. Redirecting...",
+		"dueToday": "Amount to pay",
+		"billing": "Billing",
+		"annualInfo": "Annual price: {{price}} ({{priceXOF}}), 2 months free. Online payment is monthly.",
+		"account": "Payment linked to {{email}}",
+		"secureNote": "Secure payment, protected by SSL encryption",
+		"otherMethodTitle": "Pay another way"
 	},
 	"paymentSuccess": {
 		"title": "Payment Successful!",

@@ -1292,7 +1292,13 @@
 		"contactUsForPayment": "Contactez-nous pour organiser un paiement par virement bancaire ou discuter d'autres options de paiement.",
 		"contactUs": "Nous contacter",
 		"securePayment": "🔒 Paiement sécurisé protégé par cryptage SSL",
-		"invalidPlan": "Plan invalide sélectionné. Redirection..."
+		"invalidPlan": "Plan invalide sélectionné. Redirection...",
+		"dueToday": "Montant à payer",
+		"billing": "Facturation",
+		"annualInfo": "Prix annuel : {{price}} ({{priceXOF}}), soit 2 mois offerts. Le paiement en ligne se fait au mois.",
+		"account": "Paiement associé à {{email}}",
+		"secureNote": "Paiement sécurisé, protégé par chiffrement SSL",
+		"otherMethodTitle": "Payer autrement"
 	},
 	"paymentSuccess": {
 		"title": "Paiement Réussi !",
