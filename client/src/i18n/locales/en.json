@@ -1418,6 +1418,12 @@
 			"included": "Included",
 			"notIncluded": "Not included",
 			"choosePlan": "See a plan's details"
+		},
+		"seo": {
+			"title": "Pricing - vitalCHECK | Plans for your business",
+			"description": "Discover vitalCHECK plans: Free, Standard and Premium, plus the Diagnostic service supported by a UBB expert. Choose the right option for your SME.",
+			"keywords": "pricing, price, subscription, vitalCHECK, business diagnostic, SME, small business, cooperatives",
+			"shareDescription": "Choose the vitalCHECK plan that fits your business: Free, Standard, Premium or Diagnostic service."
 		}
 	},
 	"chatbot": {

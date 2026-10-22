@@ -1476,6 +1476,12 @@
 			"included": "Inclus",
 			"notIncluded": "Non inclus",
 			"choosePlan": "Voir le détail d'un plan"
+		},
+		"seo": {
+			"title": "Tarifs - vitalCHECK | Plans pour votre entreprise",
+			"description": "Découvrez les plans vitalCHECK : Gratuit, Standard et Premium, et le Service de diagnostic accompagné par un expert UBB. Choisissez la solution adaptée à votre PME.",
+			"keywords": "tarifs, prix, abonnement, vitalCHECK, diagnostic entreprise, PME, TPE, coopératives",
+			"shareDescription": "Choisissez le plan vitalCHECK adapté à votre entreprise : Gratuit, Standard, Premium ou Service de diagnostic."
 		}
 	},
 	"chatbot": {
