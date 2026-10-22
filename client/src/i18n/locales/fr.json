@@ -1278,20 +1278,15 @@
 		"title": "Paiement",
 		"backToPricing": "Retour aux tarifs",
 		"orderSummary": "Récapitulatif de la commande",
-		"price": "Prix",
 		"or": "ou",
 		"monthly": "par mois",
 		"annual": "par an",
 		"oneTime": "Paiement unique",
-		"annualPrice": "Prix annuel",
 		"selectPaymentMethod": "Sélectionnez le mode de paiement",
 		"paypal": "PayPal ou carte bancaire",
 		"paypalDescription": "Payez en toute sécurité avec Carte bancaire ou PayPal",
-		"bankTransfer": "Virement bancaire / Nous contacter",
-		"bankTransferDescription": "Payez par virement bancaire ou contactez-nous pour d'autres options",
 		"contactUsForPayment": "Contactez-nous pour organiser un paiement par virement bancaire ou discuter d'autres options de paiement.",
 		"contactUs": "Nous contacter",
-		"securePayment": "🔒 Paiement sécurisé protégé par cryptage SSL",
 		"invalidPlan": "Plan invalide sélectionné. Redirection...",
 		"dueToday": "Montant à payer",
 		"billing": "Facturation",
@@ -1303,7 +1298,6 @@
 	"paymentSuccess": {
 		"title": "Paiement réussi",
 		"subtitle": "Merci pour votre achat. Votre paiement a été traité avec succès.",
-		"orderDetails": "Détails de la commande",
 		"orderId": "ID de commande",
 		"plan": "Plan",
 		"status": "Statut",
@@ -1380,34 +1374,12 @@
 		"enterpriseRecommendations": {
 			"title": "Quelle solution pour votre entreprise ?",
 			"subtitle": "Découvrez nos recommandations selon le type et la taille de votre organisation",
-			"recommended": "Recommandé",
 			"tableHeaders": {
-				"enterpriseType": "Type d'entreprise",
-				"recommendedPlan": "Plan recommandé",
-				"description": "Description"
+				"recommendedPlan": "Plan recommandé"
 			}
 		},
 		"support": {
-			"title": "Support et accompagnement",
-			"tableHeaders": {
-				"supportType": "Type de support"
-			},
-			"subtitle": "Notre équipe est là pour vous accompagner à chaque étape",
-			"email": {
-				"title": "Support Email",
-				"description": "Disponible pour tous les plans",
-				"responseTime": "Réponse sous 24h"
-			},
-			"whatsapp": {
-				"title": "Support WhatsApp",
-				"description": "Plans Standard et Premium",
-				"responseTime": "Réponse prioritaire"
-			},
-			"phone": {
-				"title": "Support Téléphonique",
-				"description": "Plan Premium uniquement",
-				"responseTime": "Support dédié"
-			}
+			"title": "Support et accompagnement"
 		},
 		"cta": {
 			"title": "Prêt à améliorer votre entreprise ?",
@@ -1416,7 +1388,6 @@
 			"contactUs": "Nous contacter"
 		},
 		"common": {
-			"twoMonthsFree": "(2 mois offerts)",
 			"or": "ou"
 		},
 		"featuresComparison": {

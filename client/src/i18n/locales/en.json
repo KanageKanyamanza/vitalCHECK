@@ -1220,20 +1220,15 @@
 		"title": "Checkout",
 		"backToPricing": "Back to pricing",
 		"orderSummary": "Order Summary",
-		"price": "Price",
 		"or": "or",
 		"monthly": "per month",
 		"annual": "per year",
 		"oneTime": "One-time payment",
-		"annualPrice": "Annual price",
 		"selectPaymentMethod": "Select payment method",
 		"paypal": "Credit card or PayPal",
 		"paypalDescription": "Pay securely with Credit card or PayPal",
-		"bankTransfer": "Bank Transfer / Contact Us",
-		"bankTransferDescription": "Pay by bank transfer or contact us for other options",
 		"contactUsForPayment": "Contact us to arrange payment by bank transfer or discuss other payment options.",
 		"contactUs": "Contact Us",
-		"securePayment": "🔒 Secure payment protected by SSL encryption",
 		"invalidPlan": "Invalid plan selected. Redirecting...",
 		"dueToday": "Amount to pay",
 		"billing": "Billing",
@@ -1245,7 +1240,6 @@
 	"paymentSuccess": {
 		"title": "Payment successful",
 		"subtitle": "Thank you for your purchase. Your payment has been processed successfully.",
-		"orderDetails": "Order details",
 		"orderId": "Order ID",
 		"plan": "Plan",
 		"status": "Status",
@@ -1322,34 +1316,12 @@
 		"enterpriseRecommendations": {
 			"title": "Which solution for your business?",
 			"subtitle": "Discover our recommendations based on your organization's type and size",
-			"recommended": "Recommended",
 			"tableHeaders": {
-				"enterpriseType": "Enterprise type",
-				"recommendedPlan": "Recommended plan",
-				"description": "Description"
+				"recommendedPlan": "Recommended plan"
 			}
 		},
 		"support": {
-			"title": "Support and assistance",
-			"tableHeaders": {
-				"supportType": "Support type"
-			},
-			"subtitle": "Our team is here to support you at every step",
-			"email": {
-				"title": "Email Support",
-				"description": "Available for all plans",
-				"responseTime": "Response within 24h"
-			},
-			"whatsapp": {
-				"title": "WhatsApp Support",
-				"description": "Standard and Premium plans",
-				"responseTime": "Priority response"
-			},
-			"phone": {
-				"title": "Phone Support",
-				"description": "Premium plan only",
-				"responseTime": "Dedicated support"
-			}
+			"title": "Support and assistance"
 		},
 		"cta": {
 			"title": "Ready to improve your business?",
@@ -1358,7 +1330,6 @@
 			"contactUs": "Contact us"
 		},
 		"common": {
-			"twoMonthsFree": "(2 months free)",
 			"or": "or"
 		},
 		"featuresComparison": {
