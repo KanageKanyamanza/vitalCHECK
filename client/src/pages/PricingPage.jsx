@@ -3,19 +3,20 @@ import { motion } from 'framer-motion'
 import { Helmet } from 'react-helmet-async'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Check, X } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { SocialShare } from '../components/ui'
 import { Section, Container } from '../components/ui/ds'
 import PlanCard from '../components/pricing/PlanCard'
 import DiagnosticServiceOffer from '../components/pricing/DiagnosticServiceOffer'
-import { PLAN_IDS, POPULAR_PLAN, ENTERPRISE_TYPES, SUPPORT } from '../components/pricing/planData'
+import PlanComparison from '../components/pricing/PlanComparison'
+import PlanRecommendations from '../components/pricing/PlanRecommendations'
+import { PLAN_IDS, POPULAR_PLAN } from '../components/pricing/planData'
 
 const PricingPage = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
 
-  const enterpriseTypes = ENTERPRISE_TYPES
 
   // Lien direct vers une section (ex. /pricing#service-diagnostic depuis la landing).
   // App.jsx remonte en haut (défilement fluide) à chaque changement de page : on attend
@@ -79,228 +80,9 @@ const PricingPage = () => {
 
         <DiagnosticServiceOffer />
 
-        {/* Features Comparison Table */}
-        <div className="bg-white py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.4 }}
-              className="text-center mb-12"
-            >
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                {t('pricing.featuresComparison.title')}
-              </h2>
-              <p className="text-lg text-gray-600">
-                {t('pricing.featuresComparison.subtitle')}
-              </p>
-            </motion.div>
+        <PlanComparison />
 
-            <div className="flex justify-center">
-              <div className="overflow-x-auto">
-                <table className="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-black">
-                  <thead className="bg-gray-50">
-                    <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 border-b-2 border-black">
-                      {t('pricing.featuresComparison.featuresLabel')}
-                    </th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 border-b-2 border-black">
-                      {t('pricing.plans.free.name')}
-                    </th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 border-b-2 border-black bg-primary-50">
-                      {t('pricing.plans.standard.name')}
-                    </th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 border-b-2 border-black">
-                      {t('pricing.plans.premium.name')}
-                    </th>
-                    </tr>
-                  </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {[
-                    { key: 'accessEvaluation', free: true, standard: true, premium: true },
-                    { key: 'globalScorePillars', free: true, standard: true, premium: true },
-                    { key: 'basicPdfReport', free: true, standard: true, premium: true },
-                    { key: 'personalizedRecommendations', free: false, standard: true, premium: true },
-                    { key: 'multipleEvaluations', free: false, standard: true, premium: true },
-                    { key: 'historyTracking', free: false, standard: true, premium: true },
-                    { key: 'comparativeAnalysis', free: false, standard: false, premium: true },
-                    { key: 'expertConsultation', free: false, standard: false, premium: true },
-                    { key: 'dashboardAdvancedExport', free: false, standard: true, premium: true },
-                    { key: 'evaluatedCompanyBadge', free: false, standard: false, premium: true },
-                    { key: 'emailSupport', free: true, standard: true, premium: true },
-                    { key: 'whatsappPhoneSupport', free: false, standard: true, premium: true },
-                    { key: 'multipleUsers', free: false, standard: false, premium: true }
-                  ].map((feature, index) => (
-                    <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                      <td className="px-6 py-4 text-sm text-gray-900">
-                        {t(`pricing.features.${feature.key}`)}
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        {feature.free ? (
-                          <Check className="w-5 h-5 text-green-500 mx-auto" />
-                        ) : (
-                          <X className="w-5 h-5 text-red-500 mx-auto" />
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-center bg-primary-50">
-                        {feature.standard ? (
-                          <Check className="w-5 h-5 text-green-500 mx-auto" />
-                        ) : (
-                          <X className="w-5 h-5 text-red-500 mx-auto" />
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        {feature.premium ? (
-                          <Check className="w-5 h-5 text-green-500 mx-auto" />
-                        ) : (
-                          <X className="w-5 h-5 text-red-500 mx-auto" />
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Enterprise Type Recommendations Table */}
-        <div className="bg-gray-50 py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              className="text-center mb-12"
-            >
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                {t('pricing.enterpriseRecommendations.title')}
-              </h2>
-              <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-                {t('pricing.enterpriseRecommendations.subtitle')}
-              </p>
-            </motion.div>
-
-            <div className="flex justify-center">
-              <div className="overflow-x-auto">
-                <table className="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-black">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 border-b">
-                        {t('pricing.enterpriseRecommendations.tableHeaders.enterpriseType')}
-                      </th>
-                      <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 border-b">
-                        {t('pricing.enterpriseRecommendations.tableHeaders.recommendedPlan')}
-                      </th>
-                      <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 border-b">
-                        {t('pricing.enterpriseRecommendations.tableHeaders.description')}
-                      </th>
-                    </tr>
-                  </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {enterpriseTypes.map((enterprise, index) => (
-                    <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          <enterprise.icon className="mr-3 h-5 w-5 text-ubb-brand-900" aria-hidden="true" />
-                          <span className="text-sm font-medium text-gray-900">{t(`pricing.enterpriseTypes.${enterprise.key}`)}</span>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        <div className="inline-block rounded-full bg-ubb-brand-50 px-3 py-1 text-xs font-semibold text-ubb-brand-950">
-                          {t(`pricing.plans.${enterprise.plan}.label`)}
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-sm text-gray-600">
-                        {t(`pricing.enterpriseDescriptions.${enterprise.key}`)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Support Information Table */}
-        <div className="bg-white py-16">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.8 }}
-              className="text-center mb-12"
-            >
-              <h2 className="text-3xl font-bold text-gray-900 mb-4">
-                {t('pricing.support.title')}
-              </h2>
-              <p className="text-lg text-gray-600">
-                {t('pricing.support.subtitle')}
-              </p>
-            </motion.div>
-
-            <div className="flex justify-center">
-              <div className="overflow-x-auto">
-                <table className="bg-white rounded-lg shadow-lg overflow-hidden border-2 border-black">
-                  <thead className="bg-gray-50">
-                    <tr>
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 border-b-2 border-black">
-                      {t('pricing.support.tableHeaders.supportType')}
-                    </th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 border-b-2 border-black">
-                      {t('pricing.plans.free.name')}
-                    </th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 border-b-2 border-black bg-primary-50">
-                      {t('pricing.plans.standard.name')}
-                    </th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 border-b-2 border-black">
-                      {t('pricing.plans.premium.name')}
-                    </th>
-                    </tr>
-                  </thead>
-                <tbody className="divide-y divide-gray-200">
-                  {SUPPORT.map((support, index) => (
-                    <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                      <td className="px-6 py-4">
-                        <div className="flex items-center">
-                          <support.icon className="h-5 w-5 text-ubb-brand-900" aria-hidden="true" />
-                          <div className="ml-3">
-                            <div className="text-sm font-medium text-gray-900">{t(`pricing.supportTypes.${support.key}`)}</div>
-                            <div className="text-sm text-gray-500">{t(`pricing.supportDescriptions.${support.key}`)}</div>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        {support.free ? (
-                          <Check className="w-5 h-5 text-green-500 mx-auto" />
-                        ) : (
-                          <X className="w-5 h-5 text-red-500 mx-auto" />
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-center bg-primary-50">
-                        {support.standard ? (
-                          <Check className="w-5 h-5 text-green-500 mx-auto" />
-                        ) : (
-                          <X className="w-5 h-5 text-red-500 mx-auto" />
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-center">
-                        {support.premium ? (
-                          <Check className="w-5 h-5 text-green-500 mx-auto" />
-                        ) : (
-                          <X className="w-5 h-5 text-red-500 mx-auto" />
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
+        <PlanRecommendations />
 
         {/* CTA Section */}
         <div className="bg-primary-600 text-white py-16">

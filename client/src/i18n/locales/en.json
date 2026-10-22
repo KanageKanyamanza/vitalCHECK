@@ -1413,6 +1413,11 @@
 			"badge": "Support from a UBB expert",
 			"feeTitle": "Performance fee",
 			"question": "Ask a question before ordering"
+		},
+		"comparison": {
+			"included": "Included",
+			"notIncluded": "Not included",
+			"choosePlan": "See a plan's details"
 		}
 	},
 	"chatbot": {

@@ -1471,6 +1471,11 @@
 			"badge": "Accompagnement par un expert UBB",
 			"feeTitle": "Commission de performance",
 			"question": "Poser une question avant de commander"
+		},
+		"comparison": {
+			"included": "Inclus",
+			"notIncluded": "Non inclus",
+			"choosePlan": "Voir le détail d'un plan"
 		}
 	},
 	"chatbot": {
