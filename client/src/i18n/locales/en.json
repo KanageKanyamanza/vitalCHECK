@@ -1608,7 +1608,12 @@
 				"forbidden": "Access denied: this diagnostic belongs to another account.",
 				"loginRequired": "Log in to download the premium report.",
 				"downloadError": "The premium report couldn't be downloaded. Try again in a moment."
-			}
+			},
+			"scoreLabel": "Overall score: {{score}} out of 100, level {{level}}",
+			"radarLabel": "Radar of the 5 pillars. {{details}}",
+			"sending": "Sending...",
+			"downloading": "Downloading...",
+			"otherEmail": "Use another email address"
 		},
 		"header": {
 			"titleSector": "{{sector}} diagnostic",

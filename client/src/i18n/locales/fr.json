@@ -1666,7 +1666,12 @@
 				"forbidden": "Accès refusé : ce diagnostic est lié à un autre compte.",
 				"loginRequired": "Connectez-vous pour télécharger le rapport premium.",
 				"downloadError": "Le rapport premium n'a pas pu être téléchargé. Réessayez dans quelques instants."
-			}
+			},
+			"scoreLabel": "Score global : {{score}} sur 100, niveau {{level}}",
+			"radarLabel": "Radar des 5 piliers. {{details}}",
+			"sending": "Envoi en cours...",
+			"downloading": "Téléchargement...",
+			"otherEmail": "Utiliser une autre adresse email"
 		},
 		"header": {
 			"titleSector": "Diagnostic {{sector}}",
