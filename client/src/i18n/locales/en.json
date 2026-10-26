@@ -535,7 +535,8 @@
 		"updates": {
 			"title": "Updates",
 			"content": "We reserve the right to modify this privacy policy. Changes will be published on this page with a new update date."
-		}
+		},
+		"seoDescription": "How vitalCHECK collects, uses and protects your personal data and your diagnostic answers."
 	},
 	"terms": {
 		"title": "Terms of Service",
@@ -622,7 +623,8 @@
 		"updates": {
 			"title": "Updates",
 			"content": "We reserve the right to modify these terms. Changes will be notified to users and published on this page."
-		}
+		},
+		"seoDescription": "The terms of use of the vitalCHECK platform: service, obligations, payment, liability and governing law."
 	},
 	"premium": {
 		"upgradeTitle": "Upgrade to Premium",
@@ -1771,5 +1773,9 @@
 			"successText": "You'll be redirected to the login page in a few seconds.",
 			"goToLogin": "Log in"
 		}
+	},
+	"legal": {
+		"toc": "Contents",
+		"tocLabel": "Document contents"
 	}
 }

@@ -535,7 +535,8 @@
 		"updates": {
 			"title": "Modifications",
 			"content": "Nous nous réservons le droit de modifier cette politique de confidentialité. Les modifications seront publiées sur cette page avec une nouvelle date de mise à jour."
-		}
+		},
+		"seoDescription": "Comment vitalCHECK collecte, utilise et protège vos données personnelles et vos réponses au diagnostic."
 	},
 	"terms": {
 		"title": "Conditions d'Utilisation",
@@ -622,7 +623,8 @@
 		"updates": {
 			"title": "Modifications",
 			"content": "Nous nous réservons le droit de modifier ces conditions. Les modifications seront notifiées aux utilisateurs et publiées sur cette page."
-		}
+		},
+		"seoDescription": "Les conditions d'utilisation de la plateforme vitalCHECK : service, obligations, paiement, responsabilité et droit applicable."
 	},
 	"premium": {
 		"upgradeTitle": "Passez au Premium",
@@ -1829,5 +1831,9 @@
 			"successText": "Vous allez être redirigé vers la connexion dans quelques secondes.",
 			"goToLogin": "Se connecter"
 		}
+	},
+	"legal": {
+		"toc": "Sommaire",
+		"tocLabel": "Sommaire du document"
 	}
 }
