@@ -1067,7 +1067,8 @@
 		"seo": {
 			"title": "Blog vitalCHECK - Conseils et actualités business",
 			"description": "Articles sur la santé d'entreprise, le management, la croissance et les bonnes pratiques pour les PME et startups africaines.",
-			"keywords": "blog business, conseils entreprise, management, croissance PME, startup, vitalCHECK, actualités business"
+			"keywords": "blog business, conseils entreprise, management, croissance PME, startup, vitalCHECK, actualités business",
+			"articleFallback": "Article du blog vitalCHECK"
 		},
 		"categoryLabel": "Filtrer par catégorie",
 		"typeLabel": "Filtrer par type d'article",
@@ -1077,7 +1078,19 @@
 		"resultsCount_other": "{{count}} articles trouvés",
 		"likeAction": "Aimer l'article : {{title}}",
 		"paginationLabel": "Pagination des articles",
-		"pageN": "Page {{page}}"
+		"pageN": "Page {{page}}",
+		"noContent": "Contenu non disponible.",
+		"likesCount_one": "{{count}} mention j'aime",
+		"likesCount_other": "{{count}} mentions j'aime",
+		"preview": {
+			"banner": "Mode prévisualisation : article non publié",
+			"close": "Fermer"
+		},
+		"cta": {
+			"title": "Et votre entreprise, où en est-elle ?",
+			"text": "Répondez à 25 questions en 5 à 7 minutes et obtenez votre score de santé, vos points forts et vos premières recommandations.",
+			"button": "Démarrer mon diagnostic gratuit"
+		}
 	},
 	"reportDownload": {
 		"title": "Votre Rapport vitalCHECK",

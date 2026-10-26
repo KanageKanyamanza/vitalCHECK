@@ -1009,7 +1009,8 @@
 		"seo": {
 			"title": "vitalCHECK Blog - Business tips and news",
 			"description": "Articles on business health, management, growth and good practices for African SMEs and startups.",
-			"keywords": "business blog, business tips, management, SME growth, startup, vitalCHECK, business news"
+			"keywords": "business blog, business tips, management, SME growth, startup, vitalCHECK, business news",
+			"articleFallback": "vitalCHECK blog article"
 		},
 		"categoryLabel": "Filter by category",
 		"typeLabel": "Filter by article type",
@@ -1019,7 +1020,19 @@
 		"resultsCount_other": "{{count}} articles found",
 		"likeAction": "Like the article: {{title}}",
 		"paginationLabel": "Article pagination",
-		"pageN": "Page {{page}}"
+		"pageN": "Page {{page}}",
+		"noContent": "Content not available.",
+		"likesCount_one": "{{count}} like",
+		"likesCount_other": "{{count}} likes",
+		"preview": {
+			"banner": "Preview mode: unpublished article",
+			"close": "Close"
+		},
+		"cta": {
+			"title": "And your business, where does it stand?",
+			"text": "Answer 25 questions in 5 to 7 minutes and get your health score, your strengths and your first recommendations.",
+			"button": "Start my free diagnostic"
+		}
 	},
 	"reportDownload": {
 		"title": "Your vitalCHECK Report",

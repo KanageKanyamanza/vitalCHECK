@@ -169,6 +169,101 @@
   }
 }
 
+
+/* ── Texte d'article (blog) : mise en forme du HTML saisi dans l'éditeur ──
+   Le plugin Tailwind « typography » n'est pas installé : ces règles en tiennent lieu. */
+@layer components {
+  .ubb-article {
+    @apply font-text text-ubb-body text-ubb-ink;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+  }
+  .ubb-article > * + * {
+    @apply mt-5;
+  }
+  .ubb-article > :first-child {
+    margin-top: 0;
+  }
+  .ubb-article h1,
+  .ubb-article h2,
+  .ubb-article h3,
+  .ubb-article h4 {
+    @apply font-heading font-semibold text-ubb-ink;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+  .ubb-article h1,
+  .ubb-article h2 {
+    @apply mt-10 text-2xl;
+  }
+  .ubb-article h3 {
+    @apply mt-8 text-xl;
+  }
+  .ubb-article h4 {
+    @apply mt-6 text-lg;
+  }
+  .ubb-article ul,
+  .ubb-article ol {
+    @apply pl-6;
+  }
+  .ubb-article ul {
+    list-style: disc;
+  }
+  .ubb-article ol {
+    list-style: decimal;
+  }
+  .ubb-article li {
+    @apply pl-1;
+  }
+  .ubb-article li + li {
+    @apply mt-2;
+  }
+  .ubb-article li::marker {
+    @apply text-ubb-brand-900;
+  }
+  .ubb-article a {
+    @apply font-semibold text-ubb-brand-900 underline decoration-ubb-accent-500 decoration-2 underline-offset-4;
+  }
+  .ubb-article a:hover {
+    @apply decoration-ubb-brand-900;
+  }
+  .ubb-article strong {
+    @apply font-semibold;
+  }
+  .ubb-article blockquote {
+    @apply rounded-r-ubb-field border-l-4 border-ubb-accent-500 bg-ubb-accent-50 px-5 py-4 font-heading text-lg font-medium;
+  }
+  .ubb-article img,
+  .ubb-article video {
+    @apply h-auto max-w-full rounded-ubb-card;
+  }
+  .ubb-article figure figcaption {
+    @apply mt-2 text-ubb-small text-ubb-ink-muted;
+  }
+  .ubb-article hr {
+    @apply my-10 border-ubb-brand-900/10;
+  }
+  .ubb-article table {
+    @apply block w-full overflow-x-auto text-ubb-small;
+  }
+  .ubb-article th,
+  .ubb-article td {
+    @apply border border-ubb-brand-900/10 px-3 py-2 text-left;
+  }
+  .ubb-article th {
+    @apply bg-ubb-brand-50 font-semibold;
+  }
+  .ubb-article code {
+    @apply rounded bg-ubb-brand-50 px-1.5 py-0.5 text-[0.9em];
+  }
+  .ubb-article pre {
+    @apply overflow-x-auto rounded-ubb-card bg-ubb-brand-950 p-4 text-ubb-small text-white;
+  }
+  .ubb-article pre code {
+    @apply bg-transparent p-0;
+  }
+}
+
 /* Scrollbar personnalisée orange */
 ::-webkit-scrollbar {
   width: 8px;
