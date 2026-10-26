@@ -761,7 +761,7 @@
 			"content1": "vitalCHECK was born from the belief that too many SMEs fail not because of a lack of potential, but because they lack the right support.",
 			"example": {
 				"title": "One concrete example",
-				"content": "Our work with STM, a company on the brink of bankruptcy, Through diagnosis, strategic guidance, and implementation, we helped them stabilize, restructure, and regain trust.",
+				"content": "Our work with STM, a company on the brink of bankruptcy. Through diagnosis, strategic guidance, and implementation, we helped them stabilize, restructure, and regain trust.",
 				"result": "As a direct result, their revenues grew, and they doubled our consulting fee in recognition of the measurable impact."
 			},
 			"content2": "This experience reinforced our mission: to stand beside entrepreneurs when they need clarity most, helping them turn setbacks into growth."
@@ -793,6 +793,10 @@
 			"subtitle": "Let's build your next chapter together.",
 			"startAssessment": "CLICK HERE",
 			"contactUs": "Contact us"
+		},
+		"seo": {
+			"title": "About - vitalCHECK | Helping SMEs grow",
+			"description": "vitalCHECK was created to give SMEs a clear diagnostic and practical support: our mission, our values and our story."
 		}
 	},
 	"analytics": {
