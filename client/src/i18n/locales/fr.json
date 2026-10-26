@@ -927,7 +927,7 @@
 		"readTime": "min de lecture",
 		"publishedOn": "Publié le",
 		"by": "par",
-		"views": "vues",
+		"views": "Vues",
 		"likes": "likes",
 		"share": "Partager",
 		"search": "Rechercher dans le blog...",
@@ -984,7 +984,7 @@
 			"operations": "Opérations",
 			"gouvernance": "Gouvernance"
 		},
-		"tagsLabel": "Tags",
+		"tagsLabel": "Thèmes",
 		"tags": {
 			"diagnostic": "Diagnostic",
 			"entreprise": "Entreprise",
@@ -1063,7 +1063,21 @@
 				"published": "Article publié avec succès",
 				"unpublished": "Article dépublié avec succès"
 			}
-		}
+		},
+		"seo": {
+			"title": "Blog vitalCHECK - Conseils et actualités business",
+			"description": "Articles sur la santé d'entreprise, le management, la croissance et les bonnes pratiques pour les PME et startups africaines.",
+			"keywords": "blog business, conseils entreprise, management, croissance PME, startup, vitalCHECK, actualités business"
+		},
+		"categoryLabel": "Filtrer par catégorie",
+		"typeLabel": "Filtrer par type d'article",
+		"untitled": "Titre non disponible",
+		"noExcerpt": "Extrait non disponible",
+		"resultsCount_one": "{{count}} article trouvé",
+		"resultsCount_other": "{{count}} articles trouvés",
+		"likeAction": "Aimer l'article : {{title}}",
+		"paginationLabel": "Pagination des articles",
+		"pageN": "Page {{page}}"
 	},
 	"reportDownload": {
 		"title": "Votre Rapport vitalCHECK",

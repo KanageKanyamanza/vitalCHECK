@@ -869,7 +869,7 @@
 		"readTime": "min read",
 		"publishedOn": "Published on",
 		"by": "by",
-		"views": "views",
+		"views": "Views",
 		"likes": "likes",
 		"share": "Share",
 		"search": "Search in blog...",
@@ -897,7 +897,7 @@
 			"operations": "Operations",
 			"gouvernance": "Governance"
 		},
-		"tagsLabel": "Tags",
+		"tagsLabel": "Topics",
 		"tags": {
 			"diagnostic": "Diagnostic",
 			"entreprise": "Business",
@@ -1005,7 +1005,21 @@
 				"published": "Article published successfully",
 				"unpublished": "Article unpublished successfully"
 			}
-		}
+		},
+		"seo": {
+			"title": "vitalCHECK Blog - Business tips and news",
+			"description": "Articles on business health, management, growth and good practices for African SMEs and startups.",
+			"keywords": "business blog, business tips, management, SME growth, startup, vitalCHECK, business news"
+		},
+		"categoryLabel": "Filter by category",
+		"typeLabel": "Filter by article type",
+		"untitled": "Title not available",
+		"noExcerpt": "Excerpt not available",
+		"resultsCount_one": "{{count}} article found",
+		"resultsCount_other": "{{count}} articles found",
+		"likeAction": "Like the article: {{title}}",
+		"paginationLabel": "Article pagination",
+		"pageN": "Page {{page}}"
 	},
 	"reportDownload": {
 		"title": "Your vitalCHECK Report",
