@@ -308,12 +308,13 @@ const BlogPage = () => {
                 const title = getLocalizedContent(blog.title, t('blog.untitled'))
                 const slug = getLocalizedContent(blog.slug, blog.slug)
                 const normalizedTags = normalizeTags(blog.tags)
-                const hasImage = blog.featuredImage?.url && blog.featuredImage.url.trim() !== ''
+                const coverUrl = (blog.featuredImage?.url || blog.images?.[0]?.url || '').trim()
+                const hasImage = coverUrl !== ''
                 return (
                   <li key={blog._id} className="group relative flex flex-col overflow-hidden rounded-ubb-card border border-ubb-brand-900/10 bg-white shadow-ubb-sm transition-shadow focus-within:ring-2 focus-within:ring-ubb-brand-900 focus-within:ring-offset-2 hover:shadow-ubb-md">
                     {hasImage ? (
                       <img
-                        src={blog.featuredImage.url}
+                        src={coverUrl}
                         alt=""
                         loading="lazy"
                         decoding="async"

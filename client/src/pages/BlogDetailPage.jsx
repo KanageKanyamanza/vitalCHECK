@@ -363,7 +363,7 @@ const BlogDetailPage = () => {
     : slug || ''
 
   const seoUrl = localizedSlug ? `/blog/${localizedSlug}` : '/blog'
-  const seoImage = blog?.featuredImage?.url || '/og-image.png'
+  const seoImage = blog?.featuredImage?.url || blog?.images?.[0]?.url || '/og-image.png'
   const normalizedTags = normalizeTags(blog.tags)
 
   const imagesAt = (position) => (blog.images || []).filter((img) => img.position === position)
@@ -527,8 +527,8 @@ const BlogDetailPage = () => {
                   const relatedSlug = getLocalizedContent(relatedBlog.slug, relatedBlog.slug)
                   return (
                     <li key={relatedBlog._id} className="relative flex gap-3 rounded-ubb-card border border-ubb-brand-900/10 bg-white p-3 transition-shadow focus-within:ring-2 focus-within:ring-ubb-brand-900 hover:shadow-ubb-sm">
-                      {relatedBlog.featuredImage?.url && (
-                        <img src={relatedBlog.featuredImage.url} alt="" loading="lazy" className="h-16 w-16 shrink-0 rounded-ubb-field object-cover" />
+                      {(relatedBlog.featuredImage?.url || relatedBlog.images?.[0]?.url) && (
+                        <img src={relatedBlog.featuredImage?.url || relatedBlog.images[0].url} alt="" loading="lazy" className="h-16 w-16 shrink-0 rounded-ubb-field object-cover" />
                       )}
                       <div className="min-w-0">
                         <p className="flex items-center gap-1.5 font-text text-xs font-semibold text-ubb-brand-900">
