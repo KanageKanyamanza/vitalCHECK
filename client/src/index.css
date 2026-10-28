@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@400;500;600;700;800&display=swap');
+@import './styles/tokens.css';
 
 @tailwind base;
 @tailwind components;
@@ -28,6 +29,72 @@
 }
 
 @layer components {
+  /* ── Design system UBB (docs/design-system.md) ───────────────────────── */
+  .ubb-container {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .ubb-section {
+    @apply py-16 sm:py-20 lg:py-24;
+    scroll-margin-top: var(--ubb-header-h);
+  }
+
+  .ubb-heading {
+    @apply font-heading text-ubb-ink;
+    font-optical-sizing: auto;
+    text-wrap: balance;
+  }
+
+  .ubb-focus {
+    @apply focus:outline-none focus-visible:ring-2 focus-visible:ring-ubb-brand-900 focus-visible:ring-offset-2 focus-visible:ring-offset-white;
+  }
+
+  .ubb-btn {
+    @apply ubb-focus inline-flex min-h-[48px] items-center justify-center gap-2 rounded-full px-6 py-3 text-center font-text text-base font-semibold leading-tight transition-colors duration-200 disabled:cursor-not-allowed disabled:opacity-60;
+  }
+
+  .ubb-btn-sm {
+    @apply min-h-[44px] px-5 py-2.5 text-sm;
+  }
+
+  .ubb-btn-lg {
+    @apply min-h-[56px] px-6 py-4 text-base sm:px-8 sm:text-lg;
+  }
+
+  /* CTA principal : fond jaune, texte vert profond (6.5:1) */
+  .ubb-btn-primary {
+    @apply bg-ubb-accent-500 text-ubb-brand-950 hover:bg-ubb-accent-600;
+  }
+
+  .ubb-btn-secondary {
+    @apply bg-ubb-brand-900 text-white hover:bg-ubb-brand-800;
+  }
+
+  .ubb-btn-outline {
+    @apply border border-ubb-brand-900/20 bg-white text-ubb-brand-900 hover:border-ubb-brand-900/40 hover:bg-ubb-brand-50;
+  }
+
+  /* Bouton discret sur fond vert */
+  .ubb-btn-on-dark {
+    @apply border border-white/30 text-white hover:bg-white/10 focus-visible:ring-ubb-accent-500 focus-visible:ring-offset-ubb-brand-900;
+  }
+
+  .ubb-card {
+    @apply rounded-ubb-card border border-ubb-brand-900/[0.07] bg-white shadow-ubb-sm;
+  }
+
+  .ubb-input {
+    @apply ubb-focus block min-h-[48px] w-full rounded-ubb-field border border-ubb-brand-900/20 bg-white px-4 py-3 font-text text-base text-ubb-ink placeholder:text-ubb-ink-muted/70 transition-colors hover:border-ubb-brand-900/35 focus-visible:border-ubb-brand-900;
+  }
+
+  .ubb-input[aria-invalid='true'] {
+    @apply border-red-600 hover:border-red-600;
+  }
+
+  .ubb-label {
+    @apply mb-1.5 block font-text text-sm font-semibold text-ubb-ink;
+  }
+
   .btn-primary {
     @apply bg-primary-500 hover:bg-primary-600 text-white font-medium py-3 px-6 rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2;
   }
@@ -99,6 +166,101 @@
       linear-gradient(-45deg, transparent 75%, rgba(34, 197, 94, 0.05) 75%);
     background-size: 20px 20px;
     background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  }
+}
+
+
+/* ── Texte d'article (blog) : mise en forme du HTML saisi dans l'éditeur ──
+   Le plugin Tailwind « typography » n'est pas installé : ces règles en tiennent lieu. */
+@layer components {
+  .ubb-article {
+    @apply font-text text-ubb-body text-ubb-ink;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+  }
+  .ubb-article > * + * {
+    @apply mt-5;
+  }
+  .ubb-article > :first-child {
+    margin-top: 0;
+  }
+  .ubb-article h1,
+  .ubb-article h2,
+  .ubb-article h3,
+  .ubb-article h4 {
+    @apply font-heading font-semibold text-ubb-ink;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+  .ubb-article h1,
+  .ubb-article h2 {
+    @apply mt-10 text-2xl;
+  }
+  .ubb-article h3 {
+    @apply mt-8 text-xl;
+  }
+  .ubb-article h4 {
+    @apply mt-6 text-lg;
+  }
+  .ubb-article ul,
+  .ubb-article ol {
+    @apply pl-6;
+  }
+  .ubb-article ul {
+    list-style: disc;
+  }
+  .ubb-article ol {
+    list-style: decimal;
+  }
+  .ubb-article li {
+    @apply pl-1;
+  }
+  .ubb-article li + li {
+    @apply mt-2;
+  }
+  .ubb-article li::marker {
+    @apply text-ubb-brand-900;
+  }
+  .ubb-article a {
+    @apply font-semibold text-ubb-brand-900 underline decoration-ubb-accent-500 decoration-2 underline-offset-4;
+  }
+  .ubb-article a:hover {
+    @apply decoration-ubb-brand-900;
+  }
+  .ubb-article strong {
+    @apply font-semibold;
+  }
+  .ubb-article blockquote {
+    @apply rounded-r-ubb-field border-l-4 border-ubb-accent-500 bg-ubb-accent-50 px-5 py-4 font-heading text-lg font-medium;
+  }
+  .ubb-article img,
+  .ubb-article video {
+    @apply h-auto max-w-full rounded-ubb-card;
+  }
+  .ubb-article figure figcaption {
+    @apply mt-2 text-ubb-small text-ubb-ink-muted;
+  }
+  .ubb-article hr {
+    @apply my-10 border-ubb-brand-900/10;
+  }
+  .ubb-article table {
+    @apply block w-full overflow-x-auto text-ubb-small;
+  }
+  .ubb-article th,
+  .ubb-article td {
+    @apply border border-ubb-brand-900/10 px-3 py-2 text-left;
+  }
+  .ubb-article th {
+    @apply bg-ubb-brand-50 font-semibold;
+  }
+  .ubb-article code {
+    @apply rounded bg-ubb-brand-50 px-1.5 py-0.5 text-[0.9em];
+  }
+  .ubb-article pre {
+    @apply overflow-x-auto rounded-ubb-card bg-ubb-brand-950 p-4 text-ubb-small text-white;
+  }
+  .ubb-article pre code {
+    @apply bg-transparent p-0;
   }
 }
 

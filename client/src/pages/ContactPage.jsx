@@ -1,34 +1,33 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { motion } from "framer-motion";
 import { toast } from "react-hot-toast";
-import { useNavigate } from "react-router-dom";
+import { MapPin, Phone, Mail, Clock, CheckCircle2 } from "lucide-react";
 import { useAssessment } from "../context/AssessmentContext";
 import { SocialShare } from "../components/ui";
+import { AuthLayout, Button, FormField } from "../components/ui/ds";
+import SEOHead from "../components/seo/SEOHead";
+import { API_BASE_URL } from "../services/api";
+
+const EMPTY_FORM = {
+	name: "",
+	email: "",
+	company: "",
+	phone: "",
+	subject: "",
+	message: "",
+	inquiryType: "",
+};
+
+const INQUIRY_TYPES = ["general", "assessment", "premium", "technical", "partnership", "other"];
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const ContactPage = () => {
 	const { t } = useTranslation();
-	const navigate = useNavigate();
 	const { user, assessment } = useAssessment();
-	const [formData, setFormData] = useState({
-		name: "",
-		email: "",
-		company: "",
-		phone: "",
-		subject: "",
-		message: "",
-		inquiryType: "",
-	});
+	const [formData, setFormData] = useState(EMPTY_FORM);
+	const [errors, setErrors] = useState({});
 	const [isSubmitting, setIsSubmitting] = useState(false);
-
-	const inquiryTypes = [
-		{ value: "general", label: t("contact.form.inquiryTypes.general") },
-		{ value: "assessment", label: t("contact.form.inquiryTypes.assessment") },
-		{ value: "premium", label: t("contact.form.inquiryTypes.premium") },
-		{ value: "technical", label: t("contact.form.inquiryTypes.technical") },
-		{ value: "partnership", label: t("contact.form.inquiryTypes.partnership") },
-		{ value: "other", label: t("contact.form.inquiryTypes.other") },
-	];
+	const [isSent, setIsSent] = useState(false);
 
 	// Pré-remplir les champs avec les données de l'évaluation
 	useEffect(() => {
@@ -53,18 +52,35 @@ const ContactPage = () => {
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;
-		setFormData((prev) => ({
-			...prev,
-			[name]: value,
-		}));
+		setFormData((prev) => ({ ...prev, [name]: value }));
+		if (errors[name]) setErrors((prev) => ({ ...prev, [name]: "" }));
+	};
+
+	const validate = () => {
+		const next = {};
+		if (!formData.name.trim()) next.name = t("contact.errors.name");
+		if (!formData.email.trim()) next.email = t("contact.errors.email");
+		else if (!EMAIL_PATTERN.test(formData.email.trim())) next.email = t("contact.errors.emailInvalid");
+		if (!formData.inquiryType) next.inquiryType = t("contact.errors.inquiryType");
+		if (!formData.subject.trim()) next.subject = t("contact.errors.subject");
+		if (!formData.message.trim()) next.message = t("contact.errors.message");
+		return next;
 	};
 
 	const handleSubmit = async (e) => {
 		e.preventDefault();
-		setIsSubmitting(true);
+		const next = validate();
+		setErrors(next);
+		const first = Object.keys(next)[0];
+		if (first) {
+			document.getElementById(`contact-${first}`)?.focus();
+			return;
+		}
 
+		setIsSubmitting(true);
 		try {
-			const response = await fetch("/api/contact", {
+			// URL complète de l'API : un chemin relatif tombait sur la page d'accueil en production
+			const response = await fetch(`${API_BASE_URL}/contact`, {
 				method: "POST",
 				headers: {
 					"Content-Type": "application/json",
@@ -74,15 +90,8 @@ const ContactPage = () => {
 
 			if (response.ok) {
 				toast.success(t("contact.form.successMessage"));
-				setFormData({
-					name: "",
-					email: "",
-					company: "",
-					phone: "",
-					subject: "",
-					message: "",
-					inquiryType: "",
-				});
+				setFormData(EMPTY_FORM);
+				setIsSent(true);
 			} else {
 				throw new Error("Erreur lors de l'envoi du message");
 			}
@@ -94,426 +103,126 @@ const ContactPage = () => {
 		}
 	};
 
-	const containerVariants = {
-		hidden: { opacity: 0 },
-		visible: {
-			opacity: 1,
-			transition: {
-				delayChildren: 0.3,
-				staggerChildren: 0.2,
-			},
-		},
-	};
+	const field = (name) => ({
+		id: `contact-${name}`,
+		name,
+		value: formData[name],
+		onChange: handleInputChange,
+		"aria-invalid": errors[name] ? "true" : "false",
+		"aria-describedby": errors[name] ? `contact-${name}-error` : undefined,
+	});
 
-	const itemVariants = {
-		hidden: { y: 20, opacity: 0 },
-		visible: {
-			y: 0,
-			opacity: 1,
-		},
-	};
+	const phoneValue = t("contact.info.phone.value");
+	const emailValue = t("contact.info.email.value");
+	const infos = [
+		{ key: "address", icon: MapPin, value: t("contact.info.address.value") },
+		{ key: "phone", icon: Phone, value: phoneValue.replace(/[^\d+ ]/g, "").trim(), href: `tel:+${phoneValue.replace(/\D/g, "")}` },
+		{ key: "email", icon: Mail, value: emailValue, href: `mailto:${emailValue}` },
+		{ key: "hours", icon: Clock, value: t("contact.info.hours.value") },
+	];
 
 	return (
-		<div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 pb-[50px]">
-			<div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-				<motion.div
-					variants={containerVariants}
-					initial="hidden"
-					animate="visible"
-					className="text-center mb-16"
-				>
-					<motion.h1
-						variants={itemVariants}
-						className="text-2xl md:text-5xl font-bold text-gray-900 mb-6"
-					>
-						{t("contact.title")}
-					</motion.h1>
-					<motion.p
-						variants={itemVariants}
-						className="text-base md:text-xl text-gray-600 max-w-3xl mx-auto"
-					>
-						{t("contact.subtitle")}
-					</motion.p>
-				</motion.div>
-
-				<div className="grid lg:grid-cols-2 gap-12 items-start">
-					{/* Informations de contact */}
-					<motion.div
-						variants={containerVariants}
-						initial="hidden"
-						animate="visible"
-						className="space-y-8"
-					>
-						<motion.div
-							variants={itemVariants}
-							className="bg-white rounded-2xl p-6 md:p-8 shadow-lg"
-						>
-							<h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-6">
-								{t("contact.info.title")}
-							</h3>
-
-							<div className="space-y-6">
-								<div className="flex items-start space-x-4">
-									<div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center">
-										<svg
-											className="w-6 h-6 text-primary-600"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth={2}
-												d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
-											/>
-										</svg>
-									</div>
-									<div>
-										<h4 className="font-semibold text-gray-900 text-sm md:text-base">
-											{t("company.name")}
-										</h4>
-										<p className="text-gray-600 text-xs md:text-sm">
-											{t("company.address")} | {t("company.rccm")} |{" "}
-											{t("company.ninea")}
-										</p>
-									</div>
-								</div>
-
-								<div className="flex items-start space-x-4">
-									<div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center">
-										<svg
-											className="w-6 h-6 text-primary-600"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth={2}
-												d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-											/>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth={2}
-												d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-											/>
-										</svg>
-									</div>
-									<div>
-										<h4 className="font-semibold text-gray-900 text-sm md:text-base">
-											{t("contact.info.address.title")}
-										</h4>
-										<p className="text-gray-600 text-xs md:text-sm">
-											{t("contact.info.address.value")}
-										</p>
-									</div>
-								</div>
-
-								<div className="flex items-start space-x-4">
-									<div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center">
-										<svg
-											className="w-6 h-6 text-primary-600"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth={2}
-												d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-											/>
-										</svg>
-									</div>
-									<div>
-										<h4 className="font-semibold text-gray-900 text-sm md:text-base">
-											{t("contact.info.phone.title")}
-										</h4>
-										<p className="text-gray-600 text-xs md:text-sm">
-											{t("contact.info.phone.value")}
-										</p>
-									</div>
-								</div>
-
-								<div className="flex items-start space-x-4">
-									<div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center">
-										<svg
-											className="w-6 h-6 text-primary-600"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth={2}
-												d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-											/>
-										</svg>
-									</div>
-									<div>
-										<h4 className="font-semibold text-gray-900 text-sm md:text-base">
-											{t("contact.info.email.title")}
-										</h4>
-										<p className="text-gray-600 text-xs md:text-sm">
-											{t("contact.info.email.value")}
-										</p>
-									</div>
-								</div>
-
-								<div className="flex items-start space-x-4">
-									<div className="w-12 h-12 bg-primary-100 rounded-xl flex items-center justify-center">
-										<svg
-											className="w-6 h-6 text-primary-600"
-											fill="none"
-											stroke="currentColor"
-											viewBox="0 0 24 24"
-										>
-											<path
-												strokeLinecap="round"
-												strokeLinejoin="round"
-												strokeWidth={2}
-												d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-											/>
-										</svg>
-									</div>
-									<div>
-										<h4 className="font-semibold text-gray-900 text-sm md:text-base">
-											{t("contact.info.hours.title")}
-										</h4>
-										<p className="text-gray-600 text-xs md:text-sm">
-											{t("contact.info.hours.value")}
-										</p>
-									</div>
-								</div>
-							</div>
-						</motion.div>
-
-						<motion.div
-							variants={itemVariants}
-							className="bg-gradient-to-r from-primary-500 to-primary-600 rounded-2xl p-6 md:p-8 text-white"
-						>
-							<h3 className="text-xl md:text-2xl font-bold mb-4">
-								{t("contact.why.title")}
-							</h3>
-							<p className="text-primary-100 mb-6 text-sm md:text-base">
-								{t("contact.why.description")}
-							</p>
-							<div className="text-center">
-								<button
-									onClick={() => navigate("/assessment")}
-									className="bg-white text-primary-600 hover:bg-gray-100 px-4 md:px-6 py-2 md:py-3 rounded-xl font-semibold text-sm md:text-base transition-colors duration-200"
-								>
-									{t("contact.why.startAssessment")}
-								</button>
-							</div>
-						</motion.div>
-					</motion.div>
-
-					{/* Formulaire de contact */}
-					<motion.div
-						variants={itemVariants}
-						className="bg-white rounded-2xl p-6 md:p-8 shadow-lg"
-					>
-						<h3 className="text-xl md:text-2xl font-bold text-gray-900 mb-6">
-							{t("contact.form.title")}
-						</h3>
-
-						{/* Indicateur de pré-remplissage */}
-						{user && (user.companyName || user.email) && (
-							<div className="mb-6 p-4 bg-primary-50 border border-primary-200 rounded-xl">
-								<div className="flex items-center space-x-2">
-									<svg
-										className="w-5 h-5 text-primary-600"
-										fill="none"
-										stroke="currentColor"
-										viewBox="0 0 24 24"
-									>
-										<path
-											strokeLinecap="round"
-											strokeLinejoin="round"
-											strokeWidth={2}
-											d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-										/>
-									</svg>
-									<p className="text-sm text-primary-700">
-										Vos informations ont été pré-remplies à partir de votre
-										évaluation. Vous pouvez les modifier si nécessaire.
-									</p>
-								</div>
-							</div>
-						)}
-
-						<form onSubmit={handleSubmit} className="space-y-6">
-							<div className="grid md:grid-cols-2 gap-6">
-								<div>
-									<label
-										htmlFor="name"
-										className="block text-xs md:text-sm font-medium text-gray-700 mb-2"
-									>
-										{t("contact.form.name")}
-									</label>
-									<input
-										id="name"
-										name="name"
-										type="text"
-										value={formData.name}
-										onChange={handleInputChange}
-										required
-										placeholder={t("contact.form.namePlaceholder")}
-										className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-sm md:text-base"
-									/>
-								</div>
-								<div>
-									<label
-										htmlFor="email"
-										className="block text-xs md:text-sm font-medium text-gray-700 mb-2"
-									>
-										{t("contact.form.email")}
-									</label>
-									<input
-										id="email"
-										name="email"
-										type="email"
-										value={formData.email}
-										onChange={handleInputChange}
-										required
-										placeholder={t("contact.form.emailPlaceholder")}
-										className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-sm md:text-base"
-									/>
-								</div>
-							</div>
-
-							<div className="grid md:grid-cols-2 gap-6">
-								<div>
-									<label
-										htmlFor="company"
-										className="block text-xs md:text-sm font-medium text-gray-700 mb-2"
-									>
-										{t("contact.form.company")}
-									</label>
-									<input
-										id="company"
-										name="company"
-										type="text"
-										value={formData.company}
-										onChange={handleInputChange}
-										placeholder={t("contact.form.companyPlaceholder")}
-										className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-sm md:text-base"
-									/>
-								</div>
-								<div>
-									<label
-										htmlFor="phone"
-										className="block text-xs md:text-sm font-medium text-gray-700 mb-2"
-									>
-										{t("contact.form.phone")}
-									</label>
-									<input
-										id="phone"
-										name="phone"
-										type="tel"
-										value={formData.phone}
-										onChange={handleInputChange}
-										placeholder={t("contact.form.phonePlaceholder")}
-										className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-sm md:text-base"
-									/>
-								</div>
-							</div>
-
-							<div>
-								<label
-									htmlFor="inquiryType"
-									className="block text-xs md:text-sm font-medium text-gray-700 mb-2"
-								>
-									{t("contact.form.inquiryType")}
-								</label>
-								<select
-									id="inquiryType"
-									name="inquiryType"
-									value={formData.inquiryType}
-									onChange={handleInputChange}
-									required
-									className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-sm md:text-base"
-								>
-									<option value="">
-										{t("contact.form.inquiryTypePlaceholder")}
-									</option>
-									{inquiryTypes.map((type) => (
-										<option key={type.value} value={type.value}>
-											{type.label}
-										</option>
-									))}
-								</select>
-							</div>
-
-							<div>
-								<label
-									htmlFor="subject"
-									className="block text-xs md:text-sm font-medium text-gray-700 mb-2"
-								>
-									{t("contact.form.subject")}
-								</label>
-								<input
-									id="subject"
-									name="subject"
-									type="text"
-									value={formData.subject}
-									onChange={handleInputChange}
-									required
-									placeholder={t("contact.form.subjectPlaceholder")}
-									className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 text-sm md:text-base"
-								/>
-							</div>
-
-							<div>
-								<label
-									htmlFor="message"
-									className="block text-xs md:text-sm font-medium text-gray-700 mb-2"
-								>
-									{t("contact.form.message")}
-								</label>
-								<textarea
-									id="message"
-									name="message"
-									value={formData.message}
-									onChange={handleInputChange}
-									required
-									rows={6}
-									placeholder={t("contact.form.messagePlaceholder")}
-									className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 resize-none text-sm md:text-base"
-								/>
-							</div>
-
-							<button
-								type="submit"
-								disabled={isSubmitting}
-								className="w-full bg-primary-500 hover:bg-primary-600 disabled:bg-gray-400 text-white font-semibold py-3 md:py-4 px-4 md:px-6 rounded-xl transition-all duration-200 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 text-sm md:text-base"
-							>
-								{isSubmitting ?
-									t("contact.form.sending")
-								:	t("contact.form.send")}
-							</button>
-						</form>
-
-						<div className="mt-6 p-3 md:p-4 bg-gray-50 rounded-xl">
-							<p className="text-xs md:text-sm text-gray-600 text-center">
-								{t("contact.form.privacy")}
-							</p>
-						</div>
-					</motion.div>
-				</div>
-			</div>
-
-			{/* Social Share */}
-			<SocialShare
-				title="Contactez vitalCHECK - Enterprise Health Check"
-				description="Nous sommes là pour vous aider à améliorer la santé de votre entreprise."
+		<>
+			<SEOHead
+				title={t("contact.seo.title")}
+				description={t("contact.seo.description")}
+				url="/contact"
 			/>
-		</div>
+			<AuthLayout
+				scene="contact"
+				width="lg"
+				title={t("contact.title")}
+				subtitle={t("contact.subtitle")}
+				panelTitle={t("contact.why.title")}
+				panelText={t("contact.why.description")}
+			>
+				{isSent ? (
+					<div role="status" className="ubb-card p-6 sm:p-8">
+						<span className="flex h-14 w-14 items-center justify-center rounded-full bg-ubb-brand-50 text-ubb-brand-900">
+							<CheckCircle2 className="h-8 w-8" aria-hidden="true" />
+						</span>
+						<h2 className="ubb-heading mt-5 text-ubb-subtitle">{t("contact.sent.title")}</h2>
+						<p className="mt-2 font-text text-ubb-body text-ubb-ink-muted">{t("contact.form.successMessage")}</p>
+						<Button variant="outline" onClick={() => setIsSent(false)} className="mt-6">
+							{t("contact.sent.again")}
+						</Button>
+					</div>
+				) : (
+					<form onSubmit={handleSubmit} noValidate className="space-y-5">
+						<div className="grid gap-5 sm:grid-cols-2">
+							<FormField id="contact-name" label={t("contact.form.name")} error={errors.name}>
+								<input type="text" autoComplete="name" className="ubb-input" placeholder={t("contact.form.namePlaceholder")} required {...field("name")} />
+							</FormField>
+							<FormField id="contact-email" label={t("contact.form.email")} error={errors.email}>
+								<input type="email" autoComplete="email" inputMode="email" className="ubb-input" placeholder={t("contact.form.emailPlaceholder")} required {...field("email")} />
+							</FormField>
+							<FormField id="contact-company" label={t("contact.form.company")} optional={t("common.optional")}>
+								<input type="text" autoComplete="organization" className="ubb-input" placeholder={t("contact.form.companyPlaceholder")} {...field("company")} />
+							</FormField>
+							<FormField id="contact-phone" label={t("contact.form.phone")} optional={t("common.optional")}>
+								<input type="tel" autoComplete="tel" inputMode="tel" className="ubb-input" placeholder={t("contact.form.phonePlaceholder")} {...field("phone")} />
+							</FormField>
+						</div>
+
+						<FormField id="contact-inquiryType" label={t("contact.form.inquiryType")} error={errors.inquiryType}>
+							<select className="ubb-input" required {...field("inquiryType")}>
+								<option value="">{t("contact.form.inquiryTypePlaceholder")}</option>
+								{INQUIRY_TYPES.map((type) => (
+									<option key={type} value={type}>
+										{t(`contact.form.inquiryTypes.${type}`)}
+									</option>
+								))}
+							</select>
+						</FormField>
+
+						<FormField id="contact-subject" label={t("contact.form.subject")} error={errors.subject}>
+							<input type="text" className="ubb-input" placeholder={t("contact.form.subjectPlaceholder")} required {...field("subject")} />
+						</FormField>
+
+						<FormField id="contact-message" label={t("contact.form.message")} error={errors.message}>
+							<textarea rows={5} className="ubb-input resize-y" placeholder={t("contact.form.messagePlaceholder")} required {...field("message")} />
+						</FormField>
+
+						<Button type="submit" size="lg" disabled={isSubmitting} className="w-full">
+							{isSubmitting ? t("contact.form.sending") : t("contact.form.send")}
+						</Button>
+						<p className="font-text text-ubb-small text-ubb-ink-muted">{t("contact.form.privacy")}</p>
+					</form>
+				)}
+
+				{/* Coordonnées : toujours visibles, y compris sur mobile (l'illustration y est masquée) */}
+				<section aria-labelledby="contact-info-title" className="mt-10 border-t border-ubb-brand-900/[0.08] pt-8">
+					<h2 id="contact-info-title" className="font-heading text-lg font-semibold text-ubb-ink">
+						{t("contact.info.title")}
+					</h2>
+					<ul className="mt-4 space-y-1">
+						{infos.map(({ key, icon: Icon, value, href }) => (
+							<li key={key} className="flex items-start gap-3 py-2">
+								<span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-ubb-field bg-ubb-mist text-ubb-brand-900">
+									<Icon className="h-[18px] w-[18px]" aria-hidden="true" />
+								</span>
+								<span className="min-w-0">
+									<span className="block font-text text-xs font-semibold text-ubb-ink-muted">
+										{t(`contact.info.${key}.title`)}
+									</span>
+									{href ? (
+										<a href={href} className="ubb-focus inline-flex min-h-[44px] items-center rounded font-text text-ubb-body font-medium text-ubb-ink underline decoration-ubb-accent-500 decoration-2 underline-offset-4">
+											{value}
+										</a>
+									) : (
+										<span className="block font-text text-ubb-body text-ubb-ink">{value}</span>
+									)}
+								</span>
+							</li>
+						))}
+					</ul>
+					<p className="mt-4 font-text text-ubb-small text-ubb-ink-muted">
+						{t("company.name")}. {t("company.rccm")} / {t("company.ninea")}
+					</p>
+				</section>
+			</AuthLayout>
+			<SocialShare title={t("contact.seo.title")} description={t("contact.seo.description")} />
+		</>
 	);
 };
 

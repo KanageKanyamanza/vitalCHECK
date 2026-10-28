@@ -1,24 +1,24 @@
 import React, { useState, useEffect } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import SEOHead from '../components/seo/SEOHead'
 import { getBlogPageStructuredData } from '../utils/seoData'
-import { 
-  Search, 
-  Filter, 
-  Calendar, 
-  User, 
-  Eye, 
-  Heart, 
+import {
+  Search,
+  Calendar,
+  User,
+  Eye,
+  Heart,
   Tag,
-  ArrowLeft,
   BookOpen,
   FileText,
   TrendingUp,
   Clock,
   Users,
+  ChevronLeft,
   ChevronRight
 } from 'lucide-react'
+import { Button, Container, PentagonSegments } from '../components/ui/ds'
 import { blogApiService } from '../services/api'
 import toast from 'react-hot-toast'
 import { normalizeTags } from '../utils/tagUtils'
@@ -26,7 +26,6 @@ import { autoTranslateTag } from '../utils/autoTranslateTags'
 import { getOrCreateVisitorId } from '../utils/visitorId'
 
 const BlogPage = () => {
-  const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const { t, i18n } = useTranslation()
   
@@ -150,15 +149,9 @@ const BlogPage = () => {
     }
   }
 
-  // Naviguer vers un blog
-  const handleBlogClick = (blog) => {
-    const localizedSlug = getLocalizedContent(blog.slug, blog.slug)
-    navigate(`/blog/${localizedSlug}`)
-  }
-
   // Formater la date
   const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('fr-FR', {
+    return new Date(date).toLocaleDateString((i18n.language || 'fr').startsWith('en') ? 'en-US' : 'fr-FR', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
@@ -214,237 +207,239 @@ const BlogPage = () => {
     return translation
   }
 
+  const resultsLabel = loading ? '' : t('blog.resultsCount', { count: blogs.length })
+
   return (
-    <div className="min-h-screen bg-gray-50 pb-[50px]">
+    <div className="min-h-screen bg-ubb-paper-soft">
       <SEOHead
-        title="Blog vitalCHECK - Conseils et Actualités Business"
-        description="Découvrez nos articles sur la santé d'entreprise, le management, la croissance et les bonnes pratiques pour PME et startups africaines."
-        keywords="blog business, conseils entreprise, management, croissance PME, startup, vitalCHECK, actualités business"
+        title={t('blog.seo.title')}
+        description={t('blog.seo.description')}
+        keywords={t('blog.seo.keywords')}
         url="/blog"
         structuredData={getBlogPageStructuredData()}
       />
-      
-      {/* Header */}
-      <div className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              {t('blog.title')}
-            </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              {t('blog.subtitle')}
-            </p>
-          </div>
-        </div>
-      </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      {/* En-tête */}
+      <section aria-labelledby="blog-title" className="bg-white">
+        <Container className="max-w-5xl py-10 sm:py-14">
+          <h1 id="blog-title" className="ubb-heading text-ubb-title sm:text-ubb-display">
+            {t('blog.title')}
+          </h1>
+          <p className="mt-4 max-w-ubb-prose font-text text-ubb-lead text-ubb-ink-muted">{t('blog.subtitle')}</p>
+        </Container>
+      </section>
+
+      <Container className="max-w-6xl py-8 sm:py-12">
         {/* Filtres */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            {/* Recherche */}
+        <div role="search" className="space-y-4">
+          <div className="grid gap-3 md:grid-cols-[1fr_260px]">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <label htmlFor="blog-search" className="sr-only">{t('blog.searchPlaceholder')}</label>
+              <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-ubb-ink-muted" aria-hidden="true" />
               <input
-                type="text"
+                id="blog-search"
+                type="search"
                 placeholder={t('blog.searchPlaceholder')}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+                className="ubb-input pl-11"
               />
             </div>
+            <div>
+              <label htmlFor="blog-category" className="sr-only">{t('blog.categoryLabel')}</label>
+              <select
+                id="blog-category"
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="ubb-input"
+              >
+                {blogCategories.map((category) => (
+                  <option key={category.value} value={category.value}>
+                    {category.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
 
-            {/* Filtre par type */}
-            <select
-              value={selectedType}
-              onChange={(e) => setSelectedType(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-            >
-              {blogTypes.map(type => (
-                <option key={type.value} value={type.value}>
+          {/* Types : une seule rangée qui défile sur mobile */}
+          <div role="radiogroup" aria-label={t('blog.typeLabel')} className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 sm:mx-0 sm:flex-wrap sm:px-0">
+            {blogTypes.map((type) => {
+              const active = selectedType === type.value
+              return (
+                <button
+                  key={type.value}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  onClick={() => setSelectedType(type.value)}
+                  className={`ubb-focus inline-flex min-h-[44px] shrink-0 items-center gap-2 rounded-full border px-4 font-text text-sm font-semibold transition-colors ${
+                    active
+                      ? 'border-ubb-brand-900 bg-ubb-brand-900 text-white'
+                      : 'border-ubb-brand-900/15 bg-white text-ubb-ink hover:border-ubb-brand-900/40'
+                  }`}
+                >
+                  <type.icon className="h-4 w-4" aria-hidden="true" />
                   {type.label}
-                </option>
-              ))}
-            </select>
-
-            {/* Filtre par catégorie */}
-            <select
-              value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value)}
-              className="border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-            >
-              {blogCategories.map(category => (
-                <option key={category.value} value={category.value}>
-                  {category.label}
-                </option>
-              ))}
-            </select>
-
-            {/* Bouton retour */}
-            <button
-              onClick={() => navigate('/')}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              {t('blog.backToHome')}
-            </button>
+                </button>
+              )
+            })}
           </div>
         </div>
 
-        {/* Liste des blogs */}
+        <p className="sr-only" role="status" aria-live="polite">{resultsLabel}</p>
+
+        {/* Liste des articles */}
         {loading ? (
-          <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+          <div className="flex items-center justify-center py-20" role="status" aria-label={t('common.loading')}>
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-ubb-brand-900 border-t-transparent" />
           </div>
         ) : blogs.length === 0 ? (
-          <div className="text-center py-12">
-            <FileText className="mx-auto h-12 w-12 text-gray-400" />
-            <h3 className="mt-2 text-sm font-medium text-gray-900">{t('blog.noArticles')}</h3>
-            <p className="mt-1 text-sm text-gray-500">
-              {t('blog.noArticlesDesc')}
-            </p>
+          <div className="mx-auto mt-12 max-w-md rounded-ubb-panel border border-dashed border-ubb-brand-900/20 bg-white p-10 text-center">
+            <FileText className="mx-auto h-10 w-10 text-ubb-brand-900" aria-hidden="true" />
+            <h2 className="ubb-heading mt-4 text-xl">{t('blog.noArticles')}</h2>
+            <p className="mt-2 font-text text-ubb-body text-ubb-ink-muted">{t('blog.noArticlesDesc')}</p>
           </div>
         ) : (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <ul className="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
               {blogs.map((blog) => {
                 const TypeIcon = getTypeIcon(blog.type)
+                const title = getLocalizedContent(blog.title, t('blog.untitled'))
+                const slug = getLocalizedContent(blog.slug, blog.slug)
+                const normalizedTags = normalizeTags(blog.tags)
+                const coverUrl = (blog.featuredImage?.url || blog.images?.[0]?.url || '').trim()
+                const hasImage = coverUrl !== ''
                 return (
-                  <article
-                    key={blog._id}
-                    className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 cursor-pointer"
-                    onClick={() => handleBlogClick(blog)}
-                  >
-                    {/* Image */}
-                    {blog.featuredImage && blog.featuredImage.url && blog.featuredImage.url.trim() !== '' && (
-                      <div className="aspect-w-16 aspect-h-9 rounded-t-lg overflow-hidden">
-                        <img
-                          src={blog.featuredImage.url}
-                          alt={blog.featuredImage.alt || blog.title}
-                          className="w-full h-48 object-cover"
-                          onError={(e) => {
-                            console.error('❌ [BLOG PAGE] Erreur de chargement de l\'image:', blog.featuredImage.url)
-                            e.target.style.display = 'none'
-                          }}
-                        />
+                  <li key={blog._id} className="group relative flex flex-col overflow-hidden rounded-ubb-card border border-ubb-brand-900/10 bg-white shadow-ubb-sm transition-shadow focus-within:ring-2 focus-within:ring-ubb-brand-900 focus-within:ring-offset-2 hover:shadow-ubb-md">
+                    {hasImage ? (
+                      <img
+                        src={coverUrl}
+                        alt=""
+                        loading="lazy"
+                        decoding="async"
+                        className="aspect-[16/9] w-full bg-ubb-brand-100 object-cover"
+                        onError={(e) => {
+                          e.target.style.display = 'none'
+                        }}
+                      />
+                    ) : (
+                      <div className="flex aspect-[16/9] w-full items-center justify-center bg-ubb-brand-100" aria-hidden="true">
+                        <PentagonSegments done={3} className="h-16 w-16" />
                       </div>
                     )}
 
-                    <div className="p-2 sm:p-6">
-                      {/* Métadonnées */}
-                      <div className="flex items-center space-x-3 mb-3">
-                        <div className="flex items-center text-sm text-primary-600">
-                          <TypeIcon className="h-4 w-4 mr-1" />
-                          {getTypeLabel(blog.type)}
-                        </div>
-                        <span className="text-sm text-gray-500">•</span>
-                        <span className="text-sm text-gray-500">
-                          {getCategoryLabel(blog.category)}
-                        </span>
-                      </div>
-
-                      {/* Titre */}
-                      <h2 className="text-xl font-semibold text-gray-900 mb-3 line-clamp-2">
-                        {getLocalizedContent(blog.title, 'Titre non disponible')}
-                      </h2>
-
-                      {/* Extrait */}
-                      <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                        {getLocalizedContent(blog.excerpt, 'Extrait non disponible')}
+                    <div className="flex flex-1 flex-col p-5 sm:p-6">
+                      <p className="flex flex-wrap items-center gap-x-2 font-text text-ubb-small font-semibold text-ubb-brand-900">
+                        <TypeIcon className="h-4 w-4" aria-hidden="true" />
+                        {getTypeLabel(blog.type)}
+                        <span className="font-normal text-ubb-ink-muted">/ {getCategoryLabel(blog.category)}</span>
                       </p>
 
-                      {/* Tags */}
-                      {(() => {
-                        const normalizedTags = normalizeTags(blog.tags)
-                        return normalizedTags.length > 0 && (
-                          <div className="flex flex-wrap gap-2 mb-4">
-                            {normalizedTags.slice(0, 3).map((tag, index) => (
-                              <span
-                                key={index}
-                                className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-primary-100 text-primary-800"
-                              >
-                                <Tag className="h-3 w-3 mr-1" />
-                                {translateTag(tag)}
-                              </span>
-                            ))}
-                          </div>
-                        )
-                      })()}
+                      <h2 className="ubb-heading mt-3 line-clamp-2 text-xl font-semibold">
+                        {/* Vrai lien : toute la carte est cliquable, au clavier comme à la souris */}
+                        <Link
+                          to={`/blog/${slug}`}
+                          className="rounded after:absolute after:inset-0 after:content-[''] focus:outline-none"
+                        >
+                          {title}
+                        </Link>
+                      </h2>
 
-                      {/* Footer */}
-                      <div className="flex flex-wrap items-center justify-between text-sm text-gray-500">
-                        <div className="flex items-center space-x-3">
-                          <div className="flex items-center">
-                            <User className="h-4 w-4 mr-1" />
+                      <p className="mt-2 line-clamp-3 font-text text-ubb-body text-ubb-ink-muted">
+                        {getLocalizedContent(blog.excerpt, t('blog.noExcerpt'))}
+                      </p>
+
+                      {normalizedTags.length > 0 && (
+                        <ul className="mt-4 flex flex-wrap gap-2" aria-label={t('blog.tagsLabel')}>
+                          {normalizedTags.slice(0, 3).map((tag, index) => (
+                            <li key={index} className="inline-flex items-center gap-1 rounded-full bg-ubb-brand-50 px-2.5 py-1 font-text text-xs font-medium text-ubb-brand-950">
+                              <Tag className="h-3 w-3" aria-hidden="true" />
+                              {translateTag(tag)}
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+
+                      <div className="mt-auto flex flex-wrap items-center justify-between gap-x-4 gap-y-1 pt-5 font-text text-ubb-small text-ubb-ink-muted">
+                        <span className="flex items-center gap-3">
+                          <span className="flex items-center gap-1.5">
+                            <User className="h-4 w-4" aria-hidden="true" />
                             {blog.author?.name || t('blog.author')}
-                          </div>
-                          <div className="flex items-center">
-                            <Calendar className="h-4 w-4 mr-1" />
+                          </span>
+                          <span className="flex items-center gap-1.5">
+                            <Calendar className="h-4 w-4" aria-hidden="true" />
                             {formatDate(blog.publishedAt || blog.createdAt)}
-                          </div>
-                        </div>
-                        <div className="flex items-center space-x-3">
-                          <div className="flex items-center">
-                            <Eye className="h-4 w-4 mr-1" />
+                          </span>
+                        </span>
+                        <span className="relative z-10 flex items-center gap-1">
+                          <span className="flex items-center gap-1.5" title={t('blog.views')}>
+                            <Eye className="h-4 w-4" aria-hidden="true" />
+                            <span className="sr-only">{t('blog.views')}</span>
                             {blog.views}
-                          </div>
+                          </span>
                           <button
+                            type="button"
                             onClick={(e) => {
                               e.stopPropagation()
                               handleLike(blog._id)
                             }}
-                            className="flex items-center hover:text-red-500 transition-colors"
+                            aria-label={t('blog.likeAction', { title })}
+                            className="ubb-focus inline-flex min-h-[44px] min-w-[44px] items-center justify-center gap-1.5 rounded-full px-2 hover:text-ubb-ink"
                           >
-                            <Heart className="h-4 w-4 mr-1" />
+                            <Heart className="h-4 w-4" aria-hidden="true" />
                             {blog.likes}
                           </button>
-                        </div>
+                        </span>
                       </div>
                     </div>
-                  </article>
+                  </li>
                 )
               })}
-            </div>
+            </ul>
 
             {/* Pagination */}
             {totalPages > 1 && (
-              <div className="mt-12 flex items-center justify-center">
-                <nav className="flex items-center space-x-2">
+              <nav aria-label={t('blog.paginationLabel')} className="mt-12 flex flex-wrap items-center justify-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="h-4 w-4" aria-hidden="true" />
+                  {t('common.previous')}
+                </Button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                   <button
-                    onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                    disabled={currentPage === 1}
-                    className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+                    key={page}
+                    type="button"
+                    onClick={() => setCurrentPage(page)}
+                    aria-current={page === currentPage ? 'page' : undefined}
+                    aria-label={t('blog.pageN', { page })}
+                    className={`ubb-focus inline-flex h-11 min-w-[44px] items-center justify-center rounded-full px-3 font-text text-sm font-semibold transition-colors ${
+                      page === currentPage
+                        ? 'bg-ubb-brand-900 text-white'
+                        : 'border border-ubb-brand-900/15 bg-white text-ubb-ink hover:border-ubb-brand-900/40'
+                    }`}
                   >
-                    {t('common.previous')}
+                    {page}
                   </button>
-                  
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <button
-                      key={page}
-                      onClick={() => setCurrentPage(page)}
-                      className={`px-3 py-2 text-sm font-medium rounded-md ${
-                        page === currentPage
-                          ? 'text-white bg-primary-600 border border-primary-600'
-                          : 'text-gray-500 bg-white border border-gray-300 hover:bg-gray-50'
-                      }`}
-                    >
-                      {page}
-                    </button>
-                  ))}
-                  
-                  <button
-                    onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                    disabled={currentPage === totalPages}
-                    className="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {t('common.next')}
-                  </button>
-                </nav>
-              </div>
+                ))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  {t('common.next')}
+                  <ChevronRight className="h-4 w-4" aria-hidden="true" />
+                </Button>
+              </nav>
             )}
           </>
         )}
-      </div>
+      </Container>
     </div>
   )
 }

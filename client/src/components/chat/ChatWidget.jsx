@@ -608,11 +608,11 @@ const ChatWidget = () => {
     };
 
     // Position du bouton selon le scroll
-    // Par défaut: même position que BackToTop (sm:bottom-10 bottom-24)
+    // Par défaut: même position que BackToTop (sm:bottom-10 bottom-5)
     // Quand scroll > 0: remonte pour laisser la place au BackToTop qui apparaît
     const buttonBottom = scrollY > 0
-        ? 'sm:bottom-24 bottom-40'  // Remonte quand scrollTop apparaît
-        : 'sm:bottom-8 bottom-24';  // Position par défaut (même que BackToTop)
+        ? 'sm:bottom-24 bottom-20'  // Remonte quand scrollTop apparaît
+        : 'sm:bottom-8 bottom-5';   // Position par défaut (même que BackToTop)
 
     // Calcul de la position du message d'introduction (au-dessus du chatbot)
     // Le message doit être positionné juste au-dessus du bouton chatbot
@@ -620,10 +620,10 @@ const ChatWidget = () => {
         const isMobile = window.innerWidth < 640;
         if (scrollY > 0) {
             // Quand on scroll, le chatbot est plus haut
-            return isMobile ? '13.5rem' : '9.5rem';
+            return isMobile ? '9rem' : '9.5rem';
         } else {
             // Position par défaut
-            return isMobile ? '9.5rem' : '6rem';
+            return isMobile ? '5rem' : '6rem';
         }
     };
 
@@ -690,7 +690,7 @@ const ChatWidget = () => {
                     animate={{ opacity: 1, scale: 1 }}
                     transition={{ duration: 0.3, ease: "easeOut" }}
                     onClick={handleToggle}
-                    className={`fixed ${buttonBottom} right-3 z-50 bg-primary-500 text-white p-3 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-110 focus:outline-none focus:ring-4 focus:ring-primary-200`}
+                    className={`ubb-focus fixed ${buttonBottom} right-3 z-50 flex h-12 w-12 items-center justify-center rounded-full bg-ubb-brand-900 text-white shadow-ubb-md transition-colors duration-200 hover:bg-ubb-brand-800`}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
                     aria-label={t('chatbot.openChat')}

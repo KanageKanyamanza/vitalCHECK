@@ -1,16 +1,17 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import {
-	ArrowLeft,
 	Download,
 	Mail,
 	Star,
 	TrendingDown,
 	TrendingUp,
-	CheckCircle,
+	Check,
+	CheckCircle2,
 	ListChecks,
 	Sparkles,
+	RotateCcw,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
@@ -20,6 +21,9 @@ import { getLevelV2ById } from "../utils/colors";
 import useSmoothScroll from "../hooks/useSmoothScroll";
 import SEOHead from "../components/seo/SEOHead";
 import { useClientAuth } from "../context/ClientAuthContext";
+import { Button, Container, FormField } from "../components/ui/ds";
+import ScoreRing from "../components/results/ScoreRing";
+import PillarRadar from "../components/results/PillarRadar";
 
 const RESULT_STORAGE_KEY = "vitalcheck-v2-result";
 
@@ -40,6 +44,7 @@ const SimplifiedResultsPage = () => {
 	const { scrollToTop } = useSmoothScroll();
 	const { t, i18n } = useTranslation();
 	const { user } = useClientAuth();
+	const reduceMotion = useReducedMotion();
 
 	const [data, setData] = useState(location.state || null);
 	const [loading, setLoading] = useState(!location.state);
@@ -258,18 +263,18 @@ const SimplifiedResultsPage = () => {
 			link.click();
 			document.body.removeChild(link);
 			window.URL.revokeObjectURL(url);
-			toast.success("Rapport Premium IA téléchargé !");
+			toast.success(t("diagnostic.results.premiumReport.downloaded"));
 		} catch (err) {
 			console.error("Erreur téléchargement rapport premium:", err);
 			const code = err.response?.data?.code;
 			if (code === "SUBSCRIPTION_INACTIVE" || code === "SUBSCRIPTION_EXPIRED" || code === "PLAN_UPGRADE_REQUIRED") {
-				toast.error("Abonnement premium requis pour accéder à ce rapport.");
+				toast.error(t("diagnostic.results.premiumReport.subscriptionRequired"));
 			} else if (err.response?.status === 403) {
-				toast.error("Accès refusé — ce diagnostic ne vous appartient pas.");
+				toast.error(t("diagnostic.results.premiumReport.forbidden"));
 			} else if (err.response?.status === 401) {
-				toast.error("Veuillez vous connecter pour télécharger le rapport premium.");
+				toast.error(t("diagnostic.results.premiumReport.loginRequired"));
 			} else {
-				toast.error("Erreur lors du téléchargement du rapport premium.");
+				toast.error(t("diagnostic.results.premiumReport.downloadError"));
 			}
 		} finally {
 			setDownloadingPremium(false);
@@ -278,10 +283,10 @@ const SimplifiedResultsPage = () => {
 
 	if (loading || !data) {
 		return (
-			<div className="min-h-screen flex items-center justify-center">
+			<div className="flex min-h-[60vh] items-center justify-center" role="status">
 				<div className="text-center">
-					<div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-					<p className="text-gray-600">{t("diagnostic.loading.results")}</p>
+					<div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-4 border-ubb-brand-900 border-t-transparent" aria-hidden="true" />
+					<p className="font-text text-ubb-ink-muted">{t("diagnostic.loading.results")}</p>
 				</div>
 			</div>
 		);
@@ -337,8 +342,22 @@ const SimplifiedResultsPage = () => {
 
 	const premiumBenefits = t("diagnostic.results.premiumBenefits", { returnObjects: true });
 
+	const pillarNumber = (pillarId) => pillarScores.findIndex((p) => p.pillarId === pillarId) + 1;
+	const radarLabel = t("diagnostic.results.radarLabel", {
+		details: pillarScores.map((p, i) => `${i + 1}. ${p.pillarName} ${p.score}/100`).join(", "),
+	});
+
+	const NumberBadge = ({ n }) => (
+		<span
+			className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-ubb-brand-900 font-heading text-sm font-bold text-white"
+			aria-hidden="true"
+		>
+			{n}
+		</span>
+	);
+
 	return (
-		<div className="min-h-screen pb-[50px] bg-gray-50">
+		<div className="min-h-screen bg-ubb-paper-soft">
 			<SEOHead
 				title={t("diagnostic.meta.resultsTitle")}
 				description={t("diagnostic.meta.resultsDescription")}
@@ -346,131 +365,106 @@ const SimplifiedResultsPage = () => {
 				noindex
 			/>
 
-			{/* Action Bar */}
-			<div className="bg-white shadow-sm">
-				<div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-					<div className="flex flex-wrap gap-2 items-center justify-between">
-						<span className="text-lg font-bold text-gray-900">
-							{t("diagnostic.results.pageTitle")}
-						</span>
-						<button
-							onClick={handleNewAssessment}
-							className="btn-outline flex items-center space-x-2"
-						>
-							<ArrowLeft className="w-4 h-4" />
-							<span>{t("diagnostic.results.redo")}</span>
-						</button>
-					</div>
-				</div>
-			</div>
-
-			<div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-				{/* Score global */}
-				<motion.div
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-					className="card"
-				>
-					<div className="mb-6">
-						<h1 className="text-2xl font-bold text-gray-900">
-							{formData.companyName}
-						</h1>
-						<p className="text-sm text-gray-500">
+			<Container className="max-w-5xl py-8 sm:py-12">
+				{/* En-tête */}
+				<div className="flex flex-wrap items-start justify-between gap-4">
+					<div className="min-w-0">
+						<p className="font-text text-sm font-semibold text-ubb-ink-muted">
 							{t("diagnostic.results.freeLabel")} · {dateLabel}
 						</p>
+						<h1 className="ubb-heading mt-1 break-words text-ubb-title">{formData.companyName}</h1>
 					</div>
+					<Button variant="outline" size="sm" onClick={handleNewAssessment}>
+						<RotateCcw className="h-4 w-4" aria-hidden="true" />
+						{t("diagnostic.results.redo")}
+					</Button>
+				</div>
 
-					<div className="grid lg:grid-cols-3 gap-8 items-center mb-8">
+				{/* Score global */}
+				<section aria-labelledby="overall-title" className="ubb-card mt-8 p-6 sm:p-10">
+					<div className="grid items-center gap-8 md:grid-cols-[auto_1fr] md:gap-12">
 						<div className="text-center">
-							<div
-								className="inline-flex items-center justify-center w-36 h-36 rounded-full border-8"
-								style={{ borderColor: overallLevelInfo.color }}
-							>
-								<span
-									className="text-4xl font-bold"
-									style={{ color: overallLevelInfo.color }}
-								>
-									{overallScore}
-								</span>
-							</div>
-							<div className="mt-4">
-								<span
-									className="inline-block px-4 py-1 rounded-full text-white font-semibold"
-									style={{ backgroundColor: overallLevelInfo.color }}
-								>
-									{overallLevelInfo.label}
-								</span>
-							</div>
+							<ScoreRing
+								score={overallScore}
+								color={overallLevelInfo.color}
+								label={t("diagnostic.results.scoreLabel", { score: overallScore, level: overallLevelInfo.label })}
+							/>
+							<p className="mt-4 inline-flex items-center gap-2 rounded-full border border-ubb-brand-900/15 bg-white px-4 py-1.5 font-text text-sm font-semibold text-ubb-ink">
+								<span className="h-3 w-3 rounded-full" style={{ backgroundColor: overallLevelInfo.color }} aria-hidden="true" />
+								{overallLevelInfo.label}
+							</p>
 						</div>
-
-						<div className="lg:col-span-2">
-							<h2 className="text-lg font-semibold text-gray-900 mb-2">
+						<div>
+							<h2 id="overall-title" className="ubb-heading text-ubb-subtitle">
 								{t("diagnostic.results.overallTitle")}
 							</h2>
-							<p className="text-gray-700 leading-relaxed">
+							<p className="mt-3 max-w-ubb-prose font-text text-ubb-lead text-ubb-ink-muted">
 								{overallLevelInfo.interpretation}
 							</p>
 						</div>
 					</div>
 
-					<h3 className="text-lg font-semibold text-gray-900 mb-4">
-						{t("diagnostic.results.pillarsTitle")}
-					</h3>
-					<div className="space-y-4">
-						{pillarScores.map((pillar) => {
-							const levelInfo = getLevelInfo(pillar.level);
-							return (
-								<div key={pillar.pillarId}>
-									<div className="flex justify-between mb-1 text-sm">
-										<span className="font-medium text-gray-900">
-											{pillar.pillarName}
-										</span>
-										<span className="font-bold text-gray-900">
-											{pillar.score}/100
-										</span>
-									</div>
-									<div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
-										<motion.div
-											className="h-full rounded-full"
-											style={{ backgroundColor: levelInfo.color }}
-											initial={{ width: 0 }}
-											animate={{ width: `${pillar.score}%` }}
-											transition={{ duration: 0.6, ease: "easeOut" }}
-										/>
-									</div>
-								</div>
-							);
-						})}
+					<div className="mt-10 border-t border-ubb-brand-900/[0.08] pt-8">
+						<h3 className="font-heading text-lg font-semibold text-ubb-ink">{t("diagnostic.results.pillarsTitle")}</h3>
+						<div className="mt-6 grid items-center gap-8 md:grid-cols-[minmax(0,1fr)_1.2fr]">
+							<PillarRadar
+								label={radarLabel}
+								pillars={pillarScores.map((p) => ({ score: p.score, color: getLevelInfo(p.level).color }))}
+							/>
+							<ul className="space-y-5">
+								{pillarScores.map((pillar, index) => {
+									const levelInfo = getLevelInfo(pillar.level);
+									return (
+										<li key={pillar.pillarId}>
+											<div className="flex items-center gap-3">
+												<NumberBadge n={index + 1} />
+												<span className="min-w-0 flex-1 font-text text-ubb-body font-semibold text-ubb-ink">{pillar.pillarName}</span>
+												<span className="font-heading text-lg font-bold text-ubb-ink">
+													{pillar.score}
+													<span className="font-text text-xs font-semibold text-ubb-ink-muted">/100</span>
+												</span>
+											</div>
+											<div className="mt-2 h-2.5 overflow-hidden rounded-full bg-ubb-brand-100" role="presentation">
+												<motion.div
+													className="h-full rounded-full"
+													style={{ backgroundColor: levelInfo.color }}
+													initial={reduceMotion ? false : { width: 0 }}
+													animate={{ width: `${pillar.score}%` }}
+													transition={{ duration: 0.8, delay: 0.2 + index * 0.08, ease: "easeOut" }}
+												/>
+											</div>
+											<p className="mt-1 pl-10 font-text text-xs text-ubb-ink-muted">{levelInfo.label}</p>
+										</li>
+									);
+								})}
+							</ul>
+						</div>
 					</div>
-				</motion.div>
+				</section>
 
-				{/* Risques & Forces */}
-				<motion.div
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ delay: 0.1 }}
-					className="grid md:grid-cols-2 gap-8"
-				>
-					<div className="card">
-						<div className="flex items-center space-x-2 mb-4">
-							<TrendingDown className={`w-5 h-5 ${hasRisks ? "text-danger-500" : "text-warning-500"}`} />
-							<h3 className="text-lg font-bold text-gray-900">
+				{/* Axes de vigilance et points forts */}
+				<div className="mt-6 grid gap-6 md:grid-cols-2">
+					<section aria-labelledby="risks-title" className="rounded-ubb-panel border border-ubb-accent-100 bg-ubb-accent-50 p-6 sm:p-8">
+						<div className="flex items-center gap-3">
+							<span className="flex h-10 w-10 items-center justify-center rounded-ubb-field bg-white text-ubb-accent-ink">
+								<TrendingDown className="h-5 w-5" aria-hidden="true" />
+							</span>
+							<h3 id="risks-title" className="ubb-heading text-xl font-semibold">
 								{hasRisks ? t("diagnostic.results.risksTitle") : t("diagnostic.results.improvementTitle")}
 							</h3>
 						</div>
-						<div className="space-y-4">
+						<div className="mt-6 space-y-6">
 							{focusPillars.map((pillar) => (
 								<div key={pillar.pillarId}>
-									<div className="font-semibold text-gray-900 mb-1">
-										{pillar.pillarName} — {pillar.score}/100
-									</div>
-									<ul className="space-y-1">
+									<p className="flex items-center gap-2.5 font-text font-semibold text-ubb-ink">
+										<NumberBadge n={pillarNumber(pillar.pillarId)} />
+										<span className="min-w-0 flex-1">{pillar.pillarName}</span>
+										<span className="font-heading">{pillar.score}/100</span>
+									</p>
+									<ul className="mt-3 space-y-2 pl-10">
 										{findRecommendations(pillar.pillarId).map((rec, i) => (
-											<li
-												key={i}
-												className="text-sm text-gray-600 flex items-start space-x-2"
-											>
-												<span className={`${hasRisks ? "text-danger-500" : "text-warning-500"} mt-1`}>•</span>
+											<li key={i} className="flex gap-2.5 font-text text-ubb-small text-ubb-ink">
+												<span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-ubb-accent-ink" aria-hidden="true" />
 												<span>{rec}</span>
 											</li>
 										))}
@@ -478,243 +472,187 @@ const SimplifiedResultsPage = () => {
 								</div>
 							))}
 						</div>
-					</div>
+					</section>
 
-					<div className="card">
-						<div className="flex items-center space-x-2 mb-4">
-							<TrendingUp className="w-5 h-5 text-success-500" />
-							<h3 className="text-lg font-bold text-gray-900">
+					<section aria-labelledby="strengths-title" className="rounded-ubb-panel border border-ubb-brand-900/10 bg-ubb-brand-50 p-6 sm:p-8">
+						<div className="flex items-center gap-3">
+							<span className="flex h-10 w-10 items-center justify-center rounded-ubb-field bg-white text-ubb-brand-900">
+								<TrendingUp className="h-5 w-5" aria-hidden="true" />
+							</span>
+							<h3 id="strengths-title" className="ubb-heading text-xl font-semibold">
 								{t("diagnostic.results.strengthsTitle")}
 							</h3>
 						</div>
-						<div className="space-y-4">
-							{strengthPillars.length === 0 && (
-								<p className="text-sm italic text-gray-500">{t("diagnostic.results.noStrengths")}</p>
-							)}
-							{strengthPillars.map((pillar) => (
-								<div key={pillar.pillarId} className="flex items-center justify-between">
-									<span className="font-semibold text-gray-900">
-										{pillar.pillarName}
-									</span>
-									<span className="text-2xl font-bold text-success-600">
-										{pillar.score}/100
-									</span>
-								</div>
-							))}
-						</div>
-					</div>
-				</motion.div>
+						{strengthPillars.length === 0 ? (
+							<p className="mt-6 font-text text-ubb-body text-ubb-ink-muted">{t("diagnostic.results.noStrengths")}</p>
+						) : (
+							<ul className="mt-6 space-y-4">
+								{strengthPillars.map((pillar) => (
+									<li key={pillar.pillarId} className="flex items-center gap-2.5 rounded-ubb-field bg-white p-4">
+										<NumberBadge n={pillarNumber(pillar.pillarId)} />
+										<span className="min-w-0 flex-1 font-text font-semibold text-ubb-ink">{pillar.pillarName}</span>
+										<span className="font-heading text-2xl font-bold text-ubb-brand-900">{pillar.score}/100</span>
+									</li>
+								))}
+							</ul>
+						)}
+					</section>
+				</div>
 
 				{/* Prochaines étapes */}
-				<motion.div
-					initial={{ opacity: 0, y: 20 }}
-					animate={{ opacity: 1, y: 0 }}
-					transition={{ delay: 0.2 }}
-					className="card"
-				>
-					<div className="flex items-center space-x-2 mb-4">
-						<ListChecks className="w-5 h-5 text-primary-500" />
-						<h3 className="text-lg font-bold text-gray-900">
-							{t("diagnostic.results.nextStepsTitle")}
-						</h3>
-					</div>
-					<ol className="space-y-3">
-						{nextSteps.map((step, index) => (
-							<li key={index} className="flex items-start space-x-3">
-								<span className="flex-shrink-0 w-6 h-6 rounded-full bg-primary-500 text-white text-sm font-bold flex items-center justify-center">
-									{index + 1}
-								</span>
-								<span className="text-gray-700">{step.text}</span>
-							</li>
-						))}
-					</ol>
-				</motion.div>
+				{nextSteps.length > 0 && (
+					<section aria-labelledby="steps-title" className="ubb-card mt-6 p-6 sm:p-8">
+						<div className="flex items-center gap-3">
+							<span className="flex h-10 w-10 items-center justify-center rounded-ubb-field bg-ubb-mist text-ubb-brand-900">
+								<ListChecks className="h-5 w-5" aria-hidden="true" />
+							</span>
+							<h3 id="steps-title" className="ubb-heading text-xl font-semibold">
+								{t("diagnostic.results.nextStepsTitle")}
+							</h3>
+						</div>
+						<ol className="mt-6 space-y-4">
+							{nextSteps.map((step, index) => (
+								<li key={index} className="flex items-start gap-4">
+									<NumberBadge n={index + 1} />
+									<span className="pt-0.5 font-text text-ubb-body text-ubb-ink">{step.text}</span>
+								</li>
+							))}
+						</ol>
+					</section>
+				)}
 
-				{/* Envoyer le rapport */}
+				{/* Rapport par email / téléchargement */}
 				{!saved && (
-					<motion.div
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ delay: 0.3 }}
-						className="card"
-					>
-						<div className="flex items-center space-x-2 mb-2">
-							<Mail className="w-5 h-5 text-primary-500" />
-							<h3 className="text-lg font-bold text-gray-900">
+					<section aria-labelledby="report-title" className="ubb-card mt-6 p-6 sm:p-8">
+						<div className="flex items-center gap-3">
+							<span className="flex h-10 w-10 items-center justify-center rounded-ubb-field bg-ubb-mist text-ubb-brand-900">
+								<Mail className="h-5 w-5" aria-hidden="true" />
+							</span>
+							<h3 id="report-title" className="ubb-heading text-xl font-semibold">
 								{t("diagnostic.results.emailSectionTitle")}
 							</h3>
 						</div>
+						<p className="mt-3 max-w-ubb-prose font-text text-ubb-body text-ubb-ink-muted">
+							{t("diagnostic.results.emailSectionSubtitle")}
+						</p>
 
-						{/* Email déjà connu → un seul bouton de confirmation */}
 						{emailInput ? (
-							<>
-								<p className="text-gray-600 mb-4">
-									{t("diagnostic.results.emailSectionSubtitle")}
-								</p>
-								<div className="flex flex-col sm:flex-row items-start sm:items-center gap-3">
-									<div className="flex items-center gap-2 bg-gray-50 border border-gray-200 rounded-lg px-4 py-2 text-gray-700 text-sm flex-1">
-										<Mail className="w-4 h-4 text-gray-400 shrink-0" />
-										<span className="font-medium truncate">{emailInput}</span>
-									</div>
-									<button
-										onClick={handleSaveAndSend}
-										disabled={saving}
-										className="btn-primary flex items-center justify-center space-x-2 disabled:opacity-50 whitespace-nowrap"
-									>
-										{saving ? (
-											<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-										) : (
-											<>
-												<Mail className="w-4 h-4" />
-												<span>{t("diagnostic.results.sendReportButton")}</span>
-											</>
-										)}
-									</button>
+							<div className="mt-5">
+								<div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+									<p className="flex min-h-[48px] min-w-0 flex-1 items-center gap-2 rounded-ubb-field bg-ubb-paper-soft px-4 font-text text-ubb-body font-medium text-ubb-ink">
+										<Mail className="h-4 w-4 shrink-0 text-ubb-ink-muted" aria-hidden="true" />
+										<span className="truncate">{emailInput}</span>
+									</p>
+									<Button onClick={handleSaveAndSend} disabled={saving}>
+										{saving ? t("diagnostic.results.sending") : t("diagnostic.results.sendReportButton")}
+									</Button>
 								</div>
 								<button
+									type="button"
 									onClick={() => setEmailInput("")}
-									className="mt-2 text-xs text-gray-400 hover:text-gray-600 underline"
+									className="ubb-focus mt-1 inline-flex min-h-[44px] items-center rounded font-text text-sm font-semibold text-ubb-brand-900 underline underline-offset-4"
 								>
-									Utiliser un autre email
+									{t("diagnostic.results.otherEmail")}
 								</button>
-							</>
+							</div>
 						) : (
-							/* Pas d'email → formulaire complet */
-							<>
-								<p className="text-gray-600 mb-4">
-									{t("diagnostic.results.emailSectionSubtitle")}
-								</p>
-								<form onSubmit={handleSaveAndSend} className="flex flex-col sm:flex-row gap-3">
-									<input
-										type="email"
-										value={emailInput}
-										onChange={(e) => setEmailInput(e.target.value)}
-										placeholder={t("diagnostic.results.emailPlaceholder")}
-										className="input-field flex-1"
-										required
-									/>
-									<button
-										type="submit"
-										disabled={saving}
-										className="btn-primary flex items-center justify-center space-x-2 disabled:opacity-50"
-									>
-										{saving ? (
-											<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-										) : (
-											<>
-												<Mail className="w-4 h-4" />
-												<span>{t("diagnostic.results.sendReportButton")}</span>
-											</>
-										)}
-									</button>
-								</form>
-							</>
+							<form onSubmit={handleSaveAndSend} className="mt-5 flex flex-col gap-3 sm:flex-row sm:items-end" noValidate>
+								<div className="flex-1">
+									<FormField id="results-email" label={t("diagnostic.intro.email")}>
+										<input
+											id="results-email"
+											type="email"
+											autoComplete="email"
+											inputMode="email"
+											value={emailInput}
+											onChange={(e) => setEmailInput(e.target.value)}
+											placeholder={t("diagnostic.results.emailPlaceholder")}
+											className="ubb-input"
+											required
+										/>
+									</FormField>
+								</div>
+								<Button type="submit" disabled={saving}>
+									{saving ? t("diagnostic.results.sending") : t("diagnostic.results.sendReportButton")}
+								</Button>
+							</form>
 						)}
-					</motion.div>
+					</section>
 				)}
 
 				{saved && savedAssessmentId && (
-					<motion.div
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ delay: 0.3 }}
-						className="card"
-					>
-						<div className="flex items-center space-x-2 mb-4">
-							<CheckCircle className="w-5 h-5 text-success-500" />
-							<h3 className="text-lg font-bold text-gray-900">
+					<section aria-labelledby="ready-title" className="ubb-card mt-6 p-6 sm:p-8">
+						<div className="flex items-center gap-3">
+							<span className="flex h-10 w-10 items-center justify-center rounded-ubb-field bg-ubb-brand-50 text-ubb-brand-900">
+								<CheckCircle2 className="h-5 w-5" aria-hidden="true" />
+							</span>
+							<h3 id="ready-title" className="ubb-heading text-xl font-semibold">
 								{t("diagnostic.results.reportReadyTitle")}
 							</h3>
 						</div>
-						<p className="text-gray-600 mb-4">
+						<p className="mt-3 max-w-ubb-prose font-text text-ubb-body text-ubb-ink-muted">
 							{t("diagnostic.results.reportReadySubtitle")}
 						</p>
-						<button
-							onClick={handleDownload}
-							disabled={downloading}
-							className="btn-outline flex items-center space-x-2 disabled:opacity-50"
-						>
-							{downloading ? (
-								<div className="w-4 h-4 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
-							) : (
-								<>
-									<Download className="w-4 h-4" />
-									<span>{t("diagnostic.results.downloadButton")}</span>
-								</>
-							)}
-						</button>
-					</motion.div>
+						<Button variant="outline" onClick={handleDownload} disabled={downloading} className="mt-5">
+							<Download className="h-4 w-4" aria-hidden="true" />
+							{downloading ? t("diagnostic.results.downloading") : t("diagnostic.results.downloadButton")}
+						</Button>
+					</section>
 				)}
 
-				{/* Bouton Rapport Premium IA — visible uniquement pour les abonnés payants avec diagnostic sauvegardé */}
+				{/* Rapport premium (abonnés) */}
 				{isPremiumUser && savedAssessmentId && (
-					<motion.div
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ delay: 0.4 }}
-						className="card border-2 border-green-400 bg-gradient-to-r from-green-50 to-yellow-50"
-					>
-						<div className="flex items-center space-x-2 mb-3">
-							<Sparkles className="w-6 h-6 text-green-600" />
-							<h3 className="text-xl font-bold text-gray-900">
-								Votre Rapport Premium IA est disponible
+					<section aria-labelledby="premium-report-title" className="mt-6 rounded-ubb-panel border-2 border-ubb-brand-900 bg-ubb-brand-50 p-6 sm:p-8">
+						<div className="flex items-center gap-3">
+							<span className="flex h-10 w-10 items-center justify-center rounded-ubb-field bg-ubb-brand-900 text-ubb-accent-500">
+								<Sparkles className="h-5 w-5" aria-hidden="true" />
+							</span>
+							<h3 id="premium-report-title" className="ubb-heading text-xl font-semibold">
+								{t("diagnostic.results.premiumReport.title")}
 							</h3>
 						</div>
-						<p className="text-gray-600 mb-5">
-							En tant qu'abonné premium, vous bénéficiez d'une analyse approfondie générée par intelligence artificielle : recommandations personnalisées, plan d'action priorisé et insights stratégiques adaptés à votre secteur.
+						<p className="mt-3 max-w-ubb-prose font-text text-ubb-body text-ubb-ink-muted">
+							{t("diagnostic.results.premiumReport.description")}
 						</p>
-						<button
-							onClick={handleDownloadPremium}
-							disabled={downloadingPremium}
-							className="flex items-center space-x-2 px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-						>
-							{downloadingPremium ? (
-								<>
-									<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-									<span>Génération en cours… (10–20 sec)</span>
-								</>
-							) : (
-								<>
-									<Download className="w-5 h-5" />
-									<span>Télécharger mon Rapport Premium IA</span>
-								</>
-							)}
-						</button>
-					</motion.div>
+						<Button variant="secondary" onClick={handleDownloadPremium} disabled={downloadingPremium} className="mt-5">
+							<Download className="h-4 w-4" aria-hidden="true" />
+							{downloadingPremium ? t("diagnostic.results.premiumReport.generating") : t("diagnostic.results.premiumReport.download")}
+						</Button>
+					</section>
 				)}
 
-				{/* Premium CTA — uniquement pour les non-abonnés */}
+				{/* Passer au Premium (non abonnés) */}
 				{!isPremiumUser && (
-					<motion.div
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ delay: 0.4 }}
-						className="card bg-gradient-to-r from-purple-50 to-pink-50 border border-purple-200"
-					>
-						<div className="flex items-center space-x-2 mb-4">
-							<Star className="w-6 h-6 text-purple-500" />
-							<h3 className="text-xl font-bold text-gray-900">
-								{t("diagnostic.results.premiumTitle")}
-							</h3>
+					<section aria-labelledby="premium-title" className="relative mt-6 overflow-hidden rounded-ubb-panel bg-ubb-brand-900 p-6 text-white sm:p-10">
+						<div
+							aria-hidden="true"
+							className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_80%_at_100%_0%,rgb(var(--ubb-brand-700)/0.8),transparent_70%)]"
+						/>
+						<div className="relative">
+							<div className="flex items-center gap-3">
+								<span className="flex h-10 w-10 items-center justify-center rounded-ubb-field bg-white/10 text-ubb-accent-500">
+									<Star className="h-5 w-5" aria-hidden="true" />
+								</span>
+								<h3 id="premium-title" className="ubb-heading text-xl font-semibold text-white sm:text-2xl">
+									{t("diagnostic.results.premiumTitle")}
+								</h3>
+							</div>
+							<ul className="mt-6 grid gap-3 md:grid-cols-2">
+								{Array.isArray(premiumBenefits) &&
+									premiumBenefits.map((benefit, i) => (
+										<li key={i} className="flex gap-3 font-text text-ubb-body text-ubb-brand-100">
+											<Check className="mt-1 h-4 w-4 shrink-0 text-ubb-accent-500" strokeWidth={3} aria-hidden="true" />
+											<span>{benefit}</span>
+										</li>
+									))}
+							</ul>
+							<Button onClick={handlePremiumUpgrade} className="mt-8 focus-visible:ring-ubb-accent-500 focus-visible:ring-offset-ubb-brand-900">
+								{t("diagnostic.results.premiumCta")}
+							</Button>
 						</div>
-						<ul className="space-y-2 mb-6">
-							{Array.isArray(premiumBenefits) && premiumBenefits.map((benefit, i) => (
-								<li key={i} className="flex items-start space-x-2 text-gray-700">
-									<CheckCircle className="w-4 h-4 text-purple-500 mt-1 flex-shrink-0" />
-									<span>{benefit}</span>
-								</li>
-							))}
-						</ul>
-						<button
-							onClick={handlePremiumUpgrade}
-							className="btn-secondary flex items-center justify-center space-x-2"
-						>
-							<Star className="w-4 h-4" />
-							<span>{t("diagnostic.results.premiumCta")}</span>
-						</button>
-					</motion.div>
+					</section>
 				)}
-			</div>
+			</Container>
 		</div>
 	);
 };

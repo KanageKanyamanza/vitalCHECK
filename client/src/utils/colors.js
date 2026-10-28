@@ -113,6 +113,37 @@ export const colors = {
   }
 }
 
+// Palette du design system UBB — miroir JS de src/styles/tokens.css
+// (pour Chart.js, Recharts, PDF… qui ne lisent pas les classes Tailwind)
+export const ubb = {
+  brand: {
+    50: '#F4FAF5',
+    100: '#EAF6EC',
+    200: '#DCF0E0',
+    300: '#C4E6CB',
+    400: '#A3D7AE',
+    500: '#7AC48A',
+    600: '#4FAE63',
+    700: '#2E9A45',
+    800: '#1A8A33',
+    900: '#00751B',
+    950: '#004A12',
+  },
+  accent: {
+    50: '#FEFAEB',
+    100: '#FDF0C4',
+    300: '#F8D97A',
+    500: '#F4C542',
+    600: '#E5B22A',
+    ink: '#8A6300',
+  },
+  mist: '#EAF6EC',
+  ink: '#0F2416',
+  inkMuted: '#4A5D50',
+  paper: '#FFFFFF',
+  paperSoft: '#F8FAF8',
+}
+
 // Fonctions utilitaires pour les couleurs de statut
 export const getStatusColor = (status) => {
   switch (status) {

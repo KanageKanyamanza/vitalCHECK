@@ -53,12 +53,12 @@ const SocialShare = ({ url, title, description }) => {
   ]
 
   return (
-    <div className="bg-gray-50 border-t border-gray-200 py-8">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="border-t border-ubb-brand-900/[0.06] bg-white py-8">
+      <div className="ubb-container">
         <div className="text-center md:text-left">
-          <h4 className="text-lg font-semibold text-gray-900 mb-4">
+          <h2 className="mb-4 font-heading text-lg font-semibold text-ubb-ink">
             {t('socialShare.title')}
-          </h4>
+          </h2>
           <div className="flex flex-wrap justify-center md:justify-start gap-3">
             {socialLinks.map((social) => (
               <a
@@ -66,18 +66,19 @@ const SocialShare = ({ url, title, description }) => {
                 href={social.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group relative"
+                className="ubb-focus group relative rounded-full"
+                aria-label={`${t('socialShare.shareOn')} ${social.name}`}
                 title={`${t('socialShare.shareOn')} ${social.name}`}
               >
-                <div className="w-10 h-10 rounded-full overflow-hidden hover:scale-110 transition-transform duration-200 shadow-md hover:shadow-lg">
+                <div className="h-11 w-11 overflow-hidden rounded-full shadow-ubb-sm">
                   <img 
                     src={social.icon} 
-                    alt={social.name}
+                    alt=""
                     className="w-full h-full object-cover"
                   />
                 </div>
                 {/* Tooltip */}
-                <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                <span aria-hidden="true" className="absolute -top-8 left-1/2 hidden -translate-x-1/2 transform bg-gray-900 md:block text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                   {social.name}
                 </span>
               </a>
@@ -86,16 +87,17 @@ const SocialShare = ({ url, title, description }) => {
             {/* Copy Link Button */}
             <button
               onClick={handleCopyLink}
-              className="group relative w-10 h-10 rounded-full bg-gray-200 hover:bg-gray-300 flex items-center justify-center hover:scale-110 transition-all duration-200 shadow-md hover:shadow-lg"
+              className="ubb-focus group relative flex h-11 w-11 items-center justify-center rounded-full bg-ubb-mist text-ubb-ink shadow-ubb-sm transition-colors hover:bg-ubb-brand-200"
+              aria-label={copied ? t('socialShare.copied') : t('socialShare.copyLink')}
               title={t('socialShare.copyLink')}
             >
               {copied ? (
-                <Check className="w-5 h-5 text-green-600" />
+                <Check className="w-5 h-5 text-emerald-700" aria-hidden="true" />
               ) : (
-                <Copy className="w-5 h-5 text-gray-700" />
+                <Copy className="w-5 h-5" aria-hidden="true" />
               )}
               {/* Tooltip */}
-              <span className="absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+              <span aria-hidden="true" className="absolute -top-8 left-1/2 hidden -translate-x-1/2 transform bg-gray-900 md:block text-white text-xs py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
                 {copied ? t('socialShare.copied') : t('socialShare.copyLink')}
               </span>
             </button>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useParams, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import SEOHead from '../components/seo/SEOHead'
 import { getBlogPostStructuredData } from '../utils/seoData'
@@ -17,6 +17,7 @@ import {
   Clock,
   Users,
 } from 'lucide-react'
+import { Button, Container } from '../components/ui/ds'
 import { blogApiService } from '../services/api'
 import trackingService from '../services/trackingService'
 import BlogImageGallery from '../components/blog/BlogImageGallery'
@@ -65,12 +66,12 @@ const BlogDetailPage = () => {
    * - Sinon, on parse le Markdown (gras, titres, listes, etc.) et on le convertit en HTML formaté
    */
   const renderBlogContent = () => {
-    const rawContent = getLocalizedContent(blog?.content, 'Contenu non disponible')
+    const rawContent = getLocalizedContent(blog?.content, t('blog.noContent'))
 
     if (!rawContent) {
       return (
-        <div className="prose prose-lg max-w-none">
-          <p>Contenu non disponible.</p>
+        <div className="ubb-article">
+          <p>{t('blog.noContent')}</p>
         </div>
       )
     }
@@ -82,7 +83,7 @@ const BlogDetailPage = () => {
       // Contenu déjà en HTML, le rendre tel quel
       return (
         <div
-          className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-gray-900 prose-p:text-gray-700 prose-p:leading-relaxed prose-strong:text-gray-900 prose-ul:list-disc prose-ol:list-decimal prose-li:my-2 prose-a:text-primary-600 prose-a:underline hover:prose-a:text-primary-700"
+          className="ubb-article"
           dangerouslySetInnerHTML={{ __html: rawContent }}
         />
       )
@@ -93,7 +94,7 @@ const BlogDetailPage = () => {
 
     return (
       <div
-        className="prose prose-lg max-w-none prose-headings:font-bold prose-headings:text-gray-900 prose-p:text-gray-700 prose-p:leading-relaxed prose-strong:text-gray-900 prose-ul:list-disc prose-ol:list-decimal prose-li:my-2 prose-a:text-primary-600 prose-a:underline hover:prose-a:text-primary-700"
+        className="ubb-article"
         dangerouslySetInnerHTML={{ __html: htmlContent }}
       />
     )
@@ -170,7 +171,7 @@ const BlogDetailPage = () => {
           category: response.data.data.category,
           limit: 3
         })
-        setRelatedBlogs(relatedResponse.data.data.filter(b => b.slug !== slug))
+        setRelatedBlogs(relatedResponse.data.data.filter(b => getLocalizedContent(b.slug, b.slug) !== slug))
       }
     } catch (error) {
       console.error('Error loading blog:', error)
@@ -236,8 +237,8 @@ const BlogDetailPage = () => {
     if (navigator.share) {
       try {
         await navigator.share({
-          title: blog.title,
-          text: blog.excerpt,
+          title: getLocalizedContent(blog.title, ''),
+          text: getLocalizedContent(blog.excerpt, ''),
           url: window.location.href
         })
       } catch (error) {
@@ -252,7 +253,7 @@ const BlogDetailPage = () => {
 
   // Formater la date
   const formatDate = (date) => {
-    return new Date(date).toLocaleDateString('fr-FR', {
+    return new Date(date).toLocaleDateString((i18n.language || 'fr').startsWith('en') ? 'en-US' : 'fr-FR', {
       year: 'numeric',
       month: 'long',
       day: 'numeric'
@@ -323,307 +324,232 @@ const BlogDetailPage = () => {
     }
   }
 
+  const NotFoundState = () => (
+    <div className="flex min-h-[60vh] items-center justify-center px-4">
+      <div className="text-center">
+        <h1 className="ubb-heading text-ubb-title">{t('blog.articleNotFound')}</h1>
+        <Button to="/blog" className="mt-6">
+          <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+          {t('blog.backToBlog')}
+        </Button>
+      </div>
+    </div>
+  )
+
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"></div>
+      <div className="flex min-h-[60vh] items-center justify-center" role="status" aria-label={t('common.loading')}>
+        <div className="h-12 w-12 animate-spin rounded-full border-4 border-ubb-brand-900 border-t-transparent" />
       </div>
     )
   }
 
-  if (!blog) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">{t('blog.articleNotFound')}</h1>
-          <button
-            onClick={() => navigate('/blog')}
-            className="inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {t('blog.backToBlog')}
-          </button>
-        </div>
-      </div>
-    )
-  }
+  if (!blog) return <NotFoundState />
 
   const TypeIcon = getTypeIcon(blog.type)
+  const articleTitle = getLocalizedContent(blog.title, t('blog.untitled'))
 
   // Données SEO localisées
-  const currentLanguage = i18n.language || 'fr'
   const localizedTitle =
-    (blog?.metaTitle && getLocalizedContent(blog.metaTitle, null)) ||
-    getLocalizedContent(blog?.title, 'Article de blog vitalCHECK')
+    (blog?.metaTitle && getLocalizedContent(blog.metaTitle, null)) || articleTitle
 
   const localizedExcerpt =
     (blog?.metaDescription && getLocalizedContent(blog.metaDescription, null)) ||
     getLocalizedContent(blog?.excerpt, '') ||
-    getLocalizedContent(blog?.content, 'Article de blog vitalCHECK')
+    getLocalizedContent(blog?.content, t('blog.seo.articleFallback'))
 
   const localizedSlug = blog?.slug
     ? getLocalizedContent(blog.slug, slug || '')
     : slug || ''
 
   const seoUrl = localizedSlug ? `/blog/${localizedSlug}` : '/blog'
-  const seoImage = blog?.featuredImage?.url || '/og-image.png'
+  const seoImage = blog?.featuredImage?.url || blog?.images?.[0]?.url || '/og-image.png'
+  const normalizedTags = normalizeTags(blog.tags)
+
+  const imagesAt = (position) => (blog.images || []).filter((img) => img.position === position)
+  const Gallery = ({ position, className = '' }) =>
+    imagesAt(position).length > 0 ? (
+      <div className={className}>
+        <BlogImageGallery images={imagesAt(position)} />
+      </div>
+    ) : null
+
+  const ActionButtons = ({ className = '' }) => (
+    <div className={`flex flex-wrap gap-3 ${className}`}>
+      <button
+        type="button"
+        onClick={handleLike}
+        aria-pressed={liked}
+        className={`ubb-focus inline-flex min-h-[44px] items-center gap-2 rounded-full border px-5 font-text text-sm font-semibold transition-colors ${
+          liked
+            ? 'border-ubb-brand-900 bg-ubb-brand-900 text-white'
+            : 'border-ubb-brand-900/20 bg-white text-ubb-ink hover:border-ubb-brand-900/50'
+        }`}
+      >
+        <Heart className={`h-4 w-4 ${liked ? 'fill-current' : ''}`} aria-hidden="true" />
+        {liked ? t('blog.unlikeArticle') : t('blog.likeArticle')}
+        <span aria-hidden="true">· {blog.likes}</span>
+        <span className="sr-only">{t('blog.likesCount', { count: blog.likes })}</span>
+      </button>
+      <button
+        type="button"
+        onClick={handleShare}
+        className="ubb-focus inline-flex min-h-[44px] items-center gap-2 rounded-full border border-ubb-brand-900/20 bg-white px-5 font-text text-sm font-semibold text-ubb-ink transition-colors hover:border-ubb-brand-900/50"
+      >
+        <Share2 className="h-4 w-4" aria-hidden="true" />
+        {t('blog.share')}
+      </button>
+    </div>
+  )
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-[50px]">
+    <div className="min-h-screen bg-ubb-paper-soft">
       <SEOHead
-        title={localizedTitle ? `${localizedTitle} - Blog vitalCHECK` : 'Blog vitalCHECK'}
+        title={`${localizedTitle} - Blog vitalCHECK`}
         description={
           localizedExcerpt && typeof localizedExcerpt === 'string'
             ? `${localizedExcerpt.substring(0, 160)}${localizedExcerpt.length > 160 ? '...' : ''}`
-            : 'Article de blog vitalCHECK'
+            : t('blog.seo.articleFallback')
         }
-        keywords={blog?.tags ? blog.tags.join(", ") : "blog business, conseils entreprise, vitalCHECK"}
+        keywords={blog?.tags ? blog.tags.join(", ") : t('blog.seo.keywords')}
         url={seoUrl}
         image={seoImage}
         type="article"
         structuredData={blog ? getBlogPostStructuredData(blog) : null}
       />
-      
-      {/* Indicateur de prévisualisation */}
+
+      {/* Mode prévisualisation (administration) */}
       {isPreviewMode && (
-        <div className="bg-yellow-100 border-b border-yellow-200 px-4 py-2">
-          <div className="max-w-4xl mx-auto flex items-center justify-between">
-            <div className="flex items-center">
-              <Eye className="h-4 w-4 text-yellow-600 mr-2" />
-              <span className="text-sm font-medium text-yellow-800">
-                Mode prévisualisation - Article non publié
-              </span>
-            </div>
-            <button
-              onClick={() => window.close()}
-              className="text-sm text-yellow-600 hover:text-yellow-800"
-            >
-              Fermer
+        <div role="status" className="border-b border-ubb-accent-300 bg-ubb-accent-100 px-4 py-2">
+          <div className="mx-auto flex max-w-4xl items-center justify-between gap-4">
+            <span className="flex items-center gap-2 font-text text-sm font-semibold text-ubb-brand-950">
+              <Eye className="h-4 w-4" aria-hidden="true" />
+              {t('blog.preview.banner')}
+            </span>
+            <button type="button" onClick={() => window.close()} className="ubb-focus min-h-[44px] rounded px-2 font-text text-sm font-semibold text-ubb-brand-950 underline underline-offset-4">
+              {t('blog.preview.close')}
             </button>
           </div>
         </div>
       )}
-      
-      {/* Header */}
-      <div className="bg-white shadow-sm">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <button
-            onClick={() => isPreviewMode ? window.close() : navigate('/blog')}
-            className="inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-6"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            {isPreviewMode ? 'Fermer la prévisualisation' : t('blog.backToBlog')}
-          </button>
 
-          {/* Métadonnées */}
-          <div className="flex items-center space-x-2 mb-4">
-            <div className="flex items-center text-sm text-primary-600">
-              <TypeIcon className="h-4 w-4 mr-1" />
+      {/* En-tête de l'article */}
+      <header className="bg-white">
+        <Container className="max-w-4xl py-8 sm:py-12">
+          {!isPreviewMode && (
+            <Link to="/blog" className="ubb-focus inline-flex min-h-[44px] items-center gap-2 rounded font-text text-sm font-semibold text-ubb-brand-900">
+              <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+              {t('blog.backToBlog')}
+            </Link>
+          )}
+
+          <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 font-text text-ubb-small font-semibold text-ubb-brand-900">
+            <span className="flex items-center gap-1.5">
+              <TypeIcon className="h-4 w-4" aria-hidden="true" />
               {getTypeLabel(blog.type)}
-            </div>
-            <span className="text-sm text-gray-500">•</span>
-            <span className="text-sm text-gray-500">
-              {getCategoryLabel(blog.category)}
             </span>
-            <span className="text-sm text-gray-500">•</span>
-            <div className="flex items-center text-sm text-gray-500">
-              <Calendar className="h-4 w-4 mr-1" />
+            <span className="font-normal text-ubb-ink-muted">/ {getCategoryLabel(blog.category)}</span>
+            <span className="flex items-center gap-1.5 font-normal text-ubb-ink-muted">
+              <Calendar className="h-4 w-4" aria-hidden="true" />
               {formatDate(blog.publishedAt || blog.createdAt)}
-            </div>
-          </div>
-
-          {/* Titre */}
-          <h1 className="md:text-4xl text-2xl font-bold text-gray-900 mb-4">
-            {getLocalizedContent(blog.title, 'Titre non disponible')}
-          </h1>
-
-          {/* Extrait */}
-          <p className="md:text-xl text-sm text-gray-600 mb-6">
-            {getLocalizedContent(blog.excerpt, 'Extrait non disponible')}
+            </span>
           </p>
 
-          {/* Auteur et stats */}
-          <div className="flex flex-wrap content-center items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center text-sm text-gray-500">
-                <User className="h-4 w-4 mr-1" />
-                {t('blog.author')} {blog.author?.name || t('blog.unknownAuthor')}
-              </div>
-              <div className="flex items-center text-sm text-gray-500">
-                <Eye className="h-4 w-4 mr-1" />
-                {blog.views} {t('blog.views')}
-              </div>
-            </div>
+          <h1 className="ubb-heading mt-4 text-ubb-title sm:text-ubb-display">{articleTitle}</h1>
+          <p className="mt-5 max-w-ubb-prose font-text text-ubb-lead text-ubb-ink-muted">
+            {getLocalizedContent(blog.excerpt, '')}
+          </p>
 
-            {!isPreviewMode && (
-              <div className="flex items-center space-x-3">
-                <button
-                  onClick={handleLike}
-                  className={`flex items-center px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                    liked 
-                      ? 'text-red-600 bg-red-100 hover:bg-red-200' 
-                      : 'text-gray-500 hover:text-red-600 hover:bg-red-50'
-                  }`}
-                >
-                  <Heart className={`h-4 w-4 mr-1 ${liked ? 'fill-current' : ''}`} />
-                  {blog.likes}
-                </button>
-                
-                <button
-                  onClick={handleShare}
-                  className="flex items-center px-3 py-1 rounded-full text-sm font-medium text-gray-500 hover:text-primary-600 hover:bg-primary-50 transition-colors"
-                >
-                  <Share2 className="h-4 w-4 mr-1" />
-                  {t('blog.share')}
-                </button>
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
+            <p className="flex flex-wrap items-center gap-x-4 gap-y-1 font-text text-ubb-small text-ubb-ink-muted">
+              <span className="flex items-center gap-1.5">
+                <User className="h-4 w-4" aria-hidden="true" />
+                {t('blog.author')} {blog.author?.name || t('blog.unknownAuthor')}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Eye className="h-4 w-4" aria-hidden="true" />
+                {blog.views} {t('blog.views')}
+              </span>
+            </p>
+            {!isPreviewMode && <ActionButtons />}
+          </div>
+        </Container>
+      </header>
+
+      <Container className="max-w-6xl py-8 sm:py-12">
+        <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_300px] lg:gap-12">
+          {/* Contenu */}
+          <article className="ubb-card min-w-0 p-5 sm:p-10">
+            <Gallery position="top" className="mb-8" />
+            <Gallery position="content-start" className="mb-8" />
+
+            {renderBlogContent()}
+
+            <Gallery position="middle" className="my-8" />
+            <Gallery position="bottom" className="mt-8" />
+            <Gallery position="content-end" className="mt-8" />
+
+            {normalizedTags.length > 0 && (
+              <div className="mt-10 border-t border-ubb-brand-900/[0.08] pt-6">
+                <h2 className="font-heading text-base font-semibold text-ubb-ink">{t('blog.tagsLabel')}</h2>
+                <ul className="mt-3 flex flex-wrap gap-2">
+                  {normalizedTags.map((tag, index) => (
+                    <li key={index} className="inline-flex items-center gap-1.5 rounded-full bg-ubb-brand-50 px-3 py-1.5 font-text text-sm font-medium text-ubb-brand-950">
+                      <Tag className="h-3.5 w-3.5" aria-hidden="true" />
+                      {translateTag(tag)}
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
-          </div>
+
+            {!isPreviewMode && (
+              <div className="mt-10 rounded-ubb-card bg-ubb-brand-900 p-6 text-white sm:p-8">
+                <p className="font-heading text-xl font-semibold">{t('blog.cta.title')}</p>
+                <p className="mt-2 font-text text-ubb-body text-ubb-brand-100">{t('blog.cta.text')}</p>
+                <Button to="/diagnostic" className="mt-5 focus-visible:ring-ubb-accent-500 focus-visible:ring-offset-ubb-brand-900">
+                  {t('blog.cta.button')}
+                </Button>
+              </div>
+            )}
+          </article>
+
+          {/* Articles similaires */}
+          {relatedBlogs.length > 0 && (
+            <aside aria-labelledby="related-title" className="lg:sticky lg:top-[calc(var(--ubb-header-h)+1.5rem)] lg:self-start">
+              <h2 id="related-title" className="font-heading text-lg font-semibold text-ubb-ink">
+                {t('blog.relatedArticles')}
+              </h2>
+              <ul className="mt-4 space-y-3">
+                {relatedBlogs.map((relatedBlog) => {
+                  const RelatedTypeIcon = getTypeIcon(relatedBlog.type)
+                  const relatedTitle = getLocalizedContent(relatedBlog.title, t('blog.untitled'))
+                  const relatedSlug = getLocalizedContent(relatedBlog.slug, relatedBlog.slug)
+                  return (
+                    <li key={relatedBlog._id} className="relative flex gap-3 rounded-ubb-card border border-ubb-brand-900/10 bg-white p-3 transition-shadow focus-within:ring-2 focus-within:ring-ubb-brand-900 hover:shadow-ubb-sm">
+                      {(relatedBlog.featuredImage?.url || relatedBlog.images?.[0]?.url) && (
+                        <img src={relatedBlog.featuredImage?.url || relatedBlog.images[0].url} alt="" loading="lazy" className="h-16 w-16 shrink-0 rounded-ubb-field object-cover" />
+                      )}
+                      <div className="min-w-0">
+                        <p className="flex items-center gap-1.5 font-text text-xs font-semibold text-ubb-brand-900">
+                          <RelatedTypeIcon className="h-3.5 w-3.5" aria-hidden="true" />
+                          {getTypeLabel(relatedBlog.type)}
+                        </p>
+                        <h3 className="mt-1 line-clamp-2 font-text text-sm font-semibold text-ubb-ink">
+                          <Link to={`/blog/${relatedSlug}`} className="after:absolute after:inset-0 after:content-[''] focus:outline-none">
+                            {relatedTitle}
+                          </Link>
+                        </h3>
+                        <p className="mt-1 font-text text-xs text-ubb-ink-muted">{formatDate(relatedBlog.publishedAt || relatedBlog.createdAt)}</p>
+                      </div>
+                    </li>
+                  )
+                })}
+              </ul>
+            </aside>
+          )}
         </div>
-      </div>
-
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Contenu principal */}
-          <div className="lg:col-span-2">
-            <article className="bg-white rounded-lg shadow-sm p-2 sm:p-8">
-              {/* Images en haut */}
-              {blog.images && blog.images.filter(img => img.position === 'top').length > 0 && (
-                <div className="mb-8">
-                  <BlogImageGallery images={blog.images.filter(img => img.position === 'top')} />
-                </div>
-              )}
-
-              {/* Images au début du contenu */}
-              {blog.images && blog.images.filter(img => img.position === 'content-start').length > 0 && (
-                <div className="mb-8">
-                  <BlogImageGallery images={blog.images.filter(img => img.position === 'content-start')} />
-                </div>
-              )}
-
-              {/* Contenu */}
-              {renderBlogContent()}
-
-              {/* Images au milieu */}
-              {blog.images && blog.images.filter(img => img.position === 'middle').length > 0 && (
-                <div className="my-8">
-                  <BlogImageGallery images={blog.images.filter(img => img.position === 'middle')} />
-                </div>
-              )}
-
-              {/* Images en bas */}
-              {blog.images && blog.images.filter(img => img.position === 'bottom').length > 0 && (
-                <div className="mt-8">
-                  <BlogImageGallery images={blog.images.filter(img => img.position === 'bottom')} />
-                </div>
-              )}
-
-              {/* Images à la fin du contenu */}
-              {blog.images && blog.images.filter(img => img.position === 'content-end').length > 0 && (
-                <div className="mt-8">
-                  <BlogImageGallery images={blog.images.filter(img => img.position === 'content-end')} />
-                </div>
-              )}
-
-              {/* Tags */}
-              {(() => {
-                const normalizedTags = normalizeTags(blog.tags)
-                return normalizedTags.length > 0 && (
-                  <div className="mt-8 pt-6 border-t border-gray-200">
-                    <h3 className="text-sm font-medium text-gray-900 mb-3">{t('blog.tagsLabel', 'Tags')}</h3>
-                    <div className="flex flex-wrap gap-2">
-                      {normalizedTags.map((tag, index) => (
-                        <span
-                          key={index}
-                          className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-800"
-                        >
-                          <Tag className="h-3 w-3 mr-1" />
-                          {translateTag(tag)}
-                        </span>
-                      ))}
-                    </div>
-                  </div>
-                )
-              })()}
-            </article>
-          </div>
-
-          {/* Sidebar */}
-          <div className="lg:col-span-1">
-            <div className="space-y-6">
-              {/* Actions - seulement en mode normal */}
-              {!isPreviewMode && (
-                <div className="bg-white rounded-lg shadow-sm p-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">{t('blog.actions')}</h3>
-                  <div className="space-y-3">
-                    <button
-                      onClick={handleLike}
-                      className={`w-full flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium transition-colors ${
-                        liked 
-                          ? 'text-red-600 bg-red-100 hover:bg-red-200' 
-                          : 'text-white bg-primary-600 hover:bg-primary-700'
-                      }`}
-                    >
-                      <Heart className={`h-4 w-4 mr-2 ${liked ? 'fill-current' : ''}`} />
-                      {liked ? t('blog.unlikeArticle') : t('blog.likeArticle')}
-                    </button>
-                    
-                    <button
-                      onClick={handleShare}
-                      className="w-full flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-                    >
-                      <Share2 className="h-4 w-4 mr-2" />
-                      {t('blog.share')}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* Articles similaires */}
-              {relatedBlogs.length > 0 && (
-                <div className="bg-white rounded-lg shadow-sm p-6">
-                  <h3 className="text-lg font-medium text-gray-900 mb-4">{t('blog.relatedArticles')}</h3>
-                  <div className="space-y-4">
-                    {relatedBlogs.map((relatedBlog) => {
-                      const RelatedTypeIcon = getTypeIcon(relatedBlog.type)
-                      return (
-                        <div
-                          key={relatedBlog._id}
-                          className="flex space-x-3 cursor-pointer hover:bg-gray-50 p-2 rounded-md"
-                          onClick={() => {
-                            const localizedSlug = getLocalizedContent(relatedBlog.slug, relatedBlog.slug)
-                            navigate(`/blog/${localizedSlug}`)
-                          }}
-                        >
-                          {relatedBlog.featuredImage?.url && (
-                            <img
-                              src={relatedBlog.featuredImage.url}
-                              alt={relatedBlog.title}
-                              className="w-16 h-16 object-cover rounded-md flex-shrink-0"
-                            />
-                          )}
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center text-xs text-primary-600 mb-1">
-                              <RelatedTypeIcon className="h-3 w-3 mr-1" />
-                              {getTypeLabel(relatedBlog.type)}
-                            </div>
-                            <h4 className="text-sm font-medium text-gray-900 line-clamp-2">
-                              {getLocalizedContent(relatedBlog.title, 'Titre non disponible')}
-                            </h4>
-                            <p className="text-xs text-gray-500 mt-1">
-                              {formatDate(relatedBlog.publishedAt || relatedBlog.createdAt)}
-                            </p>
-                          </div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      </div>
+      </Container>
 
       {/* Modale des visiteurs - seulement en mode normal */}
       {!isPreviewMode && (
@@ -631,7 +557,7 @@ const BlogDetailPage = () => {
           isOpen={isModalOpen}
           onClose={closeModal}
           blogId={blog?._id}
-          blogTitle={blog ? getLocalizedContent(blog.title, 'Titre non disponible') : ''}
+          blogTitle={blog ? getLocalizedContent(blog.title, t('blog.untitled')) : ''}
           blogSlug={slug}
           isReturningVisitor={isReturningVisitor}
           visitorData={visitorData}

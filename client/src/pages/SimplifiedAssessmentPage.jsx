@@ -1,49 +1,88 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, CheckCircle, Clock } from "lucide-react";
+import { motion, AnimatePresence, useReducedMotion } from "framer-motion";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { Button } from "../components/ui/ds";
 import { useTranslation } from "react-i18next";
 import toast from "react-hot-toast";
 import { assessmentV2API } from "../services/api";
-import { SimpleQuestionCard, SimpleProgressBar } from "../components/assessment";
-import { LanguageSelector } from "../components/ui";
+import DiagnosticQuestion from "../components/assessment/DiagnosticQuestion";
+import DiagnosticProgress from "../components/assessment/DiagnosticProgress";
+import PillarTransition from "../components/assessment/PillarTransition";
+import AnalysisScreen from "../components/assessment/AnalysisScreen";
+import DiagnosticHeader from "../components/assessment/DiagnosticHeader";
+import DiagnosticIntro from "../components/assessment/DiagnosticIntro";
+import { useAssessment } from "../context/AssessmentContext";
 import useSmoothScroll from "../hooks/useSmoothScroll";
 import SEOHead from "../components/seo/SEOHead";
 import { useClientAuth } from "../context/ClientAuthContext";
 
 const PROGRESS_STORAGE_KEY = "vitalcheck-v2-progress";
 const RESULT_STORAGE_KEY = "vitalcheck-v2-result";
+// Transition d'une question à l'autre, dans le sens de la navigation
+const questionVariants = {
+	enter: (dir) => ({ opacity: 0, x: dir * 24 }),
+	center: { opacity: 1, x: 0 },
+	exit: (dir) => ({ opacity: 0, x: dir * -24 }),
+};
+
+// Durée minimale de l'écran d'analyse, pour qu'il ne se réduise pas à un flash
+const MIN_ANALYSIS_MS = 1500;
+
+// Délai avant le passage automatique à la question suivante (le temps de voir la sélection)
+const AUTO_ADVANCE_MS = 450;
 
 // Types de questionnaires sectoriels supportés côté client (doit rester aligné
 // avec SECTOR_QUESTIONNAIRES côté serveur dans assessmentsV2.js)
 const SECTOR_QUESTIONNAIRE_TYPES = ["agriculture", "retail", "restaurant", "construction", "distribution", "export", "manufacturing"];
 
+// Progression interrompue (rafraîchissement, retour sur la page) : lue une seule fois,
+// directement à l'initialisation des états, pour qu'aucune sauvegarde ne l'écrase avant.
+const readSavedProgress = () => {
+	try {
+		return JSON.parse(sessionStorage.getItem(PROGRESS_STORAGE_KEY) || "null") || {};
+	} catch {
+		return {};
+	}
+};
+
+const EMPTY_FORM = { companyName: "", email: "", companySize: "", sector: "" };
+
 const SimplifiedAssessmentPage = () => {
 	const navigate = useNavigate();
-	const [searchParams] = useSearchParams();
+	const [searchParams, setSearchParams] = useSearchParams();
 	const { scrollToTop } = useSmoothScroll();
 	const { t, i18n } = useTranslation();
 	const language = i18n.language?.substring(0, 2) || "fr";
 	const { user } = useClientAuth();
+	const { dispatch } = useAssessment();
 
 	const requestedQuestionnaire = searchParams.get("questionnaire");
 	const questionnaireType = SECTOR_QUESTIONNAIRE_TYPES.includes(requestedQuestionnaire)
 		? requestedQuestionnaire
 		: "universal";
 
-	const [step, setStep] = useState("intro"); // 'intro' | 'questions'
-	const [formData, setFormData] = useState({
-		companyName: "",
-		email: "",
-		companySize: "",
-		sector: "",
-	});
+	const [saved] = useState(readSavedProgress);
+	const [step, setStep] = useState(saved.step || "intro"); // 'intro' | 'questions' | 'analysis'
+	const [formData, setFormData] = useState(saved.formData || EMPTY_FORM);
 	const [questionsData, setQuestionsData] = useState(null);
 	const [sectorLevels, setSectorLevels] = useState(null); // niveaux spécifiques au secteur
 	const [loadingQuestions, setLoadingQuestions] = useState(true);
-	const [answers, setAnswers] = useState([]);
-	const [currentIndex, setCurrentIndex] = useState(0);
+	const [answers, setAnswers] = useState(Array.isArray(saved.answers) ? saved.answers : []);
+	const [currentIndex, setCurrentIndex] = useState(
+		typeof saved.currentIndex === "number" ? saved.currentIndex : 0,
+	);
 	const [submitting, setSubmitting] = useState(false);
+	const [direction, setDirection] = useState(1); // 1 : vers la suite, -1 : retour
+	const [pillarBreak, setPillarBreak] = useState(null); // index du pilier qui vient d'être terminé
+	const [analysisStatus, setAnalysisStatus] = useState("running"); // 'running' | 'error'
+	const reduceMotion = useReducedMotion();
+	const autoAdvanceRef = useRef(null);
+	const answersRef = useRef(answers);
+	answersRef.current = answers;
+
+	// Annuler un passage automatique en attente si la page est quittée
+	useEffect(() => () => clearTimeout(autoAdvanceRef.current), []);
 
 	// Charger (ou recharger) les questions quand la langue ou le type de questionnaire change
 	useEffect(() => {
@@ -52,10 +91,18 @@ const SimplifiedAssessmentPage = () => {
 			try {
 				const response = await assessmentV2API.getQuestions(language, questionnaireType);
 				if (response.data.success) {
-					setQuestionsData(response.data.data);
+					const data = response.data.data;
+					const questionIds = new Set(
+						data.pillars.flatMap((pillar) => pillar.questions.map((question) => question.id)),
+					);
+					setQuestionsData(data);
 					setSectorLevels(response.data.levels || null);
-					setAnswers([]);
-					setCurrentIndex(0);
+					// Garder les réponses dont la question existe toujours : une reprise après
+					// rafraîchissement ou un changement de langue (mêmes identifiants) ne perd rien ;
+					// un changement de secteur (autres identifiants) repart de zéro.
+					const kept = answersRef.current.filter((a) => questionIds.has(a.questionId));
+					setAnswers(kept);
+					setCurrentIndex((index) => (kept.length === 0 ? 0 : Math.min(index, questionIds.size - 1)));
 				}
 			} catch (error) {
 				console.error("Erreur de chargement des questions v2:", error);
@@ -67,22 +114,6 @@ const SimplifiedAssessmentPage = () => {
 
 		loadQuestions();
 	}, [language, questionnaireType]);
-
-	// Restaurer une progression interrompue (rafraîchissement de page)
-	useEffect(() => {
-		try {
-			const saved = sessionStorage.getItem(PROGRESS_STORAGE_KEY);
-			if (saved) {
-				const parsed = JSON.parse(saved);
-				if (parsed.formData) setFormData(parsed.formData);
-				if (Array.isArray(parsed.answers)) setAnswers(parsed.answers);
-				if (typeof parsed.currentIndex === "number") setCurrentIndex(parsed.currentIndex);
-				if (parsed.step) setStep(parsed.step);
-			}
-		} catch {
-			// Ignorer les erreurs de lecture du stockage
-		}
-	}, []);
 
 	// Pré-remplir les champs depuis le profil utilisateur connecté
 	useEffect(() => {
@@ -100,7 +131,8 @@ const SimplifiedAssessmentPage = () => {
 		try {
 			sessionStorage.setItem(
 				PROGRESS_STORAGE_KEY,
-				JSON.stringify({ step, formData, answers, currentIndex, language }),
+				// L'analyse n'est jamais reprise telle quelle : après un rafraîchissement on revient aux questions
+				JSON.stringify({ step: step === "analysis" ? "questions" : step, formData, answers, currentIndex, language }),
 			);
 		} catch {
 			// Ignorer les erreurs d'écriture du stockage
@@ -123,20 +155,27 @@ const SimplifiedAssessmentPage = () => {
 	const isLastQuestion = currentIndex === totalQuestions - 1;
 	const currentAnswer = answers.find((a) => a.questionId === currentQuestion?.id);
 	const canProceed = currentAnswer !== undefined;
+	const answeredIds = new Set(answers.map((a) => a.questionId));
 
 	const handleFormChange = (e) => {
 		const { name, value } = e.target;
 		setFormData((prev) => ({ ...prev, [name]: value }));
 	};
 
-	const handleStart = (e) => {
-		e.preventDefault();
+	// Le secteur choisi à l'accueil pilote le paramètre ?questionnaire= (qui recharge les questions)
+	const handleSectorChange = (type) => {
+		const next = new URLSearchParams(searchParams);
+		if (type === "universal") next.delete("questionnaire");
+		else next.set("questionnaire", type);
+		setSearchParams(next, { replace: true });
+	};
 
-		if (!formData.companyName.trim() || !formData.email.trim() || !formData.companySize) {
-			toast.error(t("diagnostic.errors.requiredFields"));
-			return;
-		}
+	const handleLanguageChange = (lang) => {
+		dispatch({ type: "SET_LANGUAGE", payload: lang });
+	};
 
+	// Les champs sont validés par DiagnosticIntro avant l'appel
+	const handleStart = () => {
 		if (!questionsData) {
 			toast.error(t("diagnostic.errors.noQuestions"));
 			return;
@@ -146,7 +185,29 @@ const SimplifiedAssessmentPage = () => {
 		scrollToTop(400);
 	};
 
-	const handleAnswerSelect = (questionId, value) => {
+	const goToQuestion = (index, dir) => {
+		clearTimeout(autoAdvanceRef.current);
+		setPillarBreak(null);
+		setDirection(dir);
+		setCurrentIndex(index);
+		window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+	};
+
+	// Vers la question suivante, avec une respiration quand un pilier se termine
+	const goForwardFrom = (index) => {
+		const here = flatQuestions[index];
+		const next = flatQuestions[index + 1];
+		if (here && next && next.pillarIndex !== here.pillarIndex) {
+			clearTimeout(autoAdvanceRef.current);
+			setDirection(1);
+			setPillarBreak(here.pillarIndex);
+			window.scrollTo({ top: 0, behavior: reduceMotion ? "auto" : "smooth" });
+		} else {
+			goToQuestion(index + 1, 1);
+		}
+	};
+
+	const handleAnswerSelect = (questionId, value, { viaPointer = false } = {}) => {
 		setAnswers((prev) => {
 			const existing = prev.findIndex((a) => a.questionId === questionId);
 			if (existing >= 0) {
@@ -156,12 +217,20 @@ const SimplifiedAssessmentPage = () => {
 			}
 			return [...prev, { questionId, answer: value }];
 		});
+
+		// Au doigt ou à la souris : passage automatique à la suite après un court instant
+		// (le temps de voir la sélection). Jamais sur la dernière question ni au clavier.
+		clearTimeout(autoAdvanceRef.current);
+		if (viaPointer && !isLastQuestion) {
+			autoAdvanceRef.current = setTimeout(() => goForwardFrom(currentIndex), AUTO_ADVANCE_MS);
+		}
 	};
 
 	const handlePrevious = () => {
 		if (currentIndex > 0) {
-			setCurrentIndex((prev) => prev - 1);
+			goToQuestion(currentIndex - 1, -1);
 		} else {
+			clearTimeout(autoAdvanceRef.current);
 			setStep("intro");
 		}
 	};
@@ -170,10 +239,17 @@ const SimplifiedAssessmentPage = () => {
 		if (!canProceed) return;
 
 		if (currentIndex < totalQuestions - 1) {
-			setCurrentIndex((prev) => prev + 1);
-			scrollToTop(300);
+			goForwardFrom(currentIndex);
 		} else {
 			handleSubmit();
+		}
+	};
+
+	// Entrée valide la question (hors boutons, qui gèrent déjà Entrée)
+	const handleQuestionKeyDown = (e) => {
+		if (e.key === "Enter" && e.target.tagName !== "BUTTON" && canProceed) {
+			e.preventDefault();
+			handleNext();
 		}
 	};
 
@@ -181,12 +257,18 @@ const SimplifiedAssessmentPage = () => {
 		if (submitting) return;
 
 		setSubmitting(true);
+		setAnalysisStatus("running");
+		setStep("analysis");
+		window.scrollTo({ top: 0 });
 		try {
-			const response = await assessmentV2API.scoreAssessment({
-				answers,
-				language,
-				questionnaireType,
-			});
+			const [response] = await Promise.all([
+				assessmentV2API.scoreAssessment({
+					answers,
+					language,
+					questionnaireType,
+				}),
+				new Promise((resolve) => setTimeout(resolve, MIN_ANALYSIS_MS)),
+			]);
 
 			if (response.data.success) {
 				const payload = {
@@ -208,211 +290,146 @@ const SimplifiedAssessmentPage = () => {
 				scrollToTop(400);
 				navigate("/diagnostic/resultats", { state: payload });
 			} else {
-				toast.error(t("diagnostic.errors.scoreError"));
+				setAnalysisStatus("error");
 			}
 		} catch (error) {
 			console.error("Erreur de calcul des scores v2:", error);
-			toast.error(t("diagnostic.errors.scoreError"));
+			// Les réponses restent en mémoire et dans la session : l'écran propose de réessayer
+			setAnalysisStatus("error");
 		} finally {
 			setSubmitting(false);
 		}
 	};
 
-	if (loadingQuestions) {
+	// Écran de chargement uniquement au tout premier chargement
+	if (loadingQuestions && !questionsData) {
 		return (
 			<div className="min-h-screen flex items-center justify-center">
 				<div className="text-center">
-					<div className="w-12 h-12 border-4 border-primary-500 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-					<p className="text-gray-600">{t("diagnostic.loading.questions")}</p>
+					<div className="w-12 h-12 border-4 border-ubb-brand-900 border-t-transparent rounded-full animate-spin mx-auto mb-4" aria-hidden="true"></div>
+					<p className="font-text text-ubb-ink-muted" role="status">{t("diagnostic.loading.questions")}</p>
 				</div>
 			</div>
 		);
 	}
 
-	const companySizes = [
-		{ value: "micro", label: t("diagnostic.sizes.micro") },
-		{ value: "sme", label: t("diagnostic.sizes.sme") },
-		{ value: "large-sme", label: t("diagnostic.sizes.large-sme") },
-	];
+	const headerTitle =
+		questionnaireType === "universal"
+			? t("diagnostic.questions.header")
+			: t("diagnostic.header.titleSector", {
+					sector: t(`landing.sectorCards.items.${questionnaireType}.name`),
+				});
 
 	return (
-		<div className="min-h-screen py-[70px] bg-gray-50">
+		<div className="min-h-screen bg-ubb-paper-soft">
 			<SEOHead
 				title={t("diagnostic.meta.title")}
 				description={t("diagnostic.meta.description")}
-				keywords="diagnostic gratuit, score entreprise, santé organisationnelle, vitalCHECK, PME"
+				keywords={t("diagnostic.meta.keywords")}
 				url="/diagnostic"
 			/>
 
 			{step === "intro" && (
-				<div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-					<motion.div
-						initial={{ opacity: 0, y: 20 }}
-						animate={{ opacity: 1, y: 0 }}
-						transition={{ duration: 0.5 }}
-						className="card"
-					>
-						<div className="flex items-center space-x-2 text-primary-600 mb-3">
-							<Clock className="w-5 h-5" />
-							<span className="text-sm font-medium">
-								{t("diagnostic.intro.duration")} · {t("diagnostic.intro.free")}
-							</span>
-						</div>
-						<h1 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 mb-2">
-							{t([`diagnostic.${questionnaireType}.title`, "diagnostic.intro.title"])}
-						</h1>
-						<p className="text-gray-600 mb-6">
-							{t([`diagnostic.${questionnaireType}.subtitle`, "diagnostic.intro.subtitle"])}
-						</p>
-
-						<form onSubmit={handleStart} className="space-y-5">
-							<div>
-								<label htmlFor="companyName" className="block text-sm font-medium text-gray-700 mb-2">
-									{t("diagnostic.intro.companyName")} *
-								</label>
-								<input
-									type="text"
-									id="companyName"
-									name="companyName"
-									value={formData.companyName}
-									onChange={handleFormChange}
-									className="input-field"
-									placeholder={t("diagnostic.intro.companyNamePlaceholder")}
-									required
-								/>
-							</div>
-
-							<div>
-								<label htmlFor="companySize" className="block text-sm font-medium text-gray-700 mb-2">
-									{t("diagnostic.intro.companySize")} *
-								</label>
-								<select
-									id="companySize"
-									name="companySize"
-									value={formData.companySize}
-									onChange={handleFormChange}
-									className="input-field"
-									required
-								>
-									<option value="">{t("diagnostic.intro.companySizePlaceholder")}</option>
-									{companySizes.map((size) => (
-										<option key={size.value} value={size.value}>
-											{size.label}
-										</option>
-									))}
-								</select>
-							</div>
-
-							<div>
-								<label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-									{t("diagnostic.intro.email")} *
-								</label>
-								<input
-									type="email"
-									id="email"
-									name="email"
-									value={formData.email}
-									onChange={handleFormChange}
-									className="input-field"
-									placeholder={t("diagnostic.intro.emailPlaceholder")}
-									required
-								/>
-								<p className="text-xs text-gray-500 mt-1">
-									{t("diagnostic.intro.emailHint")}
-								</p>
-							</div>
-
-							<div>
-								<label className="block text-sm font-medium text-gray-700 mb-2">
-									{t("diagnostic.intro.language")}
-								</label>
-								<LanguageSelector />
-							</div>
-
-							<button type="submit" className="btn-primary w-full justify-center">
-								{t("diagnostic.intro.startButton")}
-							</button>
-						</form>
-					</motion.div>
-				</div>
+				<>
+					<DiagnosticHeader title={headerTitle} />
+					<DiagnosticIntro
+						questionnaireType={questionnaireType}
+						onSectorChange={handleSectorChange}
+						onLanguageChange={handleLanguageChange}
+						formData={formData}
+						onFormChange={handleFormChange}
+						onStart={handleStart}
+						questionsReady={!loadingQuestions && !!questionsData}
+					/>
+				</>
 			)}
 
 			{step === "questions" && currentQuestion && (
 				<>
-					<div className="bg-white shadow-sm">
-						<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-							<div className="flex items-center justify-between">
-								<span className="sm:text-lg font-bold text-gray-900">
-									{t("diagnostic.questions.header")}
-								</span>
-								<div className="text-lg text-gray-600">{formData.companyName}</div>
-							</div>
-						</div>
-					</div>
-
-					<div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-						<SimpleProgressBar
-							current={currentIndex + 1}
-							total={totalQuestions}
-							pillars={pillarNames}
-							currentPillarIndex={currentQuestion.pillarIndex}
+					<DiagnosticHeader title={headerTitle}>
+						<DiagnosticProgress
+							questions={flatQuestions}
+							currentIndex={currentIndex}
+							answeredIds={answeredIds}
+							pillarNames={pillarNames}
 						/>
+					</DiagnosticHeader>
 
-						<AnimatePresence mode="wait">
+					{/* pb : laisser la place à la barre d'action fixée en bas sur mobile */}
+					<div className="ubb-container max-w-3xl pb-32 pt-6 sm:pb-12 sm:pt-10" onKeyDown={handleQuestionKeyDown}>
+						<AnimatePresence mode="wait" initial={false} custom={direction}>
 							<motion.div
-								key={currentIndex}
-								initial={{ opacity: 0, x: 20 }}
-								animate={{ opacity: 1, x: 0 }}
-								exit={{ opacity: 0, x: -20 }}
-								transition={{ duration: 0.3 }}
+								key={pillarBreak !== null ? `break-${pillarBreak}` : currentQuestion.id}
+								custom={direction}
+								variants={questionVariants}
+								initial={reduceMotion ? false : "enter"}
+								animate="center"
+								exit={reduceMotion ? undefined : "exit"}
+								transition={{ duration: 0.22, ease: "easeOut" }}
 							>
-								<SimpleQuestionCard
-									question={currentQuestion}
-									pillarName={currentQuestion.pillarName}
-									selectedAnswer={currentAnswer?.answer}
-									onAnswerSelect={handleAnswerSelect}
-								/>
+								{pillarBreak !== null ? (
+									<PillarTransition
+										pillarIndex={pillarBreak}
+										pillarNames={pillarNames}
+										nextPillarQuestionCount={
+											flatQuestions.filter((q) => q.pillarIndex === pillarBreak + 1).length
+										}
+										onContinue={() => goToQuestion(currentIndex + 1, 1)}
+										onBack={() => {
+											setDirection(-1);
+											setPillarBreak(null);
+										}}
+									/>
+								) : (
+									<DiagnosticQuestion
+										question={currentQuestion}
+										selectedAnswer={currentAnswer?.answer}
+										onAnswerSelect={handleAnswerSelect}
+									/>
+								)}
 							</motion.div>
 						</AnimatePresence>
 
-						<div className="flex items-center justify-between mt-8">
-							<button
-								onClick={handlePrevious}
-								className="btn-outline flex items-center space-x-2"
-							>
-								<ArrowLeft className="w-4 h-4" />
-								<span className="hidden sm:block">{t("diagnostic.questions.previous")}</span>
-							</button>
+						{pillarBreak === null && currentIndex === 0 && !canProceed && (
+							<p className="mt-4 text-center font-text text-ubb-small text-ubb-ink-muted">
+								{t("diagnostic.questions.hint")}
+							</p>
+						)}
 
-							<div className="flex items-center space-x-2 text-sm text-gray-500">
-								<CheckCircle className="w-4 h-4" />
-								<span>
-									{t("diagnostic.questions.answers", {
-										current: answers.length,
-										total: totalQuestions,
-									})}
-								</span>
+						{/* Navigation : barre fixée en bas sur mobile (zone du pouce), sous la carte au-delà */}
+						{pillarBreak === null && (
+							<div className="fixed inset-x-0 bottom-0 z-30 border-t border-ubb-brand-900/[0.08] bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur sm:static sm:mt-8 sm:border-0 sm:bg-transparent sm:pb-0 sm:backdrop-blur-none">
+								<div className="ubb-container flex items-center gap-3 py-3 sm:px-0 sm:py-0">
+									<Button variant="outline" onClick={handlePrevious} className="shrink-0">
+										<ArrowLeft className="h-4 w-4" aria-hidden="true" />
+										{t("diagnostic.questions.previous")}
+									</Button>
+									<Button
+										variant="secondary"
+										onClick={handleNext}
+										disabled={!canProceed || submitting}
+										className="flex-1 sm:ml-auto sm:flex-none"
+									>
+										{isLastQuestion ? t("diagnostic.questions.seeResults") : t("diagnostic.questions.next")}
+										<ArrowRight className="h-4 w-4" aria-hidden="true" />
+									</Button>
+								</div>
 							</div>
+						)}
+					</div>
+				</>
+			)}
 
-							<button
-								onClick={handleNext}
-								disabled={!canProceed || submitting}
-								className="btn-primary flex items-center space-x-2 disabled:opacity-50 disabled:cursor-not-allowed"
-							>
-								{submitting ? (
-									<div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-								) : (
-									<>
-										<span className="hidden sm:block">
-											{isLastQuestion
-												? t("diagnostic.questions.seeResults")
-												: t("diagnostic.questions.next")}
-										</span>
-										<ArrowRight className="w-4 h-4" />
-									</>
-								)}
-							</button>
-						</div>
+			{step === "analysis" && (
+				<>
+					<DiagnosticHeader title={headerTitle} />
+					<div className="ubb-container max-w-3xl py-8 sm:py-12">
+						<AnalysisScreen
+							status={analysisStatus}
+							answeredCount={answers.length}
+							onRetry={handleSubmit}
+							onBack={() => setStep("questions")}
+						/>
 					</div>
 				</>
 			)}

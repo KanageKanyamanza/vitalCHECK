@@ -1,20 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { motion } from "framer-motion";
 import { useTranslation } from "react-i18next";
-import {
-	Lock,
-	Mail,
-	Eye,
-	EyeOff,
-	LogIn,
-	ArrowRight,
-	Shield,
-	Users,
-} from "lucide-react";
+import { Shield, Users } from "lucide-react";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { useClientAuth } from "../context/ClientAuthContext";
+import { AuthLayout, Button, FormField, PasswordInput } from "../components/ui/ds";
 
 import { API_BASE_URL as API_URL } from "../services/api";
 
@@ -29,6 +20,7 @@ const UnifiedLoginPage = () => {
   })
   const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   const [detectedRole, setDetectedRole] = useState(null)
   const [hasRedirected, setHasRedirected] = useState(false)
 
@@ -52,6 +44,7 @@ const UnifiedLoginPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoading(true)
+    setError('')
 
     try {
       // Utiliser l'API unifiée pour détecter automatiquement le rôle
@@ -68,7 +61,7 @@ const UnifiedLoginPage = () => {
           localStorage.setItem('adminToken', token)
           localStorage.setItem('adminData', JSON.stringify(user))
           setDetectedRole('admin')
-          toast.success('Connexion administrateur réussie !')
+          toast.success(t('auth.login.successAdmin'))
           
           // Arrêter le loader avant la redirection
           setLoading(false)
@@ -85,7 +78,7 @@ const UnifiedLoginPage = () => {
           setToken(token)
           setUser(user)
           setDetectedRole('client')
-          toast.success('Connexion client réussie !')
+          toast.success(t('auth.login.successClient'))
           
           // Arrêter le loader avant la redirection
           setLoading(false)
@@ -99,7 +92,7 @@ const UnifiedLoginPage = () => {
       }
     } catch (error) {
       console.error('Erreur de connexion:', error)
-      toast.error('Identifiants incorrects')
+      setError(t('auth.login.invalid'))
       setLoading(false) // Arrêter le loader en cas d'erreur
     }
   }
@@ -113,160 +106,79 @@ const UnifiedLoginPage = () => {
 
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center"
-        >
-          <h2 className="text-3xl font-bold text-gray-900">
-            Connexion
-          </h2>
-          <p className="mt-2 text-sm text-gray-600">
-            Accédez à votre espace client ou administrateur
+    <AuthLayout
+      scene="login"
+      title={t('auth.login.title')}
+      subtitle={t('auth.login.subtitle')}
+      panelTitle={t('auth.login.panelTitle')}
+      panelText={t('auth.login.panelText')}
+    >
+      <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+        {error && (
+          <p role="alert" className="rounded-ubb-field border border-red-200 bg-red-50 px-4 py-3 font-text text-sm font-medium text-red-800">
+            {error}
           </p>
-        </motion.div>
-      </div>
+        )}
 
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="bg-white py-8 px-4 shadow-xl sm:rounded-lg sm:px-10"
-        >
-          <form className="space-y-6" onSubmit={handleSubmit}>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Adresse email
-              </label>
-              <div className="mt-1 relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Mail className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="email"
-                  name="email"
-                  type="email"
-                  autoComplete="email"
-                  required
-                  value={formData.email}
-                  onChange={handleChange}
-                  className="appearance-none block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                  placeholder="votre@email.com"
-                />
-              </div>
-            </div>
+        <FormField id="email" label={t('auth.common.email')}>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            autoComplete="email"
+            inputMode="email"
+            required
+            value={formData.email}
+            onChange={handleChange}
+            className="ubb-input"
+            placeholder={t('auth.common.emailPlaceholder')}
+          />
+        </FormField>
 
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Mot de passe
-              </label>
-              <div className="mt-1 relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Lock className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  autoComplete="current-password"
-                  required
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="appearance-none block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm"
-                  placeholder="Votre mot de passe"
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-                  )}
-                </button>
-              </div>
-            </div>
+        <FormField id="password" label={t('auth.common.password')}>
+          <PasswordInput
+            id="password"
+            name="password"
+            autoComplete="current-password"
+            required
+            value={formData.password}
+            onChange={handleChange}
+            placeholder={t('auth.login.passwordPlaceholder')}
+          />
+        </FormField>
 
-            <div className="flex items-center justify-end">
-              <Link
-                to="/forgot-password"
-                className="text-sm text-primary-600 hover:text-primary-500"
-              >
-                Mot de passe oublié ?
-              </Link>
-            </div>
+        <div className="flex justify-end">
+          <Link
+            to="/forgot-password"
+            className="ubb-focus inline-flex min-h-[44px] items-center rounded font-text text-sm font-semibold text-ubb-brand-900 underline underline-offset-4"
+          >
+            {t('auth.login.forgot')}
+          </Link>
+        </div>
 
-            <div>
-              <motion.button
-                type="submit"
-                disabled={loading}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {loading ? (
-                  <div className="flex items-center">
-                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                    Connexion en cours...
-                  </div>
-                ) : (
-                  <div className="flex items-center">
-                    <LogIn className="h-4 w-4 mr-2" />
-                    Se connecter
-                    <ArrowRight className="h-4 w-4 ml-2 group-hover:translate-x-1 transition-transform" />
-                  </div>
-                )}
-              </motion.button>
-            </div>
+        <Button type="submit" size="lg" disabled={loading} className="w-full">
+          {loading ? t('auth.login.loading') : t('auth.login.submit')}
+        </Button>
 
-            {detectedRole && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="mt-4 p-3 bg-green-50 border border-green-200 rounded-md"
-              >
-                <div className="flex items-center">
-                  {detectedRole === 'admin' ? (
-                    <Shield className="h-5 w-5 text-green-600 mr-2" />
-                  ) : (
-                    <Users className="h-5 w-5 text-green-600 mr-2" />
-                  )}
-                  <span className="text-sm text-green-800">
-                    Connexion {detectedRole === 'admin' ? 'administrateur' : 'client'} détectée
-                  </span>
-                </div>
-              </motion.div>
+        {detectedRole && (
+          <p role="status" className="flex items-center gap-2 rounded-ubb-field bg-ubb-brand-50 px-4 py-3 font-text text-sm text-ubb-brand-950">
+            {detectedRole === 'admin' ? (
+              <Shield className="h-4 w-4 shrink-0" aria-hidden="true" />
+            ) : (
+              <Users className="h-4 w-4 shrink-0" aria-hidden="true" />
             )}
-          </form>
+            {t(detectedRole === 'admin' ? 'auth.login.detectedAdmin' : 'auth.login.detectedClient')}
+          </p>
+        )}
+      </form>
 
-          <div className="mt-6">
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-300" />
-              </div>
-              <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">Nouveau sur vitalCHECK ?</span>
-              </div>
-            </div>
-
-            <div className="mt-6">
-              <Link
-                to="/client/register"
-                className="w-full flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
-              >
-                Créer un compte client
-              </Link>
-            </div>
-          </div>
-        </motion.div>
+      <div className="mt-8 border-t border-ubb-brand-900/[0.08] pt-6">
+        <p className="font-text text-ubb-small text-ubb-ink-muted">{t('auth.login.newHere')}</p>
+        <Button to="/client/register" variant="outline" className="mt-3 w-full">
+          {t('auth.login.createAccount')}
+        </Button>
       </div>
-    </div>
+    </AuthLayout>
   )
 }
 

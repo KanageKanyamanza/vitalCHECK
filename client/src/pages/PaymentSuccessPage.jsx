@@ -1,12 +1,15 @@
 import React, { useEffect } from 'react'
-import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { motion } from 'framer-motion'
-import { CheckCircle, ArrowRight, Download, Mail } from 'lucide-react'
+import { motion, useReducedMotion } from 'framer-motion'
+import { CheckCircle2, Mail, KeyRound, FileText } from 'lucide-react'
+import { Button, Container } from '../components/ui/ds'
+import { useClientAuth } from '../context/ClientAuthContext'
 
 const PaymentSuccessPage = () => {
   const { t } = useTranslation()
-  const navigate = useNavigate()
+  const reduceMotion = useReducedMotion()
+  const { isAuthenticated } = useClientAuth()
   const [searchParams] = useSearchParams()
   const orderId = searchParams.get('orderId')
   const planId = searchParams.get('plan')
@@ -16,117 +19,95 @@ const PaymentSuccessPage = () => {
     window.scrollTo(0, 0)
   }, [])
 
-  const getPlanName = () => {
-    if (!planId) return ''
-    return t(`pricing.plans.${planId}.name`)
-  }
+  const NEXT_STEPS = [
+    { key: 'confirmationEmail', icon: Mail },
+    { key: 'accessInfo', icon: KeyRound },
+    { key: 'support', icon: FileText },
+  ]
 
   return (
-    <div className="min-h-screen bg-gray-50 pt-[100px] pb-[50px] flex items-center justify-center px-4">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="max-w-2xl w-full"
-      >
-        <div className="bg-white rounded-2xl shadow-xl p-8 md:p-12">
-          {/* Success Icon */}
-          <div className="flex justify-center mb-6">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.2, type: 'spring', stiffness: 200 }}
-              className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center"
-            >
-              <CheckCircle className="w-12 h-12 text-green-600" />
-            </motion.div>
-          </div>
-
-          {/* Title */}
-          <h1 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-4">
+    <div className="min-h-screen bg-ubb-paper-soft">
+      <Container className="max-w-2xl py-10 sm:py-16">
+        <motion.section
+          initial={reduceMotion ? false : { opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
+          aria-labelledby="payment-success-title"
+          className="ubb-card p-6 text-center sm:p-10"
+        >
+          <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-ubb-brand-50 text-ubb-brand-900">
+            <CheckCircle2 className="h-9 w-9" aria-hidden="true" />
+          </span>
+          <h1 id="payment-success-title" className="ubb-heading mt-5 text-ubb-title">
             {t('paymentSuccess.title')}
           </h1>
-
-          <p className="text-center text-gray-600 mb-8">
+          <p className="mx-auto mt-3 max-w-ubb-prose font-text text-ubb-lead text-ubb-ink-muted">
             {t('paymentSuccess.subtitle')}
           </p>
 
-          {/* Order Details */}
-          <div className="bg-gray-50 rounded-lg p-6 mb-8">
-            <h2 className="font-semibold text-gray-900 mb-4">
-              {t('paymentSuccess.orderDetails')}
-            </h2>
-            <div className="space-y-2 text-sm">
-              {orderId && (
-                <div className="flex justify-between">
-                  <span className="text-gray-600">{t('paymentSuccess.orderId')}:</span>
-                  <span className="font-mono text-gray-900">{orderId}</span>
-                </div>
-              )}
-              {planId && (
-                <div className="flex justify-between">
-                  <span className="text-gray-600">{t('paymentSuccess.plan')}:</span>
-                  <span className="font-semibold text-primary-600">{getPlanName()}</span>
-                </div>
-              )}
-              <div className="flex justify-between">
-                <span className="text-gray-600">{t('paymentSuccess.status')}:</span>
-                <span className="text-green-600 font-semibold">{t('paymentSuccess.completed')}</span>
+          {/* Détails de la commande */}
+          <dl className="mt-8 space-y-3 rounded-ubb-field bg-ubb-paper-soft p-5 text-left font-text text-ubb-small">
+            {planId && (
+              <div className="flex justify-between gap-4">
+                <dt className="text-ubb-ink-muted">{t('paymentSuccess.plan')}</dt>
+                <dd className="font-semibold text-ubb-ink">{t(`pricing.plans.${planId}.label`)}</dd>
               </div>
+            )}
+            {orderId && (
+              <div className="flex justify-between gap-4">
+                <dt className="text-ubb-ink-muted">{t('paymentSuccess.orderId')}</dt>
+                <dd className="break-all text-right font-mono text-ubb-ink">{orderId}</dd>
+              </div>
+            )}
+            <div className="flex justify-between gap-4">
+              <dt className="text-ubb-ink-muted">{t('paymentSuccess.status')}</dt>
+              <dd className="font-semibold text-ubb-brand-900">{t('paymentSuccess.completed')}</dd>
             </div>
-          </div>
+          </dl>
 
-          {/* Next Steps */}
-          <div className="bg-primary-50 rounded-lg p-6 mb-8">
-            <h2 className="font-semibold text-gray-900 mb-4 flex items-center">
-              <Mail className="w-5 h-5 mr-2 text-primary-600" />
-              {t('paymentSuccess.nextSteps')}
-            </h2>
-            <ul className="space-y-2 text-sm text-gray-700">
-              <li className="flex items-start">
-                <span className="mr-2">•</span>
-                <span>{t('paymentSuccess.confirmationEmail')}</span>
-              </li>
-              <li className="flex items-start">
-                <span className="mr-2">•</span>
-                <span>{t('paymentSuccess.accessInfo')}</span>
-              </li>
-              <li className="flex items-start">
-                <span className="mr-2">•</span>
-                <span>{t('paymentSuccess.support')}</span>
-              </li>
+          {/* Et maintenant ? */}
+          <div className="mt-8 text-left">
+            <h2 className="font-heading text-lg font-semibold text-ubb-ink">{t('paymentSuccess.nextSteps')}</h2>
+            <ul className="mt-4 space-y-3">
+              {NEXT_STEPS.map(({ key, icon: Icon }) => (
+                <li key={key} className="flex gap-3 font-text text-ubb-body text-ubb-ink">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-ubb-field bg-ubb-mist text-ubb-brand-900">
+                    <Icon className="h-4 w-4" aria-hidden="true" />
+                  </span>
+                  <span className="pt-1">{t(`paymentSuccess.${key}`)}</span>
+                </li>
+              ))}
             </ul>
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4">
-            <button
-              onClick={() => navigate('/')}
-              className="flex-1 bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center"
-            >
-              {t('paymentSuccess.backToHome')}
-              <ArrowRight className="w-4 h-4 ml-2" />
-            </button>
-            <button
-              onClick={() => navigate('/contact')}
-              className="flex-1 border-2 border-primary-600 text-primary-600 hover:bg-primary-50 font-semibold py-3 px-6 rounded-lg transition-colors"
-            >
+          <div className="mt-10 flex flex-col gap-3 sm:flex-row">
+            {isAuthenticated ? (
+              <Button to="/client/dashboard" className="sm:flex-1">
+                {t('paymentSuccess.goToDashboard')}
+              </Button>
+            ) : (
+              <Button to="/" className="sm:flex-1">
+                {t('paymentSuccess.backToHome')}
+              </Button>
+            )}
+            <Button to="/contact" variant="outline" className="sm:flex-1">
               {t('paymentSuccess.contactSupport')}
-            </button>
+            </Button>
           </div>
-        </div>
+        </motion.section>
 
-        {/* Additional Info */}
-        <p className="text-center text-sm text-gray-500 mt-6">
+        <p className="mt-6 text-center font-text text-ubb-small text-ubb-ink-muted">
           {t('paymentSuccess.needHelp')}{' '}
-          <a href="mailto:info@checkmyenterprise.com" className="text-primary-600 hover:underline">
+          <a
+            href="mailto:info@checkmyenterprise.com"
+            className="ubb-focus rounded font-semibold text-ubb-brand-900 underline underline-offset-4"
+          >
             info@checkmyenterprise.com
           </a>
         </p>
-      </motion.div>
+      </Container>
     </div>
   )
 }
 
 export default PaymentSuccessPage
-

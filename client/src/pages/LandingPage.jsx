@@ -1,169 +1,42 @@
 import React from 'react'
-import { useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { motion } from 'framer-motion'
-import { Clock, ArrowRight } from 'lucide-react'
 import { Hero } from '../components/layout'
+import ServicesSection from '../components/landing/ServicesSection'
+import SectorDiagnostics from '../components/landing/SectorDiagnostics'
+import VisionSection from '../components/landing/VisionSection'
+import ContactSection from '../components/landing/ContactSection'
 import { Footer } from '../components/navigation'
 import { SocialShare } from '../components/ui'
 import SEOHead from '../components/seo/SEOHead'
 import { getHomePageStructuredData, getWebSiteStructuredData, getBrandOrganizationStructuredData } from '../utils/seoData'
 
 const LandingPage = () => {
-  const navigate = useNavigate()
   const { t } = useTranslation()
-
-  // Textes des cartes : landing.sectorCards.items.<questionnaire> (fr.json / en.json)
-  const sectorDiagnostics = [
-    {
-      image: 'https://images.unsplash.com/photo-1500382017468-9049fed747ef?auto=format&fit=crop&w=900&q=85',
-      badge: 'bg-green-100 text-green-800',
-      button: 'bg-green-600 hover:bg-green-700',
-      questionnaire: 'agriculture',
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=900&q=85',
-      badge: 'bg-blue-100 text-blue-800',
-      button: 'bg-blue-600 hover:bg-blue-700',
-      questionnaire: 'retail',
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=900&q=85',
-      badge: 'bg-orange-100 text-orange-800',
-      button: 'bg-orange-600 hover:bg-orange-700',
-      questionnaire: 'restaurant',
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=900&q=85',
-      badge: 'bg-amber-100 text-amber-800',
-      button: 'bg-amber-700 hover:bg-amber-800',
-      questionnaire: 'construction',
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=900&q=85',
-      badge: 'bg-teal-100 text-teal-800',
-      button: 'bg-teal-600 hover:bg-teal-700',
-      questionnaire: 'distribution',
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=900&q=85',
-      badge: 'bg-indigo-100 text-indigo-800',
-      button: 'bg-indigo-600 hover:bg-indigo-700',
-      questionnaire: 'export',
-    },
-    {
-      image: 'https://images.unsplash.com/photo-1565793298595-6a879b1d9492?auto=format&fit=crop&w=900&q=85',
-      badge: 'bg-slate-200 text-slate-800',
-      button: 'bg-slate-700 hover:bg-slate-800',
-      questionnaire: 'manufacturing',
-    },
-  ]
-
-  const handleStartAssessment = () => {
-    navigate('/diagnostic')
-  }
 
   return (
     <div>
       <SEOHead
-        title="vitalCHECK Enterprise Health Check - Évaluez la santé de votre entreprise"
-        description="Évaluez la santé organisationnelle de votre entreprise africaine avec vitalCHECK. Évaluation gratuite de 10 minutes avec recommandations personnalisées et rapport détaillé."
-        keywords="entreprise, santé organisationnelle, évaluation, vitalCHECK, Afrique, business, conseil, croissance, PME, diagnostic, management, finance, opérations, marketing, RH, gouvernance, technologie"
+        title={t('landing.seo.title')}
+        description={t('landing.seo.description')}
+        keywords={t('landing.seo.keywords')}
         url="/"
         structuredData={[getWebSiteStructuredData(), getBrandOrganizationStructuredData(), getHomePageStructuredData()]}
       />
 
-      {/* Hero Section */}
-      <Hero onStartAssessment={handleStartAssessment} />
+      <Hero />
 
-      {/* Diagnostic gratuit "Niveau 1" */}
-      <div className="bg-primary-50 py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <div className="inline-flex items-center space-x-2 text-primary-600 mb-3">
-              <Clock className="w-5 h-5" />
-              <span className="text-sm font-medium">{t('landing.freeDiagnostic.duration')}</span>
-            </div>
-            <h2 className="text-2xl sm:text-3xl font-display font-bold text-gray-900 mb-3">
-              {t('landing.freeDiagnostic.title')}
-            </h2>
-            <p className="text-gray-600 max-w-2xl mx-auto mb-6">
-              {t('landing.freeDiagnostic.subtitle')}
-            </p>
-            <button
-              onClick={() => navigate('/diagnostic')}
-              className="bg-accent-500 hover:bg-accent-600 text-white font-semibold px-8 py-3 rounded-lg inline-flex items-center space-x-2 transform hover:scale-105 transition-all duration-300 shadow-lg"
-            >
-              <span>{t('landing.freeDiagnostic.button')}</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
-          </motion.div>
-        </div>
-      </div>
+      <ServicesSection />
 
-      {/* Diagnostics sectoriels */}
-      <section className="border-t border-gray-100 bg-gray-50 py-16">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-3">
-            {sectorDiagnostics.map((diagnostic, index) => {
-              const key = `landing.sectorCards.items.${diagnostic.questionnaire}`
-              return (
-              <motion.article
-                key={diagnostic.questionnaire}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="flex h-full flex-col overflow-hidden rounded-lg border border-gray-200 bg-white shadow-sm transition-shadow hover:shadow-lg"
-              >
-                {diagnostic.image ? (
-                  <div className="h-48 overflow-hidden bg-gray-100">
-                    <img
-                      src={diagnostic.image}
-                      alt={t(`${key}.imageAlt`)}
-                      loading="lazy"
-                      className="h-full w-full object-cover transition-transform duration-500 hover:scale-105"
-                    />
-                  </div>
-                ) : (
-                  <div className={`flex h-48 items-center justify-center ${diagnostic.iconBg}`} aria-hidden="true">
-                    <diagnostic.icon className="h-16 w-16" strokeWidth={1.5} />
-                  </div>
-                )}
-                <div className="flex flex-1 flex-col p-6">
-                  <span className={`mb-3 inline-block w-fit rounded px-2 py-1 text-xs font-semibold uppercase tracking-wide ${diagnostic.badge}`}>
-                    {t('landing.sectorCards.badge', { name: t(`${key}.name`) })}
-                  </span>
-                  <h3 className="mb-2 text-xl font-display font-bold text-gray-900">
-                    {t(`${key}.title`)}
-                  </h3>
-                  <p className="mb-6 flex-1 text-sm leading-6 text-gray-600">
-                    {t(`${key}.description`)}
-                  </p>
-                  <button
-                    onClick={() => navigate(`/diagnostic?questionnaire=${diagnostic.questionnaire}`)}
-                    className={`inline-flex w-full items-center justify-center gap-2 rounded-lg px-5 py-3 font-semibold text-white shadow-sm transition-colors ${diagnostic.button}`}
-                  >
-                    <span>{t('landing.sectorCards.button')}</span>
-                    <ArrowRight className="h-4 w-4" />
-                  </button>
-                </div>
-              </motion.article>
-              )
-            })}
-          </div>
-        </div>
-      </section>
+      <SectorDiagnostics />
+
+      <VisionSection />
+
+      <ContactSection />
 
       {/* Social Share */}
       <SocialShare
-        title="vitalCHECK Enterprise Health Check - Évaluez la santé de votre entreprise"
-        description="Évaluation gratuite de 10 minutes avec recommandations personnalisées et rapport détaillé."
+        title={t('landing.seo.title')}
+        description={t('landing.seo.shareDescription')}
       />
 
       {/* Footer */}

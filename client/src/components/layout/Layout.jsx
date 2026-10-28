@@ -10,8 +10,12 @@ const Layout = ({ children }) => {
   
   // Pages avec leur propre layout (navbar/footer gérés par le composant)
   const isAdminPage = location?.pathname?.startsWith('/admin') || false
-  const isClientPage = location?.pathname?.startsWith('/client') || false
-  const isShellPage = isAdminPage || isClientPage
+  // L'inscription (/client/register) est une page publique : elle garde la navbar et le pied de page
+  const isClientPage = (location?.pathname?.startsWith('/client') && location.pathname !== '/client/register') || false
+  // Parcours du diagnostic : mode « focus », la page gère son propre en-tête
+  // (pas de navbar, de pied de page ni de boutons flottants pendant les questions)
+  const isFocusPage = location?.pathname === '/diagnostic'
+  const isShellPage = isAdminPage || isClientPage || isFocusPage
 
   // Vérifier si on est sur la page d'accueil
   const isHomePage = location?.pathname === '/'
@@ -20,7 +24,8 @@ const Layout = ({ children }) => {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {!isShellPage && <Navbar />}
 
-      <main className="flex-1">
+      {/* L'en-tête est fixe : décaler le contenu de sa hauteur */}
+      <main className={`flex-1 ${isShellPage ? '' : 'pt-ubb-header'}`}>
         {children}
       </main>
 

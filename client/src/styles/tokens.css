@@ -1,0 +1,60 @@
+/*
+ * Design system UBB — source unique des valeurs de design.
+ * Les couleurs sont stockées en canaux RGB pour permettre l'opacité Tailwind
+ * (ex : bg-ubb-brand-900/80). Tailwind les référence dans tailwind.config.js.
+ * Documentation : docs/design-system.md
+ */
+:root {
+  /* Vert vitalCHECK — couleur de marque (900 = #00751B, le vert du projet) */
+  --ubb-brand-50: 244 250 245;   /* #F4FAF5 */
+  --ubb-brand-100: 234 246 236;  /* #EAF6EC — mist, sections de respiration */
+  --ubb-brand-200: 220 240 224;  /* #DCF0E0 — texte clair sur fond vert (5:1) */
+  --ubb-brand-300: 196 230 203;  /* #C4E6CB */
+  --ubb-brand-400: 163 215 174;  /* #A3D7AE */
+  --ubb-brand-500: 122 196 138;  /* #7AC48A */
+  --ubb-brand-600: 79 174 99;    /* #4FAE63 */
+  --ubb-brand-700: 46 154 69;    /* #2E9A45 — lumière du hero */
+  --ubb-brand-800: 26 138 51;    /* #1A8A33 — survol sur vert */
+  --ubb-brand-900: 0 117 27;     /* #00751B — vert vitalCHECK, 5.9:1 avec le blanc */
+  --ubb-brand-950: 0 74 18;      /* #004A12 — vert profond (pied de page, texte sur jaune) */
+
+  /* Jaune vitalCHECK — accent. Jamais en texte sur fond clair : utiliser accent-ink. */
+  --ubb-accent-50: 254 250 235;  /* #FEFAEB */
+  --ubb-accent-100: 253 240 196; /* #FDF0C4 */
+  --ubb-accent-300: 248 217 122; /* #F8D97A */
+  --ubb-accent-500: 244 197 66;  /* #F4C542 — jaune vitalCHECK */
+  --ubb-accent-600: 229 178 42;  /* #E5B22A — survol */
+  --ubb-accent-ink: 138 99 0;    /* #8A6300 — jaune foncé lisible sur blanc (5.4:1) */
+
+  /* Texte */
+  --ubb-ink: 15 36 22;           /* #0F2416 — quasi noir teinté vert */
+  --ubb-ink-muted: 74 93 80;     /* #4A5D50 — 7.1:1 sur blanc */
+
+  /* Surfaces */
+  --ubb-paper: 255 255 255;
+  --ubb-paper-soft: 248 250 248; /* #F8FAF8 */
+
+  /* Typographie */
+  --ubb-font-heading: 'Bricolage Grotesque', 'Figtree', system-ui, sans-serif;
+  --ubb-font-text: 'Figtree', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  /* Rayons — hiérarchisés : puce < champ < carte, boutons en pilule */
+  --ubb-radius-chip: 8px;
+  --ubb-radius-field: 12px;
+  --ubb-radius-card: 20px;
+  --ubb-radius-panel: 28px;
+
+  /* Ombres teintées navy */
+  --ubb-shadow-sm: 0 1px 2px rgb(15 36 22 / 0.06), 0 4px 12px -4px rgb(15 36 22 / 0.08);
+  --ubb-shadow-md: 0 2px 4px rgb(15 36 22 / 0.05), 0 16px 32px -12px rgb(15 36 22 / 0.18);
+  --ubb-shadow-lg: 0 4px 8px rgb(15 36 22 / 0.06), 0 32px 64px -24px rgb(15 36 22 / 0.28);
+
+  /* Hauteur de l'en-tête fixe (sert au décalage du contenu et des ancres) */
+  --ubb-header-h: 64px;
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --ubb-header-h: 76px;
+  }
+}

@@ -100,10 +100,10 @@ const InstallPWAButton = () => {
   return (
     <button
       onClick={handleInstallClick}
-      className="flex items-center space-x-2 bg-accent-500 hover:bg-accent-600 text-white px-4 py-2 rounded-lg transition-colors duration-200 text-sm font-medium"
+      className="ubb-btn ubb-btn-sm ubb-btn-primary"
       aria-label={t('pwa.installButton.ariaLabel', 'Installer l\'application vitalCHECK')}
     >
-      <Download className="w-4 h-4" />
+      <Download className="w-4 h-4" aria-hidden="true" />
       <span>{t('pwa.installButton.text', 'Installer l\'app')}</span>
     </button>
   )

@@ -7,6 +7,41 @@ export default {
   theme: {
     extend: {
       colors: {
+        // Design system UBB — valeurs définies dans src/styles/tokens.css
+        ubb: {
+          brand: {
+            50: 'rgb(var(--ubb-brand-50) / <alpha-value>)',
+            100: 'rgb(var(--ubb-brand-100) / <alpha-value>)',
+            200: 'rgb(var(--ubb-brand-200) / <alpha-value>)',
+            300: 'rgb(var(--ubb-brand-300) / <alpha-value>)',
+            400: 'rgb(var(--ubb-brand-400) / <alpha-value>)',
+            500: 'rgb(var(--ubb-brand-500) / <alpha-value>)',
+            600: 'rgb(var(--ubb-brand-600) / <alpha-value>)',
+            700: 'rgb(var(--ubb-brand-700) / <alpha-value>)',
+            800: 'rgb(var(--ubb-brand-800) / <alpha-value>)',
+            900: 'rgb(var(--ubb-brand-900) / <alpha-value>)',
+            950: 'rgb(var(--ubb-brand-950) / <alpha-value>)',
+            DEFAULT: 'rgb(var(--ubb-brand-900) / <alpha-value>)',
+          },
+          accent: {
+            50: 'rgb(var(--ubb-accent-50) / <alpha-value>)',
+            100: 'rgb(var(--ubb-accent-100) / <alpha-value>)',
+            300: 'rgb(var(--ubb-accent-300) / <alpha-value>)',
+            500: 'rgb(var(--ubb-accent-500) / <alpha-value>)',
+            600: 'rgb(var(--ubb-accent-600) / <alpha-value>)',
+            ink: 'rgb(var(--ubb-accent-ink) / <alpha-value>)',
+            DEFAULT: 'rgb(var(--ubb-accent-500) / <alpha-value>)',
+          },
+          mist: 'rgb(var(--ubb-brand-100) / <alpha-value>)',
+          ink: {
+            DEFAULT: 'rgb(var(--ubb-ink) / <alpha-value>)',
+            muted: 'rgb(var(--ubb-ink-muted) / <alpha-value>)',
+          },
+          paper: {
+            DEFAULT: 'rgb(var(--ubb-paper) / <alpha-value>)',
+            soft: 'rgb(var(--ubb-paper-soft) / <alpha-value>)',
+          },
+        },
         // vitalCHECK Green - Growth, trust, knowledge
         primary: {
           50: '#f0fdf4',
@@ -103,6 +138,35 @@ export default {
         display: ['Poppins', 'Inter', 'system-ui', 'sans-serif'],
         // Body text - clean and contemporary
         body: ['Inter', 'system-ui', 'sans-serif'],
+        // Design system UBB
+        heading: ['var(--ubb-font-heading)'],
+        text: ['var(--ubb-font-text)'],
+      },
+      fontSize: {
+        // Échelle UBB — fluide entre mobile (360px) et desktop (1280px)
+        'ubb-display': ['clamp(2.25rem, 1.6rem + 3.2vw, 4rem)', { lineHeight: '1.05', letterSpacing: '-0.025em', fontWeight: '700' }],
+        'ubb-title': ['clamp(1.75rem, 1.4rem + 1.8vw, 2.75rem)', { lineHeight: '1.12', letterSpacing: '-0.02em', fontWeight: '700' }],
+        'ubb-subtitle': ['clamp(1.25rem, 1.15rem + 0.5vw, 1.5rem)', { lineHeight: '1.25', letterSpacing: '-0.01em', fontWeight: '600' }],
+        'ubb-lead': ['clamp(1.0625rem, 1rem + 0.35vw, 1.25rem)', { lineHeight: '1.6' }],
+        'ubb-body': ['1rem', { lineHeight: '1.65' }],
+        'ubb-small': ['0.875rem', { lineHeight: '1.5' }],
+      },
+      borderRadius: {
+        'ubb-chip': 'var(--ubb-radius-chip)',
+        'ubb-field': 'var(--ubb-radius-field)',
+        'ubb-card': 'var(--ubb-radius-card)',
+        'ubb-panel': 'var(--ubb-radius-panel)',
+      },
+      boxShadow: {
+        'ubb-sm': 'var(--ubb-shadow-sm)',
+        'ubb-md': 'var(--ubb-shadow-md)',
+        'ubb-lg': 'var(--ubb-shadow-lg)',
+      },
+      spacing: {
+        'ubb-header': 'var(--ubb-header-h)',
+      },
+      maxWidth: {
+        'ubb-prose': '68ch',
       },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',

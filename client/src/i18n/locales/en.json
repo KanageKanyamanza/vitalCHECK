@@ -23,7 +23,8 @@
 		"userGuide": "User Guide",
 		"downloadGuide": "Download Guide",
 		"downloading": "Downloading...",
-		"downloadUserGuide": "Download user guide as PDF"
+		"downloadUserGuide": "Download user guide as PDF",
+		"backToTop": "Back to top of page"
 	},
 	"navigation": {
 		"home": "Home",
@@ -36,7 +37,16 @@
 		"blog": "Blog",
 		"userGuide": "Guide",
 		"login": "Login",
-		"dashboard": "Dashboard"
+		"dashboard": "Dashboard",
+		"byUbb": "by Ubuntu Business Builders",
+		"startDiagnostic": "Start my free diagnostic",
+		"startDiagnosticShort": "Free diagnostic",
+		"openMenu": "Open menu",
+		"closeMenu": "Close menu",
+		"mainMenu": "Main navigation",
+		"language": "Language",
+		"adminDashboard": "Admin area",
+		"myAccount": "My account"
 	},
 	"results": {
 		"title": "vitalCHECK Enterprise Health Check – Results",
@@ -185,11 +195,6 @@
 		}
 	},
 	"landing": {
-		"title1": "vitalCHECK",
-		"title2": "Enterprise Health Check",
-		"subtitle1": "Is your business fit to grow?",
-		"subtitle2": "Take this <span class='text-green-500 font-bold uppercase'>FREE</span> 10-minute self-assessment and discover your company's health score",
-		"badge": "Free • Instant results",
 		"features": {
 			"title": "What you'll get:",
 			"complete": "Complete Assessment",
@@ -217,14 +222,7 @@
 			"language": "Language",
 			"languagePlaceholder": "Select language"
 		},
-		"freeDiagnostic": {
-			"duration": "5 to 7 minutes · 100% free",
-			"title": "Discover your business health score",
-			"subtitle": "Answer 25 quick questions and instantly get your overall score, your strengths and your first recommendations.",
-			"button": "Get my free score"
-		},
 		"sectorCards": {
-			"badge": "New · {{name}} Sector",
 			"button": "CLICK HERE",
 			"items": {
 				"agriculture": {
@@ -269,6 +267,13 @@
 					"description": "25 questions tailored to production units — management, production and energy, materials and maintenance, unit cost and skills. Instant, free results.",
 					"imageAlt": "Production line in an industrial plant"
 				}
+			},
+			"title": "A diagnostic built for your sector",
+			"intro": "Choose your activity: 25 questions specific to your trade, instant and free results.",
+			"other": {
+				"title": "Your activity isn't listed?",
+				"description": "The general diagnostic works for any SME, whatever its sector.",
+				"button": "Take the general diagnostic"
 			}
 		},
 		"sectors": {
@@ -290,6 +295,111 @@
 			"micro": "Micro (1-9 employees)",
 			"sme": "SME (10-49 employees)",
 			"large-sme": "Large SME (50+ employees)"
+		},
+		"hero": {
+			"title": "Is your business ready to grow?",
+			"subtitle": "In 5 to 7 minutes, measure your SME's health with the UBB audit methodology: a clear score, your strengths and personalised recommendations.",
+			"cta": "Start my free diagnostic",
+			"ctaSecondary": "See what you get",
+			"reassurance": {
+				"free": "100% free",
+				"questions": "25 questions",
+				"instant": "Instant result"
+			},
+			"imageAlt": "A consultant and a business owner reviewing a diagnostic report together",
+			"scoreCard": {
+				"label": "Sample result",
+				"levelOf": "Level {{level}} of {{total}}",
+				"chartLabel": "Pentagon of the 5 maturity levels, level {{level}} reached: {{name}}"
+			}
+		},
+		"services": {
+			"title": "What vitalCHECK does for you",
+			"intro": "Start for free, then go as far as your business needs.",
+			"free": {
+				"title": "The free diagnostic",
+				"description": "25 questions on your business fundamentals, analysed with the UBB audit methodology.",
+				"points": {
+					"score": "Your health score out of 100",
+					"level": "Your maturity level, among the 5 UBB levels",
+					"recommendations": "Your strengths and your first recommendations"
+				},
+				"cta": "Start my free diagnostic",
+				"meta": "5 to 7 minutes, no commitment"
+			},
+			"sectors": {
+				"title": "Sector diagnostics",
+				"description": "Agriculture, retail, restaurants, construction, distribution, export or manufacturing: questions designed for your trade.",
+				"link": "Choose my sector"
+			},
+			"followUp": {
+				"title": "Follow-up and detailed report",
+				"description": "With a subscription, retake your diagnostic, track how your score evolves and get personalised recommendations in a PDF report.",
+				"link": "See subscriptions"
+			},
+			"expert": {
+				"title": "Support from a UBB expert",
+				"description": "Full assessment, written and presented report, strategic action plan and three months of guided implementation.",
+				"link": "Discover the diagnostic service"
+			}
+		},
+		"vision": {
+			"title": "An audit method, not just a questionnaire",
+			"intro": "vitalCHECK is built by Ubuntu Business Builders (UBB), a Dakar-based consulting firm that supports SMEs with diagnostics, strategy and growth.",
+			"benefits": {
+				"method": {
+					"title": "Expert analysis",
+					"description": "Every answer is analysed with the UBB audit methodology, designed for the realities of African SMEs."
+				},
+				"priorities": {
+					"title": "Clear priorities",
+					"description": "Your recommendations depend on your maturity level, so you know where to start."
+				},
+				"privacy": {
+					"title": "Confidential answers",
+					"description": "Your information is only used to produce your diagnostic.",
+					"link": "Read our privacy policy"
+				}
+			},
+			"levels": {
+				"title": "The 5 UBB maturity levels",
+				"intro": "Your score out of 100 places your business on this scale.",
+				"range": "{{min}} to {{max}}"
+			},
+			"signature": {
+				"quote": "“Ubuntu: I am because we are.” Helping each business grow means helping its whole community grow.",
+				"author": "The Ubuntu Business Builders team, Dakar"
+			}
+		},
+		"contact": {
+			"title": "Let's talk about your business",
+			"intro": "A question about the diagnostic, a need for support or a partnership idea? The UBB team will get back to you.",
+			"requiredHint": "All fields are required unless marked otherwise.",
+			"optional": "(optional)",
+			"phonePlaceholder": "+221 77 000 00 00",
+			"messagePlaceholder": "Tell us about your business and what you need.",
+			"subject": "Homepage: {{type}}",
+			"errors": {
+				"name": "Enter your name.",
+				"email": "Enter your email address.",
+				"emailInvalid": "This email address isn't valid. Example: name@company.com",
+				"message": "Write your message."
+			},
+			"sent": {
+				"title": "Message sent",
+				"again": "Send another message"
+			},
+			"cta": {
+				"title": "Not ready to write to us yet?",
+				"text": "Start with the free diagnostic: in a few minutes, you'll know where your business stands.",
+				"button": "Start my free diagnostic"
+			}
+		},
+		"seo": {
+			"title": "vitalCHECK Enterprise Health Check - Assess your business health",
+			"description": "Assess the organisational health of your African business with vitalCHECK. Free 5 to 7 minute diagnostic with personalised recommendations and a detailed report.",
+			"keywords": "business, organisational health, assessment, vitalCHECK, Africa, consulting, growth, SME, diagnostic, management, finance, operations, marketing, HR, governance, technology",
+			"shareDescription": "Free 5 to 7 minute diagnostic with personalised recommendations and a detailed report."
 		}
 	},
 	"assessment": {
@@ -425,7 +535,8 @@
 		"updates": {
 			"title": "Updates",
 			"content": "We reserve the right to modify this privacy policy. Changes will be published on this page with a new update date."
-		}
+		},
+		"seoDescription": "How vitalCHECK collects, uses and protects your personal data and your diagnostic answers."
 	},
 	"terms": {
 		"title": "Terms of Service",
@@ -512,7 +623,8 @@
 		"updates": {
 			"title": "Updates",
 			"content": "We reserve the right to modify these terms. Changes will be notified to users and published on this page."
-		}
+		},
+		"seoDescription": "The terms of use of the vitalCHECK platform: service, obligations, payment, liability and governing law."
 	},
 	"premium": {
 		"upgradeTitle": "Upgrade to Premium",
@@ -593,6 +705,22 @@
 				"partnership": "Partnership",
 				"other": "Other"
 			}
+		},
+		"seo": {
+			"title": "Contact - vitalCHECK | Let's talk about your business",
+			"description": "A question about the diagnostic, a need for support or a partnership? Write to the vitalCHECK team, we reply quickly."
+		},
+		"errors": {
+			"name": "Enter your name.",
+			"email": "Enter your email address.",
+			"emailInvalid": "This email address isn't valid. Example: name@company.com",
+			"inquiryType": "Choose the type of request.",
+			"subject": "Enter the subject of your request.",
+			"message": "Write your message."
+		},
+		"sent": {
+			"title": "Message sent",
+			"again": "Send another message"
 		}
 	},
 	"about": {
@@ -635,7 +763,7 @@
 			"content1": "vitalCHECK was born from the belief that too many SMEs fail not because of a lack of potential, but because they lack the right support.",
 			"example": {
 				"title": "One concrete example",
-				"content": "Our work with STM, a company on the brink of bankruptcy, Through diagnosis, strategic guidance, and implementation, we helped them stabilize, restructure, and regain trust.",
+				"content": "Our work with STM, a company on the brink of bankruptcy. Through diagnosis, strategic guidance, and implementation, we helped them stabilize, restructure, and regain trust.",
 				"result": "As a direct result, their revenues grew, and they doubled our consulting fee in recognition of the measurable impact."
 			},
 			"content2": "This experience reinforced our mission: to stand beside entrepreneurs when they need clarity most, helping them turn setbacks into growth."
@@ -667,6 +795,10 @@
 			"subtitle": "Let's build your next chapter together.",
 			"startAssessment": "CLICK HERE",
 			"contactUs": "Contact us"
+		},
+		"seo": {
+			"title": "About - vitalCHECK | Helping SMEs grow",
+			"description": "vitalCHECK was created to give SMEs a clear diagnostic and practical support: our mission, our values and our story."
 		}
 	},
 	"analytics": {
@@ -737,7 +869,7 @@
 		"readTime": "min read",
 		"publishedOn": "Published on",
 		"by": "by",
-		"views": "views",
+		"views": "Views",
 		"likes": "likes",
 		"share": "Share",
 		"search": "Search in blog...",
@@ -765,7 +897,7 @@
 			"operations": "Operations",
 			"gouvernance": "Governance"
 		},
-		"tagsLabel": "Tags",
+		"tagsLabel": "Topics",
 		"tags": {
 			"diagnostic": "Diagnostic",
 			"entreprise": "Business",
@@ -873,6 +1005,33 @@
 				"published": "Article published successfully",
 				"unpublished": "Article unpublished successfully"
 			}
+		},
+		"seo": {
+			"title": "vitalCHECK Blog - Business tips and news",
+			"description": "Articles on business health, management, growth and good practices for African SMEs and startups.",
+			"keywords": "business blog, business tips, management, SME growth, startup, vitalCHECK, business news",
+			"articleFallback": "vitalCHECK blog article"
+		},
+		"categoryLabel": "Filter by category",
+		"typeLabel": "Filter by article type",
+		"untitled": "Title not available",
+		"noExcerpt": "Excerpt not available",
+		"resultsCount_one": "{{count}} article found",
+		"resultsCount_other": "{{count}} articles found",
+		"likeAction": "Like the article: {{title}}",
+		"paginationLabel": "Article pagination",
+		"pageN": "Page {{page}}",
+		"noContent": "Content not available.",
+		"likesCount_one": "{{count}} like",
+		"likesCount_other": "{{count}} likes",
+		"preview": {
+			"banner": "Preview mode: unpublished article",
+			"close": "Close"
+		},
+		"cta": {
+			"title": "And your business, where does it stand?",
+			"text": "Answer 25 questions in 5 to 7 minutes and get your health score, your strengths and your first recommendations.",
+			"button": "Start my free diagnostic"
 		}
 	},
 	"reportDownload": {
@@ -1110,37 +1269,38 @@
 		"title": "Checkout",
 		"backToPricing": "Back to pricing",
 		"orderSummary": "Order Summary",
-		"price": "Price",
 		"or": "or",
 		"monthly": "per month",
 		"annual": "per year",
 		"oneTime": "One-time payment",
-		"annualPrice": "Annual price",
 		"selectPaymentMethod": "Select payment method",
 		"paypal": "Credit card or PayPal",
 		"paypalDescription": "Pay securely with Credit card or PayPal",
-		"bankTransfer": "Bank Transfer / Contact Us",
-		"bankTransferDescription": "Pay by bank transfer or contact us for other options",
 		"contactUsForPayment": "Contact us to arrange payment by bank transfer or discuss other payment options.",
 		"contactUs": "Contact Us",
-		"securePayment": "🔒 Secure payment protected by SSL encryption",
-		"invalidPlan": "Invalid plan selected. Redirecting..."
+		"invalidPlan": "Invalid plan selected. Redirecting...",
+		"dueToday": "Amount to pay",
+		"billing": "Billing",
+		"annualInfo": "Annual price: {{price}} ({{priceXOF}}), 2 months free. Online payment is monthly.",
+		"account": "Payment linked to {{email}}",
+		"secureNote": "Secure payment, protected by SSL encryption",
+		"otherMethodTitle": "Pay another way"
 	},
 	"paymentSuccess": {
-		"title": "Payment Successful!",
+		"title": "Payment successful",
 		"subtitle": "Thank you for your purchase. Your payment has been processed successfully.",
-		"orderDetails": "Order Details",
 		"orderId": "Order ID",
 		"plan": "Plan",
 		"status": "Status",
 		"completed": "Completed",
-		"nextSteps": "What's Next?",
+		"nextSteps": "What's next?",
 		"confirmationEmail": "You will receive a confirmation email shortly with your payment summary.",
 		"accessInfo": "Our experts will contact you within 24 hours to arrange your services.",
 		"support": "All your deliverables will be sent directly to your email.",
-		"backToHome": "Back to Home",
-		"contactSupport": "Contact Support",
-		"needHelp": "Need help?"
+		"backToHome": "Back to home",
+		"contactSupport": "Contact support",
+		"needHelp": "Need help?",
+		"goToDashboard": "Go to my dashboard"
 	},
 	"pricing": {
 		"title": "vitalCHECK Pricing",
@@ -1159,7 +1319,8 @@
 				"currency": "FCFA",
 				"period": "",
 				"description": "Discovery and pre-qualification",
-				"button": "Start for free"
+				"button": "Start for free",
+				"label": "Free"
 			},
 			"standard": {
 				"name": "STANDARD",
@@ -1171,7 +1332,8 @@
 				"annualPeriod": "/year",
 				"description": "Continuous improvement and tracking",
 				"button": "Select",
-				"popular": "Most popular"
+				"popular": "Most popular",
+				"label": "Standard"
 			},
 			"premium": {
 				"name": "PREMIUM",
@@ -1184,7 +1346,8 @@
 				"oneShotPrice": "199 €",
 				"oneShotFCFA": "130,000 FCFA",
 				"description": "Consulting and financing",
-				"button": "Select"
+				"button": "Select",
+				"label": "Premium"
 			},
 			"diagnostic": {
 				"name": "DIAGNOSTIC SERVICE",
@@ -1195,40 +1358,19 @@
 				"includes": "Each engagement concludes with a strategic action plan followed by three months of guided implementation.",
 				"retainer": "At the end of the intervention, clients pay a performance-based retainer equal to 1.5% of the sales increase generated through the program, payable over a 12-month period.",
 				"button": "Request Diagnostic Service",
-				"special": "Special Pack"
+				"special": "Special Pack",
+				"label": "Diagnostic service"
 			}
 		},
 		"enterpriseRecommendations": {
 			"title": "Which solution for your business?",
 			"subtitle": "Discover our recommendations based on your organization's type and size",
-			"recommended": "Recommended",
 			"tableHeaders": {
-				"enterpriseType": "Enterprise type",
-				"recommendedPlan": "Recommended plan",
-				"description": "Description"
+				"recommendedPlan": "Recommended plan"
 			}
 		},
 		"support": {
-			"title": "Support and assistance",
-			"tableHeaders": {
-				"supportType": "Support type"
-			},
-			"subtitle": "Our team is here to support you at every step",
-			"email": {
-				"title": "Email Support",
-				"description": "Available for all plans",
-				"responseTime": "Response within 24h"
-			},
-			"whatsapp": {
-				"title": "WhatsApp Support",
-				"description": "Standard and Premium plans",
-				"responseTime": "Priority response"
-			},
-			"phone": {
-				"title": "Phone Support",
-				"description": "Premium plan only",
-				"responseTime": "Dedicated support"
-			}
+			"title": "Support and assistance"
 		},
 		"cta": {
 			"title": "Ready to improve your business?",
@@ -1237,7 +1379,6 @@
 			"contactUs": "Contact us"
 		},
 		"common": {
-			"twoMonthsFree": "(2 months free)",
 			"or": "or"
 		},
 		"featuresComparison": {
@@ -1287,6 +1428,29 @@
 			"emailSupport": "Response within 24h",
 			"whatsappSupport": "Priority response",
 			"phoneSupport": "Dedicated support"
+		},
+		"card": {
+			"annual": "or {{price}} {{currency}}{{period}} (2 months free)",
+			"noCard": "No credit card needed",
+			"included": "Included:",
+			"everythingIn": "Everything in {{plan}}, plus:",
+			"billingNote": "Secure online payment with PayPal, billed monthly. Amounts in CFA francs (FCFA)."
+		},
+		"service": {
+			"badge": "Support from a UBB expert",
+			"feeTitle": "Performance fee",
+			"question": "Ask a question before ordering"
+		},
+		"comparison": {
+			"included": "Included",
+			"notIncluded": "Not included",
+			"choosePlan": "See a plan's details"
+		},
+		"seo": {
+			"title": "Pricing - vitalCHECK | Plans for your business",
+			"description": "Discover vitalCHECK plans: Free, Standard and Premium, plus the Diagnostic service supported by a UBB expert. Choose the right option for your SME.",
+			"keywords": "pricing, price, subscription, vitalCHECK, business diagnostic, SME, small business, cooperatives",
+			"shareDescription": "Choose the vitalCHECK plan that fits your business: Free, Standard, Premium or Diagnostic service."
 		}
 	},
 	"chatbot": {
@@ -1340,7 +1504,8 @@
 			"title": "Free diagnostic - vitalCHECK",
 			"description": "Get a free organizational health score for your business in 5 to 7 minutes, with immediate recommendations.",
 			"resultsTitle": "Your results - vitalCHECK",
-			"resultsDescription": "Discover your organizational health score and your first vitalCHECK recommendations."
+			"resultsDescription": "Discover your organizational health score and your first vitalCHECK recommendations.",
+			"keywords": "free diagnostic, business score, organisational health, vitalCHECK, SME"
 		},
 		"loading": {
 			"questions": "Loading diagnostic...",
@@ -1348,30 +1513,41 @@
 		},
 		"errors": {
 			"loadFailed": "Unable to load the diagnostic. Please try again.",
-			"requiredFields": "Please fill in all required fields",
 			"noQuestions": "The diagnostic could not be loaded. Please try again.",
-			"scoreError": "An error occurred while calculating your results",
 			"saveError": "An error occurred. Please try again.",
 			"noEmail": "Please enter your email address",
 			"resultsNotFound": "Results not found",
 			"reportNotReady": "The PDF report is not yet available."
 		},
 		"intro": {
-			"duration": "5 to 7 minutes",
-			"free": "100% free",
 			"title": "Your free business health score",
 			"subtitle": "Answer 25 quick questions across 5 key pillars and instantly get your overall score, strengths, and first recommendations.",
 			"companyName": "Company name",
 			"companyNamePlaceholder": "Ex: My Company Ltd",
 			"companySize": "Company size",
 			"companySizePlaceholder": "Select a size",
-			"sector": "Industry",
-			"sectorPlaceholder": "Prefer not to say",
+			"sector": "Your sector",
 			"email": "Email address",
 			"emailPlaceholder": "you@company.com",
 			"emailHint": "Your results are displayed immediately. We will use this address to resend your report if needed.",
 			"language": "Diagnostic language",
-			"startButton": "CLICK HERE"
+			"startButton": "CLICK HERE",
+			"reassurance": {
+				"time": "5 to 7 minutes, one question at a time",
+				"free": "100% free, no commitment",
+				"noFigures": "No figures needed: you answer yes, partly or no"
+			},
+			"sectorHint": "The questions adapt to your trade.",
+			"sectorUniversal": "All activities",
+			"aboutCompany": "Your business",
+			"errors": {
+				"companyName": "Enter your company name.",
+				"companySize": "Choose your company size.",
+				"email": "Enter your email address.",
+				"emailInvalid": "This email address isn't valid. Example: name@company.com"
+			},
+			"panelTitle": "Five pillars, one clear score",
+			"panelText": "Answer one question at a time: your diagnostic builds up pillar by pillar."
 		},
 		"agriculture": {
 			"title": "Farm Business Assessment 10+ ha",
@@ -1422,10 +1598,10 @@
 		},
 		"questions": {
 			"header": "Free diagnostic",
-			"answers": "{{current}} / {{total}} answers",
 			"previous": "Previous",
 			"next": "Next",
-			"seeResults": "See my results"
+			"seeResults": "See my results",
+			"hint": "Tap an answer: the next question appears automatically."
 		},
 		"results": {
 			"pageTitle": "Your results",
@@ -1454,7 +1630,68 @@
 				"Prioritized 90-day action plan",
 				"Full report with transformation roadmap",
 				"Support from a vitalCHECK expert"
-			]
+			],
+			"premiumReport": {
+				"title": "Your premium report is ready",
+				"description": "As a premium subscriber, you get an in-depth analysis of your diagnostic based on the UBB audit methodology: personalised recommendations, a prioritised action plan and strategic directions suited to your sector.",
+				"download": "Download my premium report",
+				"generating": "Preparing the report… (10 to 20 seconds)",
+				"downloaded": "Premium report downloaded.",
+				"subscriptionRequired": "A premium subscription is required to access this report.",
+				"forbidden": "Access denied: this diagnostic belongs to another account.",
+				"loginRequired": "Log in to download the premium report.",
+				"downloadError": "The premium report couldn't be downloaded. Try again in a moment."
+			},
+			"scoreLabel": "Overall score: {{score}} out of 100, level {{level}}",
+			"radarLabel": "Radar of the 5 pillars. {{details}}",
+			"sending": "Sending...",
+			"downloading": "Downloading...",
+			"otherEmail": "Use another email address"
+		},
+		"header": {
+			"titleSector": "{{sector}} diagnostic",
+			"quit": "Exit",
+			"quitHint": "Your progress stays saved on this device for the session"
+		},
+		"progress": {
+			"pillar": "Pillar {{current}} of {{total}}",
+			"question": "Question {{current}} of {{total}}",
+			"announce": "{{pillar}}: {{name}}. {{question}}.",
+			"timeLeft_one": "About {{count}} minute left",
+			"timeLeft_other": "About {{count}} minutes left",
+			"lastMinute": "Less than a minute left"
+		},
+		"pillarBreak": {
+			"title": "Pillar done: {{name}}",
+			"encouragement": {
+				"0": "Great start! The foundations of your diagnostic are in place.",
+				"1": "You're making good progress: two pillars already covered.",
+				"2": "More than halfway there. Two more pillars and your score will be ready.",
+				"3": "Final stretch: just one pillar left before your score."
+			},
+			"nextLabel": "Next: pillar {{number}} of {{total}}",
+			"nextMeta_one": "{{count}} question, about 1 minute",
+			"nextMeta_other": "{{count}} questions, about 1 minute",
+			"continue": "Continue",
+			"back": "Previous question",
+			"count_one": "{{count}} of {{total}} pillars done",
+			"count_other": "{{count}} of {{total}} pillars done",
+			"pentagonLabel_one": "{{count}} of {{total}} pillars done",
+			"pentagonLabel_other": "{{count}} of {{total}} pillars done"
+		},
+		"analysis": {
+			"title": "Analysing your answers",
+			"subtitle": "Using the UBB audit methodology. This only takes a few seconds.",
+			"steps": {
+				"reading_one": "Reading your answer",
+				"reading_other": "Reading your {{count}} answers",
+				"scoring": "Calculating your score for each pillar",
+				"recommendations": "Preparing your recommendations"
+			},
+			"errorTitle": "The analysis couldn't be completed",
+			"errorText": "Your answers are safely kept on this device. Check your internet connection, then try again.",
+			"retry": "Try again",
+			"back": "Back to the questions"
 		}
 	},
 	"team": {
@@ -1495,7 +1732,77 @@
 			"companyName": "Company",
 			"password": "Password",
 			"loginAndJoin": "Log in and join",
-			"registerAndJoin": "Create account and join"
+			"registerAndJoin": "Create account and join",
+			"panelTitle": "Work together on the same diagnostic",
+			"panelText": "Your team shares the results and follows the company's progress.",
+			"modeLabel": "Do you already have an account?"
 		}
+	},
+	"auth": {
+		"common": {
+			"email": "Email address",
+			"emailPlaceholder": "you@company.com",
+			"password": "Password",
+			"showPassword": "Show password",
+			"hidePassword": "Hide password"
+		},
+		"login": {
+			"title": "Log in",
+			"subtitle": "Access your client or administrator area.",
+			"panelTitle": "Your business health, tracked over time",
+			"panelText": "Find your scores, pillars and recommendations in one place.",
+			"passwordPlaceholder": "Your password",
+			"forgot": "Forgot your password?",
+			"submit": "Log in",
+			"loading": "Logging in...",
+			"invalid": "Incorrect email or password. Check your details and try again.",
+			"successAdmin": "Administrator login successful",
+			"successClient": "Login successful",
+			"detectedAdmin": "Administrator account detected",
+			"detectedClient": "Client account detected",
+			"newHere": "New to vitalCHECK?",
+			"createAccount": "Create a client account"
+		},
+		"register": {
+			"panelTitle": "Create your space in a minute",
+			"panelText": "Keep the history of your diagnostics and follow your business's growth."
+		},
+		"forgot": {
+			"title": "Forgot your password?",
+			"subtitle": "Enter your email address and we'll send you a link to choose a new one.",
+			"panelTitle": "Your account stays protected",
+			"panelText": "The reset link is personal and temporary.",
+			"submit": "Send the link",
+			"loading": "Sending...",
+			"sentTitle": "Check your inbox",
+			"sentText": "If an account exists for {{email}}, a reset link has just been sent.",
+			"sentHint": "Check your spam folder if you can't find it.",
+			"sentToast": "Reset email sent",
+			"error": "The email couldn't be sent. Try again in a moment.",
+			"backToLogin": "Back to login"
+		},
+		"reset": {
+			"title": "New password",
+			"subtitle": "Choose a password you don't use anywhere else.",
+			"newPassword": "New password",
+			"confirm": "Confirm password",
+			"hint": "At least 6 characters.",
+			"tooShort": "The password must be at least 6 characters long.",
+			"mismatch": "The two passwords don't match.",
+			"submit": "Save password",
+			"loading": "Saving...",
+			"successToast": "Password reset",
+			"error": "The password couldn't be reset. Try again.",
+			"invalidTitle": "Invalid or expired link",
+			"invalidText": "This reset link is no longer valid. Request a new one.",
+			"newLink": "Request a new link",
+			"successTitle": "Password changed",
+			"successText": "You'll be redirected to the login page in a few seconds.",
+			"goToLogin": "Log in"
+		}
+	},
+	"legal": {
+		"toc": "Contents",
+		"tocLabel": "Document contents"
 	}
 }

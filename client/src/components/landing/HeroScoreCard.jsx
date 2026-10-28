@@ -1,0 +1,82 @@
+import React from 'react'
+import { motion, useReducedMotion } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
+import { LEVELS_V2, getLevelV2 } from '../../utils/colors'
+import { PENTAGON_CENTER, pentagonPoints } from '../ui/ds/Pentagon'
+
+// Score d'exemple affiché sur la landing (clairement présenté comme un exemple)
+const SAMPLE_SCORE = 72
+
+const CENTER = PENTAGON_CENTER
+const RING_STEP = 11
+
+// Du niveau 1 (centre) au niveau 5 (extérieur) : les niveaux atteints sont en jaune vitalCHECK
+const REACHED_FILLS = ['#E5B22A', '#F4C542', '#F8D97A', '#FDF0C4', '#FEFAEB']
+const PENDING_FILL = '#EAF6EC'
+
+/**
+ * Signature visuelle de la landing : les 5 niveaux de maturité UBB
+ * représentés en pentagones concentriques, le niveau atteint en jaune.
+ */
+const HeroScoreCard = ({ className = '' }) => {
+  const { t, i18n } = useTranslation()
+  const reduceMotion = useReducedMotion()
+  const lang = (i18n.language || 'fr').slice(0, 2)
+
+  const level = getLevelV2(SAMPLE_SCORE)
+  const levelIndex = LEVELS_V2.findIndex((l) => l.id === level.id)
+  const levelLabel = level.label[lang] || level.label.fr
+
+  // Dessin de l'extérieur vers l'intérieur pour que chaque anneau recouvre le précédent
+  const rings = [4, 3, 2, 1, 0]
+
+  return (
+    <motion.figure
+      initial={reduceMotion ? false : { opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: 0.35, ease: 'easeOut' }}
+      className={`ubb-card flex items-center gap-4 p-4 shadow-ubb-lg sm:gap-5 sm:p-5 ${className}`}
+    >
+      <svg
+        viewBox="0 0 120 120"
+        className="h-20 w-20 shrink-0 sm:h-24 sm:w-24"
+        role="img"
+        aria-label={t('landing.hero.scoreCard.chartLabel', {
+          level: levelIndex + 1,
+          name: levelLabel,
+        })}
+      >
+        {rings.map((ring) => (
+          <motion.polygon
+            key={ring}
+            points={pentagonPoints(RING_STEP * (ring + 1) + 3)}
+            fill={ring <= levelIndex ? REACHED_FILLS[ring] : PENDING_FILL}
+            stroke="#FFFFFF"
+            strokeWidth="2"
+            strokeLinejoin="round"
+            style={{ transformOrigin: `${CENTER}px ${CENTER}px` }}
+            initial={reduceMotion ? false : { scale: 0.6, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.45, delay: 0.55 + (4 - ring) * 0.08, ease: 'easeOut' }}
+          />
+        ))}
+      </svg>
+
+      <figcaption className="min-w-0 font-text">
+        <p className="text-ubb-small text-ubb-ink-muted">{t('landing.hero.scoreCard.label')}</p>
+        <p className="mt-1 flex items-baseline gap-1 text-ubb-ink">
+          <span className="font-heading text-4xl font-bold leading-none tracking-tight">
+            {SAMPLE_SCORE}
+          </span>
+          <span className="text-sm font-semibold text-ubb-ink-muted">/100</span>
+        </p>
+        <p className="mt-2 text-sm font-semibold text-ubb-ink">{levelLabel}</p>
+        <p className="text-ubb-small text-ubb-ink-muted">
+          {t('landing.hero.scoreCard.levelOf', { level: levelIndex + 1, total: LEVELS_V2.length })}
+        </p>
+      </figcaption>
+    </motion.figure>
+  )
+}
+
+export default HeroScoreCard
