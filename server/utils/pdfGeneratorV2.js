@@ -644,14 +644,14 @@ function generateV2HTMLContent(data, options = {}) {
 const PREMIUM_TEXTS = {
 	fr: {
 		premiumTitle: 'Recommandations Personnalisées',
-		premiumSubtitle: 'Plan d\'action approfondi établi selon la méthodologie d\'audit UBB à partir de vos résultats de diagnostic',
+		premiumSubtitle: 'Plan d\'action approfondi établi selon la méthodologie du diagnostic tool UBB à partir de vos résultats de diagnostic',
 		fallbackNote: 'Vos recommandations approfondies sont en cours de préparation. Elles seront disponibles lors de votre prochain téléchargement.',
 		badge: '★ RAPPORT PREMIUM',
 		continuity: 'Analyse approfondie · Suite du rapport',
 	},
 	en: {
 		premiumTitle: 'Personalized Recommendations',
-		premiumSubtitle: 'In-depth action plan built with the UBB audit methodology from your diagnostic results',
+		premiumSubtitle: 'In-depth action plan built with the UBB diagnostic tool methodology from your diagnostic results',
 		fallbackNote: 'Your in-depth recommendations are being prepared. They will be available on your next download.',
 		badge: '★ PREMIUM REPORT',
 		continuity: 'In-depth analysis · Report continuation',

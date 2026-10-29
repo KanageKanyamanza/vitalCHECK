@@ -298,7 +298,7 @@
 		},
 		"hero": {
 			"title": "Is your business ready to grow?",
-			"subtitle": "In 5 to 7 minutes, measure your SME's health with the UBB audit methodology: a clear score, your strengths and personalised recommendations.",
+			"subtitle": "In 5 to 7 minutes, measure your SME's health with the UBB diagnostic tool methodology: a clear score, your strengths and personalised recommendations.",
 			"cta": "Start my free diagnostic",
 			"ctaSecondary": "See what you get",
 			"reassurance": {
@@ -318,7 +318,7 @@
 			"intro": "Start for free, then go as far as your business needs.",
 			"free": {
 				"title": "The free diagnostic",
-				"description": "25 questions on your business fundamentals, analysed with the UBB audit methodology.",
+				"description": "25 questions on your business fundamentals, analysed with the UBB diagnostic tool methodology.",
 				"points": {
 					"score": "Your health score out of 100",
 					"level": "Your maturity level, among the 5 UBB levels",
@@ -344,12 +344,12 @@
 			}
 		},
 		"vision": {
-			"title": "An audit method, not just a questionnaire",
+			"title": "A diagnostic tool, not just a questionnaire",
 			"intro": "vitalCHECK is built by Ubuntu Business Builders (UBB), a Dakar-based consulting firm that supports SMEs with diagnostics, strategy and growth.",
 			"benefits": {
 				"method": {
 					"title": "Expert analysis",
-					"description": "Every answer is analysed with the UBB audit methodology, designed for the realities of African SMEs."
+					"description": "Every answer is analysed with the UBB diagnostic tool methodology, designed for the realities of African SMEs."
 				},
 				"priorities": {
 					"title": "Clear priorities",
@@ -1633,7 +1633,7 @@
 			],
 			"premiumReport": {
 				"title": "Your premium report is ready",
-				"description": "As a premium subscriber, you get an in-depth analysis of your diagnostic based on the UBB audit methodology: personalised recommendations, a prioritised action plan and strategic directions suited to your sector.",
+				"description": "As a premium subscriber, you get an in-depth analysis of your diagnostic based on the UBB diagnostic tool methodology: personalised recommendations, a prioritised action plan and strategic directions suited to your sector.",
 				"download": "Download my premium report",
 				"generating": "Preparing the report… (10 to 20 seconds)",
 				"downloaded": "Premium report downloaded.",
@@ -1681,7 +1681,7 @@
 		},
 		"analysis": {
 			"title": "Analysing your answers",
-			"subtitle": "Using the UBB audit methodology. This only takes a few seconds.",
+			"subtitle": "Using the UBB diagnostic tool methodology. This only takes a few seconds.",
 			"steps": {
 				"reading_one": "Reading your answer",
 				"reading_other": "Reading your {{count}} answers",

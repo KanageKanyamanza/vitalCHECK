@@ -298,7 +298,7 @@
 		},
 		"hero": {
 			"title": "Votre entreprise est-⁠elle prête à grandir ?",
-			"subtitle": "En 5 à 7 minutes, mesurez la santé de votre PME grâce à la méthodologie d'audit UBB : un score clair, vos points forts et des recommandations personnalisées.",
+			"subtitle": "En 5 à 7 minutes, mesurez la santé de votre PME grâce à la méthodologie du diagnostic tool UBB : un score clair, vos points forts et des recommandations personnalisées.",
 			"cta": "Démarrer mon diagnostic gratuit",
 			"ctaSecondary": "Voir ce que vous obtenez",
 			"reassurance": {
@@ -318,7 +318,7 @@
 			"intro": "Commencez gratuitement, puis allez aussi loin que votre entreprise en a besoin.",
 			"free": {
 				"title": "Le diagnostic gratuit",
-				"description": "25 questions sur les fondamentaux de votre entreprise, analysées selon la méthodologie d'audit UBB.",
+				"description": "25 questions sur les fondamentaux de votre entreprise, analysées selon la méthodologie du diagnostic tool UBB.",
 				"points": {
 					"score": "Votre score de santé sur 100",
 					"level": "Votre niveau de maturité, parmi les 5 niveaux UBB",
@@ -344,12 +344,12 @@
 			}
 		},
 		"vision": {
-			"title": "Une méthode d'audit, pas un simple questionnaire",
+			"title": "Un diagnostic tool, pas un simple questionnaire",
 			"intro": "vitalCHECK est conçu par Ubuntu Business Builders (UBB), société de conseil basée à Dakar qui accompagne les PME dans leur diagnostic, leur stratégie et leur croissance.",
 			"benefits": {
 				"method": {
 					"title": "Une analyse experte",
-					"description": "Chaque réponse est analysée selon la méthodologie d'audit UBB, pensée pour les réalités des PME africaines."
+					"description": "Chaque réponse est analysée selon la méthodologie du diagnostic tool UBB, pensée pour les réalités des PME africaines."
 				},
 				"priorities": {
 					"title": "Des priorités claires",
@@ -1691,7 +1691,7 @@
 			],
 			"premiumReport": {
 				"title": "Votre rapport premium est disponible",
-				"description": "En tant qu'abonné premium, vous recevez une analyse approfondie de votre diagnostic selon la méthodologie d'audit UBB : recommandations personnalisées, plan d'action priorisé et pistes stratégiques adaptées à votre secteur.",
+				"description": "En tant qu'abonné premium, vous recevez une analyse approfondie de votre diagnostic selon la méthodologie du diagnostic tool UBB : recommandations personnalisées, plan d'action priorisé et pistes stratégiques adaptées à votre secteur.",
 				"download": "Télécharger mon rapport premium",
 				"generating": "Préparation du rapport… (10 à 20 secondes)",
 				"downloaded": "Rapport premium téléchargé.",
@@ -1739,7 +1739,7 @@
 		},
 		"analysis": {
 			"title": "Analyse de vos réponses",
-			"subtitle": "Selon la méthodologie d'audit UBB. Cela ne prend que quelques secondes.",
+			"subtitle": "Selon la méthodologie du diagnostic tool UBB. Cela ne prend que quelques secondes.",
 			"steps": {
 				"reading_one": "Lecture de votre réponse",
 				"reading_other": "Lecture de vos {{count}} réponses",
