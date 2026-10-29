@@ -24,6 +24,7 @@
     "@tiptap/extension-underline": "^3.6.2",
     "@tiptap/react": "^3.6.2",
     "@tiptap/starter-kit": "^3.6.2",
+    "@vercel/analytics": "^2.0.1",
     "axios": "^1.12.2",
     "chart.js": "^4.5.0",
     "framer-motion": "^10.16.16",
