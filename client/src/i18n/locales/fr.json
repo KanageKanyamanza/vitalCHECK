@@ -1869,7 +1869,9 @@
 			"title": "Calculateur de pertes cachées",
 			"waiting": "Chargement de votre diagnostic…",
 			"missing": "Nous ne retrouvons pas votre diagnostic. Ouvrez le calculateur depuis votre rapport, en laissant l'onglet du rapport ouvert.",
-			"backToReport": "Retour à mon rapport"
+			"backToReport": "Retour à mon rapport",
+			"panelTitle": "Vos chiffres restent chez vous",
+			"panelText": "UBB ne reçoit pas vos chiffres. Chaque montant affiche ses hypothèses : c'est une estimation, pas une promesse."
 		},
 		"cta": {
 			"title": "Vos pertes cachées",
@@ -1879,18 +1881,20 @@
 			"button": "Combien cela me coûte-t-il ?"
 		},
 		"draftBanner": "Valeurs provisoires : taux et textes en attente de validation par les consultants UBB.",
-		"step": "Étape {{current}} sur 3",
+		"step": "Étape {{current}} sur 2",
 		"loadError": "Impossible de charger le calculateur. Vérifiez votre connexion.",
 		"retry": "Réessayer",
 		"select": {
 			"title": "Les sujets à chiffrer",
 			"intro": "Nous avons choisi 3 sujets d'après vos réponses. Vous pouvez en remplacer un.",
-			"freeBadge": "Votre résultat gratuit",
+			"freeBadge": "Offert",
 			"lockedBadge": "Premium",
-			"suggested": "Suggéré",
+			"change": "Changer un sujet",
+			"seePremium": "Voir les sujets Premium",
+			"close": "Fermer la liste des sujets",
 			"count": "{{count}} sur 3 choisis",
 			"max": "Vous avez déjà choisi 3 sujets. Décochez-en un pour en choisir un autre.",
-			"freeNote": "Avec l'offre gratuite, vous voyez le résultat de votre sujet le plus faible. Les autres sont réservés au Premium.",
+			"freeNote": "Avec l'offre gratuite, vos 3 sujets sont offerts. Les autres sont réservés au Premium.",
 			"continue": "Continuer"
 		},
 		"input": {
@@ -1954,8 +1958,8 @@
 			},
 			"disclaimer": "Estimation, pas une promesse. Les montants dépendent de vos chiffres et des hypothèses indiquées.",
 			"locked": {
-				"title": "Résultat réservé au Premium",
-				"text": "Passez au Premium pour chiffrer ce sujet et simuler vos gains.",
+				"title": "Réservé au Premium",
+				"text": "Passez au Premium pour chiffrer aussi ces sujets et simuler vos gains.",
 				"cta": "Passer au Premium"
 			},
 			"pdf": "Télécharger mon PDF",

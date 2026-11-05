@@ -10,9 +10,9 @@
 
 const status = "draft";
 
-// Règle d'accès gratuit : l'utilisateur gratuit voit la première des catégories pré-cochées
-// (sa catégorie la plus faible). Les autres sont verrouillées.
-const freeAccess = { rule: "firstSelected", count: 1 };
+// Règle d'accès gratuit : l'utilisateur gratuit voit le résultat des catégories pré-cochées
+// (ses 3 catégories les plus faibles). Les autres sont réservées au Premium.
+const freeAccess = { rule: "preselected", count: 3 };
 
 // Nombre de catégories pré-cochées
 const selectionSize = 3;

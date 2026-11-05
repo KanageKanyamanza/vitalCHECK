@@ -28,7 +28,14 @@ const HiddenLossesSection = ({ answers, questionnaireType, companyName }) => {
 	const [inputs, setInputs] = useState(EMPTY_INPUTS);
 	const [results, setResults] = useState([]);
 
+	// Focus et défilement sur le titre à chaque changement d'écran, sauf à l'ouverture
+	// (le titre de la page doit rester visible)
+	const firstScreen = useRef(true);
 	useEffect(() => {
+		if (step === "select" && firstScreen.current) {
+			firstScreen.current = false;
+			return;
+		}
 		if (["select", "input", "results"].includes(step)) {
 			headingRef.current?.focus();
 			headingRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -59,7 +66,8 @@ const HiddenLossesSection = ({ answers, questionnaireType, companyName }) => {
 	}, []);
 
 	const unlockedSelection = config ? selected.filter((id) => config.unlocked.includes(id)) : [];
-	const lockedSelection = config ? selected.filter((id) => !config.unlocked.includes(id)) : [];
+	// Sujets réservés au Premium, rappelés sur l'écran de résultats
+	const lockedSelection = config ? config.categoryOrder.filter((id) => !config.unlocked.includes(id)) : [];
 
 	const showResults = () => {
 		setResults(sortResults(unlockedSelection.map((id) => computeCategory(id, inputs, config))));
@@ -67,7 +75,8 @@ const HiddenLossesSection = ({ answers, questionnaireType, companyName }) => {
 		trackEvent("f1_results_shown");
 	};
 
-	const stepNumber = { select: 1, input: 2, results: 3 }[step];
+	// Formulaire en 2 écrans (sujets, puis chiffres), puis le résultat
+	const formStep = { select: 1, input: 2 }[step];
 	const stepTitle = {
 		select: t("f1.select.title"),
 		input: t("f1.input.title"),
@@ -75,11 +84,7 @@ const HiddenLossesSection = ({ answers, questionnaireType, companyName }) => {
 	}[step];
 
 	return (
-		<section aria-labelledby="f1-title" className="ubb-card mt-6 scroll-mt-24 p-6 sm:p-8">
-			{/* La page porte déjà le titre visible */}
-			<h2 id="f1-title" className="sr-only">
-				{t("f1.cta.title")}
-			</h2>
+		<div>
 			<p className="font-text text-ubb-small text-ubb-ink-muted">{t("f1.cta.privacy")}</p>
 
 			{config?.status === "draft" && showDraftBanner && (
@@ -105,14 +110,26 @@ const HiddenLossesSection = ({ answers, questionnaireType, companyName }) => {
 				</div>
 			)}
 
-			{stepNumber && (
-				<div className="mt-5">
-					<p className="font-text text-xs font-semibold uppercase tracking-wide text-ubb-ink-muted">
-						{t("f1.step", { current: stepNumber })}
-					</p>
-					<h4 ref={headingRef} tabIndex={-1} className="mt-1 scroll-mt-24 font-heading text-lg font-semibold text-ubb-ink outline-none">
+			{stepTitle && (
+				<div className="mt-6">
+					{formStep && (
+						<div className="mb-3">
+							<p className="font-text text-xs font-semibold uppercase tracking-wide text-ubb-ink-muted">
+								{t("f1.step", { current: formStep })}
+							</p>
+							<div className="mt-2 flex gap-1.5" aria-hidden="true">
+								{[1, 2].map((n) => (
+									<span
+										key={n}
+										className={`h-1.5 flex-1 rounded-full ${n <= formStep ? "bg-ubb-brand-900" : "bg-ubb-brand-100"}`}
+									/>
+								))}
+							</div>
+						</div>
+					)}
+					<h2 ref={headingRef} tabIndex={-1} className="scroll-mt-24 font-heading text-xl font-semibold text-ubb-ink outline-none">
 						{stepTitle}
-					</h4>
+					</h2>
 					<div className="mt-3">
 						{step === "select" && (
 							<CategoryStep
@@ -147,7 +164,7 @@ const HiddenLossesSection = ({ answers, questionnaireType, companyName }) => {
 					</div>
 				</div>
 			)}
-		</section>
+		</div>
 	);
 };
 

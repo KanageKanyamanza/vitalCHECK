@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import SEOHead from "../components/seo/SEOHead";
-import { Button, Container } from "../components/ui/ds";
+import { AuthLayout, Button } from "../components/ui/ds";
 import HiddenLossesSection from "../features/f1/HiddenLossesSection";
 import { requestHandoff } from "../features/f1/handoff";
 
 /**
  * F1 « Calculateur de pertes cachées », ouvert dans un nouvel onglet depuis le rapport.
+ * Formulaire à gauche, illustration à droite (comme Connexion / Inscription).
  * Le diagnostic (réponses et questionnaire) est transmis par l'onglet du rapport.
  */
 const HiddenLossesPage = () => {
@@ -24,23 +25,27 @@ const HiddenLossesPage = () => {
 	}, []);
 
 	return (
-		<div className="min-h-screen bg-ubb-paper-soft">
+		<>
 			<SEOHead title={t("f1.page.metaTitle")} description={t("f1.cta.text")} url="/diagnostic/pertes-cachees" noindex />
-			<Container className="max-w-3xl py-8 sm:py-12">
-				{state.payload?.companyName && (
-					<p className="font-text text-sm font-semibold text-ubb-ink-muted">{state.payload.companyName}</p>
-				)}
-				<h1 className="ubb-heading mt-1 text-ubb-title">{t("f1.page.title")}</h1>
-
+			<AuthLayout
+				scene="losses"
+				width="lg"
+				compactTitle
+				titleId="f1-page-title"
+				title={t("f1.page.title")}
+				subtitle={state.payload?.companyName}
+				panelTitle={t("f1.page.panelTitle")}
+				panelText={t("f1.page.panelText")}
+			>
 				{state.status === "waiting" && (
-					<div className="mt-8 flex items-center gap-3" role="status">
+					<div className="flex items-center gap-3" role="status">
 						<div className="h-6 w-6 animate-spin rounded-full border-4 border-ubb-brand-900 border-t-transparent" aria-hidden="true" />
 						<p className="font-text text-ubb-body text-ubb-ink-muted">{t("f1.page.waiting")}</p>
 					</div>
 				)}
 
 				{state.status === "missing" && (
-					<div className="ubb-card mt-6 p-6">
+					<div>
 						<p className="font-text text-ubb-body text-ubb-ink">{t("f1.page.missing")}</p>
 						<Button to="/diagnostic/resultats" variant="outline" className="mt-5">
 							{t("f1.page.backToReport")}
@@ -55,8 +60,8 @@ const HiddenLossesPage = () => {
 						companyName={state.payload.companyName}
 					/>
 				)}
-			</Container>
-		</div>
+			</AuthLayout>
+		</>
 	);
 };
 

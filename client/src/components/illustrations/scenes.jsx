@@ -400,6 +400,72 @@ export const DiagnosticScene = () => {
   )
 }
 
+/** Pertes cachées : un bocal de pièces fuit par une fissure, une loupe repère la fuite. */
+export const LossesScene = () => {
+  const reduce = useReducedMotion()
+  const floatLens = useFloat(8, 5)
+  const floatCard = useFloat(6, 4.5, 1)
+  const coins = [
+    [196, 290], [236, 290], [276, 290], [216, 268], [256, 268], [236, 246],
+  ]
+  return (
+    <Frame label="losses">
+      <motion.g {...useReveal(0)}>
+        {/* Bocal */}
+        <rect x="150" y="128" width="180" height="200" rx="34" fill={C.white} />
+        <rect x="170" y="108" width="140" height="30" rx="12" fill={C.mist2} />
+        {coins.map(([x, y], i) => (
+          <g key={i}>
+            <ellipse cx={x} cy={y} rx="18" ry="9" fill={C.yellow} />
+            <ellipse cx={x} cy={y - 3} rx="18" ry="9" fill={C.yellowSoft} />
+          </g>
+        ))}
+        {/* Fissure */}
+        <path d="M300 318 l8 -14 l-6 -8 l10 -12" fill="none" stroke={C.greenDark} strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+      </motion.g>
+
+      {/* Pièces qui s'échappent */}
+      {[0, 1, 2].map((i) => (
+        <motion.ellipse
+          key={i}
+          cx={316 + i * 6}
+          cy="330"
+          rx="12"
+          ry="6"
+          fill={C.yellow}
+          initial={reduce ? { opacity: 1, y: 40 + i * 22 } : { opacity: 0, y: 0 }}
+          animate={reduce ? undefined : { opacity: [0, 1, 1, 0], y: [0, 30, 60, 80] }}
+          transition={reduce ? undefined : { duration: 2.4, delay: 1 + i * 0.8, repeat: Infinity, ease: 'easeIn' }}
+        />
+      ))}
+
+      {/* Loupe sur la fuite */}
+      <motion.g {...floatLens}>
+        <circle cx="372" cy="232" r="40" fill={C.white} opacity="0.35" />
+        <circle cx="372" cy="232" r="40" fill="none" stroke={C.white} strokeWidth="10" />
+        <line x1="400" y1="262" x2="430" y2="294" stroke={C.yellow} strokeWidth="14" strokeLinecap="round" />
+      </motion.g>
+
+      {/* Courbe en baisse */}
+      <motion.g {...floatCard}>
+        <rect x="52" y="74" width="120" height="78" rx="16" fill={C.white} />
+        <motion.path
+          d="M70 96 L98 108 L122 104 L152 132"
+          fill="none"
+          stroke={C.green}
+          strokeWidth="6"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          initial={reduce ? false : { pathLength: 0 }}
+          animate={{ pathLength: 1 }}
+          transition={{ duration: 1.2, delay: 0.5, ease: 'easeOut' }}
+        />
+        <circle cx="152" cy="132" r="7" fill={C.yellow} />
+      </motion.g>
+    </Frame>
+  )
+}
+
 export const SCENES = {
   login: LoginScene,
   register: RegisterScene,
@@ -407,4 +473,5 @@ export const SCENES = {
   team: TeamScene,
   contact: ContactScene,
   diagnostic: DiagnosticScene,
+  losses: LossesScene,
 }

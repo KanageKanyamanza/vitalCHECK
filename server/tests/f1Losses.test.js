@@ -34,14 +34,15 @@ test("secteur inconnu : questionnaire universel", () => {
 	assert.equal(resolveSector("retail"), "retail");
 });
 
-test("gratuit : seule la première catégorie pré-cochée est débloquée, sans action ailleurs ni simulateur", () => {
-	const answers = [answer("v2_sales_2", 0)]; // dépendance la plus faible
+test("gratuit : les 3 catégories pré-cochées sont offertes, les autres sans action, sans simulateur ni total", () => {
+	const answers = [answer("v2_sales_2", 0)]; // dépendance la plus faible, puis complétée dans l'ordre
 	const config = buildClientConfig({ questionnaireType: "universal", answers, isPaid: false });
+	const offered = ["clientDependency", "unpaid", "stockouts"];
 	assert.equal(config.access, "free");
-	assert.equal(config.preselected[0], "clientDependency");
-	assert.deepEqual(config.unlocked, ["clientDependency"]);
+	assert.deepEqual(config.preselected, offered);
+	assert.deepEqual(config.unlocked, offered);
 	for (const [id, category] of Object.entries(config.categories)) {
-		assert.equal("action" in category, id === "clientDependency", id);
+		assert.equal("action" in category, offered.includes(id), id);
 	}
 	assert.equal(config.simulator, false);
 	assert.equal(config.showTotal, false);

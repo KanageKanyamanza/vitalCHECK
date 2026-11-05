@@ -1811,7 +1811,9 @@
 			"title": "Hidden losses calculator",
 			"waiting": "Loading your diagnostic…",
 			"missing": "We cannot find your diagnostic. Open the calculator from your report and keep the report tab open.",
-			"backToReport": "Back to my report"
+			"backToReport": "Back to my report",
+			"panelTitle": "Your figures stay with you",
+			"panelText": "UBB does not receive your figures. Each amount shows its assumptions: it is an estimate, not a promise."
 		},
 		"cta": {
 			"title": "Your hidden losses",
@@ -1821,18 +1823,20 @@
 			"button": "What is this costing me?"
 		},
 		"draftBanner": "Provisional values: rates and texts awaiting validation by UBB consultants.",
-		"step": "Step {{current}} of 3",
+		"step": "Step {{current}} of 2",
 		"loadError": "The calculator could not be loaded. Check your connection.",
 		"retry": "Try again",
 		"select": {
 			"title": "Topics to estimate",
 			"intro": "We picked 3 topics based on your answers. You can replace one.",
-			"freeBadge": "Your free result",
+			"freeBadge": "Free",
 			"lockedBadge": "Premium",
-			"suggested": "Suggested",
+			"change": "Change a topic",
+			"seePremium": "See Premium topics",
+			"close": "Close the topic list",
 			"count": "{{count}} of 3 selected",
 			"max": "You have already picked 3 topics. Untick one to choose another.",
-			"freeNote": "With the free plan, you see the result for your weakest topic. The others are for Premium.",
+			"freeNote": "With the free plan, your 3 topics are free. The others are for Premium.",
 			"continue": "Continue"
 		},
 		"input": {
@@ -1896,8 +1900,8 @@
 			},
 			"disclaimer": "An estimate, not a promise. Amounts depend on your figures and the assumptions shown.",
 			"locked": {
-				"title": "Premium result",
-				"text": "Upgrade to Premium to estimate this topic and simulate your gains.",
+				"title": "Premium topics",
+				"text": "Upgrade to Premium to estimate these topics too and simulate your gains.",
 				"cta": "Upgrade to Premium"
 			},
 			"pdf": "Download my PDF",

@@ -10,10 +10,11 @@ import { SCENES } from '../../illustrations/scenes'
  * - `panelTitle` / `panelText` : message de réassurance affiché sous l'illustration
  * - `offset` : hauteur de l'en-tête au-dessus (par défaut celle de la navbar du site)
  * - `width` : largeur max de la colonne du formulaire ("md" par défaut, "xl" pour les longs formulaires)
+ * - `compactTitle` : titre plus petit et centré (avec le sous-titre)
  */
 const WIDTHS = { md: 'max-w-md', lg: 'max-w-lg', xl: 'max-w-2xl' }
 
-const AuthLayout = ({ scene, title, subtitle, panelTitle, panelText, width = 'md', children, titleId = 'auth-title', offset = 'var(--ubb-header-h)' }) => {
+const AuthLayout = ({ scene, title, subtitle, panelTitle, panelText, width = 'md', compactTitle = false, children, titleId = 'auth-title', offset = 'var(--ubb-header-h)' }) => {
   const Scene = SCENES[scene]
 
   return (
@@ -21,10 +22,12 @@ const AuthLayout = ({ scene, title, subtitle, panelTitle, panelText, width = 'md
       {/* Formulaire */}
       <section aria-labelledby={titleId} className="flex items-center justify-center bg-ubb-paper-soft px-4 py-10 sm:px-8 lg:bg-white lg:px-12">
         <div className={`w-full ${WIDTHS[width]}`}>
-          <h1 id={titleId} className="ubb-heading text-ubb-title">
+          <h1 id={titleId} className={compactTitle ? 'ubb-heading text-center text-2xl sm:text-3xl' : 'ubb-heading text-ubb-title'}>
             {title}
           </h1>
-          {subtitle && <p className="mt-3 font-text text-ubb-body text-ubb-ink-muted">{subtitle}</p>}
+          {subtitle && (
+            <p className={`mt-3 font-text text-ubb-body text-ubb-ink-muted ${compactTitle ? 'text-center' : ''}`}>{subtitle}</p>
+          )}
           <div className="mt-8">{children}</div>
         </div>
       </section>

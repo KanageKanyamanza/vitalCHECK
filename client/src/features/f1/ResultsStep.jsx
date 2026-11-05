@@ -53,7 +53,7 @@ const LossCard = ({ result, config, lang, reduction, onReduction }) => {
 				{result.kind !== "annual" && <span className="block font-normal">{t("f1.results.separate")}</span>}
 			</p>
 
-			<div className="mt-4 grid gap-4 border-t border-ubb-brand-900/[0.08] pt-4 sm:grid-cols-2">
+			<div className="mt-4 grid gap-4 border-t border-ubb-brand-900/[0.08] pt-4">
 				<div>
 					<h5 className="font-text text-sm font-semibold text-ubb-ink">{t("f1.results.figures")}</h5>
 					<ul className="mt-1 space-y-1 font-text text-ubb-small text-ubb-ink-muted">
@@ -111,16 +111,23 @@ const LossCard = ({ result, config, lang, reduction, onReduction }) => {
 	);
 };
 
-const LockedCard = ({ title }) => {
+/** Un seul encart pour tous les sujets réservés au Premium */
+const LockedCard = ({ titles }) => {
 	const { t } = useTranslation();
 	return (
 		<article className="rounded-ubb-panel border border-dashed border-ubb-brand-900/25 bg-white p-5">
 			<h4 className="flex items-center gap-2 font-heading text-lg font-semibold text-ubb-ink">
 				<Lock className="h-4 w-4 text-ubb-ink-muted" aria-hidden="true" />
-				{title}
+				{t("f1.results.locked.title")}
 			</h4>
-			<p className="mt-1 font-text text-sm font-semibold text-ubb-ink-muted">{t("f1.results.locked.title")}</p>
-			<p className="mt-2 font-text text-ubb-small text-ubb-ink-muted">{t("f1.results.locked.text")}</p>
+			<ul className="mt-2 flex flex-wrap gap-2">
+				{titles.map((title) => (
+					<li key={title} className="rounded-full bg-ubb-brand-50 px-3 py-1 font-text text-sm font-semibold text-ubb-ink">
+						{title}
+					</li>
+				))}
+			</ul>
+			<p className="mt-3 font-text text-ubb-small text-ubb-ink-muted">{t("f1.results.locked.text")}</p>
 			<Button to="/checkout?plan=premium" size="sm" className="mt-4">
 				{t("f1.results.locked.cta")}
 			</Button>
@@ -185,9 +192,7 @@ const ResultsStep = ({ config, results, lockedIds, lang, companyName, onEdit }) 
 						onReduction={(value) => setReductions((prev) => ({ ...prev, [result.categoryId]: value }))}
 					/>
 				))}
-				{lockedIds.map((id) => (
-					<LockedCard key={id} title={pick(config.categories[id].title, lang)} />
-				))}
+				{lockedIds.length > 0 && <LockedCard titles={lockedIds.map((id) => pick(config.categories[id].title, lang))} />}
 			</div>
 
 			<p className="mt-5 font-text text-ubb-small text-ubb-ink-muted">{t("f1.results.disclaimer")}</p>
