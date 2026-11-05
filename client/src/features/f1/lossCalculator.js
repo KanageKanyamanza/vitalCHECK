@@ -9,6 +9,8 @@
  * }
  */
 
+import { formatNumber } from "../shared/format.js";
+
 const MONTHS = 12;
 
 const FORMULAS = {
@@ -116,10 +118,7 @@ export const needsRevenue = (categoryIds, inputs, config) =>
 /** Arrondi d'affichage au millier de FCFA (les calculs restent exacts). */
 export const roundDisplay = (amount) => Math.round(amount / 1000) * 1000;
 
-/** 2 400 000 FCFA — espaces insécables entre les milliers, quelle que soit la langue. */
-export const formatNumber = (n) =>
-	Math.round(n)
-		.toString()
-		.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+export { formatNumber };
 
+/** 2 400 000 FCFA, arrondi au millier — espaces insécables entre les milliers. */
 export const formatFcfa = (amount) => `${formatNumber(roundDisplay(amount))} FCFA`;

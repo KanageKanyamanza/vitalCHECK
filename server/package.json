@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test:f1": "node --test tests/f1Losses.test.js",
+    "test:f2": "node --test tests/f2Alerts.test.js",
     "start": "node index.js",
     "dev": "nodemon index.js",
     "generate-sitemap": "node scripts/generate-sitemap.js",

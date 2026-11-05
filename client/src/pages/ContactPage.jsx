@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "react-router-dom";
 import { toast } from "react-hot-toast";
 import { MapPin, Phone, Mail, Clock, CheckCircle2 } from "lucide-react";
 import { useAssessment } from "../context/AssessmentContext";
@@ -23,8 +24,12 @@ const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 const ContactPage = () => {
 	const { t } = useTranslation();
+	const location = useLocation();
 	const { user, assessment } = useAssessment();
-	const [formData, setFormData] = useState(EMPTY_FORM);
+	// Venue de l'auto-contrôle F2 après une alerte critique : objet pré-rempli (aucun chiffre transmis)
+	const topicSubject =
+		new URLSearchParams(location.search).get("topic") === "f2-critical" ? t("f2.results.contactSubject") : "";
+	const [formData, setFormData] = useState({ ...EMPTY_FORM, subject: topicSubject });
 	const [errors, setErrors] = useState({});
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [isSent, setIsSent] = useState(false);
@@ -38,17 +43,17 @@ const ContactPage = () => {
 				email: user.email || "",
 				company: user.companyName || "",
 				// Pré-remplir le type de demande selon le contexte
-				inquiryType: assessment ? "premium" : "general",
+				inquiryType: topicSubject ? "assessment" : assessment ? "premium" : "general",
 				// Sujet et message personnalisés si l'utilisateur vient de terminer une évaluation
 				subject:
-					assessment ? `Demande de services premium - ${user.companyName}` : "",
+					topicSubject || (assessment ? `Demande de services premium - ${user.companyName}` : ""),
 				message:
-					assessment ?
+					!topicSubject && assessment ?
 						`Bonjour,\n\nJ'ai récemment terminé l'évaluation vitalCHECK Enterprise Health Check pour ${user.companyName} et je souhaiterais en savoir plus sur vos services premium.\n\nMerci de me contacter pour discuter des options disponibles.\n\nCordialement`
 					:	"",
 			}));
 		}
-	}, [user, assessment]);
+	}, [user, assessment, topicSubject]);
 
 	const handleInputChange = (e) => {
 		const { name, value } = e.target;

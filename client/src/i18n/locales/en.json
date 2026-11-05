@@ -1829,6 +1829,7 @@
 		"select": {
 			"title": "Topics to estimate",
 			"intro": "We picked 3 topics based on your answers. You can replace one.",
+			"introFree": "We picked 3 topics based on your answers.",
 			"freeBadge": "Free",
 			"lockedBadge": "Premium",
 			"change": "Change a topic",
@@ -1913,6 +1914,141 @@
 			"title": "Hidden losses calculator",
 			"footer": "vitalCHECK diagnostic method - Ubuntu Business Builders",
 			"lockedLine": "Premium result"
+		}
+	},
+	"tools": {
+		"dontKnow": "I don't know",
+		"newTab": "(opens in a new tab)",
+		"banner": {
+			"title": "Go further"
+		},
+		"back": "Back",
+		"backToReport": "Back to the report"
+	},
+	"f2": {
+		"page": {
+			"metaTitle": "Warning signs check - vitalCHECK",
+			"title": "Your warning signs",
+			"subtitle": "2 minutes to spot a danger. Repeat every month.",
+			"panelTitle": "A check to repeat every month",
+			"panelText": "These figures stay on this phone. UBB does not receive them."
+		},
+		"cta": {
+			"title": "Your warning signs",
+			"text": "In 2 minutes, check whether your recent figures hide a danger.",
+			"button": "Check my warning signs"
+		},
+		"dashboard": {
+			"title": "Warning signs check",
+			"text": "2 minutes every month to spot a danger in your figures.",
+			"button": "Check my warning signs"
+		},
+		"privacy": "These figures stay on this phone. UBB does not receive them.",
+		"draftBanner": "Provisional values: thresholds and texts awaiting validation by UBB consultants.",
+		"step": "Step {{current}} of 2",
+		"loading": "Loading…",
+		"loadError": "The check could not be loaded. Check your connection.",
+		"retry": "Try again",
+		"months": {
+			"title": "Your last 3 months",
+			"intro": "Enter your sales and expenses for each month. Rough figures are fine.",
+			"sales": "Sales (FCFA)",
+			"expenses": "Expenses (FCFA)",
+			"salesUnknown": "I don't know my sales for these 3 months",
+			"expensesUnknown": "I don't know my expenses for these 3 months",
+			"cellLabel": "{{row}}, {{month}}",
+			"rowError": "Fill in the 3 months or tick the box below.",
+			"continue": "Continue"
+		},
+		"situation": {
+			"title": "Your situation today",
+			"intro": "If you don't know a figure, tick \"I don't know\": the matching sign will not be checked.",
+			"overdueReceivables": "Overdue receivables (what customers should already have paid you)",
+			"cash": "Available cash (till, bank, mobile money)",
+			"fixedCosts": "Monthly fixed costs (rent, salaries, subscriptions…)",
+			"stockouts": "Stock-outs in {{month}}",
+			"topClientShare": "Share of your top customer in your sales over the last 3 months (%)",
+			"units": {
+				"money": "FCFA",
+				"count": "times",
+				"percent": "%"
+			},
+			"required": "Enter a figure or tick \"I don't know\".",
+			"tooHigh": "Enter a value between 0 and {{max}}.",
+			"back": "Back",
+			"submit": "See my warning signs"
+		},
+		"results": {
+			"title": "Your check for this month",
+			"count_one": "{{count}} warning sign",
+			"count_other": "{{count}} warning signs",
+			"severity": {
+				"critical": "Critical",
+				"moderate": "Moderate",
+				"low": "Low"
+			},
+			"facts": "What your figures show",
+			"causes": "Common causes",
+			"causesNote": "Leads to check, not certainties.",
+			"action": "Recommended action",
+			"noAlertTitle": "No warning signs",
+			"unverifiedTitle": "Not checked",
+			"unverifiedText": "A figure is missing to check:",
+			"consultant": "Talk to a UBB consultant",
+			"reminder": "Add a reminder to my calendar",
+			"reminderDone": "Reminder downloaded: open the file to add it to your calendar.",
+			"pdf": "Download my PDF",
+			"pdfGenerating": "Preparing the PDF…",
+			"pdfError": "The PDF could not be created. Please try again.",
+			"edit": "Change my figures",
+			"disclaimer": "These signs are markers calculated from your figures, not a full diagnostic.",
+			"contactSubject": "Warning signs check: critical alert"
+		},
+		"history": {
+			"keep": "Keep my results on this device",
+			"privacy": "These figures stay on this phone. UBB does not receive them.",
+			"saved": "Results kept on this device.",
+			"clear": "Delete my results from this device",
+			"cleared": "Results deleted from this device.",
+			"compareTitle": "Since your check on {{date}}",
+			"newAlerts": "New alerts",
+			"goneAlerts": "Alerts gone",
+			"fields": {
+				"lastSales": "Last month's sales",
+				"lastExpenses": "Last month's expenses",
+				"overdueReceivables": "Overdue receivables",
+				"cash": "Cash",
+				"fixedCosts": "Fixed costs",
+				"stockouts": "Stock-outs",
+				"topClientShare": "Top customer share"
+			},
+			"trend": {
+				"up": "up",
+				"down": "down",
+				"same": "unchanged"
+			}
+		},
+		"facts": {
+			"salesDecline": {
+				"continuous": "Your sales have been falling for 3 months: {{m3}} in {{month3}}, {{m2}} in {{month2}}, {{m1}} in {{month1}}.",
+				"drop": "In {{month1}}, your sales ({{m1}}) are {{drop}} below the average of {{month3}} and {{month2}} ({{average}})."
+			},
+			"costsOutpaceSales": {
+				"-1_-1": "From {{from}} to {{to}}, your sales fell by {{sales}}, your expenses by only {{expenses}}.",
+				"-1_0": "From {{from}} to {{to}}, your sales fell by {{sales}} while your expenses stayed the same.",
+				"-1_1": "From {{from}} to {{to}}, your sales fell by {{sales}} while your expenses rose by {{expenses}}.",
+				"0_1": "From {{from}} to {{to}}, your sales stayed the same while your expenses rose by {{expenses}}.",
+				"1_1": "From {{from}} to {{to}}, your sales rose by {{sales}}, your expenses by {{expenses}}.",
+				"generic": "From {{from}} to {{to}}: sales {{sales}}, expenses {{expenses}}."
+			},
+			"overdueReceivables": "Your overdue receivables ({{receivables}}) are {{share}} of your {{month1}} sales ({{lastSales}}).",
+			"lowCash": "Your cash ({{cash}}) covers {{months}} months of fixed costs ({{fixedCosts}} per month).",
+			"clientDependency": "Your top customer makes up {{share}} of your sales over the last 3 months.",
+			"stockouts": "You had {{count}} stock-outs in {{month1}}."
+		},
+		"pdf": {
+			"title": "Warning signs check",
+			"footer": "vitalCHECK diagnostic method - Ubuntu Business Builders"
 		}
 	}
 }

@@ -44,7 +44,7 @@ const CategoryStep = ({ config, selected, onChange, onContinue, lang }) => {
 
 	return (
 		<div>
-			<p className="font-text text-ubb-body text-ubb-ink-muted">{t("f1.select.intro")}</p>
+			<p className="font-text text-ubb-body text-ubb-ink-muted">{t(isFree ? "f1.select.introFree" : "f1.select.intro")}</p>
 			{isFree && <p className="mt-2 font-text text-ubb-small text-ubb-ink-muted">{t("f1.select.freeNote")}</p>}
 
 			{!expanded && (

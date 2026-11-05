@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 import { Button } from "../../components/ui/ds";
 import { f1API } from "../../services/api";
 import { trackEvent } from "../../utils/analytics";
@@ -8,6 +9,10 @@ import { computeCategory, sortResults } from "./lossCalculator";
 import CategoryStep from "./CategoryStep";
 import InputStep from "./InputStep";
 import ResultsStep from "./ResultsStep";
+import BackLink from "../shared/BackLink";
+import { leaveTool, useStepHistory } from "../shared/useStepHistory";
+
+const STEPS = ["select", "input", "results"];
 
 const EMPTY_INPUTS = { values: {}, unknown: {}, revenue: { value: null, unknown: false } };
 
@@ -27,6 +32,10 @@ const HiddenLossesSection = ({ answers, questionnaireType, companyName }) => {
 	const [selected, setSelected] = useState([]);
 	const [inputs, setInputs] = useState(EMPTY_INPUTS);
 	const [results, setResults] = useState([]);
+	const navigate = useNavigate();
+	// Bouton retour du téléphone et lien « Retour » : écran précédent ; depuis le 1er écran, retour au rapport
+	const { goBack, goBackTo } = useStepHistory(step, setStep, STEPS);
+	const handleBack = () => (step === "select" ? leaveTool(navigate, "/diagnostic/resultats") : goBack());
 
 	// Focus et défilement sur le titre à chaque changement d'écran, sauf à l'ouverture
 	// (le titre de la page doit rester visible)
@@ -111,7 +120,8 @@ const HiddenLossesSection = ({ answers, questionnaireType, companyName }) => {
 			)}
 
 			{stepTitle && (
-				<div className="mt-6">
+				<div className="mt-4">
+					<BackLink label={step === "select" ? t("tools.backToReport") : t("tools.back")} onClick={handleBack} />
 					{formStep && (
 						<div className="mb-3">
 							<p className="font-text text-xs font-semibold uppercase tracking-wide text-ubb-ink-muted">
@@ -146,7 +156,7 @@ const HiddenLossesSection = ({ answers, questionnaireType, companyName }) => {
 								categoryIds={unlockedSelection}
 								inputs={inputs}
 								onChange={setInputs}
-								onBack={() => setStep("select")}
+								onBack={goBack}
 								onSubmit={showResults}
 								lang={lang}
 							/>
@@ -158,7 +168,7 @@ const HiddenLossesSection = ({ answers, questionnaireType, companyName }) => {
 								lockedIds={lockedSelection}
 								lang={lang}
 								companyName={companyName}
-								onEdit={() => setStep("input")}
+								onEdit={() => goBackTo("input")}
 							/>
 						)}
 					</div>

@@ -118,6 +118,10 @@ app.use("/api", require("./routes/ping"));
 if (process.env.F1_HIDDEN_LOSSES === "true") {
   app.use("/api/f1", require("./routes/f1"));
 }
+// F2 Auto-contrôle d'alerte : désactivé tant que F2_ALERT_CHECK n'est pas "true"
+if (process.env.F2_ALERT_CHECK === "true") {
+  app.use("/api/f2", require("./routes/f2"));
+}
 
 // Routes SEO
 app.use("/", require("./routes/sitemap"));

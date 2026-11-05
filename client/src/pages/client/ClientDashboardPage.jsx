@@ -13,7 +13,10 @@ import {
   Plus,
   Lock,
   Zap,
+  BellRing,
+  ExternalLink,
 } from "lucide-react";
+import { isF2AlertCheckEnabled } from "../../utils/featureFlags";
 import { useClientAuth } from "../../context/ClientAuthContext";
 import { useAssessment } from "../../context/AssessmentContext";
 import axios from "axios";
@@ -240,6 +243,31 @@ const ClientDashboardPage = () => {
             />
           </div>
         </FadeIn>
+
+        {/* ── F2 Auto-contrôle d'alerte (derrière son drapeau) ─────────────────── */}
+        {isF2AlertCheckEnabled && (
+          <FadeIn delay={0.05}>
+            <div className="flex flex-col gap-4 rounded-xl border border-amber-200 bg-amber-50 p-5 sm:flex-row sm:items-center">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-white text-amber-700">
+                <BellRing className="h-5 w-5" aria-hidden="true" />
+              </span>
+              <div className="min-w-0 flex-1">
+                <h2 className="font-semibold text-gray-900">{t("f2.dashboard.title")}</h2>
+                <p className="mt-1 text-sm text-gray-600">{t("f2.dashboard.text")}</p>
+              </div>
+              <a
+                href="/diagnostic/signaux-alerte"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-primary-600 px-5 text-sm font-semibold text-white hover:bg-primary-700"
+              >
+                {t("f2.dashboard.button")}
+                <ExternalLink className="h-4 w-4" aria-hidden="true" />
+                <span className="sr-only">{t("tools.newTab")}</span>
+              </a>
+            </div>
+          </FadeIn>
+        )}
 
         {/* ── Premium section (active subscribers with data) ─────────────────── */}
         {isPaidPlan && premiumHistory.length > 0 && (

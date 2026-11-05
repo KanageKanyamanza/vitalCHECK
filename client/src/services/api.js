@@ -190,6 +190,11 @@ export const f1API = {
 		}),
 };
 
+// F2 Auto-contrôle d'alerte : seuils et textes. Lecture seule, aucun chiffre envoyé.
+export const f2API = {
+	getConfig: () => api.get("/f2/config"),
+};
+
 export const assessmentV2API = {
 	// Récupérer les 25 questions (5 piliers x 5 questions)
 	// questionnaireType : 'universal' (défaut) ou 'agriculture'

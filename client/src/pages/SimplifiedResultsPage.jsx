@@ -24,7 +24,7 @@ import { useClientAuth } from "../context/ClientAuthContext";
 import { Button, Container, FormField } from "../components/ui/ds";
 import ScoreRing from "../components/results/ScoreRing";
 import PillarRadar from "../components/results/PillarRadar";
-import HiddenLossesCta from "../features/f1/HiddenLossesCta";
+import ToolsBanner from "../features/shared/ToolsBanner";
 import { answerHandoffRequests } from "../features/f1/handoff";
 import { isF1HiddenLossesEnabled } from "../utils/featureFlags";
 
@@ -395,8 +395,8 @@ const SimplifiedResultsPage = () => {
 					</Button>
 				</div>
 
-				{/* F1 Calculateur de pertes cachées : en haut du rapport, s'ouvre dans un nouvel onglet */}
-				{isF1HiddenLossesEnabled && <HiddenLossesCta />}
+				{/* Outils F1 / F2 (chacun derrière son drapeau) : en haut du rapport, ouverts dans un nouvel onglet */}
+				<ToolsBanner />
 
 				{/* Score global */}
 				<section aria-labelledby="overall-title" className="ubb-card mt-8 p-6 sm:p-10">

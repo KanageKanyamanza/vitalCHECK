@@ -19,8 +19,9 @@ const Layout = ({ children }) => {
 
   // Vérifier si on est sur la page d'accueil
   const isHomePage = location?.pathname === '/'
-  // Calculateur de pertes cachées (F1) : formulaire plein écran, sans pied de page
-  const isCalculatorPage = location?.pathname === '/diagnostic/pertes-cachees'
+  // Outils F1 (pertes cachées) et F2 (signaux d'alerte) : formulaire plein écran, sans pied de page
+  // ni bulle de l'assistant (elle recouvrirait les champs sur téléphone)
+  const isCalculatorPage = ['/diagnostic/pertes-cachees', '/diagnostic/signaux-alerte'].includes(location?.pathname)
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -32,7 +33,7 @@ const Layout = ({ children }) => {
       </main>
 
       {!isShellPage && !isHomePage && !isCalculatorPage && <Footer />}
-      {!isShellPage && <ChatWidget />}
+      {!isShellPage && !isCalculatorPage && <ChatWidget />}
       {!isShellPage && <BackToTop showAfter={0} />}
       {!isShellPage && <PromoPopup />}
     </div>

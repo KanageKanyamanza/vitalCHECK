@@ -1887,6 +1887,7 @@
 		"select": {
 			"title": "Les sujets à chiffrer",
 			"intro": "Nous avons choisi 3 sujets d'après vos réponses. Vous pouvez en remplacer un.",
+			"introFree": "Nous avons choisi 3 sujets d'après vos réponses.",
 			"freeBadge": "Offert",
 			"lockedBadge": "Premium",
 			"change": "Changer un sujet",
@@ -1971,6 +1972,141 @@
 			"title": "Calculateur de pertes cachées",
 			"footer": "Méthode de diagnostic vitalCHECK - Ubuntu Business Builders",
 			"lockedLine": "Résultat réservé au Premium"
+		}
+	},
+	"tools": {
+		"dontKnow": "Je ne sais pas",
+		"newTab": "(s'ouvre dans un nouvel onglet)",
+		"banner": {
+			"title": "Allez plus loin"
+		},
+		"back": "Retour",
+		"backToReport": "Retour au rapport"
+	},
+	"f2": {
+		"page": {
+			"metaTitle": "Auto-contrôle d'alerte - vitalCHECK",
+			"title": "Vos signaux d'alerte",
+			"subtitle": "2 minutes pour repérer un danger. À refaire chaque mois.",
+			"panelTitle": "Un contrôle à refaire chaque mois",
+			"panelText": "Ces chiffres restent sur ce téléphone. UBB ne les reçoit pas."
+		},
+		"cta": {
+			"title": "Vos signaux d'alerte",
+			"text": "En 2 minutes, vérifiez si vos chiffres récents cachent un danger.",
+			"button": "Vérifier mes signaux d'alerte"
+		},
+		"dashboard": {
+			"title": "Auto-contrôle d'alerte",
+			"text": "2 minutes chaque mois pour repérer un danger dans vos chiffres.",
+			"button": "Vérifier mes signaux d'alerte"
+		},
+		"privacy": "Ces chiffres restent sur ce téléphone. UBB ne les reçoit pas.",
+		"draftBanner": "Valeurs provisoires : seuils et textes en attente de validation par les consultants UBB.",
+		"step": "Étape {{current}} sur 2",
+		"loading": "Chargement…",
+		"loadError": "Impossible de charger l'auto-contrôle. Vérifiez votre connexion.",
+		"retry": "Réessayer",
+		"months": {
+			"title": "Vos 3 derniers mois",
+			"intro": "Indiquez vos ventes et vos dépenses de chaque mois. Des chiffres approximatifs suffisent.",
+			"sales": "Ventes (FCFA)",
+			"expenses": "Dépenses (FCFA)",
+			"salesUnknown": "Je ne connais pas mes ventes de ces 3 mois",
+			"expensesUnknown": "Je ne connais pas mes dépenses de ces 3 mois",
+			"cellLabel": "{{row}}, {{month}}",
+			"rowError": "Complétez les 3 mois ou cochez la case en dessous.",
+			"continue": "Continuer"
+		},
+		"situation": {
+			"title": "Votre situation aujourd'hui",
+			"intro": "Si vous ne connaissez pas un chiffre, cochez « Je ne sais pas » : le signal correspondant ne sera pas vérifié.",
+			"overdueReceivables": "Créances en retard (ce que vos clients auraient déjà dû vous payer)",
+			"cash": "Trésorerie disponible (caisse, banque, mobile money)",
+			"fixedCosts": "Charges fixes mensuelles (loyer, salaires, abonnements…)",
+			"stockouts": "Ruptures de stock en {{month}}",
+			"topClientShare": "Part de votre premier client dans vos ventes des 3 derniers mois (%)",
+			"units": {
+				"money": "FCFA",
+				"count": "fois",
+				"percent": "%"
+			},
+			"required": "Indiquez un chiffre ou cochez « Je ne sais pas ».",
+			"tooHigh": "Indiquez une valeur entre 0 et {{max}}.",
+			"back": "Retour",
+			"submit": "Voir mes signaux"
+		},
+		"results": {
+			"title": "Votre bilan du mois",
+			"count_one": "{{count}} signal d'alerte",
+			"count_other": "{{count}} signaux d'alerte",
+			"severity": {
+				"critical": "Critique",
+				"moderate": "Modérée",
+				"low": "Faible"
+			},
+			"facts": "Ce que montrent vos chiffres",
+			"causes": "Causes fréquentes",
+			"causesNote": "Des pistes à vérifier, pas des certitudes.",
+			"action": "Action recommandée",
+			"noAlertTitle": "Aucun signal d'alerte",
+			"unverifiedTitle": "Non vérifiés",
+			"unverifiedText": "Il manque un chiffre pour vérifier :",
+			"consultant": "Parler à un consultant UBB",
+			"reminder": "Ajouter un rappel à mon agenda",
+			"reminderDone": "Rappel téléchargé : ouvrez le fichier pour l'ajouter à votre agenda.",
+			"pdf": "Télécharger mon PDF",
+			"pdfGenerating": "Préparation du PDF…",
+			"pdfError": "Le PDF n'a pas pu être créé. Réessayez.",
+			"edit": "Modifier mes chiffres",
+			"disclaimer": "Ces signaux sont des repères calculés avec vos chiffres, pas un diagnostic complet.",
+			"contactSubject": "Auto-contrôle : alerte critique"
+		},
+		"history": {
+			"keep": "Garder mes résultats sur cet appareil",
+			"privacy": "Ces chiffres restent sur ce téléphone. UBB ne les reçoit pas.",
+			"saved": "Résultats gardés sur cet appareil.",
+			"clear": "Effacer mes résultats de cet appareil",
+			"cleared": "Résultats effacés de cet appareil.",
+			"compareTitle": "Depuis votre contrôle du {{date}}",
+			"newAlerts": "Nouvelles alertes",
+			"goneAlerts": "Alertes disparues",
+			"fields": {
+				"lastSales": "Ventes du dernier mois",
+				"lastExpenses": "Dépenses du dernier mois",
+				"overdueReceivables": "Créances en retard",
+				"cash": "Trésorerie",
+				"fixedCosts": "Charges fixes",
+				"stockouts": "Ruptures de stock",
+				"topClientShare": "Part du premier client"
+			},
+			"trend": {
+				"up": "en hausse",
+				"down": "en baisse",
+				"same": "stable"
+			}
+		},
+		"facts": {
+			"salesDecline": {
+				"continuous": "Vos ventes baissent depuis 3 mois : {{m3}} en {{month3}}, {{m2}} en {{month2}}, {{m1}} en {{month1}}.",
+				"drop": "En {{month1}}, vos ventes ({{m1}}) sont {{drop}} sous la moyenne {{ofMonth3}} et {{ofMonth2}} ({{average}})."
+			},
+			"costsOutpaceSales": {
+				"-1_-1": "{{fromPhrase}} à {{to}}, vos ventes ont baissé de {{sales}}, vos dépenses seulement de {{expenses}}.",
+				"-1_0": "{{fromPhrase}} à {{to}}, vos ventes ont baissé de {{sales}} alors que vos dépenses sont restées stables.",
+				"-1_1": "{{fromPhrase}} à {{to}}, vos ventes ont baissé de {{sales}} alors que vos dépenses ont augmenté de {{expenses}}.",
+				"0_1": "{{fromPhrase}} à {{to}}, vos ventes sont restées stables alors que vos dépenses ont augmenté de {{expenses}}.",
+				"1_1": "{{fromPhrase}} à {{to}}, vos ventes ont augmenté de {{sales}}, vos dépenses de {{expenses}}.",
+				"generic": "{{fromPhrase}} à {{to}} : ventes {{sales}}, dépenses {{expenses}}."
+			},
+			"overdueReceivables": "Vos créances en retard ({{receivables}}) représentent {{share}} de vos ventes {{ofMonth1}} ({{lastSales}}).",
+			"lowCash": "Votre trésorerie ({{cash}}) couvre {{months}} mois de charges fixes ({{fixedCosts}} par mois).",
+			"clientDependency": "Votre premier client représente {{share}} de vos ventes des 3 derniers mois.",
+			"stockouts": "Vous avez eu {{count}} ruptures de stock en {{month1}}."
+		},
+		"pdf": {
+			"title": "Auto-contrôle d'alerte",
+			"footer": "Méthode de diagnostic vitalCHECK - Ubuntu Business Builders"
 		}
 	}
 }

@@ -8,7 +8,8 @@ import ResultsPage from '../pages/ResultsPage'
 import SimplifiedAssessmentPage from '../pages/SimplifiedAssessmentPage'
 import SimplifiedResultsPage from '../pages/SimplifiedResultsPage'
 import HiddenLossesPage from '../pages/HiddenLossesPage'
-import { isF1HiddenLossesEnabled } from '../utils/featureFlags'
+import AlertCheckPage from '../pages/AlertCheckPage'
+import { isF1HiddenLossesEnabled, isF2AlertCheckEnabled } from '../utils/featureFlags'
 import ContactPage from '../pages/ContactPage'
 import PricingPage from '../pages/PricingPage'
 import CheckoutPage from '../pages/CheckoutPage'
@@ -43,6 +44,7 @@ const AppRoutes = () => {
       <Route path="/diagnostic" element={<SimplifiedAssessmentPage />} />
       <Route path="/diagnostic/resultats" element={<SimplifiedResultsPage />} />
       {isF1HiddenLossesEnabled && <Route path="/diagnostic/pertes-cachees" element={<HiddenLossesPage />} />}
+      {isF2AlertCheckEnabled && <Route path="/diagnostic/signaux-alerte" element={<AlertCheckPage />} />}
       <Route path="/contact" element={<ContactPage />} />
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/checkout" element={<CheckoutPage />} />

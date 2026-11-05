@@ -466,6 +466,63 @@ export const LossesScene = () => {
   )
 }
 
+/** Signaux d'alerte : un tableau de bord surveillé, une cloche qui sonne, un rendez-vous mensuel coché. */
+export const AlertsScene = () => {
+  const reduce = useReducedMotion()
+  const floatBell = useFloat(8, 4.5)
+  const floatCal = useFloat(6, 5.5, 1)
+  const pulse = (delay) =>
+    reduce
+      ? {}
+      : {
+          animate: { scale: [1, 1.6], opacity: [0.5, 0] },
+          transition: { duration: 2, delay, repeat: Infinity, ease: 'easeOut' },
+        }
+  const bars = [0.85, 0.7, 0.45]
+  return (
+    <Frame label="alerts">
+      <motion.g {...useReveal(0)}>
+        {/* Tableau de bord : 3 mois de ventes en baisse */}
+        <rect x="80" y="130" width="250" height="210" rx="26" fill={C.white} />
+        <rect x="80" y="130" width="250" height="40" rx="26" fill={C.mist} />
+        <rect x="80" y="150" width="250" height="20" fill={C.mist} />
+        {bars.map((h, i) => (
+          <motion.rect
+            key={i}
+            x={120 + i * 64}
+            y={310 - h * 110}
+            width="38"
+            height={h * 110}
+            rx="8"
+            fill={i === 2 ? C.yellow : C.green}
+            style={{ transformOrigin: `${139 + i * 64}px 310px` }}
+            initial={reduce ? false : { scaleY: 0 }}
+            animate={{ scaleY: 1 }}
+            transition={{ duration: 0.7, delay: 0.5 + i * 0.15, ease: 'easeOut' }}
+          />
+        ))}
+        <line x1="104" y1="310" x2="306" y2="310" stroke={C.mist2} strokeWidth="3" strokeLinecap="round" />
+      </motion.g>
+
+      {/* Cloche d'alerte */}
+      <motion.g {...floatBell}>
+        <motion.circle cx="360" cy="120" r="40" fill={C.yellow} style={{ transformOrigin: '360px 120px' }} {...pulse(0)} />
+        <circle cx="360" cy="120" r="40" fill={C.yellow} />
+        <path d="M344 132 v-14 a16 16 0 0 1 32 0 v14 l6 6 h-44 z" fill={C.greenDark} />
+        <circle cx="360" cy="144" r="5" fill={C.greenDark} />
+      </motion.g>
+
+      {/* Rendez-vous mensuel coché */}
+      <motion.g {...floatCal}>
+        <rect x="320" y="290" width="92" height="84" rx="16" fill={C.white} />
+        <rect x="320" y="290" width="92" height="24" rx="12" fill={C.green} />
+        <rect x="320" y="302" width="92" height="12" fill={C.green} />
+        <path d="M350 344 l10 10 l20 -22" fill="none" stroke={C.green} strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+      </motion.g>
+    </Frame>
+  )
+}
+
 export const SCENES = {
   login: LoginScene,
   register: RegisterScene,
@@ -474,4 +531,5 @@ export const SCENES = {
   contact: ContactScene,
   diagnostic: DiagnosticScene,
   losses: LossesScene,
+  alerts: AlertsScene,
 }
