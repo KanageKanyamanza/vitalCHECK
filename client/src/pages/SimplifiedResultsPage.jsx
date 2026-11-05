@@ -24,6 +24,9 @@ import { useClientAuth } from "../context/ClientAuthContext";
 import { Button, Container, FormField } from "../components/ui/ds";
 import ScoreRing from "../components/results/ScoreRing";
 import PillarRadar from "../components/results/PillarRadar";
+import HiddenLossesCta from "../features/f1/HiddenLossesCta";
+import { answerHandoffRequests } from "../features/f1/handoff";
+import { isF1HiddenLossesEnabled } from "../utils/featureFlags";
 
 const RESULT_STORAGE_KEY = "vitalcheck-v2-result";
 
@@ -113,6 +116,8 @@ const SimplifiedResultsPage = () => {
 						},
 						language: assessment.language || "fr",
 						completedAt: assessment.completedAt,
+						answers: (assessment.answers || []).map(({ questionId, answer }) => ({ questionId, answer })),
+						questionnaireType: assessment.questionnaireType || "universal",
 					});
 					setEmailInput(assessment.email || "");
 				})
@@ -195,6 +200,16 @@ const SimplifiedResultsPage = () => {
 		doSave(emailInput);
 	// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [data, emailInput, saved]);
+
+	// F1 : l'onglet du calculateur demande le diagnostic à cette page (réponses et questionnaire)
+	useEffect(() => {
+		if (!isF1HiddenLossesEnabled || !data) return undefined;
+		return answerHandoffRequests(() => ({
+			answers: data.answers,
+			questionnaireType: data.questionnaireType,
+			companyName: data.formData?.companyName,
+		}));
+	}, [data]);
 
 	const handleSaveAndSend = async (e) => {
 		if (e) e.preventDefault();
@@ -379,6 +394,9 @@ const SimplifiedResultsPage = () => {
 						{t("diagnostic.results.redo")}
 					</Button>
 				</div>
+
+				{/* F1 Calculateur de pertes cachées : en haut du rapport, s'ouvre dans un nouvel onglet */}
+				{isF1HiddenLossesEnabled && <HiddenLossesCta />}
 
 				{/* Score global */}
 				<section aria-labelledby="overall-title" className="ubb-card mt-8 p-6 sm:p-10">

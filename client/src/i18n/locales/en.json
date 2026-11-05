@@ -1804,5 +1804,111 @@
 	"legal": {
 		"toc": "Contents",
 		"tocLabel": "Document contents"
+	},
+	"f1": {
+		"page": {
+			"metaTitle": "Hidden losses calculator - vitalCHECK",
+			"title": "Hidden losses calculator",
+			"waiting": "Loading your diagnostic…",
+			"missing": "We cannot find your diagnostic. Open the calculator from your report and keep the report tab open.",
+			"backToReport": "Back to my report"
+		},
+		"cta": {
+			"title": "Your hidden losses",
+			"newTab": "(opens in a new tab)",
+			"text": "Estimate in FCFA what your weak points are costing you. It takes about 2 minutes.",
+			"privacy": "Your figures stay on your phone. UBB does not receive them.",
+			"button": "What is this costing me?"
+		},
+		"draftBanner": "Provisional values: rates and texts awaiting validation by UBB consultants.",
+		"step": "Step {{current}} of 3",
+		"loadError": "The calculator could not be loaded. Check your connection.",
+		"retry": "Try again",
+		"select": {
+			"title": "Topics to estimate",
+			"intro": "We picked 3 topics based on your answers. You can replace one.",
+			"freeBadge": "Your free result",
+			"lockedBadge": "Premium",
+			"suggested": "Suggested",
+			"count": "{{count}} of 3 selected",
+			"max": "You have already picked 3 topics. Untick one to choose another.",
+			"freeNote": "With the free plan, you see the result for your weakest topic. The others are for Premium.",
+			"continue": "Continue"
+		},
+		"input": {
+			"title": "Your figures",
+			"intro": "Rough figures are fine. If you don't know, tick \"I don't know\".",
+			"dontKnow": "I don't know",
+			"required": "Enter a figure or tick \"I don't know\".",
+			"tooHigh": "Enter a value between 0 and {{max}}.",
+			"revenueTitle": "Your monthly revenue",
+			"revenueHint": "A rough figure is enough. It is used to estimate the amounts you don't know.",
+			"revenueLabel": "Approximate monthly revenue",
+			"units": {
+				"money": "FCFA",
+				"months": "months",
+				"days": "days",
+				"hours": "hours",
+				"count": "orders",
+				"percent": "%"
+			},
+			"submit": "See the result",
+			"back": "Back"
+		},
+		"results": {
+			"title": "What this is costing you",
+			"totalLabel": "Estimated annual losses",
+			"perYear": "per year",
+			"totalNote": "This total does not include unpaid invoices or dependence on one customer: they are shown separately.",
+			"noAnnual": "No annual loss could be estimated with your figures.",
+			"figures": "Your figures",
+			"assumptions": "Assumptions",
+			"period": {
+				"annual": "Calculated over 12 months",
+				"stock": "Current situation: this is not an annual loss",
+				"risk": "12 months of sales to this customer: this is not a loss"
+			},
+			"separate": "Shown separately, not counted in the total",
+			"sources": {
+				"default": "sector average",
+				"revenue": "estimated from your revenue"
+			},
+			"rates": {
+				"nonRecovery": "Share of unpaid invoices never recovered",
+				"financingMonthly": "Cost of money left waiting, per month",
+				"grossMargin": "Average gross margin in your sector",
+				"cancellation": "Orders cancelled after a delay"
+			},
+			"confidence": {
+				"label": "Confidence",
+				"high": "high",
+				"medium": "medium",
+				"low": "low"
+			},
+			"action": "Recommended action",
+			"missing": "We are missing a figure to estimate this.",
+			"simulator": {
+				"title": "What if you took action?",
+				"label": "If I reduce this loss by",
+				"gain": "Estimated annual gain: {{amount}}",
+				"avoided": "Cost avoided: {{amount}}",
+				"total": "Total estimated annual gain: {{amount}}"
+			},
+			"disclaimer": "An estimate, not a promise. Amounts depend on your figures and the assumptions shown.",
+			"locked": {
+				"title": "Premium result",
+				"text": "Upgrade to Premium to estimate this topic and simulate your gains.",
+				"cta": "Upgrade to Premium"
+			},
+			"pdf": "Download my PDF",
+			"pdfGenerating": "Preparing the PDF…",
+			"pdfError": "The PDF could not be created. Please try again.",
+			"edit": "Change my figures"
+		},
+		"pdf": {
+			"title": "Hidden losses calculator",
+			"footer": "vitalCHECK diagnostic method - Ubuntu Business Builders",
+			"lockedLine": "Premium result"
+		}
 	}
 }

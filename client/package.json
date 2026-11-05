@@ -4,6 +4,7 @@
   "version": "1.0.1",
   "type": "module",
   "scripts": {
+    "test:f1": "node --test \"src/features/f1/*.test.js\"",
     "dev": "vite",
     "build": "npm run generate-sitemap:prod && vite build",
     "build:sitemap": "node scripts/generate-sitemap.js",

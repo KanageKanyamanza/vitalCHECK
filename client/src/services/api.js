@@ -180,6 +180,16 @@ export const assessmentAPI = publicApi;
 export const reportsAPI = publicApi;
 
 // API du diagnostic simplifié "Niveau 1" (v2)
+// F1 Calculateur de pertes cachées : configuration filtrée par le serveur selon l'abonnement.
+// N'envoie que le type de questionnaire et les réponses au diagnostic, jamais les chiffres saisis dans F1.
+export const f1API = {
+	getConfig: ({ questionnaireType, answers }) =>
+		api.post("/f1/config", {
+			questionnaireType,
+			answers: (answers || []).map(({ questionId, answer }) => ({ questionId, answer })),
+		}),
+};
+
 export const assessmentV2API = {
 	// Récupérer les 25 questions (5 piliers x 5 questions)
 	// questionnaireType : 'universal' (défaut) ou 'agriculture'

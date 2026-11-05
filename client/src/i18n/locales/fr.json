@@ -1862,5 +1862,111 @@
 	"legal": {
 		"toc": "Sommaire",
 		"tocLabel": "Sommaire du document"
+	},
+	"f1": {
+		"page": {
+			"metaTitle": "Calculateur de pertes cachées - vitalCHECK",
+			"title": "Calculateur de pertes cachées",
+			"waiting": "Chargement de votre diagnostic…",
+			"missing": "Nous ne retrouvons pas votre diagnostic. Ouvrez le calculateur depuis votre rapport, en laissant l'onglet du rapport ouvert.",
+			"backToReport": "Retour à mon rapport"
+		},
+		"cta": {
+			"title": "Vos pertes cachées",
+			"newTab": "(s'ouvre dans un nouvel onglet)",
+			"text": "Estimez en FCFA ce que vos points faibles vous font perdre. Cela prend environ 2 minutes.",
+			"privacy": "Vos chiffres restent sur votre téléphone. UBB ne les reçoit pas.",
+			"button": "Combien cela me coûte-t-il ?"
+		},
+		"draftBanner": "Valeurs provisoires : taux et textes en attente de validation par les consultants UBB.",
+		"step": "Étape {{current}} sur 3",
+		"loadError": "Impossible de charger le calculateur. Vérifiez votre connexion.",
+		"retry": "Réessayer",
+		"select": {
+			"title": "Les sujets à chiffrer",
+			"intro": "Nous avons choisi 3 sujets d'après vos réponses. Vous pouvez en remplacer un.",
+			"freeBadge": "Votre résultat gratuit",
+			"lockedBadge": "Premium",
+			"suggested": "Suggéré",
+			"count": "{{count}} sur 3 choisis",
+			"max": "Vous avez déjà choisi 3 sujets. Décochez-en un pour en choisir un autre.",
+			"freeNote": "Avec l'offre gratuite, vous voyez le résultat de votre sujet le plus faible. Les autres sont réservés au Premium.",
+			"continue": "Continuer"
+		},
+		"input": {
+			"title": "Vos chiffres",
+			"intro": "Des chiffres approximatifs suffisent. Si vous ne savez pas, cochez « Je ne sais pas ».",
+			"dontKnow": "Je ne sais pas",
+			"required": "Indiquez un chiffre ou cochez « Je ne sais pas ».",
+			"tooHigh": "Indiquez une valeur entre 0 et {{max}}.",
+			"revenueTitle": "Votre chiffre d'affaires mensuel",
+			"revenueHint": "Un ordre de grandeur suffit. Il sert à estimer les montants que vous ne connaissez pas.",
+			"revenueLabel": "Chiffre d'affaires mensuel approximatif",
+			"units": {
+				"money": "FCFA",
+				"months": "mois",
+				"days": "jours",
+				"hours": "heures",
+				"count": "commandes",
+				"percent": "%"
+			},
+			"submit": "Voir le résultat",
+			"back": "Retour"
+		},
+		"results": {
+			"title": "Ce que cela vous coûte",
+			"totalLabel": "Pertes annuelles estimées",
+			"perYear": "par an",
+			"totalNote": "Ce total ne compte pas les impayés ni la dépendance à un client : ils sont présentés à part.",
+			"noAnnual": "Aucune perte annuelle n'a pu être estimée avec vos chiffres.",
+			"figures": "Vos chiffres",
+			"assumptions": "Hypothèses",
+			"period": {
+				"annual": "Calcul sur 12 mois",
+				"stock": "Situation actuelle : ce n'est pas une perte annuelle",
+				"risk": "12 mois de ventes à ce client : ce n'est pas une perte"
+			},
+			"separate": "Présenté à part, non compté dans le total",
+			"sources": {
+				"default": "valeur moyenne du secteur",
+				"revenue": "estimé à partir de votre chiffre d'affaires"
+			},
+			"rates": {
+				"nonRecovery": "Part des impayés jamais récupérée",
+				"financingMonthly": "Coût de l'argent qui attend, par mois",
+				"grossMargin": "Marge brute moyenne du secteur",
+				"cancellation": "Commandes annulées après un retard"
+			},
+			"confidence": {
+				"label": "Confiance",
+				"high": "élevée",
+				"medium": "moyenne",
+				"low": "faible"
+			},
+			"action": "Action recommandée",
+			"missing": "Il nous manque un chiffre pour estimer.",
+			"simulator": {
+				"title": "Et si vous agissiez ?",
+				"label": "Si je réduis cette perte de",
+				"gain": "Gain annuel estimé : {{amount}}",
+				"avoided": "Coût évité : {{amount}}",
+				"total": "Gain annuel total estimé : {{amount}}"
+			},
+			"disclaimer": "Estimation, pas une promesse. Les montants dépendent de vos chiffres et des hypothèses indiquées.",
+			"locked": {
+				"title": "Résultat réservé au Premium",
+				"text": "Passez au Premium pour chiffrer ce sujet et simuler vos gains.",
+				"cta": "Passer au Premium"
+			},
+			"pdf": "Télécharger mon PDF",
+			"pdfGenerating": "Préparation du PDF…",
+			"pdfError": "Le PDF n'a pas pu être créé. Réessayez.",
+			"edit": "Modifier mes chiffres"
+		},
+		"pdf": {
+			"title": "Calculateur de pertes cachées",
+			"footer": "Méthode de diagnostic vitalCHECK - Ubuntu Business Builders",
+			"lockedLine": "Résultat réservé au Premium"
+		}
 	}
 }

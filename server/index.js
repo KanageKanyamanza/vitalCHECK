@@ -114,6 +114,10 @@ app.use("/api/premium-dashboard", require("./routes/premiumDashboard"));
 app.use("/api/teams", require("./routes/teams"));
 app.use("/api/messages", require("./routes/messages"));
 app.use("/api", require("./routes/ping"));
+// F1 Calculateur de pertes cachées : désactivé tant que F1_HIDDEN_LOSSES n'est pas "true"
+if (process.env.F1_HIDDEN_LOSSES === "true") {
+  app.use("/api/f1", require("./routes/f1"));
+}
 
 // Routes SEO
 app.use("/", require("./routes/sitemap"));
