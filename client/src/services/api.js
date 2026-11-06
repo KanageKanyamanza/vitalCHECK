@@ -314,6 +314,9 @@ export const adminApiService = {
 		adminApi.patch(`/admin/payments/${paymentId}/status`, { status }),
 	exportPayments: () =>
 		adminApi.get("/admin/payments/export", { responseType: "blob" }),
+	// Mobile Money « à examiner » : action = "activate" | "reject"
+	resolveMobileMoneyPayment: (paymentId, action) =>
+		adminApi.post(`/payments/afribapay/payments/${paymentId}/resolve`, { action }),
 
 	// Chatbot
 	getChatbotStats: (days = 30) =>

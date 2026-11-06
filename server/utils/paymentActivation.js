@@ -235,7 +235,58 @@ const settleAfribapayTransaction = async (payment, tx, via) => {
   return Payment.findById(payment._id);
 };
 
+/**
+ * Décision d'un admin sur un paiement « à examiner », après vérification dans le tableau de bord AfribaPay.
+ * - activate : le paiement est confirmé, la période est calculée maintenant puis appliquée (une seule fois)
+ * - reject   : le blocage est levé sans activation (une commande en attente passe en échec)
+ * Renvoie le paiement à jour, ou null si ce n'est pas un paiement AfribaPay à examiner.
+ */
+const resolveConflict = async (paymentId, action, reviewer) => {
+  const payment = await Payment.findOne({ _id: paymentId, provider: 'afribapay', conflict: true });
+  if (!payment) return null;
+  const now = new Date();
+  const review = { conflict: false, reviewedBy: reviewer, reviewedAt: now };
+
+  if (action === 'reject') {
+    const status = payment.status === 'pending' ? 'failed' : payment.status;
+    await Payment.updateOne({ _id: payment._id, conflict: true }, { $set: { ...review, status, reviewDecision: 'rejected' } });
+    return Payment.findById(payment._id);
+  }
+
+  if (payment.status === 'completed' || payment.status === 'processed') {
+    // Déjà confirmé (conflit apparu ensuite) : on lève le blocage et on s'assure que le plan est appliqué
+    const done = await Payment.findOneAndUpdate(
+      { _id: payment._id, conflict: true },
+      { $set: { ...review, reviewDecision: 'activated' } },
+      { new: true }
+    );
+    if (done) await applyPaidPeriod(done);
+    return Payment.findById(payment._id);
+  }
+
+  const user = await User.findById(payment.user).select('subscription');
+  const { periodStart, periodEnd } = computePeriod(user?.subscription, payment.planId, now);
+  const claimed = await Payment.findOneAndUpdate(
+    { _id: payment._id, conflict: true, status: { $in: ['pending', 'failed'] } },
+    {
+      $set: {
+        ...review,
+        reviewDecision: 'activated',
+        status: 'completed',
+        activatedAt: now,
+        activatedVia: `admin:${reviewer}`,
+        periodStart,
+        periodEnd,
+      },
+    },
+    { new: true }
+  );
+  if (claimed) await applyPaidPeriod(claimed);
+  return Payment.findById(payment._id);
+};
+
 module.exports = {
+  resolveConflict,
   grantPlan,
   applyPlanToUser,
   computePeriod,

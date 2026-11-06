@@ -91,3 +91,12 @@ Activé par `PAYMENT_PROVIDER=afribapay` côté serveur (sinon PayPal, comportem
 ### Tests
 
 `cd server && npm run test:afribapay` (AfribaPay simulé, MongoDB en mémoire).
+
+### Paiements « à examiner »
+
+Un paiement Mobile Money en désaccord (montant, devise, statuts finaux contradictoires — par exemple FAILED puis SUCCESS avec la « mise à jour automatique du statut » AfribaPay) n'active jamais l'offre. Dans l'admin (Paiements), le filtre et le compteur « À examiner » les listent avec le motif. Après vérification dans le tableau de bord AfribaPay :
+
+- **Activer** : `POST /api/payments/afribapay/payments/:id/resolve` `{ action: "activate" }` — l'offre est appliquée une seule fois (30 jours à partir de la décision, ou prolongation de la même offre).
+- **Rejeter** : `{ action: "reject" }` — blocage levé, pas d'activation.
+
+La décision et l'admin qui l'a prise sont enregistrés (`reviewDecision`, `reviewedBy`, `reviewedAt`).

@@ -141,6 +141,7 @@ after(async () => {
 beforeEach(async () => {
 	await Payment.deleteMany({});
 	await User.deleteMany({});
+	await mongoose.connection.collection("admins").deleteMany({});
 	emails.length = 0;
 	fake.payins.length = 0;
 	fake.txs.clear();
@@ -442,4 +443,64 @@ test("numéro masqué dans les journaux", () => {
 	assert.equal(afribapay.normalizeSenegalPhone("+221 77 123 45 67"), "221771234567");
 	assert.equal(afribapay.normalizeSenegalPhone("771234567"), "221771234567");
 	assert.equal(afribapay.normalizeSenegalPhone("33 123 45 67"), null);
+});
+
+// ── Paiements « à examiner » (admin) ──
+const Admin = require("../models/Admin");
+const resolveAs = (token, paymentId, action) =>
+	fetch(`${base}/afribapay/payments/${paymentId}/resolve`, {
+		method: "POST",
+		headers: { "Content-Type": "application/json", ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+		body: JSON.stringify({ action }),
+	});
+const adminToken = async () => {
+	const admin = await new Admin({ email: `a${crypto.randomBytes(3).toString("hex")}@ubb.sn`, password: "Motdepasse123!", name: "Admin Test" }).save();
+	return jwt.sign({ adminId: admin._id }, process.env.JWT_SECRET);
+};
+
+// Paiement marqué FAILED puis annoncé SUCCESS : bloqué « à examiner »
+const conflictedOrder = async () => {
+	const { user, payment } = await pendingOrder();
+	const failed = webhookBody(payment, { status: "FAILED" });
+	await postWebhook(failed, sign(failed));
+	fake.statusOverride = "SUCCESS";
+	const success = webhookBody(payment);
+	await postWebhook(success, sign(success));
+	assert.equal((await Payment.findById(payment._id)).conflict, true);
+	return { user, payment };
+};
+
+test("admin : sans jeton admin -> 401 ; un client ne peut pas résoudre", async () => {
+	const { user, payment } = await conflictedOrder();
+	assert.equal((await resolveAs(null, payment._id, "activate")).status, 401);
+	assert.equal((await resolveAs(tokenFor(user), payment._id, "activate")).status, 401);
+	assert.notEqual((await User.findById(user._id)).subscription.status, "active");
+});
+
+test("admin : activer un paiement à examiner applique l'offre une seule fois", async () => {
+	const { user, payment } = await conflictedOrder();
+	const token = await adminToken();
+	assert.equal((await resolveAs(token, payment._id, "activate")).status, 200);
+	assert.equal((await resolveAs(token, payment._id, "activate")).status, 404); // plus à examiner
+	const saved = await Payment.findById(payment._id);
+	assert.equal(saved.status, "completed");
+	assert.equal(saved.conflict, false);
+	assert.equal(saved.reviewDecision, "activated");
+	const sub = (await User.findById(user._id)).subscription;
+	assert.equal(sub.status, "active");
+	assert.equal(sub.plan, "premium");
+	assert.equal(emails.filter((e) => e[0] === "upgrade").length, 1);
+});
+
+test("admin : rejeter lève le blocage sans activer ; action ou identifiant invalide refusés", async () => {
+	const { user, payment } = await conflictedOrder();
+	const token = await adminToken();
+	assert.equal((await resolveAs(token, payment._id, "delete")).status, 400);
+	assert.equal((await resolveAs(token, "pas-un-id", "reject")).status, 404);
+	assert.equal((await resolveAs(token, payment._id, "reject")).status, 200);
+	const saved = await Payment.findById(payment._id);
+	assert.equal(saved.status, "failed");
+	assert.equal(saved.conflict, false);
+	assert.equal(saved.reviewDecision, "rejected");
+	assert.notEqual((await User.findById(user._id)).subscription.status, "active");
 });

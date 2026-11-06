@@ -1,12 +1,13 @@
 const crypto = require('crypto');
 const express = require('express');
+const mongoose = require('mongoose');
 const rateLimit = require('express-rate-limit');
 const router = express.Router();
 const Payment = require('../models/Payment');
-const { authenticateClient } = require('../middleware/auth');
+const { authenticateClient, authenticateAdmin } = require('../middleware/auth');
 const { PLANS, MOBILE_MONEY_CURRENCY, MOBILE_MONEY_COUNTRY } = require('../config/plans');
 const afribapay = require('../utils/afribapayService');
-const { settleAfribapayTransaction, amountMismatch, flagConflict } = require('../utils/paymentActivation');
+const { settleAfribapayTransaction, amountMismatch, flagConflict, resolveConflict } = require('../utils/paymentActivation');
 const { claimCheck, checkPaymentStatus } = require('../utils/afribapayReconciler');
 
 const FINAL_STATUSES = ['SUCCESS', 'FAILED'];
@@ -260,6 +261,29 @@ router.get('/afribapay/orders/:orderId', authenticateClient, statusLimiter, asyn
   } catch (err) {
     console.error('[afribapay/orders] erreur:', err.message);
     res.status(500).json({ code: 'SERVER_ERROR', message: 'Erreur serveur' });
+  }
+});
+
+// ──────────────────────────────────────────────────────────────────────────────
+// POST /api/payments/afribapay/payments/:id/resolve  (admin)
+// Corps : { action: 'activate' | 'reject' } — paiement « à examiner » vérifié dans le tableau de bord AfribaPay
+// ──────────────────────────────────────────────────────────────────────────────
+router.post('/afribapay/payments/:id/resolve', authenticateAdmin, async (req, res) => {
+  const action = req.body?.action;
+  if (!['activate', 'reject'].includes(action)) {
+    return res.status(400).json({ message: 'Action invalide' });
+  }
+  if (!mongoose.isValidObjectId(req.params.id)) {
+    return res.status(404).json({ message: 'Paiement à examiner introuvable' });
+  }
+  try {
+    const payment = await resolveConflict(String(req.params.id), action, req.admin.email);
+    if (!payment) return res.status(404).json({ message: 'Paiement à examiner introuvable' });
+    console.log(`[afribapay/admin] ${payment.orderId} ${action} par ${req.admin.email}`);
+    res.json({ message: action === 'activate' ? 'Paiement activé' : 'Paiement rejeté', payment });
+  } catch (err) {
+    console.error('[afribapay/admin] résolution impossible:', err.message);
+    res.status(500).json({ message: 'Erreur serveur' });
   }
 });
 

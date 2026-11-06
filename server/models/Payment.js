@@ -88,7 +88,14 @@ const paymentSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
-  failureReason: String
+  failureReason: String,
+  // Décision d'un admin sur un paiement à examiner
+  reviewDecision: {
+    type: String,
+    enum: ['activated', 'rejected']
+  },
+  reviewedBy: String,
+  reviewedAt: Date
 }, {
   timestamps: true
 });
