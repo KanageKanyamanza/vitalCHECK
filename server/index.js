@@ -8,6 +8,8 @@ const cookieParser = require("cookie-parser");
 const { initAdmin } = require("./scripts/init-admin");
 const { startNewsletterScheduler } = require("./utils/newsletterScheduler");
 const { startEmailSyncScheduler } = require("./utils/emailSyncScheduler");
+const { startAfribapayReconciler } = require("./utils/afribapayReconciler");
+const { startRenewalReminder } = require("./utils/renewalReminder");
 
 const app = express();
 
@@ -76,6 +78,9 @@ app.use(
 // Rate limiting désactivé pour permettre un trafic illimité en production
 // Les limitations ont été retirées pour éviter de bloquer les clients
 
+// Webhook AfribaPay : corps brut non modifié pour la signature (doit passer avant express.json)
+app.use("/api/payments/afribapay/webhook", express.raw({ type: () => true, limit: "64kb" }));
+
 // Body parsing middleware
 // Note: rawBody is stored for /payments/webhook signature verification
 app.use(express.json({
@@ -99,6 +104,7 @@ app.use("/api/assessments", require("./routes/assessments"));
 app.use("/api/assessments-v2", require("./routes/assessmentsV2")); // Diagnostic simplifié Niveau 1
 app.use("/api/reports", require("./routes/reports"));
 app.use("/api/contact", require("./routes/contact"));
+app.use("/api/payments", require("./routes/afribapay")); // Mobile Money : /config, /afribapay/*
 app.use("/api/payments", require("./routes/payments")); // Route publique: /api/payments/record
 app.use("/api/admin", require("./routes/payments")); // Routes admin: /api/admin/payments
 app.use("/api/admin", require("./routes/admin"));
@@ -194,6 +200,22 @@ const connectDB = async () => {
 		startNewsletterScheduler({
 			enabled: schedulerEnabled,
 			intervalMs,
+			logger: console,
+		});
+
+		// Mobile Money : revérifie par /v1/status les commandes restées PENDING
+		// (actif dès que PAYMENT_PROVIDER=afribapay, ou s'il reste des commandes AfribaPay à suivre)
+		startAfribapayReconciler({
+			enabled:
+				(process.env.PAYMENT_PROVIDER || "").toLowerCase() === "afribapay" ||
+				String(process.env.AFRIBAPAY_RECONCILER || "").toLowerCase() === "true",
+			logger: console,
+		});
+
+		// Rappels de renouvellement (J-3) et expiration des périodes payées : désactivés par défaut
+		startRenewalReminder({
+			enabled:
+				String(process.env.RENEWAL_REMINDERS_ENABLED || "").toLowerCase() === "true",
 			logger: console,
 		});
 

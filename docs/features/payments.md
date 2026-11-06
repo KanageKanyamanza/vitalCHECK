@@ -59,3 +59,35 @@ Le frontend utilise le SDK officiel PayPal pour React.
 2. Il est redirigé vers la page de Checkout où s'affichent les boutons PayPal.
 3. Une fois le paiement validé par PayPal, le callback `onApprove` du frontend appelle l'API `/api/payments/record` pour finaliser l'opération en base de données.
 4. L'utilisateur est ensuite redirigé vers une page de succès ou directement vers ses résultats enrichis.
+
+---
+
+## 📱 Mobile Money (AfribaPay)
+
+Activé par `PAYMENT_PROVIDER=afribapay` côté serveur (sinon PayPal, comportement inchangé). Le front lit `GET /api/payments/config` pour savoir quoi afficher.
+
+### Règles
+
+- Le montant vient de `server/config/plans.js` (Standard 10 000 FCFA, Premium 25 000 FCFA). Le navigateur n'envoie que l'offre, l'opérateur, le numéro et le code Orange.
+- Activation uniquement sur `SUCCESS` confirmé côté serveur : webhook signé (`Afribapay-Sign`, HMAC-SHA256 hex du corps brut, clé secrète) et/ou `GET /v1/status`, avec montant initial (`original_amount`), devise et pays identiques à la commande.
+- Passage `pending → completed` atomique : un webhook reçu plusieurs fois n'active et ne prolonge qu'une fois. `orderId` et `transactionId` sont uniques.
+- `PENDING` n'active, n'annule et ne rembourse jamais. Une tâche (`utils/afribapayReconciler.js`, toutes les 2 min) revérifie les commandes en attente pendant 7 jours.
+- Désaccord (montant, devise, statuts finaux contradictoires) : `conflict: true`, examen manuel.
+- Période payée de 30 jours ; même offre encore active = prolongation, autre offre = nouvelle période dès le paiement. Le Diagnostic reste sur « Nous contacter ».
+
+### Routes
+
+| Méthode | Route | Protection |
+| :--- | :--- | :--- |
+| `GET` | `/api/payments/config` | publique |
+| `POST` | `/api/payments/afribapay/initiate` | client connecté, 10 / 15 min |
+| `POST` | `/api/payments/afribapay/webhook` | signature uniquement (corps brut) |
+| `GET` | `/api/payments/afribapay/orders/:orderId` | propriétaire de la commande |
+
+### Rappels
+
+`RENEWAL_REMINDERS_ENABLED=true` active le rappel J-3 et l'expiration réelle à l'échéance (e-mail dans la langue du dernier diagnostic).
+
+### Tests
+
+`cd server && npm run test:afribapay` (AfribaPay simulé, MongoDB en mémoire).

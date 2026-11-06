@@ -59,7 +59,10 @@ const userSchema = new mongoose.Schema({
     paymentId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Payment'
-    }
+    },
+    // Date de fin pour laquelle le rappel J-3 / l'avis d'expiration a déjà été envoyé
+    reminderSentFor: Date,
+    expiryNoticeSentFor: Date
   },
   isPremium: {
     type: Boolean,

@@ -755,6 +755,39 @@ const sendSubscriptionUpgradeEmail = async (to, name, planName, planId) => {
   return sendEmail(mailOptions);
 };
 
+// Rappel avant échéance (J-3) ou avis d'expiration d'une période payée
+const sendRenewalReminderEmail = async (to, name, { planName, endDate, lang = 'fr', renewUrl, expired = false }) => {
+  const en = lang === 'en';
+  const date = new Date(endDate).toLocaleDateString(en ? 'en-GB' : 'fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+  const subject = expired
+    ? (en ? `Your ${planName} plan has expired` : `Votre offre ${planName} a expiré`)
+    : (en ? `Your ${planName} plan ends on ${date}` : `Votre offre ${planName} se termine le ${date}`);
+  const body = expired
+    ? (en
+      ? `Your ${planName} access ended on <strong>${date}</strong>. Renew it with a new Mobile Money payment to get your features back.`
+      : `Votre accès ${planName} a pris fin le <strong>${date}</strong>. Renouvelez-le par un nouveau paiement Mobile Money pour retrouver vos fonctionnalités.`)
+    : (en
+      ? `Your ${planName} access ends on <strong>${date}</strong>. Mobile Money payments do not renew automatically: renew now and the 30 days are added to your current period.`
+      : `Votre accès ${planName} se termine le <strong>${date}</strong>. Le paiement Mobile Money ne se renouvelle pas tout seul : renouvelez maintenant, les 30 jours s'ajoutent à votre période en cours.`);
+
+  const mailOptions = {
+    from: `"vitalCHECK" <${process.env.EMAIL_USER}>`,
+    to,
+    subject,
+    html: createUnifiedEmailTemplate({
+      language: en ? 'en' : 'fr',
+      title: subject,
+      subtitle: en ? `Hello <strong>${name}</strong>,` : `Bonjour <strong>${name}</strong>,`,
+      content: `<p style="margin: 0; color: #4a5568; font-size: 16px; line-height: 1.6;">${body}</p>`,
+      buttons: [
+        { text: en ? 'Renew my plan' : 'Renouveler mon offre', url: renewUrl, primary: true, icon: '' },
+      ],
+    }),
+  };
+
+  return sendEmail(mailOptions);
+};
+
 const sendTeamInviteEmail = async ({ to, teamName, inviterName, token }) => {
   const joinUrl = `${process.env.CLIENT_URL || 'https://checkmyenterprise.com'}/join-team/${token}`;
 
@@ -977,6 +1010,7 @@ module.exports = {
   sendAssessmentCompletedExistingUser,
   sendV2ResultEmail,
   sendSubscriptionUpgradeEmail,
+  sendRenewalReminderEmail,
   sendPasswordResetEmail,
   sendAdminNotificationEmail,
   emailService: {
