@@ -11,6 +11,7 @@ import ContactPage from '../pages/ContactPage'
 import PricingPage from '../pages/PricingPage'
 import CheckoutPage from '../pages/CheckoutPage'
 import PaymentSuccessPage from '../pages/PaymentSuccessPage'
+import PaymentPendingPage from '../pages/PaymentPendingPage'
 import ClientRegisterPage from '../pages/client/ClientRegisterPage'
 import UnifiedLoginPage from '../pages/UnifiedLoginPage'
 import ClientDashboardPage from '../pages/client/ClientDashboardPage'
@@ -44,6 +45,11 @@ const AppRoutes = () => {
       <Route path="/pricing" element={<PricingPage />} />
       <Route path="/checkout" element={<CheckoutPage />} />
       <Route path="/payment-success" element={<PaymentSuccessPage />} />
+      <Route path="/payment/pending" element={
+        <ProtectedRoute requireAuth>
+          <PaymentPendingPage />
+        </ProtectedRoute>
+      } />
       <Route path="/login" element={<UnifiedLoginPage />} />
       {/* Redirection de l'ancienne route client/login vers la page unifiée */}
       <Route path="/client/login" element={<Navigate to="/login" replace />} />

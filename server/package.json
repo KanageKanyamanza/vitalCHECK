@@ -4,6 +4,7 @@
   "description": "Backend server for vitalCHECK Enterprise Health Check",
   "main": "index.js",
   "scripts": {
+    "test:afribapay": "node --test tests/afribapay.test.js",
     "start": "node index.js",
     "dev": "nodemon index.js",
     "generate-sitemap": "node scripts/generate-sitemap.js",

@@ -10,11 +10,38 @@ import {
   Send,
   Eye,
   Filter,
-  Download
+  Download,
+  ShieldAlert,
+  X
 } from 'lucide-react'
 import AdminLayout from '../../components/admin/AdminLayout'
 import toast from 'react-hot-toast'
 import { adminApiService } from '../../services/api'
+
+// Motifs de blocage d'un paiement Mobile Money (champ failureReason)
+const CONFLICT_REASONS = [
+  ['final_status_conflict_SUCCESS', 'Annoncé réussi après avoir été enregistré comme échoué'],
+  ['final_status_conflict_FAILED', 'Annoncé échoué après avoir été confirmé'],
+  ['webhook_amount_mismatch', 'Montant ou devise du webhook différent de la commande'],
+  ['amount_mismatch', 'Montant ou devise différent de la commande'],
+  ['country_mismatch', 'Pays différent de la commande'],
+  ['webhook_', 'Webhook et statut AfribaPay contradictoires'],
+  ['transaction_id', 'Identifiant de transaction déjà utilisé ou différent'],
+  ['order_id_mismatch', 'Identifiant de commande différent'],
+  ['user_not_found', 'Compte client introuvable'],
+]
+const conflictLabel = (reason = '') =>
+  CONFLICT_REASONS.find(([prefix]) => reason.startsWith(prefix))?.[1] || reason || 'Motif inconnu'
+
+const OPERATOR_NAMES = { orange: 'Orange Money', wave: 'Wave', free: 'Free Money', emoney: 'E-money' }
+
+// 221700000001 -> 2217******01
+const maskPhone = (phone = '') => (phone.length > 6 ? `${phone.slice(0, 4)}${'*'.repeat(phone.length - 6)}${phone.slice(-2)}` : phone)
+
+const formatAmount = (amount, currency) =>
+  currency === 'XOF'
+    ? `${Number(amount || 0).toLocaleString('fr-FR')} FCFA`
+    : `${Number(amount || 0).toLocaleString('fr-FR', { maximumFractionDigits: 2 })} ${currency === 'USD' ? '$' : currency || ''}`
 
 const PaymentManagement = () => {
   const [payments, setPayments] = useState([])
@@ -85,6 +112,22 @@ const PaymentManagement = () => {
     }
   }
 
+  // Paiement Mobile Money « à examiner » : décision prise après vérification dans le tableau de bord AfribaPay
+  const resolvePayment = async (payment, action) => {
+    const question = action === 'activate'
+      ? `Activer l'offre ${payment.planName} pour ${payment.customerEmail} ?\n\nÀ faire seulement si le paiement ${payment.orderId} apparaît comme réussi dans le tableau de bord AfribaPay.`
+      : `Rejeter le paiement ${payment.orderId} ? L'offre ne sera pas activée.`
+    if (!window.confirm(question)) return
+    try {
+      await adminApiService.resolveMobileMoneyPayment(payment._id, action)
+      toast.success(action === 'activate' ? 'Paiement activé, offre appliquée' : 'Paiement rejeté')
+      fetchPayments()
+    } catch (error) {
+      console.error('Error resolving payment:', error)
+      toast.error(error.response?.data?.message || 'Erreur lors de la mise à jour')
+    }
+  }
+
   const exportPayments = async () => {
     try {
       const response = await adminApiService.exportPayments()
@@ -110,15 +153,24 @@ const PaymentManagement = () => {
       payment.orderId?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       payment.planName?.toLowerCase().includes(searchTerm.toLowerCase())
     
-    const matchesFilter = 
-      filterStatus === 'all' || payment.status === filterStatus
-    
+    const matchesFilter =
+      filterStatus === 'all' ||
+      (filterStatus === 'review' ? payment.conflict : payment.status === filterStatus)
+
     return matchesSearch && matchesFilter
   })
+
+  const toReviewCount = payments.filter(p => p.conflict).length
+
+  // Revenus encaissés (paiements confirmés), par devise : dollars et FCFA ne s'additionnent pas
+  const revenueByCurrency = payments
+    .filter(p => ['completed', 'processed'].includes(p.status) && !p.conflict)
+    .reduce((acc, p) => ({ ...acc, [p.currency]: (acc[p.currency] || 0) + (p.amount || 0) }), {})
 
   const getStatusBadge = (status) => {
     const badges = {
       pending: { bg: 'bg-yellow-100', text: 'text-yellow-800', label: 'En attente', icon: Clock },
+      completed: { bg: 'bg-emerald-100', text: 'text-emerald-800', label: 'Confirmé', icon: Check },
       processed: { bg: 'bg-green-100', text: 'text-green-800', label: 'Traité', icon: Check },
       failed: { bg: 'bg-red-100', text: 'text-red-800', label: 'Échoué', icon: AlertCircle }
     }
@@ -166,7 +218,7 @@ const PaymentManagement = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
           <div className="bg-white rounded-lg shadow p-4">
             <div className="text-sm text-gray-600">Total Paiements</div>
             <div className="text-2xl font-bold text-gray-900">{payments.length}</div>
@@ -183,10 +235,22 @@ const PaymentManagement = () => {
               {payments.filter(p => p.status === 'pending').length}
             </div>
           </div>
+          <button
+            type="button"
+            onClick={() => setFilterStatus('review')}
+            className={`text-left rounded-lg shadow p-4 ${toReviewCount ? 'bg-red-50' : 'bg-white'}`}
+          >
+            <div className={`text-sm ${toReviewCount ? 'text-red-700' : 'text-gray-600'}`}>À examiner</div>
+            <div className={`text-2xl font-bold ${toReviewCount ? 'text-red-900' : 'text-gray-900'}`}>{toReviewCount}</div>
+          </button>
           <div className="bg-blue-50 rounded-lg shadow p-4">
-            <div className="text-sm text-blue-600">Revenus Total</div>
-            <div className="text-2xl font-bold text-blue-900">
-              ${payments.reduce((sum, p) => sum + (p.amount || 0), 0).toFixed(2)}
+            <div className="text-sm text-blue-600">Revenus encaissés</div>
+            <div className="text-xl font-bold text-blue-900">
+              {Object.keys(revenueByCurrency).length === 0
+                ? '0'
+                : Object.entries(revenueByCurrency).map(([currency, total]) => (
+                  <div key={currency}>{formatAmount(total, currency)}</div>
+                ))}
             </div>
           </div>
         </div>
@@ -216,7 +280,9 @@ const PaymentManagement = () => {
                 onChange={(e) => setFilterStatus(e.target.value)}
               >
                 <option value="all">Tous les statuts</option>
+                <option value="review">À examiner</option>
                 <option value="pending">En attente</option>
+                <option value="completed">Confirmés</option>
                 <option value="processed">Traités</option>
                 <option value="failed">Échoués</option>
               </select>
@@ -286,6 +352,11 @@ const PaymentManagement = () => {
                           <div className="text-xs text-gray-500">
                             {payment.orderId}
                           </div>
+                          {payment.provider === 'afribapay' && (
+                            <div className="text-xs text-gray-500">
+                              {OPERATOR_NAMES[payment.operator] || payment.operator} · {maskPhone(payment.phoneNumber)}
+                            </div>
+                          )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${planBadge.bg} ${planBadge.text}`}>
@@ -293,10 +364,27 @@ const PaymentManagement = () => {
                           </span>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                          ${payment.amount} {payment.currency}
+                          {formatAmount(payment.amount, payment.currency)}
                         </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          {getStatusBadge(payment.status)}
+                        <td className="px-6 py-4">
+                          {payment.conflict ? (
+                            <>
+                              <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                <ShieldAlert className="w-3 h-3 mr-1" />
+                                À examiner
+                              </span>
+                              <div className="mt-1 max-w-[220px] text-xs text-red-700">
+                                {conflictLabel(payment.failureReason)}
+                              </div>
+                            </>
+                          ) : (
+                            getStatusBadge(payment.status)
+                          )}
+                          {payment.reviewDecision && (
+                            <div className="mt-1 text-xs text-gray-500">
+                              {payment.reviewDecision === 'activated' ? 'Activé' : 'Rejeté'} par {payment.reviewedBy}
+                            </div>
+                          )}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           {payment.emailSent ? (
@@ -317,7 +405,28 @@ const PaymentManagement = () => {
                             >
                               <Mail className="w-5 h-5" />
                             </button>
-                            {payment.status === 'pending' && (
+                            {payment.conflict && (
+                              <>
+                                <button
+                                  onClick={() => resolvePayment(payment, 'activate')}
+                                  className="inline-flex min-h-[36px] items-center rounded-md bg-green-600 px-2.5 text-xs font-medium text-white hover:bg-green-700"
+                                  title="Activer l'offre (paiement vérifié chez AfribaPay)"
+                                >
+                                  <Check className="w-4 h-4 mr-1" />
+                                  Activer
+                                </button>
+                                <button
+                                  onClick={() => resolvePayment(payment, 'reject')}
+                                  className="inline-flex min-h-[36px] items-center rounded-md border border-gray-300 px-2.5 text-xs font-medium text-gray-700 hover:bg-gray-50"
+                                  title="Rejeter sans activer"
+                                >
+                                  <X className="w-4 h-4 mr-1" />
+                                  Rejeter
+                                </button>
+                              </>
+                            )}
+                            {/* Mobile Money : statut fixé par AfribaPay, jamais à la main (sinon le client verrait « confirmé » sans offre active) */}
+                            {payment.status === 'pending' && payment.provider !== 'afribapay' && (
                               <button
                                 onClick={() => markAsProcessed(payment._id)}
                                 className="text-green-600 hover:text-green-900"
