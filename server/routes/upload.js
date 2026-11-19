@@ -4,6 +4,18 @@ const Admin = require('../models/Admin');
 const { uploadImages, uploadSingleImage, uploadToCloudinary, uploadMultipleToCloudinary, deleteImage } = require('../config/cloudinary');
 const router = express.Router();
 
+// Raison lisible d'un échec Cloudinary, sans secret : réglages absents, ou message de Cloudinary
+// (les identifiants longs, comme une clé, sont masqués)
+const CLOUDINARY_VARS = ['CLOUDINARY_CLOUD_NAME', 'CLOUDINARY_API_KEY', 'CLOUDINARY_API_SECRET'];
+const cloudinaryErrorMessage = (error) => {
+  const missing = CLOUDINARY_VARS.filter((name) => !process.env[name]);
+  if (missing.length > 0) {
+    return `Cloudinary n'est pas configuré sur le serveur : réglage(s) manquant(s) ${missing.join(', ')}`;
+  }
+  const reason = String(error?.message || error?.error?.message || 'raison inconnue').replace(/[A-Za-z0-9_-]{12,}/g, '…');
+  return `Erreur lors de l'upload vers Cloudinary : ${reason}`;
+};
+
 // Middleware d'authentification admin
 const authenticateAdmin = async (req, res, next) => {
   try {
@@ -70,7 +82,7 @@ router.post('/images', authenticateAdmin, (req, res) => {
       console.error('Erreur upload Cloudinary:', error);
       res.status(500).json({
         success: false,
-        message: 'Erreur lors de l\'upload vers Cloudinary'
+        message: cloudinaryErrorMessage(error)
       });
     }
   });
@@ -119,7 +131,7 @@ router.post('/image', authenticateAdmin, (req, res) => {
       console.error('Erreur upload Cloudinary:', error);
       res.status(500).json({
         success: false,
-        message: 'Erreur lors de l\'upload vers Cloudinary'
+        message: cloudinaryErrorMessage(error)
       });
     }
   });
