@@ -8,12 +8,18 @@ import {
   Users, 
   Mail as MailIcon,
   CheckCircle2,
-  AlertCircle
+  AlertCircle,
+  ImagePlus,
+  X
 } from 'lucide-react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import toast from 'react-hot-toast';
 import axios from 'axios';
-import { API_BASE_URL } from '../../services/api';
+import { API_BASE_URL, uploadApiService } from '../../services/api';
+
+// Formats affichés par tous les clients mail (WebP et SVG ne le sont pas partout)
+const IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
+const IMAGE_MAX_BYTES = 5 * 1024 * 1024;
 
 const EmailBroadcast = () => {
   const location = useLocation();
@@ -24,6 +30,9 @@ const EmailBroadcast = () => {
   const [body, setBody] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [adminData, setAdminData] = useState(null);
+  // Image facultative, placée sous le message : { url, name } une fois envoyée sur Cloudinary
+  const [image, setImage] = useState(null);
+  const [uploadingImage, setUploadingImage] = useState(false);
 
   useEffect(() => {
     // Si aucun contact n'est sélectionné, on retourne à la liste
@@ -43,9 +52,41 @@ const EmailBroadcast = () => {
     }
   }, [selectedSubscribers, navigate]);
 
+  const handleImageChange = async (e) => {
+    const file = e.target.files?.[0];
+    e.target.value = '';
+    if (!file) return;
+    if (!IMAGE_TYPES.includes(file.type)) {
+      toast.error("Format non pris en charge : utilisez une image JPG, PNG ou GIF");
+      return;
+    }
+    if (file.size > IMAGE_MAX_BYTES) {
+      toast.error("Image trop lourde : 5 Mo maximum");
+      return;
+    }
+
+    const data = new FormData();
+    data.append('image', file);
+    setUploadingImage(true);
+    try {
+      const response = await uploadApiService.uploadImage(data);
+      setImage({ url: response.data.data.url, name: file.name });
+      toast.success("Image ajoutée");
+    } catch (error) {
+      console.error("Image upload error:", error);
+      toast.error(error.response?.data?.message || "L'image n'a pas pu être envoyée");
+    } finally {
+      setUploadingImage(false);
+    }
+  };
+
   const handleSend = async () => {
     if (!subject.trim() || !body.trim()) {
       toast.error("Le sujet et le message sont obligatoires");
+      return;
+    }
+    if (uploadingImage) {
+      toast.error("Patientez : l'image est en cours d'envoi");
       return;
     }
 
@@ -57,14 +98,16 @@ const EmailBroadcast = () => {
         recipientIds: selectedSubscribers,
         contactModel,
         subject,
-        body
+        body,
+        ...(image ? { imageUrl: image.url } : {})
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
 
       if (response.data.success) {
         toast.success(`${selectedSubscribers.length} messages envoyés avec succès`);
-        navigate('/admin/contacts');
+        // Retour à la page d'origine (liste des contacts, fiche utilisateur ou fiche évaluation)
+        navigate(-1);
       }
     } catch (error) {
       console.error("Bulk send error:", error);
@@ -103,8 +146,8 @@ const EmailBroadcast = () => {
 
           <button
             onClick={handleSend}
-            disabled={isSending}
-            className={`flex items-center gap-2 px-6 py-2.5 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-all shadow-lg shadow-green-200 font-bold ${isSending ? 'opacity-50 cursor-not-allowed' : ''}`}
+            disabled={isSending || uploadingImage}
+            className={`flex items-center gap-2 px-6 py-2.5 bg-green-600 text-white rounded-xl hover:bg-green-700 transition-all shadow-lg shadow-green-200 font-bold ${isSending || uploadingImage ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
             {isSending ? (
               <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
@@ -145,6 +188,51 @@ const EmailBroadcast = () => {
                     className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:bg-white transition-all min-h-[450px] font-medium leading-relaxed"
                   />
                 </div>
+
+                <div className="space-y-2">
+                  <span className="block text-xs font-bold text-gray-400 uppercase tracking-wider">
+                    Image <span className="normal-case font-medium">(facultative, sous le message)</span>
+                  </span>
+                  {image ? (
+                    <div className="flex items-center gap-4 p-3 bg-gray-50 border border-gray-200 rounded-xl">
+                      <img src={image.url} alt="" className="h-16 w-auto max-w-[160px] rounded-lg object-contain bg-white" />
+                      <span className="min-w-0 flex-1 truncate text-sm text-gray-700">{image.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => setImage(null)}
+                        className="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg"
+                      >
+                        <X className="w-4 h-4" />
+                        Retirer
+                      </button>
+                    </div>
+                  ) : (
+                    <label
+                      htmlFor="broadcast-image"
+                      className={`flex items-center justify-center gap-2 px-4 py-5 border-2 border-dashed border-gray-200 rounded-xl text-sm font-medium text-gray-500 hover:border-primary-500 hover:text-primary-600 transition-colors ${uploadingImage ? 'opacity-60 cursor-wait' : 'cursor-pointer'}`}
+                    >
+                      {uploadingImage ? (
+                        <>
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-600"></div>
+                          Envoi de l'image...
+                        </>
+                      ) : (
+                        <>
+                          <ImagePlus className="w-5 h-5" />
+                          Ajouter une image (JPG, PNG ou GIF, 5 Mo maximum)
+                        </>
+                      )}
+                      <input
+                        id="broadcast-image"
+                        type="file"
+                        accept={IMAGE_TYPES.join(',')}
+                        onChange={handleImageChange}
+                        disabled={uploadingImage}
+                        className="sr-only"
+                      />
+                    </label>
+                  )}
+                </div>
               </div>
 
               <div className="bg-blue-50 border border-blue-100 p-4 rounded-xl flex gap-3 items-start">
@@ -183,6 +271,9 @@ const EmailBroadcast = () => {
                   className="prose prose-green max-w-none text-gray-800 leading-relaxed text-base"
                   dangerouslySetInnerHTML={{ __html: getPreviewHtml() || '<span className="text-gray-300 italic">En attente de saisie...</span>' }}
                 />
+                {image && (
+                  <img src={image.url} alt="" className="block w-full max-w-[600px] h-auto rounded-lg mt-6 mx-auto" />
+                )}
               </div>
 
               {/* Footer */}

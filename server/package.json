@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test:afribapay": "node --test tests/afribapay.test.js",
+    "test:email-image": "node --test tests/emailImage.test.js",
     "start": "node index.js",
     "dev": "nodemon index.js",
     "generate-sitemap": "node scripts/generate-sitemap.js",
