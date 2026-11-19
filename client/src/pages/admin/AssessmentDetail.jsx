@@ -59,11 +59,12 @@ const AssessmentDetail = () => {
     }
   };
 
+  // Studio d'Envoi Direct, pré-rempli avec l'utilisateur de l'évaluation (l'ancienne page /admin/emails n'existe plus)
   const handleSendEmail = () => {
-    navigate('/admin/emails', {
+    navigate('/admin/emails/broadcast', {
       state: {
-        selectedUsers: [assessment.user._id],
-        userEmails: [assessment.user.email]
+        selectedSubscribers: [assessment.user._id],
+        contactModel: 'User'
       }
     });
   };

@@ -8,6 +8,7 @@ const Contact = require('../models/Contact');
 const MailingContact = require('../models/MailingContact');
 const User = require('../models/User');
 const { createUnifiedEmailTemplate } = require('../utils/emailTemplates');
+const { parseEmailImageUrl, emailImageBlock } = require('../utils/emailImage');
 
 /**
  * @route   POST /api/messages/sync
@@ -148,6 +149,12 @@ router.post('/bulk-send', authenticateAdmin, async (req, res) => {
       return res.status(400).json({ success: false, message: 'Données manquantes pour l\'envoi groupé' });
     }
 
+    // Image facultative, hébergée sur notre Cloudinary (upload admin du formulaire)
+    const imageUrl = parseEmailImageUrl(req.body.imageUrl);
+    if (imageUrl === undefined) {
+      return res.status(400).json({ success: false, message: 'Image invalide : ajoutez-la depuis le formulaire' });
+    }
+
     // 1. Trouver tous les destinataires
     let recipients = [];
     if (contactModel === 'User') {
@@ -158,8 +165,8 @@ router.post('/bulk-send', authenticateAdmin, async (req, res) => {
       recipients = await Contact.find({ _id: { $in: recipientIds } });
     }
 
-    // 2. Préparer le contenu
-    const formattedContent = body.replace(/\n/g, '<br>');
+    // 2. Préparer le contenu (image facultative sous le message)
+    const formattedContent = body.replace(/\n/g, '<br>') + (imageUrl ? emailImageBlock(imageUrl, subject) : '');
 
     // 3. Envoyer à chaque destinataire de manière asynchrone
     const sendPromises = recipients.map(async (recipient) => {
@@ -176,7 +183,8 @@ router.post('/bulk-send', authenticateAdmin, async (req, res) => {
           }),
           contactId: recipient._id,
           contactModel: contactModel || 'Contact',
-          rawContent: body // Garder le message pur pour l'historique
+          // Garder le message pur pour l'historique (avec le lien de l'image le cas échéant)
+          rawContent: imageUrl ? `${body}\n\n[Image : ${imageUrl}]` : body
         };
 
       try {

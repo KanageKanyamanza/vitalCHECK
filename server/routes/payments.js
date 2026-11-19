@@ -2,98 +2,11 @@ const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
 const Payment = require('../models/Payment');
-const Notification = require('../models/Notification');
 const User = require('../models/User');
-const Team = require('../models/Team');
 const { authenticateAdmin, authenticateClient } = require('../middleware/auth');
 const { verifyPayPalOrder, verifyPayPalWebhook } = require('../utils/paypalService');
-const {
-  sendPaymentEmail,
-  sendAccountCreatedEmail,
-  sendSubscriptionUpgradeEmail,
-} = require('../utils/emailService');
-
-// ──────────────────────────────────────────────────────────────────────────────
-// Shared helpers
-// ──────────────────────────────────────────────────────────────────────────────
-
-// Apply a validated plan to a user and persist the Payment record
-const applyPlanToUser = async ({ user, planId, planName, orderId, amount, currency, paymentDetails, paypalOrderId }) => {
-  const endDate = planId === 'diagnostic'
-    ? null
-    : new Date(Date.now() + 30 * 24 * 60 * 60 * 1000); // 30 days
-
-  // Create or find the Payment document (idempotent)
-  let payment = await Payment.findOne({ orderId });
-  if (!payment) {
-    payment = await new Payment({
-      orderId,
-      planId,
-      planName,
-      amount,
-      currency,
-      customerEmail: user.email,
-      paypalOrderId,
-      status: 'completed',
-      paymentDetails,
-    }).save();
-  }
-
-  const wasNewAccount = !user.hasAccount;
-  let tempPassword = null;
-
-  if (!user.hasAccount) {
-    const tmp = new User();
-    tempPassword = tmp.generateTempPassword();
-    user.password = tempPassword;
-    user.tempPassword = tempPassword;
-    user.hasAccount = true;
-    user.accountCreatedAt = new Date();
-  }
-
-  const newSub = {
-    plan: planId,
-    status: 'active',
-    startDate: new Date(),
-    endDate,
-    paymentId: payment._id,
-  };
-
-  user.subscription = newSub;
-  user.isPremium = ['premium', 'diagnostic'].includes(planId);
-  await user.save();
-
-  // Sync subscription to the user's team + update maxMembers by plan (Phase A+)
-  if (user.team) {
-    try {
-      const maxMembers = ['premium', 'diagnostic'].includes(planId) ? 5 : 1;
-      await Team.findByIdAndUpdate(user.team, { subscription: newSub, maxMembers });
-    } catch (teamErr) {
-      console.error('[payments] team subscription sync failed:', teamErr.message);
-    }
-  }
-
-  // Send email (non-blocking)
-  try {
-    if (wasNewAccount && tempPassword) {
-      await sendAccountCreatedEmail(user.email, user.companyName, tempPassword, planName);
-    } else {
-      await sendSubscriptionUpgradeEmail(user.email, user.companyName, planName, planId);
-    }
-  } catch (emailErr) {
-    console.error('[payments] email failed:', emailErr.message);
-  }
-
-  // Admin notification (non-blocking)
-  new Notification({
-    type: 'new_assessment',
-    title: 'Nouveau paiement reçu',
-    message: `Paiement ${amount} ${currency} — plan ${planName} (${user.email})`,
-    user: { id: user._id, name: user.companyName, email: user.email },
-  }).save().catch(err => console.error('[payments] notification failed:', err.message));
-
-  return { payment, user, tempPassword };
-};
+const { sendPaymentEmail } = require('../utils/emailService');
+const { applyPlanToUser } = require('../utils/paymentActivation');
 
 // ──────────────────────────────────────────────────────────────────────────────
 // POST /api/payments/record  (authenticated — requires valid client JWT)

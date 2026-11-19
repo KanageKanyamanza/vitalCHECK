@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { Link, useNavigate, useSearchParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ArrowLeft, Check, CreditCard, Building2, Lock } from 'lucide-react'
+import { ArrowLeft, Check, CreditCard, Building2, Lock, Smartphone, Loader2 } from 'lucide-react'
 import { Button, Container } from '../components/ui/ds'
 import { PayPalScriptProvider } from '@paypal/react-paypal-js'
-import { PayPalButton } from '../components/payment'
+import { PayPalButton, MobileMoneyForm } from '../components/payment'
 import { PAYPAL_CONFIG, PLAN_PRICES } from '../config/paypal'
 import toast from 'react-hot-toast'
 import { paymentsAPI } from '../services/api'
@@ -22,6 +22,7 @@ const PAYPAL_SCRIPT_OPTIONS = {
 const CheckoutPage = () => {
   const { t, i18n } = useTranslation()
   const navigate = useNavigate()
+  const location = useLocation()
   const [searchParams] = useSearchParams()
   const planId = searchParams.get('plan')
   
@@ -32,7 +33,17 @@ const CheckoutPage = () => {
   // Priorité au client connecté, sinon utilisateur d'évaluation
   const user = clientUser || assessmentUser
   const [showPayPal, setShowPayPal] = useState(false)
-  
+  // Moyen de paiement actif, choisi par le serveur (PAYMENT_PROVIDER) ; PayPal si la config est injoignable
+  const [paymentConfig, setPaymentConfig] = useState(null)
+
+  useEffect(() => {
+    let cancelled = false
+    paymentsAPI.getConfig()
+      .then(({ data }) => { if (!cancelled) setPaymentConfig(data) })
+      .catch(() => { if (!cancelled) setPaymentConfig({ provider: 'paypal' }) })
+    return () => { cancelled = true }
+  }, [])
+
   useEffect(() => {
     if (!planId || !['standard', 'premium', 'diagnostic'].includes(planId)) {
       toast.error(t('checkout.invalidPlan'))
@@ -123,8 +134,17 @@ const CheckoutPage = () => {
     }).format(value)
   const formatXOF = (value) => `${value.toLocaleString(lang === 'en' ? 'en-US' : 'fr-FR')} FCFA`
 
+  // Mobile Money : montant fourni par le serveur ; le Diagnostic n'y est pas proposé
+  const mobileMoney = paymentConfig?.provider === 'afribapay'
+  const mmAmount = mobileMoney ? paymentConfig.plans?.[planId]?.amount : null
+  const currentSub = clientUser?.subscription
+  const hasActivePlan = currentSub?.status === 'active'
+    && ['standard', 'premium'].includes(currentSub.plan)
+    && currentSub.endDate && new Date(currentSub.endDate) > new Date()
+  const periodNoteKey = !hasActivePlan ? null : currentSub.plan === planId ? 'extendNote' : 'newPeriodNote'
+
   return (
-    <PayPalScriptProvider options={PAYPAL_SCRIPT_OPTIONS}>
+    <>
       <div className="min-h-screen bg-ubb-paper-soft">
         <Container className="max-w-5xl py-8 sm:py-12">
           <Link
@@ -149,17 +169,21 @@ const CheckoutPage = () => {
               <dl className="mt-6 space-y-3 border-t border-ubb-brand-900/[0.08] pt-6 font-text">
                 <div className="flex items-baseline justify-between gap-4">
                   <dt className="text-ubb-body text-ubb-ink">{t('checkout.dueToday')}</dt>
-                  <dd className="font-heading text-3xl font-bold text-ubb-ink">{formatUSD(planDetails.price)}</dd>
+                  <dd className="font-heading text-3xl font-bold text-ubb-ink">
+                    {mobileMoney ? formatXOF(mmAmount ?? planDetails.priceXOF) : formatUSD(planDetails.price)}
+                  </dd>
                 </div>
-                <div className="flex items-baseline justify-between gap-4 text-ubb-small text-ubb-ink-muted">
-                  <dt>{t('checkout.or')}</dt>
-                  <dd>{formatXOF(planDetails.priceXOF)}</dd>
-                </div>
+                {!mobileMoney && (
+                  <div className="flex items-baseline justify-between gap-4 text-ubb-small text-ubb-ink-muted">
+                    <dt>{t('checkout.or')}</dt>
+                    <dd>{formatXOF(planDetails.priceXOF)}</dd>
+                  </div>
+                )}
                 <div className="flex items-baseline justify-between gap-4 text-ubb-small text-ubb-ink-muted">
                   <dt>{t('checkout.billing')}</dt>
                   <dd>{planDetails.period}</dd>
                 </div>
-                {planDetails.annualPrice && (
+                {planDetails.annualPrice && !mobileMoney && (
                   <p className="pt-1 text-ubb-small text-ubb-ink-muted">
                     {t('checkout.annualInfo', {
                       price: formatUSD(planDetails.annualPrice),
@@ -187,50 +211,107 @@ const CheckoutPage = () => {
                 {t('checkout.selectPaymentMethod')}
               </h2>
 
-              {/* Les boutons PayPal ne sont montés qu'après le choix explicite du mode de paiement
-                  (comme avant la refonte) : montés dès l'arrivée sur la page, le SDK les détruisait
-                  de façon intermittente pendant le chargement. */}
-              <button
-                type="button"
-                onClick={() => setShowPayPal(true)}
-                aria-expanded={showPayPal}
-                aria-controls="paypal-buttons"
-                className={`ubb-focus mt-6 flex w-full items-center gap-4 rounded-ubb-card border-2 p-4 text-left transition-colors ${
-                  showPayPal
-                    ? 'border-ubb-brand-900 bg-ubb-brand-50'
-                    : 'border-ubb-brand-900/15 bg-white hover:border-ubb-brand-900/40'
-                }`}
-              >
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-ubb-field bg-ubb-mist text-ubb-brand-900">
-                  <CreditCard className="h-5 w-5" aria-hidden="true" />
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block font-text font-semibold text-ubb-ink">{t('checkout.paypal')}</span>
-                  <span className="block font-text text-ubb-small text-ubb-ink-muted">
-                    {t('checkout.paypalDescription')}
-                  </span>
-                </span>
-                <span
-                  aria-hidden="true"
-                  className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 ${
-                    showPayPal ? 'border-ubb-brand-900 bg-ubb-brand-900' : 'border-ubb-brand-900/30'
-                  }`}
-                >
-                  {showPayPal && <Check className="h-3.5 w-3.5 text-white" strokeWidth={3.5} />}
-                </span>
-              </button>
+              {!paymentConfig && (
+                <p className="mt-6 flex items-center gap-2 font-text text-ubb-small text-ubb-ink-muted">
+                  <Loader2 className="h-4 w-4 motion-safe:animate-spin" aria-hidden="true" />
+                  <span className="sr-only">{t('checkout.selectPaymentMethod')}</span>
+                </p>
+              )}
 
-              {showPayPal && (
-                <div id="paypal-buttons" className="mt-4">
-                  <PayPalButton
-                    planId={planId}
-                    planName={planDetails.name}
-                    amount={planDetails.price}
-                    currency="USD"
-                    onSuccess={handlePaymentSuccess}
-                    onError={handlePaymentError}
-                  />
+              {mobileMoney && !mmAmount && (
+                <p className="mt-6 rounded-ubb-field bg-ubb-mist p-4 font-text text-ubb-small text-ubb-ink">
+                  {t('mobileMoney.diagnosticContact')}
+                </p>
+              )}
+
+              {mobileMoney && mmAmount && (
+                <div className="mt-6">
+                  <div className="flex items-center gap-4 rounded-ubb-card border-2 border-ubb-brand-900 bg-ubb-brand-50 p-4">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-ubb-field bg-white text-ubb-brand-900">
+                      <Smartphone className="h-5 w-5" aria-hidden="true" />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-text font-semibold text-ubb-ink">{t('mobileMoney.methodTitle')}</span>
+                      <span className="block font-text text-ubb-small text-ubb-ink-muted">{t('mobileMoney.methodDescription')}</span>
+                    </span>
+                  </div>
+
+                  {clientUser ? (
+                    <>
+                      <p className="mt-4 font-text text-ubb-small text-ubb-ink-muted">
+                        {periodNoteKey ? `${t(`mobileMoney.${periodNoteKey}`)} ` : ''}{t('mobileMoney.periodNote')}
+                      </p>
+                      <MobileMoneyForm
+                        planId={planId}
+                        amountLabel={formatXOF(mmAmount)}
+                        operators={paymentConfig.operators || []}
+                      />
+                    </>
+                  ) : (
+                    <div className="mt-4 rounded-ubb-card border border-ubb-brand-900/15 p-4">
+                      <p className="font-text font-semibold text-ubb-ink">{t('mobileMoney.loginTitle')}</p>
+                      <p className="mt-1 font-text text-ubb-small text-ubb-ink-muted">{t('mobileMoney.loginBody')}</p>
+                      <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+                        <Button to="/login" state={{ from: location }} className="w-full sm:w-auto">
+                          {t('mobileMoney.login')}
+                        </Button>
+                        <Button to="/client/register" variant="outline" className="w-full sm:w-auto">
+                          {t('mobileMoney.register')}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
+              )}
+
+              {paymentConfig && !mobileMoney && (
+                <PayPalScriptProvider options={PAYPAL_SCRIPT_OPTIONS}>
+                  {/* Les boutons PayPal ne sont montés qu'après le choix explicite du mode de paiement
+                      (comme avant la refonte) : montés dès l'arrivée sur la page, le SDK les détruisait
+                      de façon intermittente pendant le chargement. */}
+                  <button
+                    type="button"
+                    onClick={() => setShowPayPal(true)}
+                    aria-expanded={showPayPal}
+                    aria-controls="paypal-buttons"
+                    className={`ubb-focus mt-6 flex w-full items-center gap-4 rounded-ubb-card border-2 p-4 text-left transition-colors ${
+                      showPayPal
+                        ? 'border-ubb-brand-900 bg-ubb-brand-50'
+                        : 'border-ubb-brand-900/15 bg-white hover:border-ubb-brand-900/40'
+                    }`}
+                  >
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-ubb-field bg-ubb-mist text-ubb-brand-900">
+                      <CreditCard className="h-5 w-5" aria-hidden="true" />
+                    </span>
+                    <span className="min-w-0 flex-1">
+                      <span className="block font-text font-semibold text-ubb-ink">{t('checkout.paypal')}</span>
+                      <span className="block font-text text-ubb-small text-ubb-ink-muted">
+                        {t('checkout.paypalDescription')}
+                      </span>
+                    </span>
+                    <span
+                      aria-hidden="true"
+                      className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 ${
+                        showPayPal ? 'border-ubb-brand-900 bg-ubb-brand-900' : 'border-ubb-brand-900/30'
+                      }`}
+                    >
+                      {showPayPal && <Check className="h-3.5 w-3.5 text-white" strokeWidth={3.5} />}
+                    </span>
+                  </button>
+
+                  {showPayPal && (
+                    <div id="paypal-buttons" className="mt-4">
+                      <PayPalButton
+                        planId={planId}
+                        planName={planDetails.name}
+                        amount={planDetails.price}
+                        currency="USD"
+                        onSuccess={handlePaymentSuccess}
+                        onError={handlePaymentError}
+                      />
+                    </div>
+                  )}
+                </PayPalScriptProvider>
               )}
 
               <p className="mt-4 flex items-center justify-center gap-2 font-text text-xs text-ubb-ink-muted">
@@ -251,7 +332,7 @@ const CheckoutPage = () => {
           </div>
         </Container>
       </div>
-    </PayPalScriptProvider>
+    </>
   )
 }
 

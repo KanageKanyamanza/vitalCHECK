@@ -208,6 +208,10 @@ export const assessmentV2API = {
 // Payments API (public)
 export const paymentsAPI = {
 	recordPayment: (data) => api.post("/payments/record", data),
+	// Mobile Money : le serveur fixe le montant, le navigateur n'envoie que l'offre
+	getConfig: () => api.get("/payments/config"),
+	initiateMobileMoney: (data) => api.post("/payments/afribapay/initiate", data),
+	getMobileMoneyOrder: (orderId) => api.get(`/payments/afribapay/orders/${encodeURIComponent(orderId)}`),
 };
 
 // Fonctions API admin
@@ -310,6 +314,9 @@ export const adminApiService = {
 		adminApi.patch(`/admin/payments/${paymentId}/status`, { status }),
 	exportPayments: () =>
 		adminApi.get("/admin/payments/export", { responseType: "blob" }),
+	// Mobile Money « à examiner » : action = "activate" | "reject"
+	resolveMobileMoneyPayment: (paymentId, action) =>
+		adminApi.post(`/payments/afribapay/payments/${paymentId}/resolve`, { action }),
 
 	// Chatbot
 	getChatbotStats: (days = 30) =>

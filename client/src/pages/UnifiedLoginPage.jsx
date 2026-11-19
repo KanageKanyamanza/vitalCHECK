@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Shield, Users } from "lucide-react";
 import axios from "axios";
@@ -12,7 +12,13 @@ import { API_BASE_URL as API_URL } from "../services/api";
 const UnifiedLoginPage = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const location = useLocation()
   const { setToken, setUser } = useClientAuth()
+  // Retour à la page demandée avant la connexion (ex. paiement), seulement vers une page du site
+  const from = location.state?.from
+  const clientRedirect = typeof from?.pathname === "string" && from.pathname.startsWith("/") && !from.pathname.startsWith("//")
+    ? `${from.pathname}${from.search || ""}`
+    : "/client/dashboard"
   
   const [formData, setFormData] = useState({
     email: '',
@@ -37,9 +43,9 @@ const UnifiedLoginPage = () => {
       navigate('/admin/dashboard', { replace: true })
     } else if (clientToken) {
       setHasRedirected(true)
-      navigate('/client/dashboard', { replace: true })
+      navigate(clientRedirect, { replace: true })
     }
-  }, [navigate, loading, hasRedirected])
+  }, [navigate, loading, hasRedirected, clientRedirect])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
@@ -86,7 +92,7 @@ const UnifiedLoginPage = () => {
           
           // Petite pause pour que l'utilisateur voie le message de succès
           setTimeout(() => {
-            navigate('/client/dashboard', { replace: true })
+            navigate(clientRedirect, { replace: true })
           }, 500)
         }
       }

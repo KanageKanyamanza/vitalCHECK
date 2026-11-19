@@ -38,11 +38,12 @@ const UserDetail = () => {
     }
   };
 
+  // Studio d'Envoi Direct, pré-rempli avec cet utilisateur (l'ancienne page /admin/emails n'existe plus)
   const handleSendEmail = () => {
-    navigate('/admin/emails', {
+    navigate('/admin/emails/broadcast', {
       state: {
-        selectedUsers: [user._id],
-        userEmails: [user.email]
+        selectedSubscribers: [user._id],
+        contactModel: 'User'
       }
     });
   };
