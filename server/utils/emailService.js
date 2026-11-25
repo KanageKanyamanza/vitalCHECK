@@ -590,7 +590,8 @@ const sendAssessmentCompletedExistingUser = async (to, name, score) => {
 };
 
 // Send results email for the simplified Niveau 1 diagnostic (v2), with the 2-page PDF attached
-const sendV2ResultEmail = async (to, name, overallScore, levelLabel, levelId, resultsUrl, pdfBuffer, language = 'fr') => {
+// setPasswordUrl : seulement pour un compte créé par ce diagnostic (lien pour choisir son mot de passe)
+const sendV2ResultEmail = async (to, name, overallScore, levelLabel, levelId, resultsUrl, pdfBuffer, language = 'fr', setPasswordUrl = null) => {
   const statusByLevel = {
     critique: 'red',
     vulnerable: 'red',
@@ -617,6 +618,9 @@ const sendV2ResultEmail = async (to, name, overallScore, levelLabel, levelId, re
       ],
       ctaNote: '<strong>Envie d\'aller plus loin ?</strong> Notre diagnostic Premium vous propose une analyse approfondie et un accompagnement personnalisé.',
       ctaButton: 'Voir mes résultats en ligne',
+      accountTitle: 'Votre espace vitalCHECK est créé',
+      accountText: `Un compte a été créé avec l'adresse <strong>${to}</strong> pour retrouver vos diagnostics. Choisissez votre mot de passe pour vous connecter (lien valable 7 jours).`,
+      setPasswordButton: 'Définir mon mot de passe',
       note: 'Ce rapport correspond à votre auto-évaluation gratuite (Niveau 1) et constitue un point de départ pour identifier vos priorités.',
       filename: 'vitalCHECK-diagnostic-niveau1.pdf',
     },
@@ -635,6 +639,9 @@ const sendV2ResultEmail = async (to, name, overallScore, levelLabel, levelId, re
       ],
       ctaNote: '<strong>Want to go further?</strong> Our Premium diagnostic offers an in-depth analysis and personalized support.',
       ctaButton: 'View my results online',
+      accountTitle: 'Your vitalCHECK account is ready',
+      accountText: `An account was created with <strong>${to}</strong> so you can find your diagnostics again. Choose your password to log in (link valid for 7 days).`,
+      setPasswordButton: 'Set my password',
       note: 'This report reflects your free self-assessment (Level 1) and serves as a starting point to identify your priorities.',
       filename: 'vitalCHECK-diagnostic-level1.pdf',
     },
@@ -665,6 +672,13 @@ const sendV2ResultEmail = async (to, name, overallScore, levelLabel, levelId, re
           ${tx.bullets.map((b) => `<li>${b}</li>`).join('')}
         </ul>
 
+        ${setPasswordUrl ? `
+        <div style="background: #fffbeb; border: 1px solid #fde68a; padding: 20px; border-radius: 8px; margin: 20px 0;">
+          <p style="margin: 0 0 6px 0; color: #78350f; font-size: 15px; font-weight: bold;">${tx.accountTitle}</p>
+          <p style="margin: 0; color: #78350f; font-size: 14px; line-height: 1.5;">${tx.accountText}</p>
+        </div>
+        ` : ''}
+
         <div style="background: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0;">
           <p style="margin: 0; color: #14532d; font-size: 14px;">
             ${tx.ctaNote}
@@ -678,6 +692,12 @@ const sendV2ResultEmail = async (to, name, overallScore, levelLabel, levelId, re
           primary: true,
           icon: '',
         },
+        ...(setPasswordUrl ? [{
+          text: tx.setPasswordButton,
+          url: setPasswordUrl,
+          primary: false,
+          icon: '',
+        }] : []),
       ],
       note: tx.note,
     }),

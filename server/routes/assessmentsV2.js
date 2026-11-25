@@ -23,6 +23,11 @@ const { generatePremiumInsights } = require("../utils/aiInsightsService");
 const { authenticateClient } = require("../middleware/auth");
 const { checkSubscription } = require("../middleware/checkSubscription");
 const jwt = require("jsonwebtoken");
+const crypto = require("crypto");
+const { findUserByEmail } = require("../utils/userEmail");
+
+// Validité du lien « Définir mon mot de passe » envoyé à la création du compte
+const SET_PASSWORD_LINK_DAYS = 7;
 
 const router = express.Router();
 
@@ -152,7 +157,8 @@ router.post(
 		body("answers").isArray({ min: 1 }),
 		body("language").optional().isString(),
 		body("companyName").trim().isLength({ min: 2 }),
-		body("email").isEmail().normalizeEmail(),
+		// Adresse gardée telle que saisie (minuscules) : normalizeEmail() retirait les points des adresses Gmail
+		body("email").trim().isEmail().toLowerCase(),
 		body("companySize").isIn(["micro", "sme", "large-sme"]),
 		body("sector").optional().trim(),
 		body("questionnaireType").optional().isString(),
@@ -185,7 +191,7 @@ router.post(
 			// Évite la création d'un doublon quand la normalisation email diverge (ex: Gmail dots)
 			let user = null;
 			let accountCreated = false;
-			let tempPassword = null;
+			let setPasswordToken = null;
 
 			const authHeader = req.headers.authorization;
 			if (authHeader) {
@@ -201,8 +207,8 @@ router.post(
 			}
 
 			if (!user) {
-				// Recherche par email insensible à la casse (sans normalisation Gmail agressive)
-				user = await User.findOne({ email: { $regex: new RegExp(`^${email.replace(/[.+*?^${}()|[\]\\]/g, "\\$&")}$`, "i") } });
+				// Adresse exacte, ou ancienne forme Gmail (sans points) des comptes créés avant le correctif
+				user = await findUserByEmail(User, email);
 			}
 
 			if (!user) {
@@ -212,9 +218,12 @@ router.post(
 					companySize,
 					sector: sector || "other",
 				});
-				tempPassword = user.generateTempPassword();
-				user.password = tempPassword;
-				user.tempPassword = tempPassword;
+				// Mot de passe aléatoire jamais communiqué : l'utilisateur choisit le sien
+				// via le lien « Définir mon mot de passe » de l'email de résultat (valable 7 jours)
+				user.password = user.generateTempPassword();
+				setPasswordToken = crypto.randomBytes(32).toString("hex");
+				user.resetPasswordToken = crypto.createHash("sha256").update(setPasswordToken).digest("hex");
+				user.resetPasswordExpires = Date.now() + SET_PASSWORD_LINK_DAYS * 24 * 60 * 60 * 1000;
 				user.hasAccount = true;
 				user.accountCreatedAt = new Date();
 				await user.save();
@@ -277,7 +286,8 @@ router.post(
 
 			// Envoi de l'email avec le PDF en pièce jointe + lien vers les résultats
 			try {
-				const resultsUrl = `${process.env.CLIENT_URL || "https://checkmyenterprise.com"}/diagnostic/resultats?assessmentId=${assessment._id}`;
+				const clientUrl = process.env.CLIENT_URL || "https://checkmyenterprise.com";
+				const resultsUrl = `${clientUrl}/diagnostic/resultats?assessmentId=${assessment._id}`;
 				await sendV2ResultEmail(
 					email,
 					companyName,
@@ -287,6 +297,8 @@ router.post(
 					resultsUrl,
 					pdfBuffer,
 					language,
+					// Nouveau compte : lien pour choisir son mot de passe (page de réinitialisation existante)
+					setPasswordToken ? `${clientUrl}/reset-password/${setPasswordToken}` : null,
 				);
 			} catch (emailError) {
 				console.error("V2 result email error:", emailError);

@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const Admin = require('../models/Admin');
+const { findUserByEmail } = require('../utils/userEmail');
 const router = express.Router();
 
 // Connexion unifiée - détecte automatiquement le rôle
@@ -62,7 +63,8 @@ router.post('/login', async (req, res) => {
 
     // Essayer ensuite la connexion client
     try {
-      const user = await User.findOne({ email }).select('+password');
+      // Minuscules, et ancienne forme Gmail (sans points) pour les comptes créés avant le correctif
+      const user = await findUserByEmail(User, email, { select: '+password' });
       
       if (user) {
         console.log('👥 [UNIFIED LOGIN] Client trouvé:', {

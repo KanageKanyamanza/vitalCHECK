@@ -13,7 +13,7 @@ const UnifiedLoginPage = () => {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
-  const { setToken, setUser } = useClientAuth()
+  const { setToken, setUser, isAuthenticated, loading: authLoading } = useClientAuth()
   // Retour à la page demandée avant la connexion (ex. paiement), seulement vers une page du site
   const from = location.state?.from
   const clientRedirect = typeof from?.pathname === "string" && from.pathname.startsWith("/") && !from.pathname.startsWith("//")
@@ -33,19 +33,20 @@ const UnifiedLoginPage = () => {
   // Redirect if already authenticated
   useEffect(() => {
     if (hasRedirected || loading) return // Éviter les redirections multiples et pendant le chargement
-    
+
     const adminToken = localStorage.getItem('adminToken')
-    const clientToken = localStorage.getItem('clientToken')
-    
+
     // Redirection automatique seulement si pas en cours de connexion
     if (adminToken) {
       setHasRedirected(true)
       navigate('/admin/dashboard', { replace: true })
-    } else if (clientToken) {
+    } else if (!authLoading && isAuthenticated) {
+      // Client : seulement une fois la session confirmée par le contexte. Un jeton présent mais
+      // pas encore chargé (ou expiré) renvoyait vers le tableau de bord, qui renvoyait ici en boucle.
       setHasRedirected(true)
       navigate(clientRedirect, { replace: true })
     }
-  }, [navigate, loading, hasRedirected, clientRedirect])
+  }, [navigate, loading, hasRedirected, clientRedirect, authLoading, isAuthenticated])
 
   const handleSubmit = async (e) => {
     e.preventDefault()
