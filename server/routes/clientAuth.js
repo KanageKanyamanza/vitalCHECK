@@ -10,6 +10,7 @@ const {
 	sendPasswordResetEmail,
 } = require("../utils/emailService");
 const { notifyAdmins } = require("../utils/pushService");
+const { findUserByEmail } = require("../utils/userEmail");
 
 // Middleware pour authentifier le client
 const authenticateClient = async (req, res, next) => {
@@ -151,9 +152,8 @@ router.post("/login", async (req, res) => {
 		const { email, password } = req.body;
 
 		// Trouver l'utilisateur avec le mot de passe
-		const user = await User.findOne({ email: email.toLowerCase() }).select(
-			"+password"
-		);
+		// Ancienne forme Gmail (sans points) acceptée pour les comptes créés avant le correctif
+		const user = await findUserByEmail(User, email, { select: "+password" });
 
 		if (!user || !user.hasAccount) {
 			return res.status(401).json({
@@ -328,10 +328,8 @@ router.post("/forgot-password", async (req, res) => {
 		}
 
 		// Trouver l'utilisateur
-		const user = await User.findOne({ 
-			email: email.toLowerCase(),
-			hasAccount: true 
-		});
+		// Ancienne forme Gmail (sans points) acceptée pour les comptes créés avant le correctif
+		const user = await findUserByEmail(User, email, { filter: { hasAccount: true } });
 
 		// Pour des raisons de sécurité, on ne révèle pas si l'email existe ou non
 		if (!user) {

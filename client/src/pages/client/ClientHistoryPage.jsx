@@ -9,6 +9,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { API_BASE_URL as API_URL } from "../../services/api";
 import ClientLayout from "../../components/client/ClientLayout";
+import { reportPath } from "../../utils/reportPath";
 
 const ClientHistoryPage = () => {
   const { t } = useTranslation();
@@ -167,7 +168,7 @@ const ClientHistoryPage = () => {
                   {/* Actions */}
                   <div className="flex gap-2 shrink-0">
                     <button
-                      onClick={() => navigate(`/results?id=${assessment._id}`)}
+                      onClick={() => navigate(reportPath(assessment))}
                       className="flex items-center gap-1.5 px-4 py-2 text-sm text-primary-600 border border-primary-500 hover:bg-primary-50 rounded-lg transition-colors"
                     >
                       <FileText className="w-4 h-4" />

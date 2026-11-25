@@ -96,6 +96,16 @@ export const ClientAuthProvider = ({ children }) => {
     }
   }
 
+  // Session ouverte par un autre parcours (compte créé à la fin du diagnostic) : le contexte
+  // doit connaître le jeton, sinon les pages protégées ne voient personne de connecté
+  const loginWithToken = (newToken) => {
+    if (!newToken || newToken === token) return
+    localStorage.setItem('clientToken', newToken)
+    axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`
+    setLoading(true) // l'utilisateur est chargé par l'effet sur `token`
+    setToken(newToken)
+  }
+
   // Fonction pour nettoyer les données du chatbot
   const clearChatbotData = (userId) => {
     if (userId) {
@@ -187,6 +197,7 @@ export const ClientAuthProvider = ({ children }) => {
     isAuthenticated: !!user,
     register,
     login,
+    loginWithToken,
     logout,
     updateProfile,
     changePassword,

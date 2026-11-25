@@ -43,7 +43,7 @@ const SimplifiedResultsPage = () => {
 	const [searchParams] = useSearchParams();
 	const { scrollToTop } = useSmoothScroll();
 	const { t, i18n } = useTranslation();
-	const { user } = useClientAuth();
+	const { user, loginWithToken } = useClientAuth();
 	const reduceMotion = useReducedMotion();
 
 	const [data, setData] = useState(location.state || null);
@@ -162,11 +162,10 @@ const SimplifiedResultsPage = () => {
 				setSavedAssessmentId(response.data.assessment.id);
 				setSaved(true);
 
-				// Store JWT if a new account was created — needed to authenticate payment requests
+				// Nouveau compte : ouvrir la session via le contexte (nécessaire au paiement et à l'espace client).
+				// Écrire le jeton directement dans le navigateur provoquait une boucle connexion / tableau de bord.
 				if (response.data.account?.created && response.data.clientToken) {
-					localStorage.setItem('clientToken', response.data.clientToken);
-					axios.defaults.headers.common['Authorization'] =
-						`Bearer ${response.data.clientToken}`;
+					loginWithToken(response.data.clientToken);
 				}
 
 				toast.success(t("diagnostic.results.reportSentToast"));

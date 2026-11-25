@@ -25,6 +25,7 @@ import KPICard from "../../components/client/KPICard";
 import ScoreEvolutionChart from "../../components/premium/ScoreEvolutionChart";
 import DiagnosticComparator from "../../components/premium/DiagnosticComparator";
 import PremiumExportButton from "../../components/premium/PremiumExportButton";
+import { reportPath } from "../../utils/reportPath";
 
 const PAID_PLANS = ["standard", "premium", "diagnostic"];
 
@@ -386,7 +387,7 @@ const ClientDashboardPage = () => {
                           <div className="flex gap-2 shrink-0">
                             <button
                               onClick={() =>
-                                navigate(`/results?id=${assessment._id}`)
+                                navigate(reportPath(assessment))
                               }
                               className="flex items-center gap-1 px-3 py-1.5 text-xs text-primary-600 border border-primary-500 hover:bg-primary-50 rounded-lg transition-colors"
                             >
